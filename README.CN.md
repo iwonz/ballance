@@ -62,6 +62,7 @@
 
 * Windows 7 或更高
 * MacOS High Sierra 10.13+ (Intel) 或更高
+* macOS Ventura 13.1+（Apple Silicon / M 系列，包括 M3）
 * Android 6.0 或更高
 
 ||最低配置|推荐配置|
@@ -100,10 +101,10 @@
 
   1. 前往 [Releases](https://gitee.com/imengyu/Ballance/releases) 下载 MacOS 安装包
 
-      * 如果你使用的是M1、M2芯片的苹果电脑，就下载 `-AppleSilicon.dmg` 版本安装包
-      * 如果你使用的是Intel芯片的苹果电脑，就下载 `-Intel64.dmg` 版本安装包
+      * 如果你使用的是 M 系列芯片（M1、M2、M3 或更新型号）的苹果电脑，请下载 `-macOS-AppleSilicon.zip`。旧版本可能命名为 `-OSX-AppleSilicon.zip` 或 `-osx-arm64.zip`。
+      * 如果你使用的是 Intel 的苹果电脑，请下载 Intel / x64 版本。
 
-  2. 下载安装完成后在 “启动台/游戏” 中找到 Ballance 打开就可以开始玩了。
+  2. 解压 ZIP，将 `Ballance.app` 移到“应用程序”并打开。Apple Silicon 版本无需 Rosetta。构建、签名和首次启动说明请参阅 [macOS Apple Silicon 构建文档](docs/macos-apple-silicon.md)。
 
 * Android：
 
@@ -169,6 +170,8 @@ Ballance Unity Rebuild 0.9.8 版本支持了加载 Ballance 原版关卡文件�
 ## 从项目源码生成游戏程序
 
 请参考 [文档](wiki/production(zh).md)。
+
+Apple Silicon 自动构建和 GitHub Release 附件配置请参阅 [构建文档](docs/macos-apple-silicon.md)。
 
 ## 物理引擎
 

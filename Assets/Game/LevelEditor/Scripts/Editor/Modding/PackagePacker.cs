@@ -45,6 +45,7 @@ namespace Ballance2.Editor.Modding
             {
               string filesPath = files[i].FullName.Replace("\\", "/");
 
+              if (files[i].Name.StartsWith(".")) continue;
               if (filesPath.EndsWith(".meta")) continue;
               if (filesPath.EndsWith(".shader")) continue;
               if (filesPath.EndsWith(".shadergraph")) continue;
@@ -70,9 +71,11 @@ namespace Ballance2.Editor.Modding
           assetBundleBuild.assetNames = allAssetsPath.ToArray();
 
           //打包
-          BuildPipeline.BuildAssetBundles(dirTargetPath, new AssetBundleBuild[]{
+          var manifest = BuildPipeline.BuildAssetBundles(dirTargetPath, new AssetBundleBuild[]{
                         assetBundleBuild
                     }, BuildAssetBundleOptions.None, packTarget);
+          if (manifest == null)
+            return "BuildAssetBundles failed for " + packPackageName;
 
           EditorUtility.DisplayProgressBar("正在打包", "正在打包，请稍后...", 0.6f);
 
@@ -88,6 +91,7 @@ namespace Ballance2.Editor.Modding
     
     private static void DoSolvePackageDef(TextAsset packDefFile)
     {
+      packPackageName = "";
       projPath = Directory.GetCurrentDirectory().Replace("\\", "/") + "/";
       projModDefFile = projPath + AssetDatabase.GetAssetPath(packDefFile);
       projModDirPath = projPath + Path.GetDirectoryName(AssetDatabase.GetAssetPath(packDefFile));
@@ -121,8 +125,8 @@ namespace Ballance2.Editor.Modding
       string basePath = projModDirPath.Replace("\\", "/").Replace(projPath, "");
 
       //添加到包里
-      ZipUtils.AddFileToZip(zipStream, bundlePath + ".assetbundle", "/assets/" + Path.GetFileName(bundlePath) + ".assetbundle", ref crc);
-      ZipUtils.AddFileToZip(zipStream, bundlePath + ".assetbundle.manifest", "/assets/" + Path.GetFileName(bundlePath) + ".assetbundle.manifest", ref crc);
+      ZipUtils.AddFileToZip(zipStream, bundlePath + ".assetbundle", "assets/" + Path.GetFileName(bundlePath) + ".assetbundle", ref crc);
+      ZipUtils.AddFileToZip(zipStream, bundlePath + ".assetbundle.manifest", "assets/" + Path.GetFileName(bundlePath) + ".assetbundle.manifest", ref crc);
       ZipUtils.AddFileToZip(zipStream, projModDefFile, projModDirPath.Length, ref crc);
 
       //添加I18脚本

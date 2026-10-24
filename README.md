@@ -52,6 +52,7 @@ Minimum requirements
 
 * Windows 7+
 * MacOS High Sierra 10.13+ (Intel)
+* macOS Ventura 13.1+ (Apple Silicon / M-series, including M3)
 * Android 6.0+
 
 ||Minimum|Recommended|
@@ -90,10 +91,10 @@ Minimum requirements
 
   1. Goto [Releases](https://github.com/imengyu/Ballance/releases) find the latest version of MacOS
 
-      * If you are using an Apple computer with M1 or M2 chips, download the `-AppleSilicon.dmg` version installation package.
-      * If you are using an Intel Apple PC, download the `-Intel64.dmg` version installation package.
+      * On an M-series Mac (M1, M2, M3 or later), download the `-macOS-AppleSilicon.zip` artifact. Older releases may name it `-OSX-AppleSilicon.zip` or `-osx-arm64.zip`.
+      * On an Intel Mac, download the Intel / x64 artifact.
 
-  2. After downloading and installing, find Ballance in the "launchpad/Game" and open it to start playing.
+  2. Extract the ZIP, move `Ballance.app` to Applications, and open it. Apple Silicon builds run natively without Rosetta. See the [macOS build and installation notes](docs/macos-apple-silicon.md) for signing and first-launch details.
 
 * Android：
 
@@ -156,6 +157,9 @@ Steps:
 ## Generate game programs from project source code
 
 Please refer [production document](wiki/production.md)。
+
+For a reproducible Apple Silicon build and automatic GitHub Release artifacts,
+see [macOS Apple Silicon builds](docs/macos-apple-silicon.md).
 
 ## Physics Engine
 

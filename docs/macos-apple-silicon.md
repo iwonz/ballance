@@ -6,10 +6,12 @@ library requires **macOS 13.1 or later**. Intel builds remain separate.
 
 ## Build locally
 
-Install Unity **2021.3.33f1**, activate it through Unity Hub, and install **Mac
-Build Support (Mono)**. The project records the China edition, `2021.3.33f1c1`;
-CI explicitly selects the international `2021.3.33f1` editor at the same patch
-level. Do not use Unity's default build button for release packaging: it does
+Install the macOS ARM64 editor for Unity **2021.3.33f1** and activate it through
+Unity Hub. The native macOS editor includes Mono player support. No Unity
+account credentials or license files need to be uploaded to GitHub for a local
+build. The project now pins the international `2021.3.33f1` editor, replacing
+the upstream China edition `2021.3.33f1c1` at the same patch level. Both local
+builds and CI use this version. Do not use Unity's default build button for release packaging: it does
 not generate the external game packages.
 
 On an Apple Silicon Mac with Xcode Command Line Tools and Python 3:
@@ -25,7 +27,7 @@ UNITY_EDITOR="/path/to/Unity.app/Contents/MacOS/Unity" bash scripts/build-macos.
 ```
 
 Close any editor already using this project first. Outputs are
-`Builds/macOS/Ballance.app`, `Builds/Ballance-macOS-AppleSilicon.zip` and its
+`Builds/macOS/Ballance.app`, `Builds/Ballance-<version>-macOS-AppleSilicon.zip` and its
 `.sha256` checksum. Move a previous output aside before rebuilding; existing
 apps and archives are deliberately not overwritten.
 
@@ -39,12 +41,25 @@ Mono preserves support for dynamically
 loaded C# mods. The original architecture and scripting backend settings are
 restored when the build finishes.
 
+The built-in mod DLLs are recompiled from their current C# source against the
+newly built player's assemblies before packaging. The checked-in mod DLLs are
+not used as the packaged module code and are not overwritten by this process.
+
 The native physics binary is already checked in at
 `Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib`. Its importer enables
 ARM64 in the macOS editor and player. The `macOS/x64` copy is for Intel only.
 No M3-specific compiler target or rebuild of the external IVP source is needed.
+The build places this dylib directly in `Contents/PlugIns`: leaving it in Unity
+2021's generated `ARM64` subfolder causes `DllNotFoundException` in the Mono
+player even though a direct native-library smoke test succeeds.
 
 ## GitHub Actions and release assets
+
+For a local source-built release, commit the source and version changes first,
+build with the command above, and complete the gameplay checks below. Create a
+draft release targeting that exact commit, attach the resulting ZIP and checksum,
+then publish the draft. Do not substitute an older upstream binary: packaging
+an existing app does not compile the current source or game content.
 
 The **macOS Apple Silicon** workflow has three entry points:
 
@@ -53,12 +68,17 @@ The **macOS Apple Silicon** workflow has three entry points:
   player. This also works for fork PRs.
 * **Actions → macOS Apple Silicon → Run workflow** builds the selected branch
   and uploads the `macOS-AppleSilicon` artifact for review.
-* Publishing a GitHub Release builds its **tag**, then attaches
+* Publishing a GitHub Release always runs the native checks. Optionally set the
+  repository Actions variable `UNITY_CI_ENABLED` to `true` to also build its **tag**
+  in CI, then attach
   `Ballance-<tag-without-v>-macOS-AppleSilicon.zip` and its SHA-256 checksum.
   Existing assets for other platforms are preserved. Existing files with the
-  same names are not replaced.
+  same names are not replaced. Leave this variable unset for locally built
+  releases so publication does not require Unity credentials or start a duplicate
+  build.
 
-Before running a full build, a repository maintainer must configure the
+Before running a full **GitHub Actions** build (not a local build), a repository
+maintainer must configure the
 [GameCI activation secrets](https://game.ci/docs/github/activation/):
 
 * `UNITY_EMAIL` and `UNITY_PASSWORD`;

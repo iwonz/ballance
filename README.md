@@ -89,10 +89,10 @@ Minimum requirements
 
 * MacOS：
 
-  1. Goto [Releases](https://github.com/imengyu/Ballance/releases) find the latest version of MacOS
+  1. Find native Apple Silicon builds in this fork's [Releases](https://github.com/iwonz/ballance/releases).
 
       * On an M-series Mac (M1, M2, M3 or later), download the `-macOS-AppleSilicon.zip` artifact. Older releases may name it `-OSX-AppleSilicon.zip` or `-osx-arm64.zip`.
-      * On an Intel Mac, download the Intel / x64 artifact.
+      * On an Intel Mac, use an Intel / x64 artifact from the [upstream releases](https://github.com/imengyu/Ballance/releases).
 
   2. Extract the ZIP, move `Ballance.app` to Applications, and open it. Apple Silicon builds run natively without Rosetta. See the [macOS build and installation notes](docs/macos-apple-silicon.md) for signing and first-launch details.
 

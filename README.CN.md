@@ -99,10 +99,10 @@
 
 * MacOS：
 
-  1. 前往 [Releases](https://gitee.com/imengyu/Ballance/releases) 下载 MacOS 安装包
+  1. 前往本分支的 [Releases](https://github.com/iwonz/ballance/releases) 下载原生 Apple Silicon 安装包。
 
       * 如果你使用的是 M 系列芯片（M1、M2、M3 或更新型号）的苹果电脑，请下载 `-macOS-AppleSilicon.zip`。旧版本可能命名为 `-OSX-AppleSilicon.zip` 或 `-osx-arm64.zip`。
-      * 如果你使用的是 Intel 的苹果电脑，请下载 Intel / x64 版本。
+      * 如果你使用的是 Intel 的苹果电脑，请从[上游发行版](https://github.com/imengyu/Ballance/releases)下载 Intel / x64 版本。
 
   2. 解压 ZIP，将 `Ballance.app` 移到“应用程序”并打开。Apple Silicon 版本无需 Rosetta。构建、签名和首次启动说明请参阅 [macOS Apple Silicon 构建文档](docs/macos-apple-silicon.md)。
 

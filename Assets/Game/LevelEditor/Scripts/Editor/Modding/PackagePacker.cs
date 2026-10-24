@@ -19,7 +19,7 @@ namespace Ballance2.Editor.Modding
 
     private static List<string> allAssetsPath = new List<string>();
 
-    public static string DoPackPackage(BuildTarget packTarget, TextAsset packDefFile, string sourceName, string targetDir)
+    public static string DoPackPackage(BuildTarget packTarget, TextAsset packDefFile, string sourceName, string targetDir, string compiledCode = null)
     {
       string targetPath = targetDir + "/" + sourceName + ".ballance";
       if (!string.IsNullOrEmpty(targetPath))
@@ -80,7 +80,7 @@ namespace Ballance2.Editor.Modding
           EditorUtility.DisplayProgressBar("正在打包", "正在打包，请稍后...", 0.6f);
 
           //ballance 包处理
-          DoSolveBallancePack(packTarget, dirTargetPath, dirTargetPath + "/" + name, targetPath);
+          DoSolveBallancePack(packTarget, dirTargetPath, dirTargetPath + "/" + name, targetPath, compiledCode);
 
           EditorUtility.ClearProgressBar();
         }
@@ -118,7 +118,7 @@ namespace Ballance2.Editor.Modding
         }
       }
     }
-    private static void DoSolveBallancePack(BuildTarget target, string dirTargetPath, string bundlePath, string targetPath)
+    private static void DoSolveBallancePack(BuildTarget target, string dirTargetPath, string bundlePath, string targetPath, string compiledCode)
     {
       Crc32 crc = new Crc32();
       ZipOutputStream zipStream = ZipUtils.CreateZipFile(targetPath);
@@ -139,7 +139,13 @@ namespace Ballance2.Editor.Modding
       //添加DLL
       string projDllFileSrc = projModDirPath + Path.DirectorySeparatorChar + ".dll" + Path.DirectorySeparatorChar + packPackageName + ".dll";
       string projDllFile = projModDirPath + Path.DirectorySeparatorChar + "dll" + Path.DirectorySeparatorChar + packPackageName + ".dll";
-      if (File.Exists(projDllFileSrc)) 
+      if (compiledCode != null)
+      {
+        if (!File.Exists(compiledCode))
+          throw new FileNotFoundException("Missing freshly compiled package code", compiledCode);
+        projDllFile = compiledCode;
+      }
+      else if (File.Exists(projDllFileSrc))
         File.Copy(projDllFileSrc, projDllFile, true);
 
       //添加DLL

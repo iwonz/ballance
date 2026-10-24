@@ -52,12 +52,16 @@ def validate(app):
 
     physics = [path for path in native_files if path.name == "libbphysics.dylib"]
     require(len(physics) == 1, "Expected exactly one ARM64 physics library")
+    require(physics[0] == contents / "PlugIns/libbphysics.dylib",
+            "The physics library must be in Contents/PlugIns for the Mono player to find it")
     require(any(path.name in ("UnityPlayer", "UnityPlayer.dylib") for path in native_files),
             "Missing UnityPlayer runtime")
     require(any(path.name == "libmonobdwgc-2.0.dylib" for path in native_files), "Missing Mono runtime")
 
     for folder, name in [("Core", "core"), ("Packages", "core.sounds"),
-                         ("Packages", "core.sounds.music"), ("Packages", "core.assets.skys")]:
+                         ("Packages", "core.sounds.music"), ("Packages", "core.assets.skys"),
+                         ("Packages", "mod.invlife"), ("Packages", "mod.selfkill"),
+                         ("Packages", "mod.speedball")]:
         path = contents / folder / (name + ".ballance")
         with zipfile.ZipFile(path) as package:
             require(package.testzip() is None, f"Corrupt package: {path}")
@@ -67,6 +71,11 @@ def validate(app):
                     f"Incomplete package: {path}")
             with package.open(bundle) as stream:
                 require(stream.read(8) == b"UnityFS\x00", f"Invalid asset bundle: {path}")
+            if name.startswith("mod."):
+                code = package.read(f"csharp/{name}.dll")
+                require(code.startswith(b"MZ"), f"Missing managed module code: {path}")
+                managed = contents / "Resources/Data/Managed" / f"{name}.dll"
+                require(code == managed.read_bytes(), f"Stale module DLL in player: {managed}")
     for number in range(1, 14):
         path = contents / "Levels" / f"level{number:02}.ballance"
         with path.open("rb") as stream:

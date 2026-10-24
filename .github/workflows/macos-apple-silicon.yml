@@ -29,8 +29,9 @@ jobs:
 
   build:
     name: Build macOS ARM64 player and game content
-    # Fork PRs have no Unity license secrets. Maintainers can build a reviewed branch manually.
-    if: github.event_name != 'pull_request'
+    # Local builds need no GitHub Unity credentials. Automatic release builds
+    # are opt-in; publishing a locally built release must not trigger a second build.
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'release' && vars.UNITY_CI_ENABLED == 'true')
     needs: native-check
     runs-on: ubuntu-22.04
     timeout-minutes: 90

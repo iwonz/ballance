@@ -187,7 +187,7 @@ namespace Ballance2.Menu
                             updateGrResolution.Invoke(i);
                         }
                     }
-                    GrResolution.AddOption("Default");
+            GrResolution.AddOption(I18N.Tr("core.ui.Default"));
                     if (!isMathed)
                     {
                         updateGrResolution.Invoke(resolutions.Length);
@@ -252,6 +252,7 @@ namespace Ballance2.Menu
             MessageCenter.SubscribeEvent("BtnChineseSimplifiedClick", () => { ApplyLanguage(SystemLanguage.ChineseSimplified); });
             MessageCenter.SubscribeEvent("BtnChineseTraditionalClick", () => { ApplyLanguage(SystemLanguage.ChineseTraditional); });
             MessageCenter.SubscribeEvent("BtnEnglishClick", () => { ApplyLanguage(SystemLanguage.English); });
+            MessageCenter.SubscribeEvent("BtnRussianClick", () => { ApplyLanguage(SystemLanguage.Russian); });
 
             MessageCenter.SubscribeEvent("BtnLangBackClick", () =>
             {
@@ -283,6 +284,7 @@ namespace Ballance2.Menu
         private static void ApplyLanguage(SystemLanguage language)
         {
             GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME).SetInt("language", (int)language);
+            PlayerPrefs.Save();
             if (I18NProvider.GetCurrentLanguage() != language)
                 GameUIManager.Instance.GoPage("PageApplyLangDialog");
             else

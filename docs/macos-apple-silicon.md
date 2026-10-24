@@ -53,6 +53,30 @@ The build places this dylib directly in `Contents/PlugIns`: leaving it in Unity
 2021's generated `ARM64` subfolder causes `DllNotFoundException` in the Mono
 player even though a direct native-library smoke test succeeds.
 
+## Russian interface
+
+In version 1.0.9, choose **Settings → Language → Русский** and confirm the game
+restart. The preference is saved immediately and used on subsequent launches.
+A fresh installation also follows a Russian system language automatically.
+Built-in menus, settings, tutorials, level labels, mod descriptions and dialogs
+are translated. Player-entered names, third-party content, diagnostic stack traces
+and original third-party license texts are not rewritten.
+
+Roboto is bundled for Cyrillic; the original Bank Gothic menu font explicitly
+references it as a fallback. This does not depend on fonts installed on the Mac.
+
+Translation coverage and format placeholders are checked in CI without Unity:
+
+```sh
+python3 scripts/check-localization.py
+```
+
+With Unity installed, run `Ballance2.Editor.LocalizationChecks.Run` through
+`-executeMethod` to validate runtime resource loading, fallbacks, Cyrillic and
+prefab bindings. `Ballance2.Editor.LocalizationChecks.Render` additionally renders
+Russian UI previews into `Builds/checks/localization` and checks tutorial text fit;
+it needs graphics, so omit `-nographics`. Neither check changes player preferences.
+
 ## GitHub Actions and release assets
 
 For a local source-built release, commit the source and version changes first,

@@ -53,7 +53,7 @@ namespace Ballance2.UI.Core.Controls
     }
     public void UpdateValue()
     {
-      TextValue.text = _value.ToString();
+      TextValue.text = Ballance2.Services.I18N.I18N.Tr("core.key." + _value, _value.ToString());
     }
 
     private bool waitForKey = false;

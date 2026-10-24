@@ -14,4 +14,9 @@
     <Text name="core.sounds.music.package.Introduction">原版音樂資源包</Text>
     <Text name="core.sounds.music.package.Description">原版音樂資源包，包含原版遊戲的全部背景音樂資源</Text>
   </Language>
+  <Language name="Russian">
+    <Text name="core.sounds.music.package.Name">Музыка</Text>
+    <Text name="core.sounds.music.package.Introduction">Вся фоновая музыка оригинальной игры.</Text>
+    <Text name="core.sounds.music.package.Description">Вся фоновая музыка оригинальной игры.</Text>
+  </Language>
 </I18n>

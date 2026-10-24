@@ -1,0 +1,22 @@
+<I18n>
+  <Language name="ChineseSimplified">
+    <Text name="mod.speedball.package.Name">高速球</Text>
+    <Text name="mod.speedball.package.Introduction">球速修改用于提高球的速度，可以完成一些通常速度无法完成的捷径操作，也能提高一些捷径的成功率。</Text>
+    <Text name="mod.speedball.package.Description">球速修改用于提高球的速度，可以完成一些通常速度无法完成的捷径操作，也能提高一些捷径的成功率。</Text>
+  </Language>
+  <Language name="ChineseTraditional">
+    <Text name="mod.speedball.package.Name">高速球</Text>
+    <Text name="mod.speedball.package.Introduction">球速修改用于提高球的速度，可以完成一些通常速度无法完成的捷径操作，也能提高一些捷径的成功率。</Text>
+    <Text name="mod.speedball.package.Description">球速修改用于提高球的速度，可以完成一些通常速度无法完成的捷径操作，也能提高一些捷径的成功率。</Text>
+  </Language>
+  <Language name="English">
+    <Text name="mod.speedball.package.Name">Speed ball</Text>
+    <Text name="mod.speedball.package.Introduction">Increase the ball speed to use shortcuts and overcome obstacles faster.</Text>
+    <Text name="mod.speedball.package.Description">Increase the ball speed to use shortcuts and overcome obstacles faster.</Text>
+  </Language>
+  <Language name="Russian">
+    <Text name="mod.speedball.package.Name">Ускорение шара</Text>
+    <Text name="mod.speedball.package.Introduction">Увеличивает скорость шара, позволяя быстрее преодолевать препятствия и пользоваться короткими путями.</Text>
+    <Text name="mod.speedball.package.Description">Увеличивает скорость шара, позволяя быстрее преодолевать препятствия и пользоваться короткими путями.</Text>
+  </Language>
+</I18n>

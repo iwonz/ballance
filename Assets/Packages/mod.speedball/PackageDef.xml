@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package name="mod.speedball" version="1">
   <BaseInfo>
-    <Name>高速球</Name>
+    <Name>{mod.speedball.package.Name}</Name>
     <Author>ballance</Author>
-    <Introduction>球速修改用于提高球的速度，可以完成一些通常速度无法完成的捷径操作，也能提高一些捷径的成功率。</Introduction>
-    <Description><![CDATA[球速修改用于提高球的速度，可以完成一些通常速度无法完成的捷径操作，也能提高一些捷径的成功率。]]></Description>
+    <Introduction>{mod.speedball.package.Introduction}</Introduction>
+    <Description>{mod.speedball.package.Description}</Description>
     <Link>https://imengyu.top/ballanceProject</Link>
     <AuthorLink>https://imengyu.top/</AuthorLink>
     <DocLink>https://imengyu.top/ballanceProject/doc</DocLink>

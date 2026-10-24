@@ -51,7 +51,7 @@ namespace Ballance2.Menu
           }
         }    
 
-        TextLevelName.text = name;
+        TextLevelName.text = LevelDisplayName.Get(name);
       } 
       else 
       {
@@ -60,7 +60,7 @@ namespace Ballance2.Menu
           _TextItem[i].textName.text = "";
           _TextItem[i].testScore.text = "";
         }  
-        TextLevelName.text = $"{name}Fail";
+        TextLevelName.text = Ballance2.Services.I18N.I18N.Tr("core.ui.NoLevelData");
       }
     }
 

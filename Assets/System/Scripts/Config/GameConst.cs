@@ -21,11 +21,11 @@ namespace Ballance2.Config
     /// <summary>
     /// 游戏版本
     /// </summary>
-    public const string GameVersion = "1.0.8";
+    public const string GameVersion = "1.0.9";
     /// <summary>
     /// 游戏编译版本
     /// </summary>
-    public const int GameBulidVersion = 167;
+    public const int GameBulidVersion = 168;
     /// <summary>
     /// 游戏编译版本
     /// </summary>

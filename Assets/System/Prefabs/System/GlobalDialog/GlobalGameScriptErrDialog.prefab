@@ -479,7 +479,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8161916799785227693}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: 01d6c0e7bae391c40a7009033c5ceb90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -491,7 +491,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 76ed11d84beb10846a746b4259e26d39, type: 3}
     m_FontSize: 14
     m_FontStyle: 0
     m_BestFit: 0
@@ -504,6 +504,9 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Error
+  m_ResourceKey: global.GameErrorTitle
+  m_DefaultString: Error
+  m_I18N: 1
 --- !u!1001 &4663791341012804649
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -604,6 +607,18 @@ PrefabInstance:
     - target: {fileID: 6758423850950945838, guid: 2534452a5613b024693a065135468baa, type: 3}
       propertyPath: m_Name
       value: GlobalGameScriptErrContinueButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_I18N
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_ResourceKey
+      value: global.DebugContinue
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_DefaultString
+      value: Continue (For debug)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2534452a5613b024693a065135468baa, type: 3}
@@ -723,6 +738,18 @@ PrefabInstance:
     - target: {fileID: 6758423850950945838, guid: 2534452a5613b024693a065135468baa, type: 3}
       propertyPath: m_Name
       value: GlobalGameScriptErrQuitButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_I18N
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_ResourceKey
+      value: global.CloseGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_DefaultString
+      value: Quit game
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2534452a5613b024693a065135468baa, type: 3}

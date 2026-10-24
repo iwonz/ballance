@@ -44,7 +44,7 @@ namespace Ballance2.Menu
           currentPackageName = options["PackageName"];
         if (options.ContainsKey("PackageTitle"))
           currentPackageTitle = options["PackageTitle"];
-        TextTitle.text = I18N.TrF("core.ui.PackageManagerTrustTitle", currentPackageTitle);
+        TextTitle.text = I18N.TrF("core.ui.PackageManagerTrustTitle", new object[] { currentPackageTitle });
       };
     }
   }

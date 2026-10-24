@@ -8,4 +8,7 @@
   <Language name="ChineseTraditional">
     <Text name="mod.selfkill.ui.KeyTitle">重置綁定按鍵</Text>
   </Language>
+  <Language name="Russian">
+    <Text name="mod.selfkill.ui.KeyTitle">Клавиша сброса шара</Text>
+  </Language>
 </I18n>

@@ -11,4 +11,8 @@
     <Text name="mod.speedball.ui.EnableTitle">球速倍數設定</Text>
     <Text name="mod.speedball.ui.BeiText">倍</Text>
   </Language>
+  <Language name="Russian">
+    <Text name="mod.speedball.ui.EnableTitle">Множитель скорости шара</Text>
+    <Text name="mod.speedball.ui.BeiText">×</Text>
+  </Language>
 </I18n>

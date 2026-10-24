@@ -1,0 +1,22 @@
+<I18n>
+  <Language name="ChineseSimplified">
+    <Text name="mod.invlife.package.Name">无限生命</Text>
+    <Text name="mod.invlife.package.Introduction">此模组为你的关卡设置了无限生命</Text>
+    <Text name="mod.invlife.package.Description">此模组为你的关卡设置了无限生命，你可以在一个关卡尝试无限次</Text>
+  </Language>
+  <Language name="ChineseTraditional">
+    <Text name="mod.invlife.package.Name">无限生命</Text>
+    <Text name="mod.invlife.package.Introduction">此模组为你的关卡设置了无限生命</Text>
+    <Text name="mod.invlife.package.Description">此模组为你的关卡设置了无限生命，你可以在一个关卡尝试无限次</Text>
+  </Language>
+  <Language name="English">
+    <Text name="mod.invlife.package.Name">Infinite lives</Text>
+    <Text name="mod.invlife.package.Introduction">Unlimited attempts on a level.</Text>
+    <Text name="mod.invlife.package.Description">Unlimited attempts on a level.</Text>
+  </Language>
+  <Language name="Russian">
+    <Text name="mod.invlife.package.Name">Бесконечные жизни</Text>
+    <Text name="mod.invlife.package.Introduction">Неограниченное число попыток на уровне.</Text>
+    <Text name="mod.invlife.package.Description">Неограниченное число попыток на уровне.</Text>
+  </Language>
+</I18n>

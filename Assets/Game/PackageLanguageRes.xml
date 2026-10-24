@@ -214,6 +214,81 @@ Ballance Rebuild 是滚球 Ballance 游戏的开源 Unity 重制版，由 快乐
     </Text>
   </Language>
   <Language name="English">
+    <Text name="core.ui.RebuildBy">Unity remake by</Text>
+    <Text name="core.level.1">Level 1</Text>
+    <Text name="core.level.2">Level 2</Text>
+    <Text name="core.level.3">Level 3</Text>
+    <Text name="core.level.4">Level 4</Text>
+    <Text name="core.level.5">Level 5</Text>
+    <Text name="core.level.6">Level 6</Text>
+    <Text name="core.level.7">Level 7</Text>
+    <Text name="core.level.8">Level 8</Text>
+    <Text name="core.level.9">Level 9</Text>
+    <Text name="core.level.10">Level 10</Text>
+    <Text name="core.level.11">Level 11</Text>
+    <Text name="core.level.12">Level 12</Text>
+    <Text name="core.level.13">Light Zone</Text>
+    <Text name="core.ball.BallWood">Wood</Text>
+    <Text name="core.ball.BallStone">Stone</Text>
+    <Text name="core.ball.BallPaper">Paper</Text>
+    <Text name="core.key.Mouse2">Mouse2</Text>
+    <Text name="core.key.Mouse1">Mouse1</Text>
+    <Text name="core.key.Mouse0">Mouse0</Text>
+    <Text name="core.key.Insert">Insert</Text>
+    <Text name="core.key.PageDown">PageDown</Text>
+    <Text name="core.key.PageUp">PageUp</Text>
+    <Text name="core.key.End">End</Text>
+    <Text name="core.key.Home">Home</Text>
+    <Text name="core.key.CapsLock">CapsLock</Text>
+    <Text name="core.key.Tab">Tab</Text>
+    <Text name="core.key.Delete">Delete</Text>
+    <Text name="core.key.Backspace">Backspace</Text>
+    <Text name="core.key.Escape">Escape</Text>
+    <Text name="core.key.KeypadEnter">KeypadEnter</Text>
+    <Text name="core.key.Return">Return</Text>
+    <Text name="core.key.RightCommand">RightCommand</Text>
+    <Text name="core.key.LeftCommand">LeftCommand</Text>
+    <Text name="core.key.RightAlt">RightAlt</Text>
+    <Text name="core.key.LeftAlt">LeftAlt</Text>
+    <Text name="core.key.RightControl">RightControl</Text>
+    <Text name="core.key.LeftControl">LeftControl</Text>
+    <Text name="core.key.RightShift">RightShift</Text>
+    <Text name="core.key.LeftShift">LeftShift</Text>
+    <Text name="core.key.RightArrow">RightArrow</Text>
+    <Text name="core.key.LeftArrow">LeftArrow</Text>
+    <Text name="core.key.DownArrow">DownArrow</Text>
+    <Text name="core.key.UpArrow">UpArrow</Text>
+    <Text name="core.key.Space">Space</Text>
+    <Text name="core.key.None">None</Text>
+    <Text name="core.ui.OriginalLevel">Original level {0}</Text>
+    <Text name="core.ui.Level">Level {0:00}</Text>
+    <Text name="core.ui.SelectLevel">Select level</Text>
+    <Text name="core.ui.DebugMode">Debug mode</Text>
+    <Text name="core.ui.GameOver">Game over</Text>
+    <Text name="core.ui.EnterText">Enter text…</Text>
+    <Text name="core.ui.Skylayer">Sky layer</Text>
+    <Text name="core.ui.DeathZones">Death zones</Text>
+    <Text name="core.ui.Audio">Audio</Text>
+    <Text name="core.ui.Fog">Fog</Text>
+    <Text name="core.ui.Wireframe">Wireframe</Text>
+    <Text name="core.ui.Skybox">Skybox</Text>
+    <Text name="core.ui.PreviewInfo">{0}
+
+Author: {1}
+Version: {2}
+
+Initial ball: {3}
+Level bonus: {4}
+Starting points: {5}
+Starting lives: {6}
+Sectors: {7}
+Light colour: {8}
+Skybox: {9}
+Music: {10}</Text>
+    <Text name="core.ui.CameraSpeed">Camera speed: {0:F2}</Text>
+    <Text name="core.ui.PreviewMode">Preview mode</Text>
+    <Text name="core.ui.PlayerName">PLAYER</Text>
+    <Text name="core.ui.Default">Default</Text>
     <Text name="core.ui.Back">Back</Text>
     <Text name="core.ui.Ok">Ok</Text>
     <Text name="core.ui.Yes">Yes</Text>
@@ -620,5 +695,263 @@ Ballance Rebuild是滾球Ballance遊戲的開源Unity重製版，由快樂的夢
 
 也歡迎在Ballance吧討論遊戲。
     </Text>
+  </Language>
+  <Language name="Russian">
+    <Text name="core.ui.RebuildBy">Автор версии на Unity</Text>
+    <Text name="core.level.1">Уровень 1</Text>
+    <Text name="core.level.2">Уровень 2</Text>
+    <Text name="core.level.3">Уровень 3</Text>
+    <Text name="core.level.4">Уровень 4</Text>
+    <Text name="core.level.5">Уровень 5</Text>
+    <Text name="core.level.6">Уровень 6</Text>
+    <Text name="core.level.7">Уровень 7</Text>
+    <Text name="core.level.8">Уровень 8</Text>
+    <Text name="core.level.9">Уровень 9</Text>
+    <Text name="core.level.10">Уровень 10</Text>
+    <Text name="core.level.11">Уровень 11</Text>
+    <Text name="core.level.12">Уровень 12</Text>
+    <Text name="core.level.13">Светлая зона</Text>
+    <Text name="core.ball.BallWood">Деревянный</Text>
+    <Text name="core.ball.BallStone">Каменный</Text>
+    <Text name="core.ball.BallPaper">Бумажный</Text>
+    <Text name="core.key.Mouse2">Средняя кнопка мыши</Text>
+    <Text name="core.key.Mouse1">Правая кнопка мыши</Text>
+    <Text name="core.key.Mouse0">Левая кнопка мыши</Text>
+    <Text name="core.key.Insert">Insert</Text>
+    <Text name="core.key.PageDown">Page Down</Text>
+    <Text name="core.key.PageUp">Page Up</Text>
+    <Text name="core.key.End">End</Text>
+    <Text name="core.key.Home">Home</Text>
+    <Text name="core.key.CapsLock">Caps Lock</Text>
+    <Text name="core.key.Tab">Tab</Text>
+    <Text name="core.key.Delete">Delete</Text>
+    <Text name="core.key.Backspace">Backspace</Text>
+    <Text name="core.key.Escape">Esc</Text>
+    <Text name="core.key.KeypadEnter">Enter (цифр.)</Text>
+    <Text name="core.key.Return">Enter</Text>
+    <Text name="core.key.RightCommand">Правый Cmd</Text>
+    <Text name="core.key.LeftCommand">Левый Cmd</Text>
+    <Text name="core.key.RightAlt">Правый Alt</Text>
+    <Text name="core.key.LeftAlt">Левый Alt</Text>
+    <Text name="core.key.RightControl">Правый Ctrl</Text>
+    <Text name="core.key.LeftControl">Левый Ctrl</Text>
+    <Text name="core.key.RightShift">Правый Shift</Text>
+    <Text name="core.key.LeftShift">Левый Shift</Text>
+    <Text name="core.key.RightArrow">Стрелка вправо</Text>
+    <Text name="core.key.LeftArrow">Стрелка влево</Text>
+    <Text name="core.key.DownArrow">Стрелка вниз</Text>
+    <Text name="core.key.UpArrow">Стрелка вверх</Text>
+    <Text name="core.key.Space">Пробел</Text>
+    <Text name="core.key.None">Не назначена</Text>
+    <Text name="core.ui.OriginalLevel">Уровень {0} из оригинальной игры</Text>
+    <Text name="core.ui.Level">Уровень {0:00}</Text>
+    <Text name="core.ui.SelectLevel">Выбор уровня</Text>
+    <Text name="core.ui.DebugMode">Режим отладки</Text>
+    <Text name="core.ui.GameOver">Игра окончена</Text>
+    <Text name="core.ui.EnterText">Введите текст…</Text>
+    <Text name="core.ui.Skylayer">Небесный слой</Text>
+    <Text name="core.ui.DeathZones">Зоны падения</Text>
+    <Text name="core.ui.Audio">Звук</Text>
+    <Text name="core.ui.Fog">Туман</Text>
+    <Text name="core.ui.Wireframe">Каркас</Text>
+    <Text name="core.ui.Skybox">Небо</Text>
+    <Text name="core.ui.PreviewInfo">{0}
+
+Автор: {1}
+Версия: {2}
+
+Начальный шар: {3}
+Бонус за уровень: {4}
+Начальные очки: {5}
+Начальные жизни: {6}
+Секторы: {7}
+Цвет освещения: {8}
+Небо: {9}
+Музыка: {10}</Text>
+    <Text name="core.ui.CameraSpeed">Скорость камеры: {0:F2}</Text>
+    <Text name="core.ui.PreviewMode">Просмотр уровня</Text>
+    <Text name="core.ui.PlayerName">Игрок</Text>
+    <Text name="core.ui.Default">По умолчанию</Text>
+    <Text name="core.ui.Back">Назад</Text>
+    <Text name="core.ui.Ok">ОК</Text>
+    <Text name="core.ui.Yes">Да</Text>
+    <Text name="core.ui.No">Нет</Text>
+    <Text name="core.ui.Cancel">Отмена</Text>
+    <Text name="core.ui.Restart">Перезапустить игру</Text>
+    <Text name="core.ui.RestartLevel">Начать заново</Text>
+    <Text name="core.ui.Quit">Выйти</Text>
+    <Text name="core.ui.Tip">Подсказка</Text>
+    <Text name="core.ui.Unknow">Неизвестно</Text>
+    <Text name="core.ui.Continue">Продолжить</Text>
+    <Text name="core.ui.QuitToMenu">В главное меню</Text>
+    <Text name="core.ui.AboutProject">О проекте</Text>
+    <Text name="core.ui.AboutOldCreators">Авторы оригинала</Text>
+    <Text name="core.ui.AbouOpenSourceLicense">Лицензии</Text>
+    <Text name="core.ui.GoGithub">Проект на GitHub</Text>
+    <Text name="core.ui.WinUILevelBonus">Бонус за уровень</Text>
+    <Text name="core.ui.WinUITimePoints">Очки времени</Text>
+    <Text name="core.ui.WinUIExtraLife">Оставшиеся жизни</Text>
+    <Text name="core.ui.WinUIPoints">Очки</Text>
+    <Text name="core.ui.WinUIScore">Счёт</Text>
+    <Text name="core.ui.WinUINewHighScore">Новый рекорд!</Text>
+    <Text name="core.ui.WinUIEnterYourName">Введите своё имя</Text>
+    <Text name="core.ui.WinUIWin">Победа!</Text>
+    <Text name="core.ui.WinUINext">Следующий уровень</Text>
+    <Text name="core.ui.ChangeLanageNotice">Новый язык будет применён после перезапуска игры. Перезапустить игру сейчас?</Text>
+    <Text name="core.ui.MainMenuStart">Играть</Text>
+    <Text name="core.ui.MainMenuHighScore">Рекорды</Text>
+    <Text name="core.ui.MainMenuSettings">Настройки</Text>
+    <Text name="core.ui.MainMenuAbout">Об игре</Text>
+    <Text name="core.ui.MainMenuQuit">Выход</Text>
+    <Text name="core.ui.MainMenuQuitTitle">Выйти из игры?</Text>
+    <Text name="core.ui.MainMenuRestartLevelTitle">Начать этот уровень заново?</Text>
+    <Text name="core.ui.StartMenuCustom">Свои уровни</Text>
+    <Text name="core.ui.SettingsMenuTilte">Настройки</Text>
+    <Text name="core.ui.SettingsMenuVSync">Вертикальная синхронизация</Text>
+    <Text name="core.ui.SettingsMenuFullScreen">Полный экран</Text>
+    <Text name="core.ui.SettingsMenuCloud">Показывать облака</Text>
+    <Text name="core.ui.SettingsMenuResolution">Разрешение</Text>
+    <Text name="core.ui.SettingsMenuQuality">Качество</Text>
+    <Text name="core.ui.SettingsControlTilte">Управление</Text>
+    <Text name="core.ui.SettingsControlMenuReverseControl">Обратное вращение камеры</Text>
+    <Text name="core.ui.SettingsControlMenuForward">Вперёд</Text>
+    <Text name="core.ui.SettingsControlMenuBack">Назад</Text>
+    <Text name="core.ui.SettingsControlMenuLeft">Влево</Text>
+    <Text name="core.ui.SettingsControlMenuRight">Вправо</Text>
+    <Text name="core.ui.SettingsControlMenuUp">Вверх</Text>
+    <Text name="core.ui.SettingsControlMenuDown">Вниз</Text>
+    <Text name="core.ui.SettingsControlMenuRotateCam">Камера</Text>
+    <Text name="core.ui.SettingsControlMenuRotateCam2">Камера (доп.)</Text>
+    <Text name="core.ui.SettingsControlMenuOverlook">Обзор сверху</Text>
+    <Text name="core.ui.SettingsControlUISize">Размер экранных кнопок</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseLeft">Кнопки слева</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseRight">Кнопки справа</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseCenter">Кнопки по обеим сторонам</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseJoyLeft">Джойстик слева (не для монорельсов)</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseJoyRight">Джойстик справа (не для монорельсов)</Text>
+    <Text name="core.ui.SettingsAudioTilte">Звук</Text>
+    <Text name="core.ui.SettingsAudioBackground">Громкость музыки</Text>
+    <Text name="core.ui.SettingsAudioMain">Основная громкость</Text>
+    <Text name="core.ui.SettingsAudioUI">Громкость интерфейса</Text>
+    <Text name="core.ui.SettingsLanguageTilte">Язык</Text>
+    <Text name="core.ui.SettingsPackageTilte">Модификации</Text>
+    <Text name="core.ui.SettingsGraphicsTilte">Графика</Text>
+    <Text name="core.ui.SettingsQualityVeryLow">Минимальное</Text>
+    <Text name="core.ui.SettingsQualityLow">Низкое</Text>
+    <Text name="core.ui.SettingsQualityMedium">Среднее</Text>
+    <Text name="core.ui.SettingsQualityHigh">Высокое</Text>
+    <Text name="core.ui.SettingsQualityVeryHigh">Очень высокое</Text>
+    <Text name="core.ui.SettingsQualityUltra">Максимальное</Text>
+    <Text name="core.ui.LevelLoaderErrorUITitle">Не удалось загрузить уровень</Text>
+    <Text name="core.ui.LevelLoaderErrorUIMessage">Разработчик уровня: нажмите F12, чтобы открыть консоль с подробностями ошибки.
+Игрок: если это пользовательский уровень, сообщите об ошибке его автору.
+Если ошибка возникла на встроенном уровне, нажмите «Сообщить об ошибке» или откройте https://github.com/iwonz/ballance/issues.</Text>
+    <Text name="core.ui.LevelLoaderErrorUISubmitBug">Сообщить об ошибке</Text>
+    <Text name="core.ui.LevelLoaderErrorUICopyErrInfo">Скопировать ошибку</Text>
+    <Text name="core.ui.ErrorUIErrInfoCopied">Сведения об ошибке скопированы!</Text>
+    <Text name="core.ui.SettingsYouAreInDebugMode">Режим разработчика уже включён. При первом включении нужно перезапустить игру.</Text>
+    <Text name="core.ui.SettingsClickNTimeToDebugMode">До включения режима разработчика осталось нажатий: {0}</Text>
+    <Text name="core.ui.SettingsVersion">Версия: {0}</Text>
+    <Text name="core.ui.StartThisLevel">Начать уровень</Text>
+    <Text name="core.ui.StartMenuNMO">Уровень NMO</Text>
+    <Text name="core.ui.PreviewThisLevel">Просмотр уровня</Text>
+    <Text name="core.ui.NoLevelData">Нет данных об уровне</Text>
+    <Text name="core.ui.Refresh">Обновить</Text>
+    <Text name="core.ui.FileNotExist">Файл не найден</Text>
+    <Text name="core.ui.Loading">Загрузка, подождите…</Text>
+    <Text name="core.ui.ChooseLevelInLeft">Выберите уровень в списке слева</Text>
+    <Text name="core.ui.NoCustomLevel">Пользовательские уровни не установлены. Узнать об их установке можно в документации игры.</Text>
+    <Text name="core.ui.LevelNoDepends">Этот уровень не требует дополнительных модулей</Text>
+    <Text name="core.ui.LevelHasDepends">Дополнительных модулей: {0}. Все успешно загружены.</Text>
+    <Text name="core.ui.LevelHasBadDepends">Дополнительных модулей: {0}. Не удалось загрузить: {1}.</Text>
+    <Text name="core.ui.LevelEnableAllDepends">Включить все зависимости уровня</Text>
+    <Text name="core.ui.LevelAllDependsTile">Все зависимости уровня {0} ({1})</Text>
+    <Text name="core.ui.VersionMismatch">Требуется более новая версия зависимости</Text>
+    <Text name="core.ui.LevelEnableAllDependsTodo">Автоматическая загрузка и включение зависимостей пока не поддерживаются. Установите и включите нужные модули вручную.</Text>
+    <Text name="core.ui.PackageManagerEnableAll">Включить все модули</Text>
+    <Text name="core.ui.PackageManagerDisableAll">Отключить все модули</Text>
+    <Text name="core.ui.PackageManagerSave">Сохранить изменения</Text>
+    <Text name="core.ui.PackageManagerUnLoad">Удалить</Text>
+    <Text name="core.ui.PackageManagerSetting">Настройки</Text>
+    <Text name="core.ui.PackageManagerTip">Подсказка</Text>
+    <Text name="core.ui.PackageManagerChangeTip">Изменено модулей: {0}</Text>
+    <Text name="core.ui.PackageManagerStatus">Всего модулей: {0}, включено: {1}</Text>
+    <Text name="core.ui.PackageManagerGiveUpSave">Отменить изменения</Text>
+    <Text name="core.ui.PackageManagerPackNotFound">Модуль {0} не найден. Возможно, он не установлен.</Text>
+    <Text name="core.ui.PackageManagerOptional">Необязательно</Text>
+    <Text name="core.ui.PackageManagerNoDepends">Этот модуль не требует дополнительных модулей</Text>
+    <Text name="core.ui.PackageManagerTrustTitle">Модуль {0} пытается загрузить код C#. Разрешить?</Text>
+    <Text name="core.ui.PackageManagerTrustDescrb">Код C# может читать ваши личные файлы и изменять настройки компьютера. Загрузка такого модуля может быть опасна. Убедитесь, что он получен из надёжного источника. Не загружайте модуль, если не доверяете его автору.</Text>
+    <Text name="core.ui.PackageManagerTrustAndsLoad">Доверять и загрузить</Text>
+    <Text name="core.ui.PackageManagerNotTrust">Не доверять</Text>
+    <Text name="core.ui.PackageManagerNotTrustAndDelete">Не доверять и удалить</Text>
+    <Text name="core.ui.PackageManagerCheckInfo">Сведения о модуле</Text>
+    <Text name="core.ui.PackageManagerLinkVisitSite">Страница проекта</Text>
+    <Text name="core.ui.PackageManagerLinkVisitDoc">Документация</Text>
+    <Text name="core.ui.PackageManagerLinkVisiAuthor">Страница автора</Text>
+    <Text name="core.ui.PackageManagerPackageInfoTitle">Сведения о модуле</Text>
+    <Text name="core.ui.PackageManagerPackageIntroductionTitle">Описание модуля</Text>
+    <Text name="core.ui.PackageManagerPackageDependsTitle">Зависимости модуля</Text>
+    <Text name="core.ui.PackageManagerPackageName">Название</Text>
+    <Text name="core.ui.PackageManagerPackageVersion">Версия</Text>
+    <Text name="core.ui.PackageManagerPackageAuthor">Автор</Text>
+    <Text name="core.ui.PackageManagerPackageInstallTime">Установка и обновление</Text>
+    <Text name="core.ui.PackageSystemPackage">Основной модуль нельзя удалить или отключить</Text>
+    <Text name="core.ui.PackageWantUnaload">Удалить модуль? Он сразу станет недоступен в игре. Файл модуля будет удалён без возможности восстановления!</Text>
+    <Text name="core.ui.PackageUnaloadTip">Удаление модуля</Text>
+    <Text name="core.ui.PackageManagerSettingUITitle">Настройки модуля «{0}»</Text>
+    <Text name="core.ui.TutorialText1">Обучение
+Нажмите Esc, чтобы поставить игру на паузу или выйти.
+Нажмите Enter, чтобы продолжить обучение, или Q, чтобы пропустить его.</Text>
+    <Text name="core.ui.TutorialText2">Вращение камеры
+Удерживайте левый Shift и нажимайте стрелки влево или вправо, чтобы поворачивать камеру на 90°.
+
+Нажмите Enter, чтобы продолжить…</Text>
+    <Text name="core.ui.TutorialText3">Обзор сверху
+Удерживайте пробел, чтобы поднять камеру и осмотреться.
+
+Нажмите Enter, чтобы продолжить…</Text>
+    <Text name="core.ui.TutorialText4">Движение
+Поверните камеру так, чтобы дорожка с двумя башнями оказалась перед вами.
+Используйте стрелки без Shift, чтобы катить шар вперёд, назад, влево и вправо.
+Следуйте по дорожке!</Text>
+    <Text name="core.ui.TutorialText5">Дополнительная жизнь
+При падении с дорожки вы теряете жизнь. Оставшиеся жизни показаны в правом нижнем углу экрана. Подбирайте бонусы жизни, чтобы получить дополнительные попытки.
+
+Нажмите Enter, чтобы продолжить…</Text>
+    <Text name="core.ui.TutorialText6">Преобразователи
+Преобразователи меняют материал шара. Материал площадки показывает, каким станет шар.
+Перед вами преобразователь в каменный шар.
+
+Нажмите Enter, чтобы продолжить…</Text>
+    <Text name="core.ui.TutorialText7">Этот подъём слишком крут для каменного шара!
+Найдите преобразователь в деревянный шар и попробуйте снова.
+Совет: поворачивайте камеру (Shift + стрелка влево или вправо), чтобы лучше видеть дорогу. Катиться спиной вперёд опасно!
+
+Нажмите Enter, чтобы продолжить…</Text>
+    <Text name="core.ui.TutorialText8">Дополнительные очки
+Слева показаны очки времени: во время игры они постепенно уменьшаются. Подбирайте бонусы очков, чтобы увеличить свой счёт.
+
+Нажмите Enter, чтобы продолжить…</Text>
+    <Text name="core.ui.TutorialText9">Контрольные точки
+Перед вами первая контрольная точка, через которую нужно пройти.
+Если вы потеряете жизнь, игра продолжится с последней пройденной контрольной точки.
+
+Нажмите Enter, чтобы продолжить…</Text>
+    <Text name="core.ui.TutorialText10">Последние советы
+Осматривайте путь, меняйте материал шара и не спешите на узких участках.
+Если нужна помощь или вы нашли ошибку, откройте страницу проекта через меню «Об игре».
+
+Нажмите Enter, чтобы завершить обучение.</Text>
+    <Text name="core.ui.ProjectAbout">Ballance Rebuild — воссоздание игры Ballance на Unity с открытым исходным кодом. Автор проекта — Happy Dreamfish (imengyu).
+
+Играйте, создавайте собственные модификации и уровни и делитесь ими с другими игроками.
+
+Исходный проект: https://github.com/imengyu/Ballance
+Этот форк, поддержка Apple Silicon и сообщения об ошибках: https://github.com/iwonz/ballance
+
+Руководства по созданию модификаций и уровней: https://github.com/imengyu/Ballance/wiki
+
+Обсудить игру можно в сообществе Ballance в Discord.</Text>
   </Language>
 </I18n>

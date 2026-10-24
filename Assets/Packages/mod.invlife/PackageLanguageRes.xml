@@ -8,4 +8,7 @@
   <Language name="ChineseTraditional">
     <Text name="mod.invlife.ui.EnableTitle">啟用無限生命</Text>
   </Language>
+  <Language name="Russian">
+    <Text name="mod.invlife.ui.EnableTitle">Бесконечные жизни</Text>
+  </Language>
 </I18n>

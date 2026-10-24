@@ -14,4 +14,9 @@
     <Text name="core.assets.skys.package.Introduction">天空盒資源包，包含原版遊戲的12種天空盒</Text>
     <Text name="core.assets.skys.package.Description">天空盒資源包，包含原版遊戲的12種天空盒</Text>
   </Language>
+  <Language name="Russian">
+    <Text name="core.assets.skys.package.Name">Небо</Text>
+    <Text name="core.assets.skys.package.Introduction">Набор из 12 вариантов неба оригинальной игры.</Text>
+    <Text name="core.assets.skys.package.Description">Набор из 12 вариантов неба оригинальной игры.</Text>
+  </Language>
 </I18n>

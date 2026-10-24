@@ -3,6 +3,7 @@ using Ballance2.Game;
 using Ballance2.Game.GamePlay;
 using Ballance2.Game.LevelBuilder;
 using RuntimeSceneGizmo;
+using Ballance2.Services.I18N;
 using UnityEngine.UI;
 
 namespace Ballance2.Menu
@@ -55,17 +56,11 @@ namespace Ballance2.Menu
     public void SetLevelInfo(string name, string author, string version) {
       var json = LevelBuilder.Instance.CurrentLevelJson;
       var level = json.level;
-      _TextLevelInfo.text = name + "\n"
-         + "\nAuthor:" + author
-         + "\nVersion:" + version + "\n"
-         + "\nFirstBall:" + level.firstBall
-         + "\nLevelScore:" + level.levelScore
-         + "\nStartPoint:" + level.startPoint
-         + "\nStartLife:" + level.startLife
-         + "\nSector count:" + level.sectorCount
-         + "\nLightColor:" + level.lightColor
-         + "\nSkyBox:" + level.skyBox
-         + "\nMusicTheme:" + level.musicTheme;
+      _TextLevelInfo.text = I18N.TrF("core.ui.PreviewInfo", "{0}",
+         LevelDisplayName.Get(name), author, version,
+         I18N.Tr("core.ball." + level.firstBall, level.firstBall),
+         level.levelScore, level.startPoint, level.startLife, level.sectorCount,
+         level.lightColor, level.skyBox, level.musicTheme);
     }
     /// <summary>
     /// 设置FreeCamera引用
@@ -75,8 +70,9 @@ namespace Ballance2.Menu
       _FreeCamera = freeCam;
       _GizmoRenderer.ReferenceTransform = freeCam.transform;
       freeCam.onCamSpeedChanged = () => {
-        _TextCameraSpeed.text = "CamSpeed: " + string.Format("{0:F2}", freeCam.cameraSpeed);
+        _TextCameraSpeed.text = I18N.TrF("core.ui.CameraSpeed", freeCam.cameraSpeed);
       };
+      freeCam.onCamSpeedChanged();
     }
   }
 }

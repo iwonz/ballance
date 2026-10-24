@@ -119,6 +119,7 @@ namespace Ballance2.Services.Init
             .GetInt("language", (int)Application.systemLanguage)
         );
         I18NProvider.LoadLanguageResources(Resources.Load<TextAsset>("StaticLangResource").text);
+        Log.I(TAG, "Interface language: {0}", I18NProvider.GetCurrentLanguage());
       }
     }
   }

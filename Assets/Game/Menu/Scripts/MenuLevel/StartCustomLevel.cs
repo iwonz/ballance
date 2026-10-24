@@ -241,7 +241,7 @@ namespace Ballance2.Menu
       var Button = go.GetComponent<Button>();
       var Text = go.transform.Find("Text").GetComponent<Text>();
 
-      Text.text = info.name;
+      Text.text = LevelDisplayName.Get(info.name);
       Button.onClick.RemoveAllListeners();
       Button.onClick.AddListener(() => StartCoroutine(SelectLevel(info)));
 
@@ -344,13 +344,13 @@ namespace Ballance2.Menu
           PanelError.gameObject.SetActive(false);
           PanelNoContent.gameObject.SetActive(false);
 
-          TextName.text = info.name;
+          TextName.text = LevelDisplayName.Get(info.name);
           TextAuthor.text = info.author;
-          TextName.text = info.name;
+          TextName.text = LevelDisplayName.Get(info.name);
           TextVersion.text = info.version;
           TextUrl.text = info.url;
           TextUrl.gameObject.SetActive(string.IsNullOrEmpty(info.url));
-          TextIntroduction.text = info.introduction;
+          TextIntroduction.text = LevelDisplayName.Introduction(info.name, info.introduction);
           TextPreview.gameObject.SetActive(info.allowPreview);
           ImageDepends.sprite = info.dependsSuccess ? IconSuccess : IconError;
           ImageBigImage.sprite = info.image != null ? info.image : NoPreviewImage;

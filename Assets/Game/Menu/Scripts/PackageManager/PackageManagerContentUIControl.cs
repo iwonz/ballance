@@ -90,7 +90,7 @@ namespace Ballance2.Menu
       if(currentPackage == null) {
         ScrollView.gameObject.SetActive(false);
         ContentNotFound.gameObject.SetActive(true);
-        TextContentNotFound.text = I18N.TrF("core.ui.PackageManagerPackNotFound", name);
+        TextContentNotFound.text = I18N.TrF("core.ui.PackageManagerPackNotFound", new object[] { name });
       } else {
         var package = currentPackage;
         TextPackageName.text = package.BaseInfo.Name;

@@ -82,6 +82,10 @@ namespace Ballance2.UI.Core.Controls
     }
     public void UpdateText()
     {
+      // Plain Text prefabs may opt into localization only in their instances.
+      // Keep runtime values and serialized m_Text intact when not opted in.
+      if (!i18N && string.IsNullOrEmpty(defaultString))
+        return;
 #if UNITY_EDITOR
       if (EditorApplication.isPlaying)
         text = (i18N && m_ResourceKey != "") ?

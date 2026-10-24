@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package name="mod.invlife" version="1">
   <BaseInfo>
-    <Name>无限生命</Name>
+    <Name>{mod.invlife.package.Name}</Name>
     <Author>ballance</Author>
-    <Introduction>此模组为你的关卡设置了无限生命</Introduction>
-    <Description><![CDATA[此模组为你的关卡设置了无限生命，你可以在一个关卡尝试无限次]]></Description>
+    <Introduction>{mod.invlife.package.Introduction}</Introduction>
+    <Description>{mod.invlife.package.Description}</Description>
     <Link>https://imengyu.top/ballanceProject</Link>
     <AuthorLink>https://imengyu.top/</AuthorLink>
     <DocLink>https://imengyu.top/ballanceProject/doc</DocLink>

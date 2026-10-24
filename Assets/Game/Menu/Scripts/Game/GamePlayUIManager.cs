@@ -70,7 +70,7 @@ namespace Ballance2.Menu
 
       //高分默认数据
       var HighscoreEntryName = PageHighscoreEntry.Content.Find("InputField").GetComponent<InputField>();
-      HighscoreEntryName.text = PlayerPrefs.GetString("LastEnterHighscoreEntry", "NAME");
+      HighscoreEntryName.text = PlayerPrefs.GetString("LastEnterHighscoreEntry", I18N.Tr("core.ui.PlayerName"));
 
       //过关之后的下一关按扭
       var ButtonNext = PageGameWin.Content.Find("ButtonNext").gameObject;

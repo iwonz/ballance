@@ -47,27 +47,7 @@ namespace Ballance2.Services.I18N
         {
             try
             {
-                var currentLanguageStr = currentLanguage.ToString();
-
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(xmlAssets);
-                XmlElement root = doc.DocumentElement;
-
-                var nodeLanguage = root.SelectSingleNode($"./Language[@name='{currentLanguageStr}']");
-                //if language not found.fallback to first language(English).
-                if (nodeLanguage == null)
-                    nodeLanguage = root.SelectSingleNode($"./Language[@name='English']");
-
-                //Search Text node
-                foreach (XmlElement nodeText in nodeLanguage.ChildNodes)
-                {
-                    var nodeTextName = nodeText.Attributes["name"];
-                    if (nodeText.Name == "Text" && nodeTextName != null
-                        && !string.IsNullOrEmpty(nodeTextName.Value) && !string.IsNullOrEmpty(nodeText.InnerXml))
-                    {
-                        LanguageValues[nodeTextName.Value] = nodeText.InnerXml;
-                    }
-                }
+                ReadLanguageResources(xmlAssets, LanguageValues);
                 return true;
             }
             catch (XmlException e)
@@ -84,29 +64,10 @@ namespace Ballance2.Services.I18N
         /// <returns>加载是否成功</returns>
         public static Dictionary<string, string> PreLoadLanguageResources(string xmlAssets)
         {
-            var currentLanguageStr = currentLanguage.ToString();
             Dictionary<string, string> LanguageValues = new Dictionary<string, string>();
             try
             {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(xmlAssets);
-                XmlElement root = doc.DocumentElement;
-                //Search Language node
-                var nodeLanguage = root.SelectSingleNode($"./Language[@name='{currentLanguageStr}']");
-                //if language not found.fallback to first language(English).
-                if (nodeLanguage == null)
-                    nodeLanguage = root.SelectSingleNode($"./Language[@name='English']");
-
-                //Search Text node
-                foreach (XmlElement nodeText in nodeLanguage.ChildNodes)
-                {
-                    var nodeTextName = nodeText.Attributes["name"];
-                    if (nodeText.Name == "Text" && nodeTextName != null
-                        && !string.IsNullOrEmpty(nodeTextName.Value) && !string.IsNullOrEmpty(nodeText.InnerXml))
-                    {
-                        LanguageValues[nodeTextName.Value] = nodeText.InnerXml;
-                    }
-                }
+                ReadLanguageResources(xmlAssets, LanguageValues);
                 return LanguageValues;
             }
             catch (XmlException e)
@@ -122,6 +83,29 @@ namespace Ballance2.Services.I18N
         /// <param name="xmlAssets">语言定义XML资源文件</param>
         /// <returns>加载是否成功</returns>
 
+
+        // Merge English first so partially translated third-party mods also have
+        // a per-key fallback. Select only Text elements (XML comments are valid).
+        private static void ReadLanguageResources(string xml, Dictionary<string, string> values)
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml(xml);
+            var root = doc.DocumentElement;
+            ReadLanguage(root.SelectSingleNode("./Language[@name='English']"), values);
+            if (currentLanguage != SystemLanguage.English)
+                ReadLanguage(root.SelectSingleNode($"./Language[@name='{currentLanguage}']"), values);
+        }
+
+        private static void ReadLanguage(XmlNode language, Dictionary<string, string> values)
+        {
+            if (language == null) return;
+            foreach (XmlElement text in language.SelectNodes("Text"))
+            {
+                var key = text.GetAttribute("name");
+                if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(text.InnerXml))
+                    values[key] = text.InnerXml;
+            }
+        }
 
         public static bool LoadLanguageResources(TextAsset xmlAssets)
         {

@@ -1,0 +1,22 @@
+<I18n>
+  <Language name="ChineseSimplified">
+    <Text name="mod.selfkill.package.Name">自杀器</Text>
+    <Text name="mod.selfkill.package.Introduction">欲死不能时使用此工具使球快速死亡，可以在设置中修改按键</Text>
+    <Text name="mod.selfkill.package.Description">欲死不能时使用此工具使球快速死亡，可以在设置中修改按键。默认绑定按键R</Text>
+  </Language>
+  <Language name="ChineseTraditional">
+    <Text name="mod.selfkill.package.Name">自杀器</Text>
+    <Text name="mod.selfkill.package.Introduction">欲死不能时使用此工具使球快速死亡，可以在设置中修改按键</Text>
+    <Text name="mod.selfkill.package.Description">欲死不能时使用此工具使球快速死亡，可以在设置中修改按键。默认绑定按键R</Text>
+  </Language>
+  <Language name="English">
+    <Text name="mod.selfkill.package.Name">Reset ball</Text>
+    <Text name="mod.selfkill.package.Introduction">Reset a stuck ball. Default key: R; configurable in settings.</Text>
+    <Text name="mod.selfkill.package.Description">Reset a stuck ball. Default key: R; configurable in settings.</Text>
+  </Language>
+  <Language name="Russian">
+    <Text name="mod.selfkill.package.Name">Сброс шара</Text>
+    <Text name="mod.selfkill.package.Introduction">Позволяет сбросить застрявший шар, потеряв жизнь. По умолчанию — R; клавишу можно изменить в настройках.</Text>
+    <Text name="mod.selfkill.package.Description">Позволяет сбросить застрявший шар, потеряв жизнь. По умолчанию — R; клавишу можно изменить в настройках.</Text>
+  </Language>
+</I18n>

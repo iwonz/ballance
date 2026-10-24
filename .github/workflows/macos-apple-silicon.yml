@@ -22,6 +22,7 @@ jobs:
           persist-credentials: false
       - name: Check scripts and native plugin
         run: |
+          python3 scripts/check-localization.py
           bash -n scripts/build-macos.sh
           python3 -c 'import ast; from pathlib import Path; ast.parse(Path("scripts/package-macos.py").read_text())'
           test "$(uname -m)" = arm64

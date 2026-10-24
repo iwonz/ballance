@@ -1462,6 +1462,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4594081324457637471, guid: 042c9f8202fdedd4280b61d845616382, type: 3}
+      propertyPath: m_I18N
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4594081324457637471, guid: 042c9f8202fdedd4280b61d845616382, type: 3}
+      propertyPath: m_ResourceKey
+      value: core.ui.RebuildBy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4594081324457637471, guid: 042c9f8202fdedd4280b61d845616382, type: 3}
+      propertyPath: m_DefaultString
+      value: Unity Rebuild Version by
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 042c9f8202fdedd4280b61d845616382, type: 3}
 --- !u!224 &2465278409369226412 stripped

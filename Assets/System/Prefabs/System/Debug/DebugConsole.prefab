@@ -616,7 +616,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 76ed11d84beb10846a746b4259e26d39, type: 3}
     m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
@@ -1221,7 +1221,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8720175196235786450}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: 01d6c0e7bae391c40a7009033c5ceb90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -1233,7 +1233,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 76ed11d84beb10846a746b4259e26d39, type: 3}
     m_FontSize: 14
     m_FontStyle: 2
     m_BestFit: 0
@@ -1248,6 +1248,9 @@ MonoBehaviour:
   m_Text: 'Enter command
 
     ...'
+  m_ResourceKey: global.EnterCommand
+  m_DefaultString: "Enter command"
+  m_I18N: 1
 --- !u!1 &8919008730695994780
 GameObject:
   m_ObjectHideFlags: 0
@@ -1315,7 +1318,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 76ed11d84beb10846a746b4259e26d39, type: 3}
     m_FontSize: 12
     m_FontStyle: 0
     m_BestFit: 0
@@ -1327,7 +1330,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 
+  m_Text:
 --- !u!1 &9207057044779540298
 GameObject:
   m_ObjectHideFlags: 0
@@ -1506,6 +1509,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: ExecButton
       objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_I18N
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_ResourceKey
+      value: global.Execute
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_DefaultString
+      value: Exec
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2534452a5613b024693a065135468baa, type: 3}
 --- !u!224 &5219463186889825030 stripped
@@ -1650,6 +1665,18 @@ PrefabInstance:
     - target: {fileID: 6758423850950945838, guid: 2534452a5613b024693a065135468baa, type: 3}
       propertyPath: m_Name
       value: CloseButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_I18N
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_ResourceKey
+      value: global.Close
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_DefaultString
+      value: Close
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2534452a5613b024693a065135468baa, type: 3}
@@ -1797,6 +1824,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: CheckBoxAutoScroll
       objectReference: {fileID: 0}
+    - target: {fileID: 8193969246310834946, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
+      propertyPath: m_I18N
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8193969246310834946, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
+      propertyPath: m_ResourceKey
+      value: global.AutoScroll
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
 --- !u!114 &2611401113568525319 stripped
@@ -1941,6 +1976,18 @@ PrefabInstance:
     - target: {fileID: 6758423850950945838, guid: 2534452a5613b024693a065135468baa, type: 3}
       propertyPath: m_Name
       value: ClearButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_I18N
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_ResourceKey
+      value: global.Clear
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347956739096400588, guid: 2534452a5613b024693a065135468baa, type: 3}
+      propertyPath: m_DefaultString
+      value: Clear
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2534452a5613b024693a065135468baa, type: 3}
@@ -2099,6 +2146,14 @@ PrefabInstance:
     - target: {fileID: 9153488925147734778, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
       propertyPath: m_Name
       value: CheckBoxShowErr
+      objectReference: {fileID: 0}
+    - target: {fileID: 8193969246310834946, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
+      propertyPath: m_I18N
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8193969246310834946, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
+      propertyPath: m_ResourceKey
+      value: global.ErrorAndWarn
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
@@ -2420,7 +2475,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8193969246310834946, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
       propertyPath: m_ResourceKey
-      value: 
+      value: global.Messages
       objectReference: {fileID: 0}
     - target: {fileID: 8193969246310834946, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
       propertyPath: m_DefaultString
@@ -2433,6 +2488,10 @@ PrefabInstance:
     - target: {fileID: 9153488925147734778, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
       propertyPath: m_Name
       value: CheckBoxMessages
+      objectReference: {fileID: 0}
+    - target: {fileID: 8193969246310834946, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}
+      propertyPath: m_I18N
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f5f0df7282ad944e8674e115a3a2820, type: 3}

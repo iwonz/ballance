@@ -61,9 +61,9 @@ draft release targeting that exact commit, attach the resulting ZIP and checksum
 then publish the draft. Do not substitute an older upstream binary: packaging
 an existing app does not compile the current source or game content.
 
-The **macOS Apple Silicon** workflow has three entry points:
+The **macOS Apple Silicon** workflow supports these entry points:
 
-* Pull requests run the native physics smoke test on an Apple Silicon runner
+* Pull requests and pushes to `main` run the native physics smoke test on an Apple Silicon runner
   without requiring secrets. They do **not** claim to compile or test the Unity
   player. This also works for fork PRs.
 * **Actions → macOS Apple Silicon → Run workflow** builds the selected branch

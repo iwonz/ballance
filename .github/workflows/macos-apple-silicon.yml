@@ -1,6 +1,8 @@
 name: macOS Apple Silicon
 
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
   release:
@@ -23,7 +25,7 @@ jobs:
           bash -n scripts/build-macos.sh
           python3 -c 'import ast; from pathlib import Path; ast.parse(Path("scripts/package-macos.py").read_text())'
           test "$(uname -m)" = arm64
-          lipo -verify_arch arm64 Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib
+          lipo Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib -verify_arch arm64
           xcrun clang++ -arch arm64 -std=c++11 -Wall -Wextra -Werror scripts/physics-smoke.cpp -o "$RUNNER_TEMP/physics-smoke"
           "$RUNNER_TEMP/physics-smoke" "$PWD/Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib"
 

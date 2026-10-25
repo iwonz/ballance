@@ -282,12 +282,13 @@ namespace Ballance2.Services
                 if (sEnablePackageLoadFilter && !sLoadCustomPackages.Contains(info.Value.packageName)) continue;
 
                 var task = pm.RegisterPackage((info.Value.enableLoad ? "Enable:" : "") + info.Value.packageName);
-                yield return task.AsIEnumerator();
+                yield return new WaitUntil(() => task.IsCompleted);
 
-                if (task.Result && info.Value.enableLoad)
+                if (task.GetAwaiter().GetResult() && info.Value.enableLoad)
                 {
                     var task2 = pm.LoadPackage(info.Value.packageName);
-                    yield return task2.AsIEnumerator();
+                    yield return new WaitUntil(() => task2.IsCompleted);
+                    task2.GetAwaiter().GetResult();
                 }
             }
         }
@@ -337,8 +338,8 @@ namespace Ballance2.Services
       Task<bool> task = systemPackage.LoadInfo(GamePathManager.GetResRealPath("core", "core.ballance"));
 #endif
 
-            yield return task.AsIEnumerator();
-            if (!task.Result)
+            yield return new WaitUntil(() => task.IsCompleted);
+            if (!task.GetAwaiter().GetResult())
             {
                 GameErrorChecker.ThrowGameError(GameError.SystemPackageLoadFailed, "Failed to load system package info");
                 StopAllCoroutines();
@@ -346,9 +347,9 @@ namespace Ballance2.Services
             }
 
             task = systemPackage.LoadPackage();
-            yield return task.AsIEnumerator();
+            yield return new WaitUntil(() => task.IsCompleted);
 
-            if (!task.Result)
+            if (!task.GetAwaiter().GetResult())
             {
                 GameErrorChecker.ThrowGameError(GameError.SystemPackageLoadFailed, "Failed to load system package");
                 StopAllCoroutines();
@@ -432,9 +433,9 @@ namespace Ballance2.Services
 
                         // Load the package.
                         Task<bool> task = pm.LoadPackage(packageName);
-                        yield return task.AsIEnumerator();
+                        yield return new WaitUntil(() => task.IsCompleted);
 
-                        if (task.Result)
+                        if (task.GetAwaiter().GetResult())
                         {
                             GamePackage package = pm.FindPackage(packageName);
                             if (package == null)
@@ -852,7 +853,10 @@ namespace Ballance2.Services
                         resolutionWidth = resolutionHeight;
                         resolutionHeight = tmpInt;
                     }
-                    Screen.SetResolution(resolutionWidth, resolutionHeight, fullScreen, resolution.refreshRate);
+                    var mode = fullScreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+                    if (fullScreen && Screen.fullScreenMode == FullScreenMode.ExclusiveFullScreen)
+                        mode = FullScreenMode.ExclusiveFullScreen;
+                    Screen.SetResolution(resolutionWidth, resolutionHeight, mode, resolution.refreshRateRatio);
                     // Emit the screen size changed event.
                     GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_SCREEN_SIZE_CHANGED, resolutionWidth, resolutionHeight);
                 }

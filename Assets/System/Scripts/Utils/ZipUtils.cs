@@ -1,9 +1,8 @@
-﻿using Ballance2.Services.Debug;
-using ICSharpCode.SharpZipLib.Checksum;
-using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.IO;
-using System.Threading.Tasks;
+using UnityEngine;
+using Unity.SharpZipLib.Checksum;
+using Unity.SharpZipLib.Zip;
 
 /*
 * Copyright(c) 2021  mengyu
@@ -20,143 +19,87 @@ using System.Threading.Tasks;
 */
 namespace Ballance2.Utils
 {
-  /// <summary>
-  /// ZIP archive helpers.
-  /// </summary>
-  public class ZipUtils
+  public static class ZipUtils
   {
-    /// <summary>
-    /// Add a file to a ZIP archive.
-    /// </summary>
-    /// <param name="zipStream">ZIP stream.</param>
-    /// <param name="file">File path to add.</param>
-    /// <param name="subIndex">Index at which to slice the path into the archive filename.</param>
-    /// <param name="crc">CRC32 checksum.</param>
-    public static void AddFileToZip(ZipOutputStream zipStream, string file, int subIndex, ref Crc32 crc)
-    {
-      string fileName = file.Substring(subIndex);
-      AddFileToZip(zipStream, file, fileName, ref crc);
-    }
-    /// <summary>
-    /// Add a file to a ZIP archive.
-    /// </summary>
-    /// <param name="zipStream">ZIP stream.</param>
-    /// <param name="file">File path to add.</param>
-    /// <param name="inZipFilePath">Path inside the ZIP.</param>
-    /// <param name="crc">CRC32 checksum.</param>
-    public static void AddFileToZip(ZipOutputStream zipStream, string file, string inZipFilePath, ref Crc32 crc)
-    {
-      FileStream fileStream = File.OpenRead(file);
-      byte[] buffer = new byte[fileStream.Length];
-      fileStream.Read(buffer, 0, buffer.Length);
+    public const int MaxEntryBytes = 512 * 1024 * 1024;
+    private const int ReadChunkBytes = 1024 * 1024;
 
-      ZipEntry entry = new ZipEntry(inZipFilePath);
-      entry.DateTime = DateTime.Now;
-      entry.Size = fileStream.Length;
-      fileStream.Close();
-      crc.Reset();
-      crc.Update(buffer);
-      entry.Crc = crc.Value;
-      zipStream.PutNextEntry(entry);
-      zipStream.Write(buffer, 0, buffer.Length);
+    public static void AddFileToZip(ZipOutputStream zip, string file, string entryName)
+    {
+      using var input = File.OpenRead(file);
+      zip.PutNextEntry(new ZipEntry(entryName.Replace('\\', '/').TrimStart('/'))
+      {
+        Size = input.Length,
+        DateTime = File.GetLastWriteTime(file)
+      });
+      input.CopyTo(zip);
+      zip.CloseEntry();
     }
-    /// <summary>
-    /// Create a ZIP archive.
-    /// </summary>
-    /// <param name="file">ZIP file path.</param>
-    /// <returns>ZIP stream handle.</returns>
+
     public static ZipOutputStream CreateZipFile(string file)
     {
-      ZipOutputStream zipStream = new ZipOutputStream(File.Create(file));
-      zipStream.SetLevel(0);  // Compression level 0-9.
-      return zipStream;
+      var zip = new ZipOutputStream(File.Create(file));
+      zip.SetLevel(0); // AssetBundles already use chunk compression.
+      return zip;
     }
-    /// <summary>
-    /// Close a ZIP archive.
-    /// </summary>
-    /// <param name="file">ZIP file path.</param>
-    /// <returns>ZIP stream handle.</returns>
-    public static void CloseZipFile(ZipOutputStream file)
+
+    public static ZipFile OpenZipFile(string file) => OpenZipStream(File.OpenRead(file));
+
+    public static ZipFile OpenZipStream(Stream stream)
     {
-      file.Close();
-      file.Dispose();
+      try { return new ZipFile(stream) { IsStreamOwner = true }; }
+      catch { stream.Dispose(); throw; }
     }
-    /// <summary>
-    /// Open an existing ZIP archive.
-    /// </summary>
-    /// <param name="file">ZIP file path.</param>
-    /// <returns>ZIP stream handle.</returns>
-    public static ZipInputStream OpenZipFile(string file)
+
+    public static ZipEntry FindEntry(ZipFile zip, string name) => zip.GetEntry(name) ?? zip.GetEntry("/" + name);
+
+    private static byte[] AllocateEntry(ZipEntry entry)
     {
-      ZipInputStream zipStream = null;
-      try
-      {
-        zipStream = new ZipInputStream(File.OpenRead(file));
-      }
-      catch (Exception e)
-      {
-        Log.E("ZipUtils", "Load Zip file {0} failed! {1}", file, e.ToString());
-        GameErrorChecker.LastError = GameError.FileReadFailed;
-      }
-      return zipStream;
+      if (entry.Size < 0 || entry.Size > MaxEntryBytes)
+        throw new InvalidDataException("ZIP entry exceeds the 512 MiB limit: " + entry.Name);
+      return new byte[(int)entry.Size];
     }
-    /// <summary>
-    /// Open a stream as a ZIP archive.
-    /// </summary>
-    /// <param name="stream">File stream.</param>
-    /// <returns>ZIP stream handle.</returns>
-    public static ZipInputStream OpenZipStream(Stream stream)
+
+    private static void ValidateEntry(Stream stream, ZipEntry entry, Crc32 crc)
     {
-      ZipInputStream zipStream = null;
-      try
-      {
-        zipStream = new ZipInputStream(stream);
-      }
-      catch (Exception e)
-      {
-        Log.E("ZipUtils", "Load Zip stream failed! {1}", e.ToString());
-        GameErrorChecker.LastError = GameError.FileReadFailed;
-      }
-      return zipStream;
+      if (stream.ReadByte() != -1 || crc.Value != entry.Crc)
+        throw new InvalidDataException("ZIP entry length or CRC mismatch: " + entry.Name);
     }
-    /// <summary>
-    /// Read a ZIP entry into memory.
-    /// </summary>
-    /// <param name="zip">ZIP stream.</param>
-    /// <returns></returns>
-    public static MemoryStream ReadZipFileToMemory(ZipInputStream zip)
+
+    public static byte[] ReadEntry(ZipFile zip, ZipEntry entry)
     {
-      int size;
-      MemoryStream ms = new MemoryStream();
-      byte[] buffer = new byte[4096];
-      while (true)
+      byte[] data = AllocateEntry(entry);
+      using var input = zip.GetInputStream(entry);
+      var crc = new Crc32();
+      int offset = 0;
+      while (offset < data.Length)
       {
-        size = zip.Read(buffer, 0, 4096);
-        if (size > 0)
-          ms.Write(buffer, 0, size);
-        else break;
+        int count = input.Read(data, offset, Math.Min(ReadChunkBytes, data.Length - offset));
+        if (count == 0) throw new EndOfStreamException("Truncated ZIP entry: " + entry.Name);
+        crc.Update(new ArraySegment<byte>(data, offset, count));
+        offset += count;
       }
-      return ms;
+      ValidateEntry(input, entry, crc);
+      return data;
     }
-    /// <summary>
-    /// Read a ZIP entry into memory asynchronously.
-    /// </summary>
-    /// <param name="zip">ZIP stream.</param>
-    /// <returns></returns>
-    public static async Task<MemoryStream> ReadZipFileToMemoryAsync(ZipInputStream zip)
+
+    public static async Awaitable<byte[]> ReadEntryAsync(ZipFile zip, ZipEntry entry)
     {
-      MemoryStream ms = new MemoryStream();
-      byte[] buffer = new byte[1048576];
-      while (true)
+      byte[] data = AllocateEntry(entry);
+      using var input = zip.GetInputStream(entry);
+      var crc = new Crc32();
+      int offset = 0;
+      while (offset < data.Length)
       {
-        // SharpZipLib's Stream.ReadAsync uses worker threads, unavailable on Web.
-        int i = zip.Read(buffer, 0, buffer.Length);
-        if (i > 0)
-          ms.Write(buffer, 0, i);
-        else break;
-        await Task.Yield();
+        // Synchronous chunks also work on Web, where worker threads are disabled.
+        int count = input.Read(data, offset, Math.Min(ReadChunkBytes, data.Length - offset));
+        if (count == 0) throw new EndOfStreamException("Truncated ZIP entry: " + entry.Name);
+        crc.Update(new ArraySegment<byte>(data, offset, count));
+        offset += count;
+        if (offset < data.Length) await Awaitable.NextFrameAsync();
       }
-      return ms;
+      ValidateEntry(input, entry, crc);
+      return data;
     }
   }
 }

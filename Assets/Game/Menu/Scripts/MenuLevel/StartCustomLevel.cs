@@ -171,7 +171,8 @@ namespace Ballance2.Menu
     }
     private void OnDestroy() {
       loadedLevels.Clear();
-      itemPrefabPool.Destroy();
+      itemPrefabPool?.Destroy();
+      itemDependsPrefabPool?.Destroy();
     }
 
     private void Back() {
@@ -207,6 +208,7 @@ namespace Ballance2.Menu
         TextPanelDependsTitle.text = I18N.TrF("core.ui.LevelAllDependsTile", "", selectedItem.name, selectedItem.requiredPackages.Count);
         selectedItem.requiredPackages.ForEach((p) => {
           var go = itemDependsPrefabPool.NextAvailableObject();
+          if (go == null) { Log.W("StartCustomLevel", "Dependency row capacity exhausted."); return; }
           var text = go.transform.Find("Text").GetComponent<Text>();
           var button = go.transform.Find("Button").GetComponent<Button>();
           if(p.loaded == "true")
@@ -238,6 +240,7 @@ namespace Ballance2.Menu
         return;
 
       var go = itemPrefabPool.NextAvailableObject();
+      if (go == null) { Log.W("StartCustomLevel", "Level row capacity exhausted."); return; }
       var Button = go.GetComponent<Button>();
       var Text = go.transform.Find("Text").GetComponent<Text>();
 
@@ -292,7 +295,7 @@ namespace Ballance2.Menu
             #endif
 
             string path = GamePathManager.GetLevelRealPath(info.name.ToLower(), false);
-            UnityWebRequest request = UnityWebRequest.Get(path);
+            using var request = UnityWebRequest.Get(path);
             yield return request.SendWebRequest();
 
             if (request.result != UnityWebRequest.Result.Success)

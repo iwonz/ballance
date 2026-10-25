@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.IO;
@@ -651,12 +651,12 @@ namespace AssetUsageDetectorNamespace
 			if( searchTextureReferences && isInPlayMode && !AssetDatabase.Contains( material ) )
 			{
 				Shader shader = material.shader;
-				int shaderPropertyCount = ShaderUtil.GetPropertyCount( shader );
+				int shaderPropertyCount = shader.GetPropertyCount();
 				for( int i = 0; i < shaderPropertyCount; i++ )
 				{
-					if( ShaderUtil.GetPropertyType( shader, i ) == ShaderUtil.ShaderPropertyType.TexEnv )
+					if( shader.GetPropertyType( i ) == UnityEngine.Rendering.ShaderPropertyType.Texture )
 					{
-						string propertyName = ShaderUtil.GetPropertyName( shader, i );
+						string propertyName = shader.GetPropertyName( i );
 						Texture assignedTexture = material.GetTexture( propertyName );
 						if( objectsToSearchSet.Contains( assignedTexture ) )
 						{
@@ -683,12 +683,12 @@ namespace AssetUsageDetectorNamespace
 				ShaderImporter shaderImporter = AssetImporter.GetAtPath( AssetDatabase.GetAssetPath( unityObject ) ) as ShaderImporter;
 				if( shaderImporter != null )
 				{
-					int shaderPropertyCount = ShaderUtil.GetPropertyCount( shader );
+					int shaderPropertyCount = shader.GetPropertyCount();
 					for( int i = 0; i < shaderPropertyCount; i++ )
 					{
-						if( ShaderUtil.GetPropertyType( shader, i ) == ShaderUtil.ShaderPropertyType.TexEnv )
+						if( shader.GetPropertyType( i ) == UnityEngine.Rendering.ShaderPropertyType.Texture )
 						{
-							string propertyName = ShaderUtil.GetPropertyName( shader, i );
+							string propertyName = shader.GetPropertyName( i );
 							Texture defaultTexture = shaderImporter.GetDefaultTexture( propertyName );
 #if UNITY_2018_1_OR_NEWER
 							if( !defaultTexture )

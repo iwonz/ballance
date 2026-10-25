@@ -61,7 +61,7 @@ UNITY_EDITOR=/Applications/Unity/Hub/Editor/6000.6.7f1/Unity.app/Contents/MacOS/
 ```
 
 `BuildChecks.Run` checks six installed target modules and HTTP/jar/file path handling,
-then invokes the virtual Input System and localization checks. The iOS availability check is not an
+then invokes virtual Input System, localization, and modernization checks. The iOS availability check is not an
 iOS export or release. If the optional module is absent, report that prerequisite
 and run relevant checks individually instead of claiming the aggregate passed.
 
@@ -75,6 +75,17 @@ XML, fallbacks, Cyrillic coverage, and prefab bindings. For visual previews, use
 `Builds/checks/localization` and checks tutorial fit. These checks preserve existing
 player preferences. Always inspect the log for compilation errors and the method's
 completion message, not just whether Unity started.
+
+`Ballance2.Editor.ModernizationChecks.Run` uses temporary files and objects to check
+UTF-8/file URL round trips, short headers, legacy package metadata and translation
+order, ZIP CRC/length/size rejection, archive stream ownership, streamed writer
+allocation, indexed metadata reads, and pool capacity/ownership/clear/disposal.
+It also checks the package page's inactive row template and ScrollView overflow cleanup. Small async reads complete in the
+editor check; the frame-yielding path for large bundles must be exercised in a
+player, particularly Web. The allocation/read-byte checks are bounded fixtures,
+not whole-game FPS or peak-memory benchmarks. Display ratio formatting and saved
+setting keys are reviewed at their UI/startup callers; physical monitor mode
+switching still needs representative hardware.
 
 ## Native physics
 

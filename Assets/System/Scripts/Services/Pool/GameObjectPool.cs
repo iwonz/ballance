@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,160 +13,95 @@ namespace Ballance2.Services.Pool
     public bool fixedSize;
   }
 
-  /// <summary>
-  /// GameObject pool.
-  /// </summary>
-  
-  
-  public class GameObjectPool
+  public class GameObjectPool : IDisposable
   {
-    private string TAG {
-      get {
-        return "GameObjectPool:" + poolName;
-      }
-    } 
+    private readonly string poolName;
+    private readonly int maxSize;
+    private readonly Transform poolRoot;
+    private readonly UnityEngine.Pool.ObjectPool<GameObject> pool;
+    private readonly HashSet<GameObject> rented = new HashSet<GameObject>();
+    private bool disposed;
 
-    private int maxSize;
-    private int poolSize;
-    private string poolName;
-    private Transform poolRoot;
-    private GameObject poolObjectPrefab;
-    private Stack<GameObject> availableObjStack = new Stack<GameObject>();
-
-    /// <summary>
-    /// Release resources.
-    /// </summary>
-    
-    public void Destroy() {
-      availableObjStack.Clear();
-      poolObjectPrefab = null;
-    }
-
-    /// <summary>
-    /// Create a GameObject pool.
-    /// </summary>
-    /// <param name="poolName">Pool name.</param>
-    /// <param name="poolObjectPrefab">Pooled prefab.</param>
-    /// <param name="initCount">Initial size.</param>
-    /// <param name="maxSize">Maximum size.</param>
-    /// <param name="pool">Root transform for pooled objects.</param>
-    
-    public GameObjectPool(string poolName, GameObject poolObjectPrefab, int initCount, int maxSize, Transform pool)
+    public GameObjectPool(string poolName, GameObject prefab, int initCount, int maxSize, Transform root)
     {
+      if (prefab == null) throw new ArgumentNullException(nameof(prefab));
+      if (root == null) throw new ArgumentNullException(nameof(root));
+      if (initCount < 0 || maxSize < 1 || initCount > maxSize)
+        throw new ArgumentOutOfRangeException(nameof(initCount), "Pool capacity must satisfy 0 <= initial <= maximum.");
       this.poolName = poolName;
-      this.poolSize = initCount;
       this.maxSize = maxSize;
-      this.poolRoot = pool;
-      this.poolObjectPrefab = poolObjectPrefab;
-
-      //populate the pool
-      for (int index = 0; index < initCount; index++)
-      {
-        AddObjectToPool(NewObjectInstance());
-      }
+      poolRoot = root;
+      pool = new UnityEngine.Pool.ObjectPool<GameObject>(
+        () => UnityEngine.Object.Instantiate(prefab, poolRoot),
+        go => { rented.Add(go); go.SetActive(true); },
+        go => { go.SetActive(false); go.transform.SetParent(poolRoot, false); },
+        DestroyObject, collectionCheck: true, defaultCapacity: initCount, maxSize: maxSize);
+      var initial = new GameObject[initCount];
+      for (int i = 0; i < initCount; i++) initial[i] = pool.Get();
+      foreach (var go in initial) ReturnObjectToPool(go);
     }
 
-    //o(1)
-    private void AddObjectToPool(GameObject go)
-    {
-      //add to pool
-      go.SetActive(false);
-      availableObjStack.Push(go);
-      go.transform.SetParent(poolRoot, false);
-    }
-    private GameObject NewObjectInstance()
-    {
-      return GameObject.Instantiate(poolObjectPrefab) as GameObject;
-    }
-    
-    /// <summary>
-    /// Get an available object.
-    /// </summary>
-    /// <returns>GameObject instance, or null when none is available.</returns>
-    
     public GameObject NextAvailableObject()
     {
-      GameObject go = null;
-      if (availableObjStack.Count > 0)
-      {
-        go = availableObjStack.Pop();
-      }
-      else
-      {
-        Log.W(TAG, "No object available & cannot grow pool: " + poolName);
-      }
-      if(go != null)
-        go.SetActive(true);
-      return go;
+      if (disposed) throw new ObjectDisposedException(poolName);
+      // Unity's maxSize bounds inactive retention; the UI also needs a total cap.
+      if (rented.Count >= maxSize) return null;
+      return pool.Get();
     }
 
-    /// <summary>
-    /// Return a named child of the pool root to the pool.
-    /// </summary>
-    /// <param name="objName">Object name.</param>
-    
-    
     public void ReturnObjectFromParent(string objName)
     {
-      var obj = this.poolRoot.Find(objName);
-      if(obj != null)
-        AddObjectToPool(obj.gameObject);
-      else
-        Log.E(TAG, string.Format("Not found the pool child object {0}.", objName));
-    }
-    /// <summary>
-    /// Whether the pool root has a child with the given name.
-    /// </summary>
-    /// <param name="objName">Object name.</param>
-    
-    
-    public bool ContainsObjectInParent(string objName)
-    {
-      return this.poolRoot.Find(objName) != null;
-    }
-    /// <summary>
-    /// Clear children of the pool root.
-    /// </summary>
-    
-    public void Clear()
-    {
-      for(int i = this.poolRoot.childCount - 1; i >= 0; i--)
-        ReturnObjectToPool(this.poolRoot.GetChild(i).gameObject);
+      foreach (var go in rented)
+        if (go != null && go.name == objName)
+        {
+          ReturnObjectToPool(go);
+          return;
+        }
     }
 
-    /// <summary>
-    /// Return an object to the pool; only children of this pool's root are accepted.
-    /// </summary>
-    /// <param name="po">Object.</param>
-    
-    
-    public void ReturnObjectToPool(GameObject po)
+    public bool ContainsObjectInParent(string objName)
     {
-      if(po.transform.parent == this.poolRoot)
-        AddObjectToPool(po);
-      else
-        Log.E(TAG, string.Format("Trying to add object to incorrect pool {0}, it parent {1} not this pool root.", poolName, po.transform.parent.name));
+      foreach (var go in rented)
+        if (go != null && go.name == objName) return true;
+      return false;
     }
-    
-    //o(1)
-    /// <summary>
-    /// Return an object to a pool.
-    /// </summary>
-    /// <param name="pool">Pool name.</param>
-    /// <param name="po">Object.</param>
-    
-    
-    
-    public void ReturnObjectToPool(string pool, GameObject po)
+
+    public void Clear()
     {
-      if (poolName.Equals(pool))
-      {
-        AddObjectToPool(po);
-      }
-      else
-      {
-        Log.E(TAG, string.Format("Trying to add object to incorrect pool {0} ", poolName));
-      }
+      if (disposed) return;
+      foreach (var go in new List<GameObject>(rented)) ReturnObjectToPool(go);
+    }
+
+    public void ReturnObjectToPool(GameObject go)
+    {
+      if (disposed) throw new ObjectDisposedException(poolName);
+      if (go == null || !rented.Remove(go))
+        throw new InvalidOperationException("Object is not rented from pool: " + poolName);
+      pool.Release(go);
+    }
+
+    public void ReturnObjectToPool(string name, GameObject go)
+    {
+      if (name != poolName) throw new ArgumentException("Incorrect pool name: " + name, nameof(name));
+      ReturnObjectToPool(go);
+    }
+
+    public void Destroy() => Dispose();
+
+    public void Dispose()
+    {
+      if (disposed) return;
+      disposed = true;
+      foreach (var go in rented) DestroyObject(go);
+      rented.Clear();
+      pool.Dispose();
+    }
+
+    private static void DestroyObject(GameObject go)
+    {
+      if (go == null) return;
+      if (Application.isPlaying) UnityEngine.Object.Destroy(go);
+      else UnityEngine.Object.DestroyImmediate(go);
     }
   }
 }

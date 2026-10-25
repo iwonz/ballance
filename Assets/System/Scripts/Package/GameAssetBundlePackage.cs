@@ -34,7 +34,7 @@ namespace Ballance2.Package
     {
       PackageFilePath = PathUtils.FixFilePathScheme(filePath);
 
-      UnityWebRequest request = UnityWebRequest.Get(filePath);
+      using var request = UnityWebRequest.Get(PathUtils.ToRequestUrl(filePath));
       await request.SendWebRequest();
 
       if (request.result == UnityWebRequest.Result.Success)

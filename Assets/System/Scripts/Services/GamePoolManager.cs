@@ -38,6 +38,7 @@ namespace Ballance2.Services
     
     public override void Destroy()
     { 
+      foreach (var pool in m_ObjectPools.Values) pool.Dispose();
       m_ObjectPools.Clear();
       foreach(var o in m_GameObjectPools)
         o.Value.Destroy();
@@ -46,7 +47,7 @@ namespace Ballance2.Services
     }
 
     private Transform m_PoolRootObject = null;
-    private Dictionary<string, object> m_ObjectPools = new Dictionary<string, object>();
+    private Dictionary<Type, IDisposable> m_ObjectPools = new Dictionary<Type, IDisposable>();
     private Dictionary<string, GameObjectPool> m_GameObjectPools = new Dictionary<string, GameObjectPool>();
 
     private Transform PoolRootObject
@@ -77,6 +78,7 @@ namespace Ballance2.Services
     public GameObjectPool CreatePool(string poolName, int initSize, int maxSize, GameObject prefab)
     {
       var pool = new GameObjectPool(poolName, prefab, initSize, maxSize, PoolRootObject);
+      if (m_GameObjectPools.TryGetValue(poolName, out var previous)) previous.Destroy();
       m_GameObjectPools[poolName] = pool;
       return pool;
     }
@@ -110,7 +112,7 @@ namespace Ballance2.Services
         result = pool.NextAvailableObject();
         if (result == null)
         {
-          Log.W(TAG, "No object available in pool. Consider setting fixedSize to false.: " + poolName);
+          Log.W(TAG, "Pool capacity exhausted: " + poolName);
           GameErrorChecker.LastError = GameError.NotAvailable;
         }
       }
@@ -154,7 +156,8 @@ namespace Ballance2.Services
     {
       var type = typeof(T);
       var pool = new ObjectPool<T>(actionOnGet, actionOnRelease);
-      m_ObjectPools[type.Name] = pool;
+      if (m_ObjectPools.TryGetValue(type, out var previous)) previous.Dispose();
+      m_ObjectPools[type] = pool;
       return pool;
     }
 
@@ -166,9 +169,9 @@ namespace Ballance2.Services
     {
       var type = typeof(T);
       ObjectPool<T> pool = null;
-      if (m_ObjectPools.ContainsKey(type.Name))
+      if (m_ObjectPools.ContainsKey(type))
       {
-        pool = m_ObjectPools[type.Name] as ObjectPool<T>;
+        pool = m_ObjectPools[type] as ObjectPool<T>;
       }
       return pool;
     }

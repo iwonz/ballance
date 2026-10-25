@@ -1518,6 +1518,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemDependsPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 1613663399096021299, guid: 9c7e2efc403c5c942b5ce3ce41e14044, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5055901528595914752, guid: 9c7e2efc403c5c942b5ce3ce41e14044, type: 3}
       propertyPath: m_Type
       value: 0

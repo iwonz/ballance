@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using SObject = System.Object;
-using AillieoUtils;
+using UnityEngine.Pool;
 
 namespace Ballance2.UI.Core.Controls
 {
@@ -57,7 +57,7 @@ namespace Ballance2.UI.Core.Controls
     Rect refRect;
 
     // resource management
-    SimpleObjPool<RectTransform> itemPool = null;
+    ObjectPool<RectTransform> itemPool = null;
 
     [Tooltip("Initial number of pooled items.")]
     public int poolSize;
@@ -480,13 +480,8 @@ namespace Ballance2.UI.Core.Controls
       GameObject poolNode = new GameObject("POOL");
       poolNode.SetActive(false);
       poolNode.transform.SetParent(transform, false);
-      itemPool = new SimpleObjPool<RectTransform>(
-          poolSize,
-          (RectTransform item) =>
-          {
-            item.transform.SetParent(poolNode.transform, false);
-          },
-          () =>
+      itemPool = new ObjectPool<RectTransform>(
+          createFunc: () =>
           {
             GameObject itemObj = Instantiate(itemTemplate.gameObject);
             RectTransform item = itemObj.GetComponent<RectTransform>();
@@ -499,7 +494,15 @@ namespace Ballance2.UI.Core.Controls
 
                   itemObj.SetActive(true);
             return item;
-          });
+          },
+          actionOnRelease: item => item.SetParent(poolNode.transform, false),
+          actionOnDestroy: item =>
+          {
+            if (item == null) return;
+            if (Application.isPlaying) Destroy(item.gameObject);
+            else DestroyImmediate(item.gameObject);
+          },
+          defaultCapacity: Mathf.Max(0, poolSize), maxSize: Mathf.Max(1, poolSize));
     }
 
     void OnGetItemForDataIndex(RectTransform item, int index)
@@ -558,7 +561,7 @@ namespace Ballance2.UI.Core.Controls
       }
       else
       {
-        itemPool.Recycle(item);
+        itemPool.Release(item);
       }
     }
 
@@ -709,8 +712,9 @@ namespace Ballance2.UI.Core.Controls
     {
       if (itemPool != null)
       {
-        itemPool.Purge();
+        itemPool.Dispose();
       }
+      base.OnDestroy();
     }
 
     protected Rect GetItemLocalRect(int index)

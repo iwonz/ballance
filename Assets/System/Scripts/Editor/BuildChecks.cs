@@ -31,6 +31,7 @@ namespace Ballance2.Editor
       Require(!PathUtils.IsRemotePath(local), "Local path treated as remote");
       InputChecks.Run();
       LocalizationChecks.Run();
+      ModernizationChecks.Run();
       Debug.Log("Unity 6 build and resource-path checks passed for all six platforms.");
     }
 

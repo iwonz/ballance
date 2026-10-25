@@ -1,9 +1,7 @@
 ﻿using System.IO;
 using UnityEditor;
 using UnityEngine;
-using ICSharpCode.SharpZipLib.Checksum;
 using Ballance2.Utils;
-using ICSharpCode.SharpZipLib.Zip;
 using System.Xml;
 using System.Collections.Generic;
 
@@ -120,21 +118,19 @@ namespace Ballance2.Editor.Modding
     }
     private static void DoSolveBallancePack(BuildTarget target, string dirTargetPath, string bundlePath, string targetPath, string compiledCode, bool includeCode)
     {
-      Crc32 crc = new Crc32();
-      ZipOutputStream zipStream = ZipUtils.CreateZipFile(targetPath);
-      string basePath = projModDirPath.Replace("\\", "/").Replace(projPath, "");
+      using var zipStream = ZipUtils.CreateZipFile(targetPath);
 
       // Add to the package.
-      ZipUtils.AddFileToZip(zipStream, bundlePath + ".assetbundle", "assets/" + Path.GetFileName(bundlePath) + ".assetbundle", ref crc);
-      ZipUtils.AddFileToZip(zipStream, bundlePath + ".assetbundle.manifest", "assets/" + Path.GetFileName(bundlePath) + ".assetbundle.manifest", ref crc);
-      ZipUtils.AddFileToZip(zipStream, projModDefFile, projModDirPath.Length, ref crc);
+      ZipUtils.AddFileToZip(zipStream, bundlePath + ".assetbundle", "assets/" + Path.GetFileName(bundlePath) + ".assetbundle");
+      ZipUtils.AddFileToZip(zipStream, bundlePath + ".assetbundle.manifest", "assets/" + Path.GetFileName(bundlePath) + ".assetbundle.manifest");
+      ZipUtils.AddFileToZip(zipStream, projModDefFile, "PackageDef.xml");
 
       // Add language resources.
       var i18nRes = projModDirPath + Path.DirectorySeparatorChar + "PackageLanguageResPre.xml"; 
-      if (File.Exists(i18nRes)) ZipUtils.AddFileToZip(zipStream, i18nRes, projModDirPath.Length, ref crc);
+      if (File.Exists(i18nRes)) ZipUtils.AddFileToZip(zipStream, i18nRes, "PackageLanguageResPre.xml");
 
       // Add the logo image.
-      if (File.Exists(projLogoFile)) ZipUtils.AddFileToZip(zipStream, projLogoFile, projModDirPath.Length, ref crc);
+      if (File.Exists(projLogoFile)) ZipUtils.AddFileToZip(zipStream, projLogoFile, "PackageLogo.png");
 
       if (includeCode)
       {
@@ -152,12 +148,10 @@ namespace Ballance2.Editor.Modding
 
         // Add the DLL.
         if (File.Exists(projDllFile))
-          ZipUtils.AddFileToZip(zipStream, projDllFile, "csharp/" + packPackageName + ".dll", ref crc);
+          ZipUtils.AddFileToZip(zipStream, projDllFile, "csharp/" + packPackageName + ".dll");
 
       }
 
-      zipStream.Finish();
-      zipStream.Close();
     }
   }
 }

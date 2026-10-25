@@ -55,7 +55,7 @@ namespace Tayx.Graphy
         {
             string customizationSceneGuid = AssetDatabase.FindAssets( "Graphy_CustomizationScene" )[ 0 ];
 
-            AssetDatabase.ImportPackage( AssetDatabase.GUIDToAssetPath( customizationSceneGuid ), true );
+            UnityEditor.AssetPackage.Package.Import( AssetDatabase.GUIDToAssetPath( customizationSceneGuid ), true );
         }
     }
 }

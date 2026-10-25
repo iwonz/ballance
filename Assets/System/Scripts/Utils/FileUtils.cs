@@ -54,11 +54,10 @@ namespace Ballance2.Utils
     /// <returns>True if the header matches; otherwise false.</returns>
     public static bool TestFileHead(string file, byte[] head)
     {
-      byte[] temp = new byte[head.Length];
-      FileStream fs = new FileStream(PathUtils.FixFilePathScheme(file), FileMode.Open);
-      fs.Read(temp, 0, head.Length);
-      fs.Close();
-      return StringUtils.TestBytesMatch(temp, head);
+      using var stream = File.OpenRead(PathUtils.FixFilePathScheme(file));
+      foreach (byte expected in head)
+        if (stream.ReadByte() != expected) return false;
+      return true;
     }
 
     /// <summary>
@@ -69,10 +68,8 @@ namespace Ballance2.Utils
     /// <param name="data">Content to write.</param>
     public static void WriteFile(string path, bool append, string data)
     {
-      var sw = new StreamWriter(path, append);
-      sw.Write(data);
-      sw.Close();
-      sw.Dispose();
+      if (append) File.AppendAllText(path, data);
+      else File.WriteAllText(path, data);
     }
   
     /// <summary>
@@ -105,14 +102,7 @@ namespace Ballance2.Utils
     /// <returns></returns>
     public static string ReadFile(string path)
     {
-      if (!File.Exists(path))
-        throw new FileNotFoundException("Cant read non-exists file", path);
-
-      var sr = new StreamReader(path);
-      var rs = sr.ReadToEnd();
-      sr.Close();
-      sr.Dispose();
-      return rs;
+      return File.ReadAllText(path);
     }
 
     /// <summary>
@@ -122,11 +112,7 @@ namespace Ballance2.Utils
     /// <returns>Byte array.</returns>
     public static byte[] ReadAllToBytes(string file)
     {
-      FileStream fs = new FileStream(PathUtils.FixFilePathScheme(file), FileMode.Open);
-      byte[] temp = new byte[fs.Length];
-      fs.Read(temp, 0, temp.Length);
-      fs.Close();
-      return temp;
+      return File.ReadAllBytes(PathUtils.FixFilePathScheme(file));
     }
     
     /// <summary>

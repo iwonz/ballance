@@ -68,7 +68,7 @@ leaves developer mode. Use a test profile when changing scores or settings.
 The original Unity remake is by mengyu; this fork continues its code and content.
 Native physics derives from [source-physics](https://github.com/nillerusr/source-physics).
 Bundled components include [QuickOutline](https://github.com/chrisnolet/QuickOutline),
-[AsyncAwaitUtil](https://github.com/seedov/AsyncAwaitUtil),
+[Unity SharpZipLib](https://docs.unity3d.com/Packages/com.unity.sharp-zip-lib@1.4/manual/index.html),
 [Graphy](https://github.com/Tayx94/graphy),
 [RuntimeSceneGizmo](https://github.com/yasirkula/UnityRuntimeSceneGizmo),
 [RuntimeInspector](https://github.com/yasirkula/UnityRuntimeInspector), and

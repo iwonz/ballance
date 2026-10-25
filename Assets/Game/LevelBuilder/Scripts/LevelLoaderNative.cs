@@ -206,7 +206,7 @@ namespace Ballance2.Game.LevelBuilder
     {
       if (!level.LoadInEditor)
       {
-        UnityWebRequest request = UnityWebRequest.Get(level.Path);
+        using var request = UnityWebRequest.Get(level.Path);
         yield return request.SendWebRequest();
 
         if (request.result != UnityWebRequest.Result.Success)

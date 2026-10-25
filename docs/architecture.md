@@ -1,8 +1,7 @@
 # Implementation map
 
 Start with the relevant capability below, then follow its source links and callers.
-This map describes the implementation at the agent-development baseline, based on
-release 1.0.9 / commit `52a1835f`; keep it current when code changes. Behavioral
+This map describes the current implementation; keep it current when code changes. Behavioral
 contracts live in [OpenSpec specs](../openspec/specs), and execution evidence belongs
 in change records. Check selection is centralized in [validation.md](validation.md).
 
@@ -46,6 +45,11 @@ main Unity scene, not separate player scene builds.
 global/package and object-level event paths. Read teardown as well as registration
 when adding listeners. Check editor startup plus a player menu/level/quit cycle.
 
+Unity async operations use native Unity 6 await support. Package APIs retain
+`Task<bool>` for mod compatibility; coroutine startup consumers wait for completion
+and call `GetAwaiter().GetResult()` so faults/cancellation propagate. The legacy
+AsyncAwaitUtil runner is removed. Gameplay coroutines still own frame/state sequences.
+
 ## Package management
 
 [Contract](../openspec/specs/package-management/spec.md).
@@ -58,7 +62,15 @@ resources, code entry points, and lifecycle hooks;
 Levels use a different bundle format despite sharing the `.ballance` extension.
 [GamePathManager](../Assets/System/Scripts/Res/GamePathManager.cs) resolves package
 resources; [PathUtils](../Assets/System/Scripts/Utils/PathUtils.cs) preserves
-HTTP/HTTPS/jar/file semantics. ZIP reads yield without relying on Web worker threads.
+HTTP/HTTPS/jar/file semantics.
+[ZipUtils](../Assets/System/Scripts/Utils/ZipUtils.cs) uses the pinned Unity registry
+package `com.unity.sharp-zip-lib` 1.4.2. Reads locate entries through the central
+directory, accept legacy leading-slash metadata names, check size and CRC, and cap
+each expanded entry at 512 MiB. Async reads yield between 1 MiB chunks through
+`Awaitable.NextFrameAsync`, without Web worker threads. Local archives use a file
+stream; HTTP/jar archives still download into memory before indexed reads. This is
+not network streaming or an aggregate memory budget. Writers copy file streams
+directly and let the library calculate CRC. Requests and archive streams are disposed.
 
 The three built-in mods under `Assets/Packages/mod.*` are compiled into the player;
 their historical DLL imports are disabled. External DLL loading is Mono-only.
@@ -153,6 +165,17 @@ prefab controls to handlers. [MenuManager](../Assets/Game/Menu/Scripts/MenuManag
 initializes menu and gameplay screens; sibling managers provide settings, high
 scores, packages, and touch UI. Read prefab bindings when changing handlers.
 
+[GameObjectPool](../Assets/System/Scripts/Services/Pool/GameObjectPool.cs) and
+[GamePoolManager](../Assets/System/Scripts/Services/GamePoolManager.cs) retain the
+project API over `UnityEngine.Pool.ObjectPool`. A rented-item set enforces ownership
+and total capacity, since Unity's `maxSize` only limits inactive retention. Repeated
+clear returns rented items once; embedded row templates are explicitly inactive. Disposal destroys that pool's active and inactive
+objects even when pools share a root. Callers handle exhausted capacity.
+[ScrollView](../Assets/System/Scripts/UI/Core/Controls/ScrollView/ScrollView.cs) uses
+Unity's pool directly and destroys rows beyond retained capacity. Display settings
+use `Resolution.refreshRateRatio` and the explicit fullscreen-mode overload; saved
+resolution indices and keys retain their existing format.
+
 [GameSoundManager](../Assets/System/Scripts/Services/GameSoundManager.cs) owns mixers
 and registered sources; [MusicManager](../Assets/Game/GamePlay/Scripts/MusicManager.cs)
 selects music/ambient themes. Ball sound effects live in `Balls/Effects`.
@@ -202,6 +225,25 @@ packers, while `Assets/System/Scripts/Editor` contains compiler helpers, inspect
 and current build checks. The legacy Editor logical-scene name is not evidence of a
 finished standalone level editor. [Bugs.txt](../Bugs.txt) preserves unverified historical
 notes; reproduce them before proposing fixes.
+
+## Dependency and source-mod migration
+
+The vendored `ICSharpCode.SharpZipLib.dll`, AsyncAwaitUtil, unused FastCachePool, and
+SimpleObjPool are removed. External source mods using those implementation helpers
+must migrate to `Unity.SharpZipLib`, native Unity awaits/`Awaitable`, and
+`UnityEngine.Pool`. Existing package `Task<bool>` methods and serialized pool fields
+remain compatible. The generic pool facade now creates parameterless instances on
+an empty `Get`; callers must return only objects obtained from that pool.
+`ZipUtils.AddFileToZip` now takes the stream, file path, and archive entry name;
+readers use `FindEntry` and `ReadEntry`/`ReadEntryAsync` instead of sequential ZIP helpers.
+Archives with an individual expanded entry above 512 MiB are now rejected.
+
+Local vendor patches are limited to supported Unity APIs: AssetUsageDetector uses
+Shader property reflection, Graphy uses refresh ratios and AssetPackage import,
+and RuntimeTransformGizmo uses `FindAnyObjectByType` for its optional single-controller lookup.
+Scenes with multiple controllers must assign the existing serialized reference.
+Retain their licenses when updating vendors. The deprecated VS Code integration
+package is removed; Unity's Visual Studio editor integration remains installed.
 
 ## Platform builds
 

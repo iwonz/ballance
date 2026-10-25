@@ -127,8 +127,8 @@ class ReleaseTests(unittest.TestCase):
     def test_edition_round_trip_and_wrong_product(self):
         self.tag = "remaster/v1.0.0"
         self.archive = self.download / asset_name(self.tag)
-        (self.web / "index.html").write_text('productName: "Ballance Remaster", productVersion: "1.0.0"')
-        (self.web / "build-identity.json").write_text(json.dumps({"edition": "remaster", "version": "1.0.0", "productName": "Ballance Remaster", "applicationIdentifier": "com.iwonz.BallanceRemaster"}))
+        (self.web / "index.html").write_text('productName: "Reballance", productVersion: "1.0.0"')
+        (self.web / "build-identity.json").write_text(json.dumps({"edition": "remaster", "version": "1.0.0", "productName": "Reballance", "applicationIdentifier": "com.iwonz.BallanceRemaster"}))
         self.archive_web()
         digest = hashlib.sha256(self.archive.read_bytes()).hexdigest()
         result = pages.prepare(self.download, self.destination, self.tag, digest)
@@ -144,9 +144,9 @@ class ReleaseTests(unittest.TestCase):
     def test_wrong_application_identity_rejected(self):
         self.tag = "remaster/v1.0.0"
         self.archive = self.download / asset_name(self.tag)
-        (self.web / "index.html").write_text('productName: "Ballance Remaster", productVersion: "1.0.0"')
+        (self.web / "index.html").write_text('productName: "Reballance", productVersion: "1.0.0"')
         (self.web / "build-identity.json").write_text(json.dumps({"edition": "remaster", "version": "1.0.0",
-            "productName": "Ballance Remaster", "applicationIdentifier": "com.MengyuGame.Ballance"}))
+            "productName": "Reballance", "applicationIdentifier": "com.MengyuGame.Ballance"}))
         self.archive_web()
         with self.assertRaisesRegex(RuntimeError, "edition"):
             pages.prepare(self.download, self.destination, self.tag)
@@ -161,11 +161,11 @@ class ReleaseTests(unittest.TestCase):
 
     def test_checkout_identity_prevents_relabeling(self):
         self.assertEqual(parse_tag("v1.0.11"), ("original", "1.0.11", True))
-        self.assertEqual(asset_name("original/v1.0.12", "Windows"), "Ballance-Original-1.0.12-Windows.zip")
-        self.assertEqual(asset_name("remaster/v1.0.0-dev.1", "Android"), "Ballance-Remaster-1.0.0-dev.1-Android.apk")
+        self.assertEqual(asset_name("original/v1.0.12", "Windows"), "Ballance-1.0.12-Windows.zip")
+        self.assertEqual(asset_name("remaster/v1.0.0-dev.1", "Android"), "Reballance-1.0.0-dev.1-Android.apk")
         settings = self.root / "ProjectSettings"
         settings.mkdir()
-        descriptor = {"id": "remaster", "productName": "Ballance Remaster", "applicationIdentifier": "com.iwonz.BallanceRemaster"}
+        descriptor = {"id": "remaster", "productName": "Reballance", "applicationIdentifier": "com.iwonz.BallanceRemaster"}
         (settings / "Edition.json").write_text(json.dumps(descriptor))
         self.assertEqual(checkout_edition(self.root), descriptor)
         with self.assertRaisesRegex(RuntimeError, "Missing build identity"):
@@ -187,8 +187,8 @@ class ReleaseTests(unittest.TestCase):
         Path(str(self.archive) + ".sha256").unlink()
         self.tag = "remaster/v1.0.0"
         self.archive = self.download / asset_name(self.tag)
-        (self.web / "index.html").write_text('productName: "Ballance Remaster", productVersion: "1.0.0"')
-        (self.web / "build-identity.json").write_text(json.dumps({"edition": "remaster", "version": "1.0.0", "productName": "Ballance Remaster", "applicationIdentifier": "com.iwonz.BallanceRemaster"}))
+        (self.web / "index.html").write_text('productName: "Reballance", productVersion: "1.0.0"')
+        (self.web / "build-identity.json").write_text(json.dumps({"edition": "remaster", "version": "1.0.0", "productName": "Reballance", "applicationIdentifier": "com.iwonz.BallanceRemaster"}))
         self.archive_web()
         shutil.copytree(self.download, downloads / "remaster")
         source = self.root / "site"

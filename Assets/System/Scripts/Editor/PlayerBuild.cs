@@ -38,7 +38,7 @@ namespace Ballance2.Editor
       if (edition == null || (edition.id != "original" && edition.id != "remaster"))
         throw new BuildFailedException("Invalid edition in " + path);
       bool remaster = edition.id == "remaster";
-      if (edition.productName != (remaster ? "Ballance Remaster" : "Ballance") ||
+      if (edition.productName != (remaster ? "Reballance" : "Ballance") ||
           edition.applicationIdentifier != (remaster ? "com.iwonz.BallanceRemaster" : "com.MengyuGame.Ballance"))
         throw new BuildFailedException("Edition product/application identity mismatch");
       return edition;

@@ -26,7 +26,7 @@ python3 scripts/package-build.py WebGL
 
 The Original descriptor keeps `Ballance` / `com.MengyuGame.Ballance`. New builds
 include build-identity.json; packaging verifies it before producing
-`Ballance-Original-<version>-<platform>` archives for `original/v<version>` tags.
+`Ballance-<version>-<platform>` archives for `original/v<version>` tags.
 Legacy published `v1.0.11` assets retain their original names.
 
 Use the same target in both commands. Release assets and SHA-256 sidecars go to

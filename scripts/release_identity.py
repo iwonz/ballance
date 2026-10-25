@@ -7,7 +7,7 @@ import re
 VERSION = r"[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?"
 EDITIONS = {
     "original": ("Ballance", "com.MengyuGame.Ballance"),
-    "remaster": ("Ballance Remaster", "com.iwonz.BallanceRemaster"),
+    "remaster": ("Reballance", "com.iwonz.BallanceRemaster"),
 }
 
 
@@ -20,7 +20,7 @@ def parse_tag(tag):
 
 def asset_name(tag, platform="WebGL"):
     edition, version, legacy = parse_tag(tag)
-    prefix = "Ballance" if legacy else "Ballance-" + edition.title()
+    prefix = "Ballance" if edition == "original" else "Reballance"
     extension = "zip" if platform in ("macOS", "Windows") else "apk" if platform == "Android" else "tar.gz"
     return f"{prefix}-{version}-{platform}.{extension}"
 

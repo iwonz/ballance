@@ -563,3 +563,25 @@ The user reported solid HUD blocks, an unwanted centered preset title, unnatural
   independent maintenance change completed verification and was archived in
   11f87081 after Unity 6000.6.7f1 compilation and all installer/release tests passed.
   The broader Remaster lifecycle remains active.
+
+### Development-9 Web and source checkpoint
+
+- Content-aware Unity Web build completed successfully and was packaged with its
+  matching identity and checksum. Web archive SHA-256:
+  `8cc3a6e38db56f8a8f5995dbb11db156cd7108133e33e5d5f9407f6490c7c2fe`.
+  The isolated local browser reached the centered Reballance main menu and the
+  modification list with the generated icon family and updated toggle glyphs.
+- Local landing checks passed: automatic Russian selection, RU/EN toggle, seven
+  preset buttons, first-tab skip link, 390px mobile width without horizontal
+  overflow, and no Unity network requests. Inspected the settled mobile hero and
+  desktop preset layout. The first capture immediately after resize was replaced
+  with a settled capture. Full site acceptance and current Remaster gameplay
+  imagery remain outstanding.
+- Refreshed the macOS index. Spotlight returns exactly `/Applications/Ballance.app`
+  and `/Applications/Reballance-dev.app`; filesystem and LaunchServices results
+  agree. Profiles and release archives were not cleaned.
+- Pushed source commits to main and original. Hosted
+  [Build checks](https://github.com/iwonz/ballance/actions/runs/40232568286) passed
+  native/script checks and specification/context validation, but failed the
+  completed-change delivery gate because the Remaster lifecycle is unfinished.
+  No release or Pages deployment was triggered.

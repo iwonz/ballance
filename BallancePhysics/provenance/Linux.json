@@ -1,0 +1,13 @@
+{
+  "platform": "Linux",
+  "upstreamRevision": "47533475e01cbff05fbc3bbe8b4edc485f292cea",
+  "abi": 2304,
+  "patchSha256": "c7a64c676ddce2f9a767cf728214ff1e9502d11aa8a1c02058358cc148f5f3ce",
+  "bridgeSha256": "969af9e28200913394ea695f192f587aa0e13e7433edd2b21007036b4ff8f8e2",
+  "headerSha256": "507e5c6327d2e75883fca9ce2d143e5af34641df06625444c66db366369ce1b1",
+  "librarySha256": "5ace39d184f9a7c24d5f1ae9016ade56444f5d9f02151718b401b8d6e95defaa",
+  "compiler": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+  "floatingPointContraction": "off",
+  "smokeExecuted": true,
+  "smokeRuntime": "host"
+}

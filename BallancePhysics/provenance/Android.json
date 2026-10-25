@@ -1,0 +1,13 @@
+{
+  "platform": "Android",
+  "upstreamRevision": "47533475e01cbff05fbc3bbe8b4edc485f292cea",
+  "abi": 2304,
+  "patchSha256": "c7a64c676ddce2f9a767cf728214ff1e9502d11aa8a1c02058358cc148f5f3ce",
+  "bridgeSha256": "969af9e28200913394ea695f192f587aa0e13e7433edd2b21007036b4ff8f8e2",
+  "headerSha256": "507e5c6327d2e75883fca9ce2d143e5af34641df06625444c66db366369ce1b1",
+  "librarySha256": "67783e01dfa118e9da4a191f264c31130e1e8b05ed0555b7249736fe07465ed3",
+  "compiler": "Android (12470979, +pgo, -bolt, +lto, -mlgo, based on r522817c) clang version 18.0.3 (https://android.googlesource.com/toolchain/llvm-project d8003a456d14a3deb8054cdaa529ffbf02d9b262)",
+  "floatingPointContraction": "off",
+  "smokeExecuted": false,
+  "smokeRuntime": "not executed"
+}

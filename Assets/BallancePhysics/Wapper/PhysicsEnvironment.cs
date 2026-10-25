@@ -127,6 +127,7 @@ namespace BallancePhysics.Wapper
     }
 
     private bool destroyLock = false;
+    public event Action<float> BeforeSimulation;
 
     /// <summary>
     /// Whether the physics environment has been created.
@@ -156,9 +157,8 @@ namespace BallancePhysics.Wapper
           var bodyCurrent = obj.Value;
           if(bodyCurrent.IsPhysicalized) {
             obj.Value.UnPhysicalize(true);
-            obj = obj.Next;
-            continue;
           }
+          obj = obj.Next;
         }
         Debug.Log("Destroy: " + objects.Count + " PhysicsObject destroyed. ");
         objects.Clear();
@@ -268,6 +268,7 @@ namespace BallancePhysics.Wapper
         LinkedListNode<PhysicsObject> obj = objects.First;
   
         // Simulate.
+        BeforeSimulation?.Invoke((1.0f / SimulationRate) * TimeFactor);
         Profiler.BeginSample("PhysicsEnvironmentSimulate");
         PhysicsApi.API.environment_simulate_dtime(Handle, /* Time.fixedDeltaTime */(1.0f / SimulationRate) * TimeFactor);
         Profiler.EndSample();

@@ -18,6 +18,22 @@ namespace BallancePhysics.Wapper
   /// </summary>
   public class PhysicsObject : MonoBehaviour
   {
+    private SurfaceMaterial surfaceMaterial;
+    private SurfaceRegion[] surfaceRegions;
+
+    public void ConfigureSurface(SurfaceMaterial material, SurfaceRegion[] regions)
+    {
+      surfaceMaterial = material;
+      surfaceRegions = regions;
+      if (IsPhysicalized) PhysicsApi.API.physics_set_surface_regions(Handle, material, regions);
+    }
+
+    public bool TryGetSurfaceContact(out SurfaceContact contact)
+    {
+      contact = default;
+      return IsPhysicalized && PhysicsApi.API.physics_get_surface_contact(Handle, ref contact) != 0;
+    }
+
     #region Properties
 
     [Tooltip("Object mass in kilograms.")]
@@ -349,6 +365,8 @@ namespace BallancePhysics.Wapper
 
         EnableGravity = m_EnableGravity;
         EnableCollisionEvent = m_EnableCollisionEvent;
+        if (surfaceMaterial != SurfaceMaterial.None)
+          PhysicsApi.API.physics_set_surface_regions(Handle, surfaceMaterial, surfaceRegions);
       }
     }
     /// <summary>

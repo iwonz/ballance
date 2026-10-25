@@ -1,6 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using BallancePhysics.Api;
+using BallancePhysics.Wapper;
+using System.Collections.Generic;
 using static BallancePhysics.Api.ApiStruct;
 using UnityEngine;
 
@@ -97,7 +99,10 @@ namespace BallancePhysics
     public static void PhysicsApiDestroy()
     {
       Debug.Log("PhysicsApiDestroy");
-
+      // Contact deletion callbacks still use the native vector pool during world cleanup.
+      foreach (var world in new List<PhysicsEnvironment>(PhysicsEnvironment.PhysicsWorlds.Values))
+        if (world != null) world.Destroy();
+      PhysicsEnvironment.PhysicsWorlds.Clear();
       ballance_physics_entry(sFalse, IntPtr.Zero);
     }
 

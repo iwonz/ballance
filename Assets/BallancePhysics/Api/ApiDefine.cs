@@ -190,5 +190,11 @@ namespace BallancePhysics.Api
   public delegate void fn_do_update_all_physics_contact_detection(IntPtr world);
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   public delegate void fn_get_stats(IntPtr world, IntPtr active_time, IntPtr time);
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate int fn_environment_set_surface_state(IntPtr world, ref SurfaceState state, float wind_x, float wind_y, float wind_z);
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate int fn_physics_set_surface_regions(IntPtr body, int kind, int count, IntPtr regions);
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate int fn_physics_get_surface_contact(IntPtr body, ref SurfaceContact result);
   
 }

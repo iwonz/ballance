@@ -17,6 +17,11 @@
 class IVP_U_Point;
 class IVP_U_Quat;
 
+// ABI 2304: fixed-width fields; regions use the physical object's local frame.
+struct sSurfaceState { float wetness, snow, ice, sand, vegetation; };
+struct sSurfaceRegion { float center[3], extent[3], snow, ice, sand, vegetation; };
+struct sSurfaceContact { sSurfaceState state; float point[3], normal[3], friction, resistance; int supportId; };
+
 //Output message callback
 //    level: sError/sWarning/sInfo
 //    message: message string

@@ -33,6 +33,8 @@ jobs:
         run: |
           openspec validate --all --strict --no-interactive
           python3 scripts/test-agent-context.py
+          python3 scripts/test-web-performance.py
+          node --check scripts/measure-web-performance.js
           python3 scripts/check-agent-context.py
       - name: Require a completed change record in this delivery
         if: github.event_name == 'pull_request' || github.event_name == 'push'

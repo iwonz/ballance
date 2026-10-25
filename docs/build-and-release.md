@@ -72,6 +72,14 @@ site checks succeed. Do not reuse or rename an older player as a new version.
 
 Web uses gzip with **Decompression Fallback**, single-threaded Wasm physics, and
 relative URLs. Custom Content-Encoding or COOP/COEP headers are unnecessary.
+Web releases explicitly use runtime-speed LTO and WebAssembly 2023, retaining full
+managed exception handling. This enables native Wasm exceptions and SIMD without
+reducing graphics quality or changing simulation frequency. Use current browsers;
+the generated Unity 6.6 compiler targets Chrome 95+, Firefox 100+, or Safari 16.4+
+(these minimum versions are not a tested browser matrix). See Unity's [Wasm setting](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/PlayerSettings.WebGL-wasm2023.html)
+and [performance guidance](https://docs.unity3d.com/6000.6/Documentation/Manual/webgl-performance.html).
+Run the [hardware frame checks](validation.md#web-frame-performance) when changing
+rendering, physics hot paths, Web compilation, or gameplay performance.
 The player works below a repository prefix such as `/ballance/`. Generated Web
 files are release assets, not source-controlled content.
 
@@ -139,6 +147,8 @@ The script downloads a pinned IVP revision, applies
 Wasm smoke test before replacing the library. Android uses the matching NDK and
 checks 16 KB LOAD-segment alignment with llvm-readelf. Override the SDK location
 with `--sdk` if needed; Android rebuilding requires a macOS/Linux host.
+Web compilation and its smoke link use native Wasm longjmp and SIMD, matching the
+Wasm 2023 player. Do not link an older emulated-longjmp IVP archive into that player.
 The patch supplies the constraint-deletion callback required by the wrapper and a
 header include guard. Public IVP diagnostics go to stdout.
 

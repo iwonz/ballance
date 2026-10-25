@@ -55,6 +55,9 @@ def build(platform, sdk):
     flags = ["-std=c++11", "-O2", "-DNDEBUG", "-DLINUX", "-D_LINUX", "-DPOSIX",
              "-DBALLANCE_SOURCE_IVP", "-fno-exceptions", "-fno-strict-aliasing",
              "-Wno-deprecated", "-Wno-invalid-source-encoding", "-Wno-null-dereference"]
+    # Convex builders use setjmp; match the Wasm 2023 player's native longjmp ABI.
+    web_flags = ["-sSUPPORT_LONGJMP=wasm", "-msimd128"] if platform == "WebGL" else []
+    flags += web_flags
     if platform == "Android":
         ndk_bin = next((sdk / "toolchains/llvm/prebuilt").glob("*/bin"))
         compiler = [str(ndk_bin / "aarch64-linux-android26-clang++")]
@@ -80,6 +83,7 @@ def build(platform, sdk):
             run("python3", sdk / "emscripten/emar.py", "rcs", library, *objects, env=env)
             smoke = output / "smoke.js"
             run(*compiler, "-x", "c++", "-std=c++11", "-O2", "-fno-exceptions",
+                *web_flags,
                 ROOT / "scripts/physics-smoke.cpp", "-x", "none", library,
                 "-sENVIRONMENT=node", "-o", smoke, env=env)
             node = sdk / "node" / ("node.exe" if os.name == "nt" else "node")

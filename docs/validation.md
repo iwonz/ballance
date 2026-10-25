@@ -15,6 +15,8 @@ python3 scripts/test-agent-context.py
 python3 scripts/check-localization.py
 python3 scripts/check-physics-abi.py
 python3 scripts/test-release-tools.py
+python3 scripts/test-web-performance.py
+node --check scripts/measure-web-performance.js
 bash -n scripts/build.sh scripts/build-macos.sh scripts/setup-openspec.sh
 ```
 
@@ -122,6 +124,76 @@ For Android, signature, zipalign, native LOAD alignment, and APK content inspect
 are packaging checks. They do not replace touch, audio, lifecycle, or gameplay on a
 physical device. Likewise, Windows/Linux build success does not prove runtime play.
 The current macOS release is ARM64 and ad-hoc signed; it is not notarized.
+
+## Web frame performance
+
+Use [measure-web-performance.js](../scripts/measure-web-performance.js) with
+**Playwright CLI 0.1.22** and a headed Chrome browser on an otherwise idle machine.
+Serve a complete content-aware Web build over HTTP. The script creates an isolated
+profile, measures the animated menu and the unpaused level 01 start area, and closes
+that profile without changing real player saves. It skips the tutorial and briefly
+moves the ball before the gameplay capture. This is not a complete level playthrough.
+
+Example from the repository root, with the server running in another terminal:
+
+```sh
+python3 -m http.server 8010 --bind 127.0.0.1 --directory Builds
+```
+
+Run the browser commands from an ignored artifact directory:
+
+```sh
+mkdir -p Builds/checks
+cd Builds/checks
+npx --yes @playwright/cli@0.1.22 --session fps open http://127.0.0.1:8010/WebGL/ --headed
+npx --yes @playwright/cli@0.1.22 --session fps run-code --filename ../../scripts/measure-web-performance.js
+# Use the exact JSON path printed by the capture command:
+python3 ../../scripts/check-web-performance.py output/playwright/performance-<timestamp>.json
+npx --yes @playwright/cli@0.1.22 --session fps close
+```
+
+The reference profile is a 1280x900 browser viewport, DPR 2, a **1920x1200** Unity
+canvas, fresh default High quality, and a visible hardware-accelerated tab on a
+display capable of at least 60 Hz, with the WebGL GPU timer extension available.
+Keep the browser foregrounded and avoid concurrent
+builds or other GPU workloads. Do not force SwiftShader. Repeat captures at least
+twice on the same hardware/browser for before/after comparisons. A run that fails
+must remain in the evidence; investigate interference instead of selecting only
+successful runs. Screenshots before/after each capture verify the intended state.
+
+An initial idle-page calibration records browser refresh cadence; a cadence below
+59 Hz cannot qualify for the 60 FPS target. Each scenario warms up for 10 seconds
+and records for 30 seconds. The JSON contains
+the Wasm SHA-256/build version, browser, GPU, actual canvas dimensions, visibility,
+draw counts, frame timestamps, CPU callback times, and asynchronous GPU elapsed
+times. Only animation callbacks
+that submit draws to the Unity canvas count as frames. GPU queries must resolve
+without disjoint timing; missing results cannot pass. CPU callback time and GPU
+elapsed time are separate measurements and must not be added together. This is
+render-submission cadence plus GPU work, not physical display latency.
+Instrumentation runs only in the test browser, with no shipped
+per-frame profiler overhead. Loading and screenshot readbacks are outside captures.
+
+[check-web-performance.py](../scripts/check-web-performance.py) exits nonzero for
+unqualified/incomplete data or a failed **60 FPS target with scheduler tolerance**:
+
+| Metric | Required budget |
+| --- | --- |
+| Average FPS over the entire capture | At least 59 (allows 59.94 Hz and scheduling jitter) |
+| p95 frame interval | At most 20 ms |
+| p99 frame interval | At most 25 ms |
+| Intervals above 33.34 ms | At most 0.1% |
+| Longest interval, including capture boundaries | At most 100 ms |
+| GPU p95 / p99 elapsed time | At most 16.67 / 20 ms |
+| GPU frames above 33.34 ms / longest GPU frame | At most 0.1% / 100 ms |
+
+These are explicit regression tolerances, not a claim that every frame finishes in
+16.67 ms. No cap prevents higher FPS on faster displays. Software renderers, hidden
+tabs, lost contexts, invalid GPU timings, changed resolution, invalid timestamps, absent draws, and
+missing scenarios cannot pass. Hosted CI runs the checker's adversarial self-tests
+and JavaScript syntax check; **it does not run or certify hardware game FPS**.
+Repeat real measurements on intended player hardware and heavier level sections
+before extending the performance claim beyond this reference fixture.
 
 ## Evidence boundaries
 

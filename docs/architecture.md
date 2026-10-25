@@ -226,6 +226,14 @@ and current build checks. The legacy Editor logical-scene name is not evidence o
 finished standalone level editor. [Bugs.txt](../Bugs.txt) preserves unverified historical
 notes; reproduce them before proposing fixes.
 
+[Web performance capture](../scripts/measure-web-performance.js) measures game draw
+submission cadence externally in an isolated browser profile. The
+[report gate](../scripts/check-web-performance.py) and its
+[adversarial fixtures](../scripts/test-web-performance.py) reject slow or unqualified
+captures. [Validation guidance](validation.md#web-frame-performance) owns the
+reference profile, budget, commands, and limits; hosted tests validate the gate,
+not hardware FPS.
+
 ## Dependency and source-mod migration
 
 The vendored `ICSharpCode.SharpZipLib.dll`, AsyncAwaitUtil, unused FastCachePool, and

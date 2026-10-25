@@ -129,7 +129,10 @@ namespace Ballance2.Editor
         PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
         PlayerSettings.WebGL.decompressionFallback = true;
         PlayerSettings.WebGL.threadsSupport = false;
-        PlayerSettings.WebGL.wasm2023 = false;
+        PlayerSettings.WebGL.wasm2023 = true;
+#if UNITY_WEBGL
+        UnityEditor.WebGL.UserBuildSettings.codeOptimization = UnityEditor.WebGL.WasmCodeOptimization.RuntimeSpeedLTO;
+#endif
         PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.FullWithStacktrace;
         PlayerSettings.WebGL.debugSymbolMode = WebGLDebugSymbolMode.External;
         PlayerSettings.WebGL.initialMemorySize = 256;

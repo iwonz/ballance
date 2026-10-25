@@ -1,4 +1,4 @@
-﻿using Ballance2.Base;
+using Ballance2.Base;
 using Ballance2.Config;
 using Ballance2.Config.Settings;
 using Ballance2.Package;
@@ -172,7 +172,7 @@ namespace Ballance2.Services
     /// <returns></returns>
     internal Dictionary<string, GamePackageRegisterInfo> LoadPackageRegisterInfo()
     {
-      string pathPackageStatus = Application.persistentDataPath + "/PackageStatus.xml";
+      string pathPackageStatus = Ballance2.Res.GamePathManager.PersistentDataPath + "/PackageStatus.xml";
       if (File.Exists(pathPackageStatus))
       {
         StreamReader sr = new StreamReader(pathPackageStatus, Encoding.UTF8);
@@ -214,7 +214,7 @@ namespace Ballance2.Services
     /// </summary>
     internal void SavePackageRegisterInfo()
     {
-      StreamWriter sw = new StreamWriter(Application.persistentDataPath + "/PackageStatus.xml", false, Encoding.UTF8);
+      StreamWriter sw = new StreamWriter(Ballance2.Res.GamePathManager.PersistentDataPath + "/PackageStatus.xml", false, Encoding.UTF8);
 
       XmlDocument xml = new XmlDocument();
       XmlNode nodePackageConfig = xml.CreateElement("PackageConfig");

@@ -17,6 +17,7 @@ namespace Ballance2.Menu
     private int settingsUpdateCallbackId = 0;
 
     private void Start() {
+      Ballance2.Game.Remaster.RemasterTheme.Apply(gameObject);
       InitKeys();
       InitKeySize();
     }

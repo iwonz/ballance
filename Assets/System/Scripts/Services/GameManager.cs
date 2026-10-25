@@ -822,51 +822,12 @@ namespace Ballance2.Services
         // Apply video settings to the engine.
         private bool OnVideoSettingsUpdated(string groupName, int action)
         {
-            int resolutionsSet = GameSettings.GetInt(SettingConstants.SettingsVideoResolution, -1);
+            if (GetComponent<Ballance2.Game.Remaster.RemasterGraphics>() == null)
+                gameObject.AddComponent<Ballance2.Game.Remaster.RemasterGraphics>();
+            Ballance2.Game.Remaster.RemasterGraphics.ApplyQuality();
             bool fullScreen = GameSettings.GetBool(SettingConstants.SettingsVideoFullScreen, Screen.fullScreen);
-            int quality = GameSettings.GetInt(SettingConstants.SettingsVideoQuality, -1);
-            int vSync = GameSettings.GetInt(SettingConstants.SettingsVideoVsync, -1);
-
-            Log.V(TAG, "OnVideoSettingsUpdated:\nresolutionsSet: {0}\nfullScreen: {1}\nquality: {2}\nvSync : {3}", resolutionsSet, fullScreen, quality, vSync);
-
-            if (resolutionsSet >= 0)
-            {
-                if (resolutionsSet < resolutions.Length)
-                {
-                    var resolution = resolutions[resolutionsSet];
-                    var resolutionWidth = resolution.width;
-                    var resolutionHeight = resolution.height;
-
-                    var currentResolution = Screen.currentResolution;
-
-
-                    // Aspect ratio.
-                    var currentResolutionAspectRatio = currentResolution.width * 1F / currentResolution.height;
-                    var resolutionAspectRatio = resolution.width * 1F / resolution.height;
-
-                    var isCurrentResolutionLandspace = currentResolutionAspectRatio > 1;
-                    var isResolutionLandspace = resolutionAspectRatio > 1;
-
-                    if (isCurrentResolutionLandspace ^ isResolutionLandspace)
-                    {
-                        var tmpInt = resolutionWidth;
-                        resolutionWidth = resolutionHeight;
-                        resolutionHeight = tmpInt;
-                    }
-                    var mode = fullScreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
-                    if (fullScreen && Screen.fullScreenMode == FullScreenMode.ExclusiveFullScreen)
-                        mode = FullScreenMode.ExclusiveFullScreen;
-                    Screen.SetResolution(resolutionWidth, resolutionHeight, mode, resolution.refreshRateRatio);
-                    // Emit the screen size changed event.
-                    GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_SCREEN_SIZE_CHANGED, resolutionWidth, resolutionHeight);
-                }
-            }
-            if (fullScreen != Screen.fullScreen)
-                Screen.fullScreen = fullScreen;
-            if (quality >= 0)
-                QualitySettings.SetQualityLevel(quality, true);
-            if (vSync >= 0)
-                QualitySettings.vSyncCount = vSync;
+            if (fullScreen != Screen.fullScreen) Screen.fullScreen = fullScreen;
+            QualitySettings.vSyncCount = GameSettings.GetInt(SettingConstants.SettingsVideoVsync, 0);
             return true;
         }
 
@@ -1063,7 +1024,7 @@ namespace Ballance2.Services
         public string CaptureScreenshot()
         {
             // Create the directory.
-            string saveDir = Application.persistentDataPath + "/Screenshot/";
+            string saveDir = Ballance2.Res.GamePathManager.PersistentDataPath + "/Screenshot/";
             if (!Directory.Exists(saveDir))
                 Directory.CreateDirectory(saveDir);
 

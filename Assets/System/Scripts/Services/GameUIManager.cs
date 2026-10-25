@@ -210,6 +210,8 @@ namespace Ballance2.Services
       WindowsRectTransform = CloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUIWindow").GetComponent<RectTransform>();
       TopWindowsRectTransform = CloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameTopUIWindow").GetComponent<RectTransform>();
       OthersRectTransform = CloneUtils.CreateEmptyUIObjectWithParent(UIRoot.transform, "GameUIOthers").GetComponent<RectTransform>();
+      foreach (var root in new[] { PagesRectTransform, ViewsRectTransform, TopViewsRectTransform, WindowsRectTransform, TopWindowsRectTransform })
+        root.gameObject.AddComponent<Ballance2.Game.Remaster.RemasterSafeArea>();
 
       InitAllPrefabs();
 
@@ -760,6 +762,7 @@ namespace Ballance2.Services
       GameObject go = CloneUtils.CloneNewObjectWithParent(prefab, (topMost ? TopViewsRectTransform : ViewsRectTransform).transform, name);
       RectTransform view = go.GetComponent<RectTransform>();
       view.SetParent((topMost ? TopViewsRectTransform : ViewsRectTransform).gameObject.transform);
+      Ballance2.Game.Remaster.RemasterTheme.Apply(go);
       return view;
     }
 

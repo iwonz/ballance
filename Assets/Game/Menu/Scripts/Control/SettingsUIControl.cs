@@ -1,3 +1,4 @@
+using Ballance2.Game.Remaster;
 using Ballance2.Game;
 using Ballance2.Package;
 using Ballance2.Services;
@@ -23,7 +24,7 @@ namespace Ballance2.Menu
             var PageSettingsAudio = GameUIManager.RegisterPage("PageSettingsAudio", "PageCommon");
             var PageSettingsControls = GameUIManager.RegisterPage("PageSettingsControls", "PageCommon");
             var PageSettingsControlsMobile = GameUIManager.RegisterPage("PageSettingsControlsMobile", "PageCommon");
-            var PageSettingsGraphics = GameUIManager.RegisterPage("PageSettingsGraphics", "PageCommon");
+            var PageSettingsGraphics = GameUIManager.RegisterPage("PageSettingsGraphics", "PageFull");
             var PageLanguage = GameUIManager.RegisterPage("PageLanguage", "PageCommon");
             var PageApplyLangDialog = GameUIManager.RegisterPage("PageApplyLangDialog", "PageCommon");
             var PagePackageManager = GameUIManager.RegisterPage("PagePackageManager", "PageFull");
@@ -35,6 +36,7 @@ namespace Ballance2.Menu
             PageSettingsControls.CreateContent(package);
             PageSettingsControlsMobile.CreateContent(package);
             PageSettingsGraphics.CreateContent(package);
+            RemasterSettingsPanel.Install(PageSettingsGraphics.Content);
             PageSettingsInGame.CreateContent(package);
             PageLanguage.CreateContent(package);
             PageApplyLangDialog.CreateContent(package);
@@ -55,12 +57,6 @@ namespace Ballance2.Menu
             {
                 BindSettingsUI(MessageCenter);
             });
-        }
-
-        private class QualitiesItemData
-        {
-            public string text;
-            public int level;
         }
 
         private static void BindSettingsUI(GameUIMessageCenter MessageCenter)
@@ -84,27 +80,6 @@ namespace Ballance2.Menu
             {
                 GameSettings.SetFloat(SettingConstants.SettingsVoiceBackground, (float)val);
                 GameSettings.NotifySettingsUpdate(SettingConstants.SettingsVoice);
-            });
-            // Video.
-            var updateGrResolution = MessageCenter.SubscribeValueBinder("GrResolution", (val) =>
-            {
-                GameSettings.SetInt(SettingConstants.SettingsVideoResolution, Convert.ToInt32(val));
-            });
-            var updateGrQuality = MessageCenter.SubscribeValueBinder("GrQuality", (val) =>
-            {
-                GameSettings.SetInt(SettingConstants.SettingsVideoQuality, Convert.ToInt32(val));
-            });
-            var updateGrFullScreen = MessageCenter.SubscribeValueBinder("GrFullScreen", (val) =>
-            {
-                GameSettings.SetBool(SettingConstants.SettingsVideoFullScreen, (bool)val);
-            });
-            var updateGrCloud = MessageCenter.SubscribeValueBinder("GrCloud", (val) =>
-            {
-                GameSettings.SetBool(SettingConstants.SettingsVideoCloud, (bool)val);
-            });
-            var updateGrVSync = MessageCenter.SubscribeValueBinder("GrVSync", (val) =>
-            {
-                GameSettings.SetInt(SettingConstants.SettingsVideoVsync, (bool)val ? 1 : 0);
             });
             // Controls.
             var updateControlKeyForward = MessageCenter.SubscribeValueBinder("ControlKeyForward", (val) =>
@@ -153,68 +128,7 @@ namespace Ballance2.Menu
                 GameSettings.NotifySettingsUpdate(SettingConstants.SettingsControl);
             });
 
-            Resolution[] resolutions = null;
-            QualitiesItemData[] qualities = null;
-
-            // Load settings data.
-            MessageCenter.SubscribeEvent("BtnSettingsGraphicsClick", () =>
-            {
-                if (updateGrFullScreen != null) updateGrFullScreen.Invoke(GameSettings.GetBool(SettingConstants.SettingsVideoFullScreen, Screen.fullScreen));
-                if (updateGrCloud != null) updateGrCloud.Invoke(GameSettings.GetBool(SettingConstants.SettingsVideoCloud));
-                if (updateGrVSync != null) updateGrVSync.Invoke(GameSettings.GetInt(SettingConstants.SettingsVideoVsync, QualitySettings.vSyncCount) >= 1 ? true : false);
-
-                GameUIManager.GoPage("PageSettingsGraphics");
-
-                if (resolutions == null)
-                {
-                    // Load resolution settings.
-                    resolutions = Screen.resolutions;
-                    var GrResolution = MessageCenter.GetComponentInstance("GrResolution").GetComponent<Updown>();
-                    var currentResolution = Screen.currentResolution;
-                    var isMathed = false;
-                    for (int i = 0; i < resolutions.Length; i++)
-                    {
-                        var resolution = resolutions[i];
-                        GrResolution.AddOption($"{resolution.width}x{resolution.height}@{resolution.refreshRateRatio.value:0.##}");
-                        if (
-                          updateGrResolution != null
-                          && ((currentResolution.width == resolution.width && currentResolution.height == resolution.height)
-                          || (currentResolution.width == resolution.height && currentResolution.height == resolution.width))
-                          && Math.Abs(currentResolution.refreshRateRatio.value - resolution.refreshRateRatio.value) < 0.01
-                        )
-                        {
-                            isMathed = true;
-                            updateGrResolution.Invoke(i);
-                        }
-                    }
-            GrResolution.AddOption(I18N.Tr("core.ui.Default"));
-                    if (!isMathed)
-                    {
-                        updateGrResolution.Invoke(resolutions.Length);
-                    }
-                }
-                if (qualities == null)
-                {
-                    qualities = new QualitiesItemData[]
-                    {
-                        new QualitiesItemData { level = 0, text = I18N.Tr("core.ui.SettingsQualityVeryLow") },
-                        new QualitiesItemData { level = 1, text = I18N.Tr("core.ui.SettingsQualityLow") },
-                        new QualitiesItemData { level = 2, text = I18N.Tr("core.ui.SettingsQualityMedium") },
-                        new QualitiesItemData { level = 3, text = I18N.Tr("core.ui.SettingsQualityHigh") },
-                        new QualitiesItemData { level = 4, text = I18N.Tr("core.ui.SettingsQualityVeryHigh") },
-                        new QualitiesItemData { level = 5, text = I18N.Tr("core.ui.SettingsQualityUltra") },
-                    };
-                    var GrQuality = MessageCenter.GetComponentInstance("GrQuality").GetComponent<Updown>();
-                    var qualitiyCurrent = QualitySettings.GetQualityLevel();
-                    for (int i = 0; i < qualities.Length; i++)
-                    {
-                        var qualitiy = qualities[i];
-                        GrQuality.AddOption(qualitiy.text);
-                        if (qualitiyCurrent == qualitiy.level && updateGrQuality != null)
-                            updateGrQuality.Invoke(i);
-                    }
-                }
-            });
+            MessageCenter.SubscribeEvent("BtnSettingsGraphicsClick", () => GameUIManager.GoPage("PageSettingsGraphics"));
             MessageCenter.SubscribeEvent("BtnSettingsControlsClick", () =>
             {
                 if (updateControlKeyForward != null) updateControlKeyForward.Invoke(GameSettings.GetInt(SettingConstants.SettingsControlKeyFront));

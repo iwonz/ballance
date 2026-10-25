@@ -140,6 +140,7 @@ namespace Ballance2.UI.Core
         UIAnchorPosUtils.SetUIPos(content, 0, 0, 0, 0);
 
         defaultSelection = content.GetComponent<DefaultSelection>();
+        Ballance2.Game.Remaster.RemasterTheme.Apply(go, PageName != "PageEndScore");
       }
     }
 
@@ -164,6 +165,7 @@ namespace Ballance2.UI.Core
         Content = content;
         UIAnchorPosUtils.SetUIAnchor(content, UIAnchor.Stretch, UIAnchor.Stretch);
         UIAnchorPosUtils.SetUIPos(content, 0, 0, 0, 0);
+        Ballance2.Game.Remaster.RemasterTheme.Apply(go);
       }
     }
 

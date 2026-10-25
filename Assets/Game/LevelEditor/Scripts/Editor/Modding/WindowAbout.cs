@@ -7,13 +7,13 @@ namespace Ballance2.Editor.Modding
     {
         public WindowAbout()
         {
-            titleContent = new GUIContent("About Ballance");
+            titleContent = new GUIContent("About Reballance");
         }
 
         [@MenuItem("Ballance/Help", false, 104)]
         static void ShowHelp()
         {
-
+            EditorUtility.OpenWithDefaultApp("https://github.com/iwonz/ballance/blob/main/docs/architecture.md");
         }
         [@MenuItem("Ballance/About", false, 109)]
         static void ShowAbout()
@@ -30,7 +30,7 @@ namespace Ballance2.Editor.Modding
 
         private void OnEnable()
         {
-            logo = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/System/Textures/splash_app.bmp");
+            logo = Resources.Load<Texture2D>("Remaster/TitleArtwork");
         }
 
         private void OnGUI()
@@ -45,22 +45,21 @@ namespace Ballance2.Editor.Modding
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            GUILayout.Label(logo, GUILayout.Width(360));
+            GUILayout.Label(logo, GUILayout.Width(360), GUILayout.Height(203));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
             GUILayout.Space(16);
-            GUILayout.Label("Ballance Rebuild Project", DefaultCenteredLargeText);
-            GUILayout.Label("Ballance Remake (Unity)", DefaultCenteredText);
+            GUILayout.Label("Reballance", DefaultCenteredLargeText);
+            GUILayout.Label("Independent Unity reconstruction", DefaultCenteredText);
 
             EditorGUILayout.Space(3);
-            GUILayout.Label("A remake of Ballance in Unity.\nThis project began as the original author's long-standing personal goal.\n" +
-                "The original author was a student learning game development.\nSee the project on GitHub for more information.", DefaultCenteredText);
+            GUILayout.Label("Modern materials and seven environments.\nBased on the classic game by Cyparade.\nSee the repository for development and license details.", DefaultCenteredText);
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Original project: github.com/imengyu/Ballance2", LinkLabel))
-                EditorUtility.OpenWithDefaultApp("https://github.com/imengyu/Ballance2");
+            if (GUILayout.Button("github.com/iwonz/ballance", LinkLabel))
+                EditorUtility.OpenWithDefaultApp("https://github.com/iwonz/ballance");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -68,8 +67,7 @@ namespace Ballance2.Editor.Modding
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Copyright © 2020 mengyu 版权所有，MIT 开源协议", LinkLabel))
-                EditorUtility.OpenWithDefaultApp("https://imyzc.com/");
+            GUILayout.Label("Copyright © 2020 mengyu 版权所有，MIT 开源协议", DefaultCenteredText);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 

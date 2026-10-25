@@ -35,6 +35,7 @@ namespace Ballance2.Menu
 
     private void Start() {
       _ScoreBoardActive.gameObject.SetActive(false);
+      Ballance2.Game.Remaster.RemasterHud.Install(this);
 
         // Create a touch keyboard on mobile.
         #if (UNITY_ANDROID || UNITY_IOS)

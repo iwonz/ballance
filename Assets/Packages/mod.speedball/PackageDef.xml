@@ -5,9 +5,9 @@
     <Author>ballance</Author>
     <Introduction>{mod.speedball.package.Introduction}</Introduction>
     <Description>{mod.speedball.package.Description}</Description>
-    <Link>https://imengyu.top/ballanceProject</Link>
-    <AuthorLink>https://imengyu.top/</AuthorLink>
-    <DocLink>https://imengyu.top/ballanceProject/doc</DocLink>
+    <Link>https://github.com/iwonz/ballance</Link>
+    <AuthorLink>https://github.com/iwonz/ballance</AuthorLink>
+    <DocLink>https://github.com/iwonz/ballance/tree/main/docs</DocLink>
     <VersionName>1.0</VersionName>
     <Dependencies>
       <Package name="core" minVer="1" mustLoad="true">

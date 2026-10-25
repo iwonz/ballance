@@ -102,7 +102,7 @@ namespace Ballance2.Game.GamePlay
       this.EventResetAllSector = events.RegisterEvent("ResetAllSector");
     }
     private void DestroyEvent() {
-      GameMediator.Instance.UnRegisterEventEmitter("SectorManager");
+      if (GameMediator.Instance != null) GameMediator.Instance.UnRegisterEventEmitter("SectorManager");
     }
 
     #endregion
@@ -133,7 +133,7 @@ namespace Ballance2.Game.GamePlay
       );
     }
     private void DestroyCommand() {
-      GameManager.Instance.GameDebugCommandServer.UnRegisterCommand(this._CommandId);
+      if (GameManager.Instance != null) GameManager.Instance.GameDebugCommandServer?.UnRegisterCommand(this._CommandId);
     }
   
     #endregion
@@ -244,6 +244,11 @@ namespace Ballance2.Game.GamePlay
     public void ActiveCurrentSector(bool playCheckPointSound) 
     {
       var sector = GamePlayManager.Instance.CurrentSector;
+      var environment = Ballance2.Game.Remaster.EnvironmentController.Active;
+      if (environment != null) {
+        if (playCheckPointSound) environment.Run.EnterSector(sector);
+        else environment.Run.RestoreCheckpoint();
+      }
       var nowSector = this.CurrentLevelRestPoints[sector];
 
       // Set flame state.

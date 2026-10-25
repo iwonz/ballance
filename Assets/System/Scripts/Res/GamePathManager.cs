@@ -1,4 +1,4 @@
-﻿using Ballance2.Config;
+using Ballance2.Config;
 using Ballance2.Config.Settings;
 using System;
 using Ballance2.Utils;
@@ -26,6 +26,31 @@ namespace Ballance2.Res
   /// </summary>
   public static class GamePathManager
   {
+    private static string persistentDataPath;
+    public static string PersistentDataPath
+    {
+      get {
+        if (persistentDataPath == null) {
+          persistentDataPath = ResolvePersistentDataPath(Application.persistentDataPath, Application.platform);
+          Directory.CreateDirectory(persistentDataPath);
+        }
+        return persistentDataPath;
+      }
+    }
+
+    public static string ResolvePersistentDataPath(string path, RuntimePlatform platform)
+    {
+      bool desktop = platform == RuntimePlatform.OSXPlayer || platform == RuntimePlatform.WindowsPlayer ||
+        platform == RuntimePlatform.LinuxPlayer || platform == RuntimePlatform.OSXEditor ||
+        platform == RuntimePlatform.WindowsEditor || platform == RuntimePlatform.LinuxEditor;
+      if (!desktop) return path;
+      // Retain the development edition's storage identity when its public title changes.
+      string name = Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+      if (name == "Reballance") return Path.Combine(Path.GetDirectoryName(path), "Ballance Remaster");
+      if (name == "unity.iwonz.Reballance") return Path.Combine(Path.GetDirectoryName(path), "unity.iwonz.Ballance Remaster");
+      return path;
+    }
+
     /// <summary>
     /// Debug package directory.
     /// </summary>
@@ -206,7 +231,7 @@ namespace Ballance2.Res
           if(CheckPackageInBuiltInPackage(pathbuf))
             pathbuf = Application.streamingAssetsPath + "/BuiltInPackages/Packages/" + pathbuf;
           else 
-            pathbuf = Application.persistentDataPath + "/Packages/" + pathbuf;
+            pathbuf = PersistentDataPath + "/Packages/" + pathbuf;
 #else
           pathbuf = pathbuf;
 #endif
@@ -222,7 +247,7 @@ namespace Ballance2.Res
           if(CheckPackageInBuiltInPackage(pathbuf))
             result = Application.streamingAssetsPath + "/BuiltInPackages/Packages/" + pathbuf;
           else 
-            result = Application.persistentDataPath + "/Packages/" + pathbuf;
+            result = PersistentDataPath + "/Packages/" + pathbuf;
 #else
           result = pathorname;
 #endif
@@ -293,7 +318,7 @@ namespace Ballance2.Res
         if(CheckPackageInBuiltInLevel(pathbuf))
           pathbuf = Application.streamingAssetsPath + "/BuiltInPackages/Levels/" + pathbuf;
         else
-          pathbuf = Application.persistentDataPath + "/Levels/" + pathbuf;
+          pathbuf = PersistentDataPath + "/Levels/" + pathbuf;
 #else
         pathbuf = pathbuf;
 #endif
@@ -309,7 +334,7 @@ namespace Ballance2.Res
         if(CheckPackageInBuiltInLevel(pathorname))
           result = Application.streamingAssetsPath + "/BuiltInPackages/Levels/" + pathorname;
         else
-          result = Application.persistentDataPath + "/Levels/" + pathorname;
+          result = PersistentDataPath + "/Levels/" + pathorname;
 #else
         result = pathorname;
 #endif

@@ -74,10 +74,17 @@ namespace Ballance2
     /// <summary>
     /// Quit the player.
     /// </summary>
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern void BallanceRemasterExit(int restart);
+#endif
     public static void QuitPlayer()
     {
 #if UNITY_EDITOR
       UnityEditor.EditorApplication.isPlaying = false;
+#elif UNITY_WEBGL
+      PlayerPrefs.Save();
+      BallanceRemasterExit(IsRestart ? 1 : 0);
 #else
       Application.Quit();
 #endif

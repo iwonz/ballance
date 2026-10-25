@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102128">
+  <title>{{{ PRODUCT_NAME }}}</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #102128; color: #eef4ef; font: 14px system-ui, sans-serif; }
+    #player { display: grid; grid-template-rows: auto minmax(0, 1fr); width: 100%; height: 100dvh; }
+    header { display: flex; align-items: center; gap: 16px; padding: max(9px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 9px max(18px, env(safe-area-inset-left)); }
+    header strong { font-weight: 500; letter-spacing: .12em; margin-right: auto; }
+    a, button { color: inherit; font: inherit; border: 1px solid #62746e; border-radius: 6px; padding: 6px 12px; background: transparent; text-decoration: none; cursor: pointer; }
+    a:focus-visible, button:focus-visible { outline: 3px solid #b7ddbc; outline-offset: 3px; }
+    button:disabled { opacity: .4; cursor: default; }
+    .stage { position: relative; min-height: 0; }
+    canvas { display: block; width: 100%; height: 100%; background: #102128; outline: none; }
+    #loading { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; gap: 18px; background: #102128; padding: 30px; }
+    #loading strong { font-size: clamp(28px, 6vw, 60px); letter-spacing: .16em; font-weight: 300; }
+    progress { width: min(65vw, 320px); height: 5px; accent-color: #b7ddbc; margin: auto; }
+    #message { position: absolute; inset: auto 16px 16px; padding: 16px; background: #402c28; border: 1px solid #bd8376; white-space: pre-wrap; }
+    [hidden] { display: none !important; }
+    @media (max-width: 480px) { header { gap: 8px; font-size: 12px; } header strong { letter-spacing: 0; } a, button { padding: 6px 8px; } }
+  </style>
+</head>
+<body>
+  <main id="player">
+    <header><strong>REBALLANCE</strong><a id="home" href="../">About the game</a><button id="fullscreen" disabled>Full screen</button></header>
+    <div class="stage">
+      <canvas id="unity-canvas" width="{{{ WIDTH }}}" height="{{{ HEIGHT }}}" tabindex="0" aria-label="Reballance"></canvas>
+      <div id="loading" role="status"><strong>REBALLANCE</strong><span id="loading-label">Loading Reballance</span><progress max="1" value="0" aria-labelledby="loading-label"></progress></div>
+      <div id="message" role="alert" hidden></div>
+    </div>
+  </main>
+  <script>
+    // Let the browser move focus between host controls instead of Unity consuming Tab.
+    window.addEventListener("keydown", event => {
+      if (event.key === "Tab") event.stopImmediatePropagation();
+    }, true);
+    const language = navigator.language.toLowerCase();
+    const locale = language.startsWith("ru") ? "ru" : language.startsWith("zh") ? (/hant|tw|hk/.test(language) ? "zh-Hant" : "zh-Hans") : "en";
+    const labels = {
+      en: ["About the game", "Full screen", "Loading Reballance", "Unable to complete this action. Your data could not be saved or loaded."],
+      ru: ["Об игре", "Полный экран", "Загрузка Reballance", "Не удалось завершить действие: ошибка сохранения или загрузки данных."],
+      "zh-Hans": ["关于游戏", "全屏", "正在加载 Reballance", "无法完成操作：数据保存或加载失败。"],
+      "zh-Hant": ["關於遊戲", "全螢幕", "正在載入 Reballance", "無法完成操作：資料儲存或載入失敗。"]
+    }[locale];
+    document.documentElement.lang = locale;
+    document.querySelector("#home").textContent = labels[0];
+    document.querySelector("#fullscreen").textContent = labels[1];
+    document.querySelector("#loading-label").textContent = labels[2];
+    function failure(message) {
+      document.querySelector("#loading").hidden = true;
+      const banner = document.querySelector("#message");
+      banner.textContent = labels[3]; banner.hidden = false;
+      console.error(message);
+    }
+    var buildUrl = "Build";
+    var config = {
+      dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+      frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+      codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+      productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+      productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+      fullscreenElementID: "player",
+      matchWebGLToCanvasSize: true,
+      autoSyncPersistentDataPath: true,
+      showBanner: (message, type) => type === "error" ? failure(message) : console.warn(message)
+    };
+    const script = document.createElement("script");
+    script.src = buildUrl + "/{{{ LOADER_FILENAME }}}";
+    script.onerror = failure;
+    script.onload = () => createUnityInstance(document.querySelector("canvas"), config, progress => {
+      document.querySelector("progress").value = progress;
+    }).then(instance => {
+      document.querySelector("#loading").hidden = true;
+      let leaving = false;
+      window.addEventListener("ballance-remaster-exit", event => {
+        if (event.detail.failed) { failure("Save synchronization failed"); return; }
+        if (leaving) return;
+        leaving = true;
+        instance.Quit().then(() => {
+          if (event.detail.restart) location.reload();
+          else location.assign(new URL("../", location.href));
+        }).catch(failure);
+      });
+      const fullscreen = document.querySelector("#fullscreen");
+      fullscreen.disabled = false;
+      fullscreen.onclick = () => instance.SetFullscreen(1);
+      document.querySelector("canvas").focus();
+    }).catch(failure);
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>

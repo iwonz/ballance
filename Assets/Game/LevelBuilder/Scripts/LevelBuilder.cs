@@ -15,6 +15,7 @@ using BallancePhysics.Wapper;
 using Ballance2.Game.Utils;
 using Ballance2.Utils;
 using System.Collections.ObjectModel;
+using Ballance2.Game.Remaster;
 
 namespace Ballance2.Game.LevelBuilder {
 
@@ -173,6 +174,7 @@ namespace Ballance2.Game.LevelBuilder {
     }
 
     private IEnumerator UnLoadLevelInternal(GameManager.VoidDelegate endCallback) {
+      if (EnvironmentController.Active != null) EnvironmentController.Active.Release();
       // Emit the start event.
       GameMediator.Instance.DispatchGlobalEvent(GameEventNames.EVENT_LEVEL_BUILDER_UNLOAD_START);
 
@@ -845,7 +847,7 @@ namespace Ballance2.Game.LevelBuilder {
 
       // Hide clouds when disabled in settings.
       var GameSettings = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME);
-      if (!GameSettings.GetBool(SettingConstants.SettingsVideoCloud))
+      if (CurrentLevelSkyLayer != null && !GameSettings.GetBool(SettingConstants.SettingsVideoCloud))
         CurrentLevelSkyLayer.SetActive(false);
 
       Log.D(TAG, "Load music");
@@ -891,6 +893,8 @@ namespace Ballance2.Game.LevelBuilder {
       //-----------------------------
       yield return StartCoroutine(CallLoadStep("last"));
       CallLevelCustomModEvent("finishLoad");
+
+      EnvironmentController.Attach(CurrentLevelObject, CurrentLevelAsset, levelName, IsPreviewMode);
 
       Log.D(TAG, "Load finish");
 

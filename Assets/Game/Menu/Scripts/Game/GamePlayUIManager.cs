@@ -1,3 +1,4 @@
+using Ballance2.Game.Remaster;
 using Ballance2.Game.GamePlay;
 using Ballance2.Package;
 using Ballance2.Services;
@@ -70,7 +71,7 @@ namespace Ballance2.Menu
 
       // Default high-score data.
       var HighscoreEntryName = PageHighscoreEntry.Content.Find("InputField").GetComponent<InputField>();
-      HighscoreEntryName.text = PlayerPrefs.GetString("LastEnterHighscoreEntry", I18N.Tr("core.ui.PlayerName"));
+      HighscoreEntryName.text = RemasterPreferences.GetString("LastEnterHighscoreEntry", I18N.Tr("core.ui.PlayerName"));
 
       // Next-level button after completion.
       var ButtonNext = PageGameWin.Content.Find("ButtonNext").gameObject;
@@ -79,7 +80,7 @@ namespace Ballance2.Menu
       };
 
       MessageCenter.SubscribeEvent("BtnHighscrollEnterClick", () => {
-        PlayerPrefs.SetString("LastEnterHighscoreEntry", HighscoreEntryName.text);
+        RemasterPreferences.SetString("LastEnterHighscoreEntry", HighscoreEntryName.text);
         WinScoreUIControl.Instance.SaveHighscore(HighscoreEntryName.text);
 
         // Show the high-score page for a new high score; otherwise show the next-level menu.

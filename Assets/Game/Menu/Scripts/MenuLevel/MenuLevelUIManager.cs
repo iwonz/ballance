@@ -16,11 +16,11 @@ namespace Ballance2.Menu
       var GameUIManager = GameManager.GetSystemService<GameUIManager>();
       var MessageCenter = MenuManager.MessageCenter;
 
-      var PageMain = GameUIManager.RegisterPage("PageMain", "PageCommon");
-      var PageAbout = GameUIManager.RegisterPage("PageAbout", "PageCommon");
-      var PageHighscore = GameUIManager.RegisterPage("PageHighscore", "PageCommon");
+      var PageMain = GameUIManager.RegisterPage("PageMain", "PageFull");
+      var PageAbout = GameUIManager.RegisterPage("PageAbout", "PageFull");
+      var PageHighscore = GameUIManager.RegisterPage("PageHighscore", "PageFull");
       var PageQuit = GameUIManager.RegisterPage("PageQuit", "PageCommon");
-      var PageStart = GameUIManager.RegisterPage("PageStart", "PageCommon");
+      var PageStart = GameUIManager.RegisterPage("PageStart", "PageFull");
       var PageLightZone = GameUIManager.RegisterPage("PageLightZone", "PageTransparent");
       var PageAboutCreators = GameUIManager.RegisterPage("PageAboutCreators", "PageCommon");
       var PageAboutProject = GameUIManager.RegisterPage("PageAboutProject", "PageCommon");
@@ -39,6 +39,11 @@ namespace Ballance2.Menu
       PageAboutProject.CreateContent(package);
       PageAboutLicense.CreateContent(package);
       PageStart.CreateContent(package);
+      Ballance2.Game.Remaster.RemasterMenuLayout.Install(PageMain.Content, false);
+      Ballance2.Game.Remaster.RemasterMenuLayout.Install(PageStart.Content, true, () => {
+        Ballance2.Game.Remaster.RemasterPreferences.SetInt("tutorial.dismissed", 0);
+        LoadInternalLevel("01");
+      });
       PageStartCustomLevel.CreateContent(package);
       PageStart.OnShow = (options) => {
         for (var i = 2; i <= 12; i++) {
@@ -59,9 +64,9 @@ namespace Ballance2.Menu
         #endif
       };
       PageGlobalConfirm.OnShow = (options) => {
-        var ButtonConfirmText = PageStart.Content.Find("Panel/ButtonConfirm/Text").GetComponent<Text>();
-        var ButtonCancelText = PageStart.Content.Find("Panel/ButtonCancel/Text").GetComponent<Text>();
-        var Text = PageStart.Content.Find("Text").GetComponent<Text>();
+        var ButtonConfirmText = PageGlobalConfirm.Content.Find("Panel/ButtonConfirm/Text").GetComponent<Text>();
+        var ButtonCancelText = PageGlobalConfirm.Content.Find("Panel/ButtonCancel/Text").GetComponent<Text>();
+        var Text = PageGlobalConfirm.Content.Find("Text").GetComponent<Text>();
         if (ButtonConfirmText != null)
           ButtonConfirmText.text = options["okText"] as string;
         if (ButtonCancelText != null)
@@ -80,19 +85,14 @@ namespace Ballance2.Menu
       });
       
 
-      // Create the special 3D logo effect.
-      var BallanceLogo3DObjects = GameManager.Instance.InstancePrefab(package.GetPrefabAsset("BallanceLogo3DObjects.prefab"), "BallanceLogo3DObjects");
-      BallanceLogo3DObjects.SetActive(false);
-      
-      // GRAVITY easter egg.
+      Ballance2.Game.Remaster.RemasterAbout.Install(PageAbout.Content);
+      Ballance2.Game.Remaster.RemasterAbout.ReplaceIllustration(PageAboutProject.Content);
 
       // About page.
       PageAbout.OnShow = (p) => {
-        BallanceLogo3DObjects.SetActive(true);
         StartGRAVITYKey();
       };
       PageAbout.OnHide = () => {
-        BallanceLogo3DObjects.SetActive(false);
         GameUIManager.DeleteKeyListen(keyListenGRAVITY);
       };
       // Enable the GRAVITY easter egg on the creators page.
@@ -134,8 +134,7 @@ namespace Ballance2.Menu
         GameUIManager.BackPreviusPage();
       });
       MessageCenter.SubscribeEvent("BtnStartLightZoneClick", () => {
-        GameManager.GameMediator.NotifySingleEvent(MenuLevelCameraControl.EVENT_SWITCH_LIGHTZONE, true);
-        GameUIManager.GoPage("PageLightZone");
+        LoadInternalLevel("13");
       });
       MessageCenter.SubscribeEvent("ButtonOpenSourceLicenseClick", () => GameUIManager.GoPage("PageAboutLicense"));
       MessageCenter.SubscribeEvent("BtnGoBallanceBaClick", () => Application.OpenURL(ConstLinks.BallanceBa));
@@ -150,9 +149,6 @@ namespace Ballance2.Menu
       });
       MessageCenter.SubscribeEvent("BtnHighscorePageRightClick", () => {
         HighscoreUIControl.Instance.Next();
-      });
-      MessageCenter.SubscribeEvent("BtnAboutImengyuClick", () => {
-        Application.OpenURL(ConstLinks.ImengyuHome);
       });
 
       MessageCenter.SubscribeEvent("BtnStartLev01Click", () => LoadInternalLevel("01"));
@@ -198,7 +194,7 @@ namespace Ballance2.Menu
 
       // Load full version information.
       var ButtonVersionText = PageAbout.Content.transform.Find("ButtonVersion/Text").GetComponent<Text>();
-      ButtonVersionText.text = I18N.TrF("core.ui.SettingsVersion", "Version: {0}", Ballance2.Config.GameConst.GameVersion.ToString());
+      ButtonVersionText.text = I18N.TrF("core.ui.SettingsVersion", "Version: {0}", Application.version);
     }
 
     private static void LoadInternalLevel(string id) {

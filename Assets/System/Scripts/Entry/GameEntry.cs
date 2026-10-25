@@ -1,4 +1,5 @@
-﻿using Ballance2.Config;
+using Ballance2.Game.Remaster;
+using Ballance2.Config;
 using Ballance2.Services.Debug;
 using Ballance2.Services.Init;
 using Ballance2.Services.InputManager;
@@ -108,11 +109,7 @@ namespace Ballance2.Entry
     public void QuitGame()
     {
       StopAllCoroutines();
-#if UNITY_EDITOR
-      UnityEditor.EditorApplication.isPlaying = false;
-#else
-      Application.Quit();
-#endif
+      GameSystem.QuitPlayer();
     }
 
     private void InitCommandLine()
@@ -124,7 +121,7 @@ namespace Ballance2.Entry
         for (int i = 0; i < len; i++)
         {
           if (CommandLineArgs[i] == "-debug")
-            PlayerPrefs.SetInt("core.DebugMode", 1);
+            RemasterPreferences.SetInt("core.DebugMode", 1);
         }
       }
     }
@@ -134,7 +131,7 @@ namespace Ballance2.Entry
       DebugMode = true;
 #else
       if(!DebugMode) {
-        if(PlayerPrefs.GetString("core.DebugMode", "") == "True") DebugMode = true;
+        if(RemasterPreferences.GetString("core.DebugMode", "") == "True") DebugMode = true;
         else DebugMode = false;
       }
 #endif

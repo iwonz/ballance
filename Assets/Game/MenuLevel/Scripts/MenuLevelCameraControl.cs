@@ -40,8 +40,8 @@ namespace Ballance2.Game
       this.transformI_Zone_SuDu = this.I_Zone_SuDu.transform;
       this.transformI_Zone_NenLi = this.I_Zone_NenLi.transform;
       this.transformI_Zone_LiLiang = this.I_Zone_LiLiang.transform;
-      this.skyBoxNight = SkyBoxUtils.MakeSkyBox("M");
-      this.skyBoxDay = SkyBoxUtils.MakeSkyBox("C");
+      this.skyBoxNight = SkyBoxUtils.MakeSkyBox("M",true);
+      this.skyBoxDay = SkyBoxUtils.MakeSkyBox("C",true);
       this.menuSound = GameSoundManager.RegisterSoundPlayer(
         GameSoundType.Background, 
         GameSoundManager.LoadAudioResource("core.sounds.music:Menu_atmo.wav"), 
@@ -65,6 +65,11 @@ namespace Ballance2.Game
     }
 
     private void Update() {
+      if (skyBox.material != null) {
+        bool clouds = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME).GetBool(SettingConstants.SettingsVideoCloud);
+        skyBox.material.SetFloat("_CloudQuality",clouds ? Mathf.Clamp(Ballance2.Game.Remaster.RemasterPreferences.GetInt("graphics.quality",1),0,2)+1 : 0);
+        skyBox.material.SetFloat("_WeatherTime",Time.unscaledTime);
+      }
       if (!this.menuSound.isPlaying) {
         this.menuSoundTime -= Time.deltaTime;
         if (this.menuSoundTime < 0) {
@@ -88,7 +93,11 @@ namespace Ballance2.Game
     }
     private void OnDisable() {
       RenderSettings.ambientLight = new Color32(15, 15, 15, 255);
-      this.menuSound.Stop();
+      if (this.menuSound != null) this.menuSound.Stop();
+    }
+    private void OnDestroy() {
+      if (skyBoxNight != null) Destroy(skyBoxNight);
+      if (skyBoxDay != null) Destroy(skyBoxDay);
     }
     private void OnEnable() {
       if (this._Stared) { 

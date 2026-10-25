@@ -79,7 +79,7 @@
     <Text name="core.ui.LevelLoaderErrorUIMessage">关卡开发者：您可以按 F12 进入控制台查看更多错误信息。
 玩家：如果这是第三方玩家制作的关卡，您可以向制作者反馈错误信息。
 如果这是游戏自带关卡，您可以点击 “提交BUG” 或访问 
-https://github.com/imengyu/ballance/issues/ 向我们反馈错误
+https://github.com/iwonz/ballance/issues/ 向我们反馈错误
     </Text>
     <Text name="core.ui.LevelLoaderErrorUISubmitBug">提交BUG</Text>
     <Text name="core.ui.LevelLoaderErrorUICopyErrInfo">复制错误信息</Text>
@@ -197,25 +197,71 @@ Ballance 平衡球 是一款滚球游戏。
 
 如果你在某个时候遇到困难或需要一些技术帮助，请查看“Ballance HTML帮助”，它可以通过Windows开始菜单访问（不是在游戏期间！）。
 
-额外提示：上面是原版提示。如果你遇到了游戏的BUG或是有新的建议，请前往项目 https://github.com/imengyu/ballance/issues/ 向我们提交 Issues 反馈错误。
+额外提示：上面是原版提示。如果你遇到了游戏的BUG或是有新的建议，请前往项目 https://github.com/iwonz/ballance/issues/ 向我们提交 Issues 反馈错误。
 
 欢迎前往 Ballance 吧讨论游戏！
 
 按“回车”键退出教程...
     </Text>
-    <Text name="core.ui.ProjectAbout">
-Ballance Rebuild 是滚球 Ballance 游戏的开源 Unity 重制版，由 快乐的梦鱼 制作。
+    <Text name="core.ui.ProjectAbout">Reballance 是基于 Unity 的开源同人重制版，带来全新材质、界面和七种环境预设。
 
-你可以游玩这个重制版，还可以根据此重制版制作自定义模组或者地图，分享给其他玩家游玩。
+保留熟悉的空中赛道，同时探索天气与表面覆盖带来的变化。本项目并非 Cyparade 商业原作的官方发行版。
 
-项目的源代码存放在 https://github.com/imengyu/Ballance 。
-
-如果你遇到了BUG，或者有很棒的点子，建议，欢迎前往项目主页 https://github.com/imengyu/Ballance 提交你的 Issue，我们一起讨论呀。
-
-如果希望为Ballance开发自己的mod，关卡，欢迎前往 https://github.com/imengyu/Ballance/wiki 了解相关教程！
-
-也欢迎在 Ballance 吧讨论游戏。
-    </Text>
+源代码与反馈：https://github.com/iwonz/ballance
+开发与关卡文档：https://github.com/iwonz/ballance/tree/main/docs</Text>
+    <Text name="core.ui.Remaster.Settings">环境与画面</Text>
+    <Text name="core.ui.Remaster.Environment">环境</Text>
+    <Text name="core.ui.Remaster.Quality">画质</Text>
+    <Text name="core.ui.Remaster.Resolution">3D 分辨率</Text>
+    <Text name="core.ui.Remaster.RenderScale">渲染比例</Text>
+    <Text name="core.ui.Remaster.UIScale">界面大小</Text>
+    <Text name="core.ui.Remaster.Shadows">阴影</Text>
+    <Text name="core.ui.Remaster.AA">抗锯齿</Text>
+    <Text name="core.ui.Remaster.Effects">特效</Text>
+    <Text name="core.ui.Remaster.Clouds">云层</Text>
+    <Text name="core.ui.Remaster.Off">关闭</Text>
+    <Text name="core.ui.Remaster.On">开启</Text>
+    <Text name="core.ui.Remaster.Medium">中</Text>
+    <Text name="core.ui.Remaster.High">高</Text>
+    <Text name="core.ui.Remaster.Actual">实际 3D 分辨率：</Text>
+    <Text name="core.ui.Remaster.PresetNote">暂停时天气也会暂停。画面设置不会改变物理效果。</Text>
+    <Text name="core.ui.Remaster.Preset0">标准</Text>
+    <Text name="core.ui.Remaster.Preset1">标准 + 天气</Text>
+    <Text name="core.ui.Remaster.Preset2">莫斯科</Text>
+    <Text name="core.ui.Remaster.Preset3">伦敦</Text>
+    <Text name="core.ui.Remaster.Preset4">撒哈拉</Text>
+    <Text name="core.ui.Remaster.Preset5">香港</Text>
+    <Text name="core.ui.Remaster.Preset6">加利福尼亚</Text>
+    <Text name="core.ui.Remaster.Levels">选择路线</Text>
+    <Text name="core.ui.Remaster.Tagline">熟悉的旅程，全新的氛围。</Text>
+    <Text name="core.ui.Remaster.ReplayTutorial">重玩教程</Text>
+    <Text name="core.ui.Remaster.TouchMove">方向键或屏幕摇杆</Text>
+    <Text name="core.ui.Remaster.TouchRotate">左右旋转视角按钮</Text>
+    <Text name="core.ui.Remaster.TouchLook">俯视按钮</Text>
+    <Text name="core.ui.Remaster.Tutorial1">欢迎来到 Ballance
+保持平衡，找到出口。提示会在需要时出现。你可以随时跳过，也可以在关卡选择中重新开启教程。</Text>
+    <Text name="core.ui.Remaster.Tutorial2">观察四周
+使用 {rotate} 将视角旋转 90°。看清下一块平台，有助于通过狭窄的转弯。</Text>
+    <Text name="core.ui.Remaster.Tutorial3">从上方观察
+按住 {look}，查看路线以及转角后方。</Text>
+    <Text name="core.ui.Remaster.Tutorial4">掌握平衡
+移动：{move}。面向两座塔之间的道路，向木桥前进。轻轻调整方向。</Text>
+    <Text name="core.ui.Remaster.Tutorial5">多一次机会
+掉落会失去一条生命。拾取生命奖励可增加一次机会，剩余生命显示在游戏界面中。</Text>
+    <Text name="core.ui.Remaster.Tutorial6">改变材质
+这个转换器会把球变成石球。木球、石球和纸球在斜坡和机关上的表现不同。</Text>
+    <Text name="core.ui.Remaster.Tutorial7">这个球太重了
+找到木球转换器再试一次。使用 {rotate}，让道路保持在视野内。</Text>
+    <Text name="core.ui.Remaster.Tutorial8">时间与分数
+游戏过程中时间分会逐渐减少。拾取分数奖励可以提高成绩。</Text>
+    <Text name="core.ui.Remaster.Tutorial9">安全的返回点
+通过这个检查点。掉落后会回到这里，并恢复检查点的机关和天气状态。</Text>
+    <Text name="core.ui.Remaster.Tutorial10">开始探索吧
+观察前方，选择合适的球，在狭窄路段放慢速度。你可以在关卡选择中重玩教程。</Text>
+    <Text name="core.ui.Remaster.SkipTutorial">跳过教程</Text>
+    <Text name="core.ui.Remaster.HudScore">分数</Text>
+    <Text name="core.ui.Remaster.HudLives">生命</Text>
+    <Text name="core.ui.Remaster.ReturnToMenu">返回主菜单？当前关卡进度将丢失。</Text>
   </Language>
   <Language name="English">
     <Text name="core.ui.RebuildBy">Unity remake by</Text>
@@ -371,7 +417,7 @@ Music: {10}</Text>
     <Text name="core.ui.LevelLoaderErrorUIMessage">Level developer: you can press F12 to open console to view more error information.
 Player: if this is a level made by a third party player, you can feed back error information to the producer.
 If this is the game's original level, you can click "Submit bug" or visit
-https://github.com/imengyu/ballance/issues/ Feedback errors to us.
+https://github.com/iwonz/ballance/issues/ Feedback errors to us.
     </Text>
     <Text name="core.ui.LevelLoaderErrorUISubmitBug">Submit bug</Text>
     <Text name="core.ui.LevelLoaderErrorUICopyErrInfo">Copy error message</Text>
@@ -479,19 +525,65 @@ In case you get stuck at some point or need some technical help, please take a l
 
 Quit the tutorial with "RETURN" ...
     </Text>
-    <Text name="core.ui.ProjectAbout">
-Ballance Rebuild is an open-source Unity remake of the Ball Ball game, produced by Happy Dreamfish.
+    <Text name="core.ui.ProjectAbout">Reballance is an open-source fan reconstruction in Unity, with renewed materials, interface and seven environment presets.
 
-You can play this remastered version, and you can also create custom modules or maps based on this remastered version to share with other players.
+Explore familiar sky courses with weather and surface coverings. This is an independent project, not the original commercial release by Cyparade.
 
-The source code of the project is stored in https://github.com/imengyu/Ballance 。
-
-If you encounter bugs or have great ideas, please feel free to visit the project homepage https://github.com/imengyu/Ballance Submit your issue and let's discuss it together.
-
-If you want to develop your own mod and level for Ballance, welcome to https://github.com/imengyu/Ballance/wiki Learn about related tutorials!
-
-Welcome to discuss the game at Ballance Discord.
-    </Text>
+Source and feedback: https://github.com/iwonz/ballance
+Development and level documentation: https://github.com/iwonz/ballance/tree/main/docs</Text>
+    <Text name="core.ui.Remaster.Settings">Environment &amp; graphics</Text>
+    <Text name="core.ui.Remaster.Environment">Environment</Text>
+    <Text name="core.ui.Remaster.Quality">Quality</Text>
+    <Text name="core.ui.Remaster.Resolution">3D resolution</Text>
+    <Text name="core.ui.Remaster.RenderScale">Render scale</Text>
+    <Text name="core.ui.Remaster.UIScale">Interface size</Text>
+    <Text name="core.ui.Remaster.Shadows">Shadows</Text>
+    <Text name="core.ui.Remaster.AA">Anti-aliasing</Text>
+    <Text name="core.ui.Remaster.Effects">Effects</Text>
+    <Text name="core.ui.Remaster.Clouds">Clouds</Text>
+    <Text name="core.ui.Remaster.Off">Off</Text>
+    <Text name="core.ui.Remaster.On">On</Text>
+    <Text name="core.ui.Remaster.Medium">Medium</Text>
+    <Text name="core.ui.Remaster.High">High</Text>
+    <Text name="core.ui.Remaster.Actual">Actual 3D resolution:</Text>
+    <Text name="core.ui.Remaster.PresetNote">Weather pauses with the game. Graphics settings do not change the physics.</Text>
+    <Text name="core.ui.Remaster.Preset0">Standard</Text>
+    <Text name="core.ui.Remaster.Preset1">Standard + Weather</Text>
+    <Text name="core.ui.Remaster.Preset2">Moscow</Text>
+    <Text name="core.ui.Remaster.Preset3">London</Text>
+    <Text name="core.ui.Remaster.Preset4">Sahara</Text>
+    <Text name="core.ui.Remaster.Preset5">Hong Kong</Text>
+    <Text name="core.ui.Remaster.Preset6">California</Text>
+    <Text name="core.ui.Remaster.Levels">Choose your path</Text>
+    <Text name="core.ui.Remaster.Tagline">A familiar journey. A new atmosphere.</Text>
+    <Text name="core.ui.Remaster.ReplayTutorial">Replay tutorial</Text>
+    <Text name="core.ui.Remaster.TouchMove">the directional pad or joystick</Text>
+    <Text name="core.ui.Remaster.TouchRotate">the left and right camera buttons</Text>
+    <Text name="core.ui.Remaster.TouchLook">the overhead-view button</Text>
+    <Text name="core.ui.Remaster.Tutorial1">Welcome to Ballance
+Keep your balance and find the exit. These short hints appear when you need them. You can skip them at any time and replay the tutorial from level selection.</Text>
+    <Text name="core.ui.Remaster.Tutorial2">Look around
+Rotate the camera by 90° with {rotate}. A clear view of the next platform makes narrow turns easier.</Text>
+    <Text name="core.ui.Remaster.Tutorial3">A view from above
+Hold {look} to inspect the route and see what lies beyond a corner.</Text>
+    <Text name="core.ui.Remaster.Tutorial4">Find your balance
+Move with {move}. Face the path between the two towers, then roll towards the wooden bridge. Make small corrections.</Text>
+    <Text name="core.ui.Remaster.Tutorial5">An extra chance
+Falling costs one life. Collect a life bonus to gain another attempt; your remaining lives are shown in the HUD.</Text>
+    <Text name="core.ui.Remaster.Tutorial6">A different material
+This transformer turns your ball to stone. Wood, stone and paper react differently to slopes and mechanisms.</Text>
+    <Text name="core.ui.Remaster.Tutorial7">Too heavy for this slope
+Find the wood transformer and try again. Use {rotate} to keep the route in view.</Text>
+    <Text name="core.ui.Remaster.Tutorial8">Time and points
+Your time points decrease while you play. Collect point bonuses to raise your score.</Text>
+    <Text name="core.ui.Remaster.Tutorial9">A safe return
+Pass through this checkpoint. After a fall, you return here with the checkpoint’s mechanisms and weather state.</Text>
+    <Text name="core.ui.Remaster.Tutorial10">Ready to explore
+Look ahead, choose the right ball and take your time on narrow paths. You can replay these hints from level selection.</Text>
+    <Text name="core.ui.Remaster.SkipTutorial">Skip tutorial</Text>
+    <Text name="core.ui.Remaster.HudScore">Score</Text>
+    <Text name="core.ui.Remaster.HudLives">Lives</Text>
+    <Text name="core.ui.Remaster.ReturnToMenu">Return to the main menu? Current level progress will be lost.</Text>
   </Language>
   <Language name="ChineseTraditional">
     <Text name="core.ui.Back">返回</Text>
@@ -573,7 +665,7 @@ Welcome to discuss the game at Ballance Discord.
     <Text name="core.ui.LevelLoaderErrorUIMessage">關卡開發者：您可以按F12進入控制台查看更多錯誤資訊。
 玩家：如果這是協力廠商玩家製作的關卡，您可以向製作者迴響錯誤資訊。
 如果這是遊戲自帶關卡，您可以點擊“提交BUG”或訪問
-https://github.com/imengyu/ballance/issues/ 向我們迴響錯誤
+https://github.com/iwonz/ballance/issues/ 向我們迴響錯誤
     </Text>
     <Text name="core.ui.LevelLoaderErrorUISubmitBug">提交BUG</Text>
     <Text name="core.ui.LevelLoaderErrorUICopyErrInfo">複製錯誤資訊</Text>
@@ -688,25 +780,71 @@ https://github.com/imengyu/ballance/issues/ 向我們迴響錯誤
 
 如果你在某個時候遇到困難或需要一些科技幫助，請查看“Ballance HTML幫助”，它可以通過Windows開始菜單訪問（不是在遊戲期間！）。
 
-額外提示：上面是原版提示。 如果你遇到了遊戲的BUG或是有新的建議，請前往項目 https://github.com/imengyu/ballance/issues/ 向我們提交Issues迴響錯誤。
+額外提示：上面是原版提示。 如果你遇到了遊戲的BUG或是有新的建議，請前往項目 https://github.com/iwonz/ballance/issues/ 向我們提交Issues迴響錯誤。
 
 歡迎前往Ballance吧討論遊戲！
 
 按“回車”鍵退出教程…
     </Text>
-    <Text name="core.ui.ProjectAbout">
-Ballance Rebuild是滾球Ballance遊戲的開源Unity重製版，由快樂的夢魚製作。
+    <Text name="core.ui.ProjectAbout">Reballance 是基於 Unity 的開源同人重製版，帶來全新材質、介面和七種環境預設。
 
-你可以遊玩這個重製版，還可以根據此重製版製作自定義模組或者地圖，分享給其他玩家遊玩。
+保留熟悉的空中賽道，同時探索天氣與表面覆蓋帶來的變化。本專案並非 Cyparade 商業原作的官方發行版。
 
-項目的原始程式碼存放在 https://github.com/imengyu/Ballance 。
-
-如果你遇到了BUG，或者有很棒的點子，建議，歡迎前往項目主頁 https://github.com/imengyu/Ballance 提交你的Issue，我們一起討論呀。
-
-如果希望為Ballance開發自己的mod，關卡，歡迎前往 https://github.com/imengyu/Ballance/wiki 瞭解相關教程！
-
-也歡迎在Ballance吧討論遊戲。
-    </Text>
+原始碼與回饋：https://github.com/iwonz/ballance
+開發與關卡文件：https://github.com/iwonz/ballance/tree/main/docs</Text>
+    <Text name="core.ui.Remaster.Settings">環境與畫面</Text>
+    <Text name="core.ui.Remaster.Environment">環境</Text>
+    <Text name="core.ui.Remaster.Quality">畫質</Text>
+    <Text name="core.ui.Remaster.Resolution">3D 解析度</Text>
+    <Text name="core.ui.Remaster.RenderScale">算繪比例</Text>
+    <Text name="core.ui.Remaster.UIScale">介面大小</Text>
+    <Text name="core.ui.Remaster.Shadows">陰影</Text>
+    <Text name="core.ui.Remaster.AA">抗鋸齒</Text>
+    <Text name="core.ui.Remaster.Effects">特效</Text>
+    <Text name="core.ui.Remaster.Clouds">雲層</Text>
+    <Text name="core.ui.Remaster.Off">關閉</Text>
+    <Text name="core.ui.Remaster.On">開啟</Text>
+    <Text name="core.ui.Remaster.Medium">中</Text>
+    <Text name="core.ui.Remaster.High">高</Text>
+    <Text name="core.ui.Remaster.Actual">實際 3D 解析度：</Text>
+    <Text name="core.ui.Remaster.PresetNote">暫停時天氣也會暫停。畫面設定不會改變物理效果。</Text>
+    <Text name="core.ui.Remaster.Preset0">標準</Text>
+    <Text name="core.ui.Remaster.Preset1">標準 + 天氣</Text>
+    <Text name="core.ui.Remaster.Preset2">莫斯科</Text>
+    <Text name="core.ui.Remaster.Preset3">倫敦</Text>
+    <Text name="core.ui.Remaster.Preset4">撒哈拉</Text>
+    <Text name="core.ui.Remaster.Preset5">香港</Text>
+    <Text name="core.ui.Remaster.Preset6">加利福尼亞</Text>
+    <Text name="core.ui.Remaster.Levels">選擇路線</Text>
+    <Text name="core.ui.Remaster.Tagline">熟悉的旅程，全新的氛圍。</Text>
+    <Text name="core.ui.Remaster.ReplayTutorial">重玩教學</Text>
+    <Text name="core.ui.Remaster.TouchMove">方向鍵或螢幕搖桿</Text>
+    <Text name="core.ui.Remaster.TouchRotate">左右旋轉視角按鈕</Text>
+    <Text name="core.ui.Remaster.TouchLook">俯視按鈕</Text>
+    <Text name="core.ui.Remaster.Tutorial1">歡迎來到 Ballance
+保持平衡，找到出口。提示會在需要時出現。你可以隨時略過，也可以在關卡選擇中重新開啟教學。</Text>
+    <Text name="core.ui.Remaster.Tutorial2">觀察四周
+使用 {rotate} 將視角旋轉 90°。看清下一塊平台，有助於通過狹窄的轉彎。</Text>
+    <Text name="core.ui.Remaster.Tutorial3">從上方觀察
+按住 {look}，查看路線以及轉角後方。</Text>
+    <Text name="core.ui.Remaster.Tutorial4">掌握平衡
+移動：{move}。面向兩座塔之間的道路，向木橋前進。輕輕調整方向。</Text>
+    <Text name="core.ui.Remaster.Tutorial5">多一次機會
+掉落會失去一條生命。拾取生命獎勵可增加一次機會，剩餘生命顯示在遊戲介面中。</Text>
+    <Text name="core.ui.Remaster.Tutorial6">改變材質
+這個轉換器會把球變成石球。木球、石球和紙球在斜坡和機關上的表現不同。</Text>
+    <Text name="core.ui.Remaster.Tutorial7">這個球太重了
+找到木球轉換器再試一次。使用 {rotate}，讓道路保持在視野內。</Text>
+    <Text name="core.ui.Remaster.Tutorial8">時間與分數
+遊戲過程中時間分會逐漸減少。拾取分數獎勵可以提高成績。</Text>
+    <Text name="core.ui.Remaster.Tutorial9">安全的返回點
+通過這個檢查點。掉落後會回到這裡，並恢復檢查點的機關和天氣狀態。</Text>
+    <Text name="core.ui.Remaster.Tutorial10">開始探索吧
+觀察前方，選擇合適的球，在狹窄路段放慢速度。你可以在關卡選擇中重玩教學。</Text>
+    <Text name="core.ui.Remaster.SkipTutorial">跳過教學</Text>
+    <Text name="core.ui.Remaster.HudScore">分數</Text>
+    <Text name="core.ui.Remaster.HudLives">生命</Text>
+    <Text name="core.ui.Remaster.ReturnToMenu">返回主選單？目前關卡進度將遺失。</Text>
   </Language>
   <Language name="Russian">
     <Text name="core.ui.RebuildBy">Автор версии на Unity</Text>
@@ -959,15 +1097,64 @@ Ballance Rebuild是滾球Ballance遊戲的開源Unity重製版，由快樂的夢
 Если нужна помощь или вы нашли ошибку, откройте страницу проекта через меню «Об игре».
 
 Нажмите Enter, чтобы завершить обучение.</Text>
-    <Text name="core.ui.ProjectAbout">Ballance Rebuild — воссоздание игры Ballance на Unity с открытым исходным кодом. Автор проекта — Happy Dreamfish (imengyu).
+    <Text name="core.ui.ProjectAbout">Reballance — независимая реконструкция на Unity с открытым исходным кодом, обновлёнными материалами, интерфейсом и семью пресетами окружения.
 
-Играйте, создавайте собственные модификации и уровни и делитесь ими с другими игроками.
+Знакомые трассы в небе дополняют погода и покрытия. Проект не является оригинальным коммерческим выпуском Cyparade.
 
-Исходный проект: https://github.com/imengyu/Ballance
-Этот форк, поддержка Apple Silicon и сообщения об ошибках: https://github.com/iwonz/ballance
-
-Руководства по созданию модификаций и уровней: https://github.com/imengyu/Ballance/wiki
-
-Обсудить игру можно в сообществе Ballance в Discord.</Text>
+Исходный код и обратная связь: https://github.com/iwonz/ballance
+Документация для разработки и уровней: https://github.com/iwonz/ballance/tree/main/docs</Text>
+    <Text name="core.ui.Remaster.Settings">Окружение и графика</Text>
+    <Text name="core.ui.Remaster.Environment">Окружение</Text>
+    <Text name="core.ui.Remaster.Quality">Качество</Text>
+    <Text name="core.ui.Remaster.Resolution">Разрешение 3D</Text>
+    <Text name="core.ui.Remaster.RenderScale">Масштаб рендера</Text>
+    <Text name="core.ui.Remaster.UIScale">Размер интерфейса</Text>
+    <Text name="core.ui.Remaster.Shadows">Тени</Text>
+    <Text name="core.ui.Remaster.AA">Сглаживание</Text>
+    <Text name="core.ui.Remaster.Effects">Эффекты</Text>
+    <Text name="core.ui.Remaster.Clouds">Облака</Text>
+    <Text name="core.ui.Remaster.Off">Выкл.</Text>
+    <Text name="core.ui.Remaster.On">Вкл.</Text>
+    <Text name="core.ui.Remaster.Medium">Среднее</Text>
+    <Text name="core.ui.Remaster.High">Высокое</Text>
+    <Text name="core.ui.Remaster.Actual">Фактическое разрешение 3D:</Text>
+    <Text name="core.ui.Remaster.PresetNote">Пауза останавливает погоду. Настройки графики не меняют физику.</Text>
+    <Text name="core.ui.Remaster.Preset0">Стандартный</Text>
+    <Text name="core.ui.Remaster.Preset1">Стандартный + Погода</Text>
+    <Text name="core.ui.Remaster.Preset2">Москва</Text>
+    <Text name="core.ui.Remaster.Preset3">Лондон</Text>
+    <Text name="core.ui.Remaster.Preset4">Сахара</Text>
+    <Text name="core.ui.Remaster.Preset5">Гонконг</Text>
+    <Text name="core.ui.Remaster.Preset6">Калифорния</Text>
+    <Text name="core.ui.Remaster.Levels">Выберите путь</Text>
+    <Text name="core.ui.Remaster.Tagline">Знакомое путешествие. Новая атмосфера.</Text>
+    <Text name="core.ui.Remaster.ReplayTutorial">Повторить обучение</Text>
+    <Text name="core.ui.Remaster.TouchMove">экранные стрелки или джойстик</Text>
+    <Text name="core.ui.Remaster.TouchRotate">кнопки поворота камеры влево и вправо</Text>
+    <Text name="core.ui.Remaster.TouchLook">кнопку обзора сверху</Text>
+    <Text name="core.ui.Remaster.Tutorial1">Добро пожаловать в Ballance
+Сохраняйте равновесие и найдите выход. Короткие подсказки появляются по ходу игры. Их можно пропустить в любой момент и снова включить в выборе уровней.</Text>
+    <Text name="core.ui.Remaster.Tutorial2">Осмотритесь
+Поворачивайте камеру на 90°: {rotate}. Хороший обзор следующей платформы помогает на узких поворотах.</Text>
+    <Text name="core.ui.Remaster.Tutorial3">Взгляд сверху
+Удерживайте {look}, чтобы рассмотреть путь и заглянуть за поворот.</Text>
+    <Text name="core.ui.Remaster.Tutorial4">Почувствуйте равновесие
+Управление: {move}. Повернитесь к дорожке между двумя башнями и двигайтесь к деревянному мосту. Корректируйте движение понемногу.</Text>
+    <Text name="core.ui.Remaster.Tutorial5">Ещё одна попытка
+При падении вы теряете жизнь. Подберите бонус жизни, чтобы получить дополнительную попытку. Оставшиеся жизни показаны на экране.</Text>
+    <Text name="core.ui.Remaster.Tutorial6">Другой материал
+Этот преобразователь делает шар каменным. Дерево, камень и бумага по-разному ведут себя на склонах и механизмах.</Text>
+    <Text name="core.ui.Remaster.Tutorial7">Слишком тяжёлый шар
+Найдите преобразователь в деревянный шар и попробуйте снова. Держите путь в поле зрения: {rotate}.</Text>
+    <Text name="core.ui.Remaster.Tutorial8">Время и очки
+Очки времени уменьшаются, пока вы играете. Подбирайте бонусы очков, чтобы увеличить счёт.</Text>
+    <Text name="core.ui.Remaster.Tutorial9">Точка возвращения
+Пройдите через эту контрольную точку. После падения вы вернётесь сюда вместе с сохранённым состоянием механизмов и погоды.</Text>
+    <Text name="core.ui.Remaster.Tutorial10">В путь!
+Смотрите вперёд, выбирайте подходящий шар и не спешите на узких участках. Повторить подсказки можно в выборе уровней.</Text>
+    <Text name="core.ui.Remaster.SkipTutorial">Пропустить обучение</Text>
+    <Text name="core.ui.Remaster.HudScore">Очки</Text>
+    <Text name="core.ui.Remaster.HudLives">Жизни</Text>
+    <Text name="core.ui.Remaster.ReturnToMenu">Вернуться в главное меню? Текущий прогресс уровня будет потерян.</Text>
   </Language>
 </I18n>

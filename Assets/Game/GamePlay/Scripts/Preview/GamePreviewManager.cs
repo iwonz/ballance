@@ -18,6 +18,7 @@ namespace Ballance2.Game.GamePlay
 
     private bool _IsGamePlaying = false;
     private bool _IsLoaded = false;
+    public bool IsPlaying => _IsGamePlaying;
 
     public Camera GamePreviewCamera;
     public Camera GamePreviewMinimapCamera;
@@ -57,6 +58,7 @@ namespace Ballance2.Game.GamePlay
         UIManager.CloseAllPage();
         UIManager.MaskBlackFadeOut(1);
         _IsLoaded = true;
+        _IsGamePlaying = true;
 
         // Escape key.
         escKeyId = UIManager.ListenKey(KeyCode.Escape, (key, down) => {

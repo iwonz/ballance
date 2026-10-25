@@ -1,7 +1,8 @@
 # Build and release
 
 Use **Unity 6000.6.7f1**, as pinned in ProjectSettings. Do not mix Unity 2021
-players or AssetBundles with current outputs. Every release rebuilds the player,
+players or AssetBundles with current outputs. Select the correct independent
+[edition worktree](editions.md) before building. Every release rebuilds the player,
 core, six built-in packages, and levels 01-13 for its target.
 
 ## Local builds
@@ -18,14 +19,17 @@ python3 scripts/package-build.py WebGL
 
 | Target argument | Output under `Builds/` | Release asset |
 | --- | --- | --- |
-| `WebGL` | `WebGL/index.html`, Build, StreamingAssets | `Ballance-<version>-WebGL.tar.gz` |
-| `macOS` | `macOS/Ballance.app`, ARM64, Mono | `Ballance-<version>-macOS.zip` |
-| `Windows` | `Windows/Ballance.exe`, x86-64, Mono | `Ballance-<version>-Windows.zip` |
-| `Linux` | `Linux/Ballance.x86_64`, x86-64, Mono | `Ballance-<version>-Linux.tar.gz` |
-| `Android` | `Android/Ballance.apk`, ARM64, IL2CPP | `Ballance-<version>-Android.apk` |
+| `WebGL` | `WebGL/index.html`, Build, StreamingAssets | `<Product>-<version>-WebGL.tar.gz` |
+| `macOS` | `macOS/<Product>.app`, ARM64, Mono | `<Product>-<version>-macOS.zip` |
+| `Windows` | `Windows/<Product>.exe`, x86-64, Mono | `<Product>-<version>-Windows.zip` |
+| `Linux` | `Linux/<Product>.x86_64`, x86-64, Mono | `<Product>-<version>-Linux.tar.gz` |
+| `Android` | `Android/<Product>.apk`, ARM64, IL2CPP | `<Product>-<version>-Android.apk` |
 
 Use the same target in both commands. Release assets and SHA-256 sidecars go to
-`Builds/releases/`; filenames use Player Settings -> Version. Move previous outputs
+`Builds/releases/`; filenames use the edition descriptor and Player Settings ->
+Version. Original checkouts without an edition descriptor retain legacy naming;
+the Original maintenance branch carries the shared edition-aware tooling and an
+`original` descriptor for namespaced tags. Move previous outputs
 aside before rebuilding: these tools deliberately refuse to overwrite them.
 Unity logs go to `Logs/build-<platform>.log`.
 
@@ -107,30 +111,37 @@ rendering, physics hot paths, Web compilation, or gameplay performance.
 The player works below a repository prefix such as `/ballance/`. Generated Web
 files are release assets, not source-controlled content.
 
-1. Set **Settings -> Pages -> Source -> GitHub Actions**.
-2. In the `github-pages` environment, allow deployment from `main` and tags `v*`.
-   A release event runs from its tag. These rules were configured for this fork
-   during release 1.0.9; verify them if repository/environment settings change.
-3. Complete the source change and its OpenSpec record. Build and check Web from the
-   intended release commit using the [validation guide](validation.md).
-4. Create a draft release on that commit's tag. Attach
-   `Ballance-<version>-WebGL.tar.gz` and the matching `.sha256` file, plus the other
-   verified platform assets and checksums. Use a tag such as `v1.0.10`, matching
-   Player Settings -> Version and every archive filename.
-5. Publish the release. **Publish Web to GitHub Pages** validates checksum, safe
-   extraction, required content, size, and the embedded Web player version, then
-   deploys the site. Missing Web assets fail this workflow.
-6. Wait for the workflow's public `release.json` tag check to pass, then test the
-   public URL, including menu, level loading, and controls. Include the release and
-   successful Pages run links in the delivery report. If rollout fails, repair and
-   rerun it before declaring the release delivered.
+The root becomes a static RU/EN landing. Original launches at `original.html`,
+with assets under `original/`; Remaster launches at `remaster/`. Keeping Original's
+host page in the old directory preserves Unity's directory-based Web storage key.
+Test an existing browser profile before the first relocation. The landing does not
+load Unity.
 
-The current fork's URL is [iwonz.github.io/ballance](https://iwonz.github.io/ballance/)
-unless a custom domain is configured. The site's `release.json` identifies its tag,
-player version, archive, and verified SHA-256. To redeploy or explicitly roll back,
-manually dispatch the workflow with an
-existing release tag; it deploys that release's checked archive. The workflow needs
-no Unity license or Unity secrets.
+1. Set **Settings -> Pages -> Source -> GitHub Actions**. Allow `main`, legacy `v*`,
+   `original/v*` and `remaster/v*` in the deployment environment as applicable.
+2. Complete source verification in the edition's worktree. Create its immutable
+   namespaced tag and a draft release. Build from that source, package all supported
+   targets and attach verified archives with SHA-256 sidecars, including Web.
+3. Update only that edition's `tag` and `sha256` in `site/releases.json` on `main`.
+   Keep the other entry unchanged. The first two-player deployment requires real
+   verified assets for both entries; a null Remaster pin deliberately fails.
+4. Publish the prepared release. The Pages workflow checks out `main`, pins that
+   checkout's commit, downloads the two explicit Web versions and validates both.
+   The Original branch carries this same central workflow; do not restore its
+   historical single-player deployment.
+5. The workflow stages both games and the landing atomically, checks the combined
+   uncompressed site against 1,000,000,000 bytes and serializes deployment without
+   cancelling an earlier deployment. A release event must match a manifest entry.
+6. Wait for the workflow's public identity checks for both players, then exercise
+   both public games: loading, control, recovery and return to menu. Include the
+   release and successful Pages workflow links in delivery evidence.
+
+The public URL is [iwonz.github.io/ballance](https://iwonz.github.io/ballance/).
+Root `release.json` identifies the pair; each edition has its own `release.json`.
+To roll back one edition, restore only its manifest entry to a previously verified
+tag/checksum and manually dispatch the Pages workflow on `main`. It assembles the
+whole pair while leaving the other pin unchanged. Do not select “latest” dynamically.
+No Unity license or Unity secrets are needed for this deployment.
 
 Test over HTTP, not by opening index.html with file://:
 
@@ -139,11 +150,19 @@ python3 -m http.server 8000 --directory Builds
 # Open http://localhost:8000/WebGL/
 ```
 
-For a deployment-equivalent check, download/extract the release through
-`python3 scripts/prepare-pages.py <download-dir> <empty-site-dir> <release-tag>`
-and serve the result under a repository subpath. The download directory must contain
-exactly one Web archive and its checksum. The extraction limit is 1 GB uncompressed. Built-in packages are under
-`StreamingAssets/BuiltInPackages`, with same-origin URLs retaining the site prefix.
+For a deployment-equivalent check with a ready manifest:
+
+```sh
+python3 scripts/prepare-site.py Builds/site-download Builds/site-preview --fetch
+python3 -m http.server 8000 --directory Builds/site-preview
+python3 scripts/verify-site.py http://localhost:8000/ site/releases.json
+```
+
+Use new, empty download/output directories. `prepare-pages.py` remains the individual
+archive validator used by `prepare-site.py`; it checks checksum, safe extraction,
+required content and embedded edition/version. The combined size limit is additional
+to each archive's limit. Built-in packages use same-origin URLs below each edition's
+`StreamingAssets/BuiltInPackages` directory.
 Built-in mods are compiled into the player. New external C# DLL mods require Mono;
 Web/Android IL2CPP require adding their source and rebuilding.
 
@@ -161,26 +180,74 @@ physics checks on hosted runners. It does not build Unity or test all devices.
 
 ## Rebuilding native plugins
 
+Remaster uses ABI 2304; the Original baseline retains ABI 2302 in its own worktree.
+Never copy one edition's plugin set into the other. Use the same source/patch for
+all five Remaster targets. `-ffp-contract=off` preserves the Original arithmetic
+order; enabling fused multiply-add changed the paper-ball replay even with the
+old bridge and is not an approved optimization:
+
 ```sh
+python3 scripts/build-physics.py macOS
 python3 scripts/build-physics.py WebGL
 python3 scripts/build-physics.py Android
+docker build --platform linux/amd64 -f scripts/native/Dockerfile -t ballance-native:2303 scripts/native
+docker run --rm --platform linux/amd64 --network none -v "$PWD:/repo" ballance-native:2303 python3 scripts/build-physics.py Linux
+docker run --rm --platform linux/amd64 --network none -v "$PWD:/repo" ballance-native:2303 python3 scripts/build-physics.py Windows
 ```
 
-The script downloads a pinned IVP revision, applies
-`BallancePhysics/source-physics.patch`, and uses the Unity toolchains. Web runs its
-Wasm smoke test before replacing the library. Android uses the matching NDK and
-checks 16 KB LOAD-segment alignment with llvm-readelf. Override the SDK location
-with `--sdk` if needed; Android rebuilding requires a macOS/Linux host.
-Web compilation and its smoke link use native Wasm longjmp and SIMD, matching the
-Wasm 2023 player. Do not link an older emulated-longjmp IVP archive into that player.
-The patch supplies the constraint-deletion callback required by the wrapper and a
-header include guard. Public IVP diagnostics go to stdout.
+The script fetches pinned IVP revision `47533475e01cbff05fbc3bbe8b4edc485f292cea`
+into `Library/NativePhysics/source` and applies `BallancePhysics/source-physics.patch`.
+Build Web or macOS first to populate this source before running an offline container.
+The Docker base digest and compiler families are pinned in `scripts/native/Dockerfile`;
+exact compiler versions and bridge/header/patch/library hashes are recorded under
+`BallancePhysics/provenance`. Docker on Apple Silicon executes x86-64 through the
+host's emulation; Windows smoke uses Wine. These are native ABI checks, not physical
+Windows/Linux player certification. MinGW permits legacy upstream diagnostic
+pointer truncations; that compatibility flag is excluded from the project bridge.
 
-Follow [native instructions](../BallancePhysics/AGENTS.md), run ABI and target checks,
-and record provenance in the change. See [validation.md](validation.md) for check
-commands and the limits of automated verification.
+macOS uses Apple clang ARM64. Web uses Unity's Emscripten and runs the Wasm smoke
+under its Node runtime before installing the archive. Native Wasm longjmp and SIMD
+match the Wasm 2023 player. Android uses Unity's NDK, ARM64/API 26 and 16 KB LOAD
+alignment checks; it still requires device execution. Override Unity SDK paths with
+`--sdk`. Native Linux x86-64 and Windows compiler hosts can also run the corresponding
+platform argument directly with `CXX` configured.
+
+The source patch supplies constraint cleanup, contact-material refresh and pointer/
+header portability fixes. Follow [native instructions](../BallancePhysics/AGENTS.md)
+and [validation guidance](validation.md). Preserve the measured Original dry replay
+tolerance; a successful rebuild does not establish identical gameplay.
 
 References: [Unity release](https://unity.com/releases/editor/whats-new/6000.6.7f1),
 [Unity Web deployment](https://docs.unity3d.com/6000.6/Documentation/Manual/webgl-deploying.html),
 [GitHub Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages),
 [Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
+
+## Local macOS installation
+
+Use `/Applications/Ballance.app` and `/Applications/Reballance.app` for stable
+installations. Intermediate development versions use `Ballance-dev.app` and
+`Reballance-dev.app`; bundle IDs and saved-data paths remain stable. Package a
+completed player before installing it.
+
+```sh
+python3 scripts/install-macos.py remaster Builds/macOS/Reballance-dev.app
+python3 scripts/install-macos.py remaster Builds/macOS/Reballance-dev.app --apply
+```
+
+Use `original` and its corresponding app for the classic edition. A dry run lists
+exact paths. Applying verifies identity, version, signature and copied-file hashes,
+rejects downgrades and active copies, and replaces the edition's canonical app.
+It then deletes obsolete matching installed/build bundles, including former
+`.app.disabled` copies, and clears their stale LaunchServices registrations. Newer
+work in progress is retained. Saved profiles, release archives and unrelated apps
+are outside cleanup. Stable installation removes the superseded `-dev` app.
+
+The local generated tree uses `Builds.noindex` with a `Builds` symlink; this avoids
+Spotlight indexing but does not by itself stop LaunchServices discovery. Temporary
+staging is hidden. After validating the canonical copy, the installer also removes
+its unpacked source bundle; keep the verified release archive until publication
+checks finish. It never resets the global application database.
+
+Run `python3 scripts/test-install-macos.py` after changes. Fixtures cover replacement,
+corruption/signature failure, edition isolation, downgrade refusal, retired-copy
+cleanup, development filenames, newer-build preservation and catalog parsing.

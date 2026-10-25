@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "editions": {
+    "original": {
+      "tag": "v1.0.11",
+      "sha256": "3557b247f90e6b3877a5c94ad409da016c669c1b9ca95bb1845208f203b15610"
+    },
+    "remaster": null
+  }
+}

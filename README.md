@@ -1,14 +1,30 @@
-# Ballance Unity Rebuild
+# Ballance and Reballance
 
-An open-source Unity recreation of Ballance, with the original 13 levels, native
-IVP physics, custom-level interfaces, built-in mods, and English, Chinese, and
-Russian UI. This fork uses **Unity 6.6 (6000.6.7f1)**.
+Two independently maintained editions of the open-source Unity recreation of
+Ballance. Both retain the 13 classic levels, native IVP physics, custom-level
+interfaces, built-in mods, and English, Chinese, and Russian localization.
+The pinned editor is **Unity 6.6 (6000.6.7f1)**.
 
-[Play in your browser](https://iwonz.github.io/ballance/) ·
+[Play Ballance in your browser](https://iwonz.github.io/ballance/) ·
 [Download releases](https://github.com/iwonz/ballance/releases) ·
 [Agent instructions](AGENTS.md) · [OpenSpec workflow](openspec/README.md)
 
 ![Ballance logo](Assets/Game/Common/Textures/UI/LogoPicture.jpg)
+
+## Editions
+
+**Ballance** is the preserved classic experience, with the
+existing visuals, menus, tutorials and gameplay. Its immutable baseline is
+[v1.0.11](https://github.com/iwonz/ballance/releases/tag/v1.0.11), commit
+`d066bfe5`, also named [original/v1.0.11](https://github.com/iwonz/ballance/tree/original/v1.0.11). The `original` branch is for compatible
+maintenance fixes. This is the classic Unity reconstruction, not the commercial
+Cyparade game or its original executable.
+
+**Reballance** is developed on `main`: new presentation, interface and
+authored weather with independent saves and releases. It is **under development**;
+the published browser game remains Ballance until a verified Remaster is available.
+See the [active implementation record](openspec/changes/build-original-and-remaster-editions/proposal.md)
+and [edition maintenance guide](docs/editions.md) for scope and current boundaries.
 
 **Note: Ballance belongs to Cyparade's work, and the copyright belongs to the original developer Cyparade. The development of this project is for learning purposes only and cannot be used for any commercial purposes. This project follows the GPL-3.0 protocol, but is limited to the code of this project. Any 3D model data, physical engine, images, audio and video, and game data related to Ballance are not within this scope. Any use of these game data for commercial activities without the permission of the copyright owner is illegal.**
 

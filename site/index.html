@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eeeae1">
+  <meta name="description" content="Ballance and Reballance. A familiar journey above the clouds, with two independent editions.">
+  <title>Ballance — Above the clouds</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="assets/site.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+  <header class="header">
+    <a class="wordmark" href="#" aria-label="Ballance">BALLANCE<span>REBALLANCE</span></a>
+    <nav aria-label="Play">
+      <a class="button original" href="original.html" data-i18n="playOriginal">Play Ballance</a>
+      <a class="button primary" href="remaster/" data-i18n="playRemaster">Play Reballance</a>
+    </nav>
+    <button class="language" id="language" aria-label="Switch to Russian">RU</button>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <img class="hero-image" src="assets/original-archive.jpg" alt="A wooden ball on a suspended stone track above the clouds" data-alt="heroAlt" fetchpriority="high">
+      <div class="hero-shade"></div>
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="heroEyebrow">A little courage. A little balance.</p>
+        <h1 id="hero-title" data-i18n="heroTitle">The sky is still<br>waiting for you.</h1>
+        <p class="hero-lead" data-i18n="heroLead">A wooden ball, a narrow path, and a world suspended in the clouds. Come back to a feeling you remember.</p>
+        <a class="text-link" href="#story" data-i18n="discover">Rediscover Ballance ↓</a>
+      </div>
+      <p class="image-credit" data-i18n="heroCredit">Archive in-game capture · Unity recreation</p>
+      <div class="hero-index"><span>01 / 03</span><span data-i18n="heroIndex">ONE JOURNEY. TWO EDITIONS.</span></div>
+    </section>
+    <section class="section story" id="story">
+      <div><p class="eyebrow">01 — <span data-i18n="storyEyebrow">The beginning</span></p><h2 data-i18n="storyTitle">Some games stay<br>with you.</h2></div>
+      <div class="prose"><p data-i18n="storyA">Ballance, created by Cyparade, made a world out of balance, momentum and height. Its stone paths, wooden bridges and steel rails ask for patience as much as precision.</p><p data-i18n="storyB">Wood, stone and paper are more than appearances. Each ball has a different weight and a different role. Finding the right material is part of finding the way.</p><p data-i18n="storyC">This independent project continues the open-source Unity recreation by Happy Dreamfish (imengyu). It preserves a classic edition and gives Reballance room to evolve.</p></div>
+    </section>
+    <section class="section edition" id="original">
+      <div class="edition-number">01</div>
+      <div><p class="eyebrow" data-i18n="originalEyebrow">The familiar experience</p><h2>Ballance</h2><p data-i18n="originalText">The classic Unity recreation: familiar routes, menus, tutorial and mechanics. Version 1.0.11 is preserved as a permanent starting point, with a separate branch for fixes and compatibility.</p><p class="small" data-i18n="originalNote">This is the classic Unity reconstruction, not the original commercial Cyparade executable.</p><a class="button original" href="original.html" data-i18n="playOriginal">Play Ballance</a><a class="quiet-link" href="https://github.com/iwonz/ballance/tree/original/v1.0.11" data-i18n="sourceTag">Explore the preserved source ↗</a></div>
+      <figure><img src="assets/original-gameplay.jpg" alt="Ballance gameplay" data-alt="originalAlt" loading="lazy"><figcaption data-i18n="originalCaption">Archive in-game capture. Classic routes, independently maintained.</figcaption></figure>
+    </section>
+    <section class="remaster" id="remaster">
+      <div class="section remaster-intro"><p class="eyebrow">02 — <span data-i18n="remasterEyebrow">Reballance</span></p><h2 data-i18n="remasterTitle">The same sense of wonder.<br>A world with more texture.</h2><p data-i18n="remasterIntro">Reballance development brings tactile materials, clearer menus and carefully authored weather to the suspended tracks. Your classic edition stays independent.</p><span class="status" data-i18n="development">Reballance in development</span></div>
+      <div class="section materials"><article><img class="material" src="assets/material-wood.png" width="1254" height="1254" alt="" loading="lazy"><h3 data-i18n="wood">Wood</h3><p data-i18n="woodText">Warm grain, readable seams, and the familiar all-round ball.</p></article><article><img class="material" src="assets/material-stone.png" width="1254" height="1254" alt="" loading="lazy"><h3 data-i18n="stone">Stone</h3><p data-i18n="stoneText">Dense mineral detail, worn edges, and a reassuring sense of weight.</p></article><article><img class="material" src="assets/material-paper.png" width="1254" height="1254" alt="" loading="lazy"><h3 data-i18n="paper">Paper</h3><p data-i18n="paperText">Soft fibres and folds. Light enough to find a different way forward.</p></article></div>
+      <p class="material-caption" data-i18n="materialCaption">Texture studies for Reballance · work in progress</p>
+      <section class="section weather" aria-labelledby="weather-title"><div class="weather-heading"><div><p class="eyebrow" data-i18n="weatherEyebrow">Seven ways to see the sky</p><h2 id="weather-title" data-i18n="weatherTitle">Choose your atmosphere.</h2></div><p data-i18n="weatherIntro">Standard is the default. Weather presets are separate from graphics quality. Place names describe an artistic theme, with the tracks still floating in the sky.</p></div>
+        <div class="preset-list" role="group" aria-label="Environment presets" id="presets"></div>
+        <p class="preset-description" id="preset-description" aria-live="polite"></p>
+        <figure class="concept"><img src="assets/weather-concept.png" width="1585" height="992" alt="Concept references for clear skies, rain, fog, snow, sand and jungle vegetation" data-alt="conceptAlt" loading="lazy"><figcaption data-i18n="conceptCaption">ART DIRECTION CONCEPT · Supplied visual reference, not a screenshot of the current Reballance.</figcaption></figure>
+      </section>
+    </section>
+    <section class="section downloads" id="downloads"><div><p class="eyebrow">03 — <span data-i18n="downloadsEyebrow">Make yourself at home</span></p><h2 data-i18n="downloadsTitle">Play in the browser.<br>Or take it with you.</h2></div><div class="prose"><p data-i18n="downloadsText">Ballance 1.0.11 is available for Web, Windows, Linux, macOS and Android. Reballance downloads will appear with its verified release.</p><a class="button original" href="https://github.com/iwonz/ballance/releases/tag/v1.0.11" data-i18n="downloadOriginal">Download Ballance 1.0.11 ↗</a><a class="quiet-link" href="https://github.com/iwonz/ballance" data-i18n="project">Source code & development ↗</a><p class="small" data-i18n="separateSaves">Each edition has its own settings and progress. Your saves are not transferred automatically.</p></div></section>
+  </main>
+  <footer class="section footer"><a class="wordmark" href="#">BALLANCE</a><p data-i18n="credits">Original game: Cyparade. Unity recreation: Happy Dreamfish / imengyu. This fork and Reballance: iwonz. An independent community project.</p><a href="https://github.com/iwonz/ballance/blob/main/LICENSE" data-i18n="license">License & credits ↗</a></footer>
+</body>
+</html>

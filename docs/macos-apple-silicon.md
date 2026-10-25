@@ -23,12 +23,14 @@ For an editor installed elsewhere, set its executable path explicitly:
 UNITY_EDITOR="/path/to/Unity.app/Contents/MacOS/Unity" bash scripts/build-macos.sh
 ```
 
-Close any editor already using this project first. Outputs are
-`Builds/macOS/Ballance.app`, `Builds/Ballance-<version>-macOS-AppleSilicon.zip` and its
-`.sha256` checksum. Move a previous output aside before rebuilding; existing
-apps and archives are deliberately not overwritten.
+Close any editor already using this project first. The wrapper delegates to the
+shared content-aware build and packaging commands. Outputs are
+`Builds/macOS/Ballance.app` (`Ballance-dev.app` for development versions),
+`Builds/releases/Ballance-<version>-macOS.zip` and its checksum. Existing outputs
+are not overwritten. Follow [local installation and cleanup](build-and-release.md#local-macos-installation)
+after packaging; obsolete unpacked apps are deleted after verified replacement.
 
-The build entry point is `Ballance2.Editor.MacOSBuild.BuildAppleSilicon`.
+The build entry point is `Ballance2.Editor.PlayerBuild.Build`.
 It selects ARM64 and Mono, explicitly builds `Assets/Scenes/Main.unity`, builds
 the core package, every module in `Assets/Packages`, and levels 01–13 for
 `StandaloneOSX`. Packages go under `Ballance.app/Contents/{Core,Packages,Levels}`

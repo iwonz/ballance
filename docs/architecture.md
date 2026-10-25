@@ -312,3 +312,7 @@ an HTTP 200 response alone is not a gameplay check.
 The context checker and its self-tests validate structure and delivery records;
 strict OpenSpec validation owns requirement/delta parsing. These are guardrails,
 not substitutes for reading changed code or reviewing scenario evidence.
+
+Local macOS installation and obsolete-player cleanup are owned by
+[scripts/install-macos.py](../scripts/install-macos.py); see
+[the installation procedure](build-and-release.md#local-macos-installation).

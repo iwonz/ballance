@@ -151,3 +151,33 @@ References: [Unity release](https://unity.com/releases/editor/whats-new/6000.6.7
 [Unity Web deployment](https://docs.unity3d.com/6000.6/Documentation/Manual/webgl-deploying.html),
 [GitHub Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages),
 [Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
+
+## Local macOS installation
+
+Use `/Applications/Ballance.app` and `/Applications/Reballance.app` for stable
+installations. Intermediate development versions use `Ballance-dev.app` and
+`Reballance-dev.app`; bundle IDs and saved-data paths remain stable. Package a
+completed player before installing it.
+
+```sh
+python3 scripts/install-macos.py remaster Builds/macOS/Reballance-dev.app
+python3 scripts/install-macos.py remaster Builds/macOS/Reballance-dev.app --apply
+```
+
+Use `original` and its corresponding app for the classic edition. A dry run lists
+exact paths. Applying verifies identity, version, signature and copied-file hashes,
+rejects downgrades and active copies, and replaces the edition's canonical app.
+It then deletes obsolete matching installed/build bundles, including former
+`.app.disabled` copies, and clears their stale LaunchServices registrations. Newer
+work in progress is retained. Saved profiles, release archives and unrelated apps
+are outside cleanup. Stable installation removes the superseded `-dev` app.
+
+The local generated tree uses `Builds.noindex` with a `Builds` symlink; this avoids
+Spotlight indexing but does not by itself stop LaunchServices discovery. Temporary
+staging is hidden. After validating the canonical copy, the installer also removes
+its unpacked source bundle; keep the verified release archive until publication
+checks finish. It never resets the global application database.
+
+Run `python3 scripts/test-install-macos.py` after changes. Fixtures cover replacement,
+corruption/signature failure, edition isolation, downgrade refusal, retired-copy
+cleanup, development filenames, newer-build preservation and catalog parsing.

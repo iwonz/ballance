@@ -58,6 +58,7 @@ jobs:
           python3 scripts/check-physics-abi.py
           bash -n scripts/build-macos.sh scripts/build.sh scripts/setup-openspec.sh
           python3 scripts/test-release-tools.py
+          python3 scripts/test-install-macos.py
           python3 -c 'import ast; from pathlib import Path; ast.parse(Path("scripts/package-macos.py").read_text())'
           test "$(uname -m)" = arm64
           lipo Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib -verify_arch arm64

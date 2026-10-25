@@ -65,6 +65,9 @@ Web использует gzip с **Decompression Fallback**, однопоточ�
 Исходники не содержат сгенерированную игру: Web-архив хранится в GitHub Release.
 
 1. Один раз включите **Settings → Pages → Source → GitHub Actions**.
+   В **Settings → Environments → github-pages → Deployment branches and tags**
+   разрешите ветку `main` и теги `v*`: публикация релиза запускается от тега.
+   В `iwonz/ballance` оба правила уже настроены.
 2. Закоммитьте исходники и workflows, соберите и проверьте Web из этого коммита.
 3. Создайте draft release на его теге; приложите
    `Ballance-<version>-WebGL.tar.gz` и соответствующий `.sha256`.

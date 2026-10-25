@@ -63,7 +63,7 @@ UNITY_EDITOR=/Applications/Unity/Hub/Editor/6000.6.7f1/Unity.app/Contents/MacOS/
 ```
 
 `BuildChecks.Run` checks six installed target modules and HTTP/jar/file path handling,
-then invokes virtual Input System, localization, and modernization checks. The iOS availability check is not an
+then invokes virtual Input System, localization, modernization, and graphics checks. The iOS availability check is not an
 iOS export or release. If the optional module is absent, report that prerequisite
 and run relevant checks individually instead of claiming the aggregate passed.
 
@@ -88,6 +88,15 @@ player, particularly Web. The allocation/read-byte checks are bounded fixtures,
 not whole-game FPS or peak-memory benchmarks. Display ratio formatting and saved
 setting keys are reviewed at their UI/startup callers; physical monitor mode
 switching still needs representative hardware.
+
+`Ballance2.Editor.GraphicsChecks.Run` deliberately changes API/power preferences,
+verifies that the content-aware build policy restores them for the five release
+targets, and restores prior values. It checks recognized software names, missing
+device information, prefab wiring, literal text, and four-language text fit. These
+are configuration/UI checks, not evidence that a multi-GPU system chose a discrete
+GPU. Inspect the rebuilt player's graphics settings and back navigation; use a
+separate software-rendered browser session to exercise the warning, then close it
+before any hardware FPS capture.
 
 ## Native physics
 
@@ -164,7 +173,8 @@ successful runs. Screenshots before/after each capture verify the intended state
 An initial idle-page calibration records browser refresh cadence; a cadence below
 59 Hz cannot qualify for the 60 FPS target. Each scenario warms up for 10 seconds
 and records for 30 seconds. The JSON contains
-the Wasm SHA-256/build version, browser, GPU, actual canvas dimensions, visibility,
+the Wasm SHA-256/build version, browser, GPU, actual WebGL context power preference,
+canvas dimensions, visibility,
 draw counts, frame timestamps, CPU callback times, and asynchronous GPU elapsed
 times. Only animation callbacks
 that submit draws to the Unity canvas count as frames. GPU queries must resolve
@@ -192,6 +202,11 @@ These are explicit regression tolerances, not a claim that every frame finishes 
 tabs, lost contexts, invalid GPU timings, changed resolution, invalid timestamps, absent draws, and
 missing scenarios cannot pass. Hosted CI runs the checker's adversarial self-tests
 and JavaScript syntax check; **it does not run or certify hardware game FPS**.
+Report schema 2 additionally requires `powerPreference: "high-performance"`; missing,
+default, or low-power values fail reference-profile qualification. The preference
+does not prove which GPU the browser selected, so hardware-name and GPU-timing
+checks remain required. Schema 1 reports are historical evidence and need a new
+capture for the current gate; do not relabel old reports to make them pass.
 Repeat real measurements on intended player hardware and heavier level sections
 before extending the performance claim beyond this reference fixture.
 

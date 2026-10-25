@@ -107,6 +107,13 @@ namespace Ballance2.Editor
       }
     }
 
+    internal static void ConfigureGraphics(BuildTarget target)
+    {
+      PlayerSettings.SetUseDefaultGraphicsAPIs(target, true);
+      if (target == BuildTarget.WebGL)
+        PlayerSettings.WebGL.powerPreference = WebGLPowerPreference.HighPerformance;
+    }
+
     private static void Configure(BuildTarget target, string output)
     {
       var named = NamedBuildTarget.FromBuildTargetGroup(BuildPipeline.GetBuildTargetGroup(target));
@@ -115,6 +122,7 @@ namespace Ballance2.Editor
       // The game's behaviours and UI types also live in separately loaded asset bundles.
       PlayerSettings.SetManagedStrippingLevel(named, desktop ? ManagedStrippingLevel.Disabled : ManagedStrippingLevel.Minimal);
       PlayerSettings.stripEngineCode = false;
+      ConfigureGraphics(target);
       if (target == BuildTarget.StandaloneOSX)
         EditorUserBuildSettings.SetPlatformSettings("OSXUniversal", "Architecture", "ARM64");
       if (target == BuildTarget.Android)

@@ -44,6 +44,30 @@ Android temporarily selects Input System only because Both is unsupported there;
 `AndroidInput` preserves existing bindings and touch controls, and the build restores
 the previous editor input setting even on failure.
 
+## Graphics device selection
+
+Rendering already uses Unity's graphics backend; gameplay and IVP physics still
+run on the CPU. The content-aware builder explicitly restores Unity's
+[automatic graphics API selection](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/PlayerSettings.SetUseDefaultGraphicsAPIs.html)
+for each target. The engine chooses among compatible APIs; this is not a benchmark
+that proves one API is fastest on every driver. The current Web backend remains
+WebGL 2. Enabling WebGPU requires separate compatibility/performance validation,
+including Unity's [readback limitations](https://docs.unity3d.com/6000.6/Documentation/Manual/WebGPU-limitations.html).
+
+Web builds also request [HighPerformance](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/PlayerSettings.WebGL-powerPreference.html)
+when creating the graphics context. This was already the project's serialized
+default; the builder now enforces it after local overrides. Browsers may ignore
+the hint, and a web page cannot enable a browser's disabled hardware acceleration
+or override OS GPU policy. On a machine with multiple GPUs, use the OS graphics
+preferences for the game or browser, enable browser graphics acceleration, and
+restart the affected application. A performance GPU can increase power use.
+
+The game's **Settings -> Graphics** page shows the reported device/API and warns
+about recognized software renderers. It does not offer a CPU/GPU switch or change
+saved quality settings. Compare the actual renderer and frame evidence using the
+[hardware checks](validation.md#web-frame-performance), rather than treating the
+high-performance request or an unfamiliar device name as proof of acceleration.
+
 ## Signing and deferred platforms
 
 The Android APK is for installation and testing. For Google Play, configure your

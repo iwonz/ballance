@@ -16,9 +16,9 @@ spec.loader.exec_module(performance)
 def fixture(fps=60):
     sample = {"warmupMs": 10000, "durationMs": 30000, "width": 1920, "height": 1200,
               "finalWidth": 1920, "finalHeight": 1200, "dpr": 2, "renderer": "ANGLE Metal Apple M3",
-              "visible": True, "contextLost": False, "gpuDisjoint": False,
+              "visible": True, "contextLost": False, "gpuDisjoint": False, "powerPreference": "high-performance",
               "frames": [{"timeMs": (i + 1) * 1000 / fps, "cpuMs": 2, "gpuMs": 3, "draws": 50} for i in range(fps * 30)]}
-    return {"schema": 1, "gameplayReady": True, "browser": "Chrome fixture", "browserHz": fps, "build": {"sha256": "a" * 64},
+    return {"schema": 2, "gameplayReady": True, "browser": "Chrome fixture", "browserHz": fps, "build": {"sha256": "a" * 64},
             "scenarios": [{"name": name, **copy.deepcopy(sample)} for name in ("menu", "level01")]}
 
 
@@ -101,8 +101,16 @@ class PerformanceChecks(unittest.TestCase):
         with self.assertRaises(ValueError):
             performance.check(data)
 
+    def test_gpu_preference(self):
+        for preference in (None, "default", "low-power", ""):
+            with self.subTest(preference=preference):
+                data = fixture()
+                data["scenarios"][0]["powerPreference"] = preference
+                with self.assertRaises(ValueError):
+                    performance.check(data)
+
     def test_missing_scenario_or_identity(self):
-        for key, value in (("scenarios", []), ("gameplayReady", False), ("build", {}), ("schema", 2), ("browserHz", 30)):
+        for key, value in (("scenarios", []), ("gameplayReady", False), ("build", {}), ("schema", 1), ("browserHz", 30)):
             data = fixture()
             data[key] = value
             with self.assertRaises(ValueError):

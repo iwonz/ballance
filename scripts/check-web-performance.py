@@ -19,7 +19,7 @@ def percentile(values, fraction):
 
 
 def check(report):
-    if report.get("schema") != 1 or report.get("gameplayReady") is not True:
+    if report.get("schema") != 2 or report.get("gameplayReady") is not True:
         raise ValueError("Incomplete gameplay capture")
     if not report.get("browser") or not re.fullmatch(r"[0-9a-f]{64}", report.get("build", {}).get("sha256", "")):
         raise ValueError("Missing browser or build identity")
@@ -33,6 +33,8 @@ def check(report):
         renderer = sample.get("renderer", "")
         if not renderer or re.search(r"swiftshader|llvmpipe|softpipe|software|microsoft basic", renderer, re.I):
             raise ValueError(f"{name}: hardware renderer required")
+        if sample.get("powerPreference") != "high-performance":
+            raise ValueError(f"{name}: high-performance WebGL context preference required")
         if sample.get("visible") is not True or sample.get("contextLost") is not False:
             raise ValueError(f"{name}: hidden tab or lost graphics context")
         if sample.get("gpuDisjoint") is not False:

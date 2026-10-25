@@ -8,7 +8,7 @@ async (page) => {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 2 });
   const game = await context.newPage();
   const output = `output/playwright/performance-${Date.now()}`;
-  const report = { schema: 1, url, browser: browser.version(), capturedAt: new Date().toISOString(), scenarios: [] };
+  const report = { schema: 2, url, browser: browser.version(), capturedAt: new Date().toISOString(), scenarios: [] };
   const messages = [];
   game.on("console", message => messages.push(message.text()));
   const waitFor = async text => {
@@ -40,6 +40,7 @@ async (page) => {
       const result = {
         warmupMs: 10000, width: canvas.width, height: canvas.height, dpr: devicePixelRatio,
         renderer: extension ? gl.getParameter(extension.UNMASKED_RENDERER_WEBGL) : "",
+        powerPreference: gl.getContextAttributes().powerPreference,
         userAgent: navigator.userAgent, visible: document.visibilityState === "visible",
         frames: [], gpuDisjoint: false,
       };

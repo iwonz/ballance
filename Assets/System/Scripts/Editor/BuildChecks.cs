@@ -32,6 +32,7 @@ namespace Ballance2.Editor
       InputChecks.Run();
       LocalizationChecks.Run();
       ModernizationChecks.Run();
+      GraphicsChecks.Run();
       Debug.Log("Unity 6 build and resource-path checks passed for all six platforms.");
     }
 

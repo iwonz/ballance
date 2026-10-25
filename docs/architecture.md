@@ -176,6 +176,16 @@ Unity's pool directly and destroys rows beyond retained capacity. Display settin
 use `Resolution.refreshRateRatio` and the explicit fullscreen-mode overload; saved
 resolution indices and keys retain their existing format.
 
+[GraphicsDeviceInfo](../Assets/Game/Menu/Scripts/Control/GraphicsDeviceInfo.cs) refreshes
+the reported device/API when graphics settings become visible. It shows localized
+advice for recognized software renderers, without changing preferences or running
+per-frame diagnostics. Device names are displayed as literal text; an unfamiliar
+name is not treated as certified hardware acceleration.
+
+Known UI gap: the existing Web resolution selector can display `Unknow %` in a
+fresh browser profile. Use the actual canvas dimensions for performance evidence;
+the selector label is not a reliable measurement of render resolution.
+
 [GameSoundManager](../Assets/System/Scripts/Services/GameSoundManager.cs) owns mixers
 and registered sources; [MusicManager](../Assets/Game/GamePlay/Scripts/MusicManager.cs)
 selects music/ambient themes. Ball sound effects live in `Balls/Effects`.

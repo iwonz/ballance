@@ -65,6 +65,10 @@
     <Text name="core.ui.SettingsLanguageTilte">语言</Text>
     <Text name="core.ui.SettingsPackageTilte">模组管理器</Text>
     <Text name="core.ui.SettingsGraphicsTilte">视频</Text>
+    <Text name="core.ui.GraphicsDeviceInfo">报告的设备：{0}&#10;图形 API：{1}</Text>
+    <Text name="core.ui.GraphicsDeviceUnknown">未知</Text>
+    <Text name="core.ui.GraphicsSoftwareWeb">正在使用软件渲染。请启用浏览器的图形加速，然后重启浏览器。</Text>
+    <Text name="core.ui.GraphicsSoftwareSystem">正在使用软件渲染。请检查显卡驱动程序和系统 GPU 设置。</Text>
     <Text name="core.ui.SettingsQualityVeryLow">最低</Text>
     <Text name="core.ui.SettingsQualityLow">低</Text>
     <Text name="core.ui.SettingsQualityMedium">中等</Text>
@@ -353,6 +357,10 @@ Music: {10}</Text>
     <Text name="core.ui.SettingsLanguageTilte">Language</Text>
     <Text name="core.ui.SettingsPackageTilte">Module manager</Text>
     <Text name="core.ui.SettingsGraphicsTilte">Graphics</Text>
+    <Text name="core.ui.GraphicsDeviceInfo">Reported device: {0}&#10;Graphics API: {1}</Text>
+    <Text name="core.ui.GraphicsDeviceUnknown">Unknown</Text>
+    <Text name="core.ui.GraphicsSoftwareWeb">Software rendering. Enable browser graphics acceleration and restart the browser.</Text>
+    <Text name="core.ui.GraphicsSoftwareSystem">Software rendering. Check graphics drivers and system GPU preferences.</Text>
     <Text name="core.ui.SettingsQualityVeryLow">VeryLow</Text>
     <Text name="core.ui.SettingsQualityLow">Low</Text>
     <Text name="core.ui.SettingsQualityMedium">Medium</Text>
@@ -551,6 +559,10 @@ Welcome to discuss the game at Ballance Discord.
     <Text name="core.ui.SettingsLanguageTilte">語言</Text>
     <Text name="core.ui.SettingsPackageTilte">模組管理器</Text>
     <Text name="core.ui.SettingsGraphicsTilte">視頻</Text>
+    <Text name="core.ui.GraphicsDeviceInfo">回報的裝置：{0}&#10;圖形 API：{1}</Text>
+    <Text name="core.ui.GraphicsDeviceUnknown">未知</Text>
+    <Text name="core.ui.GraphicsSoftwareWeb">目前使用軟體算繪。請啟用瀏覽器的圖形加速，然後重新啟動瀏覽器。</Text>
+    <Text name="core.ui.GraphicsSoftwareSystem">目前使用軟體算繪。請檢查顯示卡驅動程式和系統 GPU 設定。</Text>
     <Text name="core.ui.SettingsQualityVeryLow">最低</Text>
     <Text name="core.ui.SettingsQualityLow">低</Text>
     <Text name="core.ui.SettingsQualityMedium">中等</Text>
@@ -836,6 +848,10 @@ Ballance Rebuild是滾球Ballance遊戲的開源Unity重製版，由快樂的夢
     <Text name="core.ui.SettingsLanguageTilte">Язык</Text>
     <Text name="core.ui.SettingsPackageTilte">Модификации</Text>
     <Text name="core.ui.SettingsGraphicsTilte">Графика</Text>
+    <Text name="core.ui.GraphicsDeviceInfo">Устройство: {0}&#10;Графический API: {1}</Text>
+    <Text name="core.ui.GraphicsDeviceUnknown">Неизвестно</Text>
+    <Text name="core.ui.GraphicsSoftwareWeb">Программный рендеринг. Включите аппаратное ускорение в браузере и перезапустите его.</Text>
+    <Text name="core.ui.GraphicsSoftwareSystem">Программный рендеринг. Проверьте драйверы и выбор видеокарты в настройках системы.</Text>
     <Text name="core.ui.SettingsQualityVeryLow">Минимальное</Text>
     <Text name="core.ui.SettingsQualityLow">Низкое</Text>
     <Text name="core.ui.SettingsQualityMedium">Среднее</Text>

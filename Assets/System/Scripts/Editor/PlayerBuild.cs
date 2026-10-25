@@ -13,6 +13,37 @@ namespace Ballance2.Editor
   {
     public const string UnityVersion = "6000.6.7f1";
 
+    [Serializable]
+    private class Edition
+    {
+      public string id;
+      public string productName;
+      public string applicationIdentifier;
+    }
+
+    [Serializable]
+    private class BuildIdentity
+    {
+      public string edition;
+      public string version;
+      public string productName;
+      public string applicationIdentifier;
+    }
+
+    private static Edition ReadEdition()
+    {
+      const string path = "ProjectSettings/Edition.json";
+      if (!File.Exists(path)) return null;
+      var edition = JsonUtility.FromJson<Edition>(File.ReadAllText(path));
+      if (edition == null || (edition.id != "original" && edition.id != "remaster"))
+        throw new BuildFailedException("Invalid edition in " + path);
+      bool remaster = edition.id == "remaster";
+      if (edition.productName != (remaster ? "Ballance Remaster" : "Ballance") ||
+          edition.applicationIdentifier != (remaster ? "com.iwonz.BallanceRemaster" : "com.MengyuGame.Ballance"))
+        throw new BuildFailedException("Edition product/application identity mismatch");
+      return edition;
+    }
+
     [MenuItem("Ballance/Build/Build current platform with game content")]
     public static void Build()
     {
@@ -76,6 +107,15 @@ namespace Ballance2.Editor
           RequireFile(Path.Combine(output, "index.html"));
           File.WriteAllText(Path.Combine(output, ".nojekyll"), "");
         }
+        var edition = ReadEdition();
+        if (edition != null)
+        {
+          var folder = target == BuildTarget.WebGL || target == BuildTarget.iOS ? output : Path.GetDirectoryName(output);
+          File.WriteAllText(Path.Combine(folder, "build-identity.json"), JsonUtility.ToJson(new BuildIdentity {
+            edition = edition.id, version = PlayerSettings.bundleVersion,
+            productName = edition.productName, applicationIdentifier = edition.applicationIdentifier
+          }, true) + "\n");
+        }
         Debug.Log("Built " + target + " with all 13 levels: " + output);
       }
       finally
@@ -118,6 +158,12 @@ namespace Ballance2.Editor
     {
       var named = NamedBuildTarget.FromBuildTargetGroup(BuildPipeline.GetBuildTargetGroup(target));
       var desktop = BuildPipeline.GetBuildTargetGroup(target) == BuildTargetGroup.Standalone;
+      var edition = ReadEdition();
+      if (edition != null)
+      {
+        PlayerSettings.productName = edition.productName;
+        PlayerSettings.SetApplicationIdentifier(named, edition.applicationIdentifier);
+      }
       PlayerSettings.SetScriptingBackend(named, desktop ? ScriptingImplementation.Mono2x : ScriptingImplementation.IL2CPP);
       // The game's behaviours and UI types also live in separately loaded asset bundles.
       PlayerSettings.SetManagedStrippingLevel(named, desktop ? ManagedStrippingLevel.Disabled : ManagedStrippingLevel.Minimal);
@@ -145,7 +191,7 @@ namespace Ballance2.Editor
         PlayerSettings.WebGL.debugSymbolMode = WebGLDebugSymbolMode.External;
         PlayerSettings.WebGL.initialMemorySize = 256;
         PlayerSettings.WebGL.maximumMemorySize = 2048;
-        PlayerSettings.WebGL.template = "APPLICATION:Default";
+        PlayerSettings.WebGL.template = ReadEdition()?.id == "remaster" ? "PROJECT:Remaster" : "APPLICATION:Default";
       }
       AssetDatabase.SaveAssets();
     }

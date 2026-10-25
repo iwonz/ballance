@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tarfile
 import zipfile
+from release_identity import asset_name, validate_build_identity
 
 ROOT = Path(__file__).resolve().parent.parent
 PLATFORMS = ("macOS", "Windows", "Linux", "Android", "iOS", "WebGL")
@@ -48,8 +49,8 @@ def package(platform):
                 "iOS": "Unity-iPhone.xcodeproj/project.pbxproj", "WebGL": "index.html"}
     if not (folder / required[platform]).is_file():
         raise RuntimeError(f"Build {platform} first with scripts/build.sh")
-    extension = "zip" if platform in ("macOS", "Windows") else "apk" if platform == "Android" else "tar.gz"
-    archive = ROOT / "Builds/releases" / f"Ballance-{version[1]}-{platform}.{extension}"
+    tag = validate_build_identity(ROOT, folder, version[1])
+    archive = ROOT / "Builds/releases" / asset_name(tag, platform)
     if archive.exists() or Path(str(archive) + ".sha256").exists():
         raise RuntimeError(f"Move previous release files aside first: {archive}")
     archive.parent.mkdir(parents=True, exist_ok=True)

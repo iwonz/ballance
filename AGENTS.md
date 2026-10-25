@@ -35,6 +35,7 @@ When a request changes scope, update the same change's artifacts before continui
 - Ball gameplay uses native IVP through `Assets/BallancePhysics`, not Unity Rigidbody physics. Unity colliders still serve trigger and presentation paths.
 - Pair native creation with cleanup; keep C/C# calling conventions, struct layouts, static AOT callbacks, and delegate lifetimes consistent. Follow [native instructions](BallancePhysics/AGENTS.md).
 - `Assets/Plugins` mostly contains third-party code. Keep vendor changes narrow, retain licenses, and explain local integration changes. `AndroidInput.cs` is project-owned.
+- Run local macOS players through `scripts/install-macos.py`; use the canonical latest Original and Remaster applications. Do not register additional diagnostic app copies. See the build guide for installation and cleanup.
 - Do not commit generated players, caches, logs, credentials, signing keys, or machine-specific configuration. Do not rewrite native binaries for a documentation change.
 - iOS work is deferred. Windows/Linux are x86-64, macOS and Android release targets are ARM64; check the build guide before changing platform support.
 

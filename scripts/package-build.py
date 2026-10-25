@@ -4,12 +4,13 @@ import argparse
 import hashlib
 from pathlib import Path
 import re
+import plistlib
 import shutil
 import subprocess
 import sys
 import tarfile
 import zipfile
-from release_identity import asset_name, validate_build_identity
+from release_identity import asset_name, checkout_edition, validate_build_identity
 
 ROOT = Path(__file__).resolve().parent.parent
 PLATFORMS = ("macOS", "Windows", "Linux", "Android", "iOS", "WebGL")
@@ -44,8 +45,11 @@ def package(platform):
     if not version:
         raise RuntimeError("Invalid bundleVersion for a release filename")
     folder = ROOT / "Builds" / platform
-    required = {"macOS": "Ballance.app/Contents/Info.plist", "Windows": "Ballance.exe",
-                "Linux": "Ballance.x86_64", "Android": "Ballance.apk",
+    edition = checkout_edition(ROOT)
+    product = edition["productName"] if edition else "Ballance"
+    mac_app = product + ("-dev" if "-dev." in version[1] else "") + ".app"
+    required = {"macOS": mac_app + "/Contents/Info.plist", "Windows": product + ".exe",
+                "Linux": product + ".x86_64", "Android": product + ".apk",
                 "iOS": "Unity-iPhone.xcodeproj/project.pbxproj", "WebGL": "index.html"}
     if not (folder / required[platform]).is_file():
         raise RuntimeError(f"Build {platform} first with scripts/build.sh")
@@ -55,13 +59,17 @@ def package(platform):
         raise RuntimeError(f"Move previous release files aside first: {archive}")
     archive.parent.mkdir(parents=True, exist_ok=True)
     if platform == "macOS":
+        info_path = folder / mac_app / "Contents/Info.plist"
+        info = plistlib.loads(info_path.read_bytes())
+        info["CFBundleDisplayName"] = Path(mac_app).stem
+        info_path.write_bytes(plistlib.dumps(info))
         subprocess.run([sys.executable, str(ROOT / "scripts/package-macos.py"),
-                        str(folder / "Ballance.app"), str(archive)], check=True)
+                        str(folder / mac_app), str(archive)], check=True)
         return archive
     if platform == "WebGL":
         validate_web(folder)
     if platform == "Android":
-        shutil.copyfile(folder / "Ballance.apk", archive)
+        shutil.copyfile(folder / (product + ".apk"), archive)
     elif platform == "Windows":
         with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as output:
             for path in sorted(folder.rglob("*")):

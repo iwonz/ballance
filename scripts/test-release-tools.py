@@ -4,11 +4,13 @@ import hashlib
 import importlib.util
 import io
 import json
+import plistlib
 from pathlib import Path
 import tarfile
 import tempfile
 import shutil
 import unittest
+from unittest.mock import patch
 import zipfile
 from release_identity import asset_name, checkout_edition, parse_tag, validate_build_identity
 
@@ -69,6 +71,25 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(identity, {"tag": self.tag, "version": "1.0.0",
                                    "archive": self.archive.name,
                                    "sha256": hashlib.sha256(self.archive.read_bytes()).hexdigest()})
+
+    def test_macos_packager_uses_the_development_bundle_name(self):
+        settings = self.root / "ProjectSettings"; settings.mkdir()
+        (settings / "ProjectSettings.asset").write_text("  bundleVersion: 1.0.0-dev.9\n")
+        (settings / "Edition.json").write_text(json.dumps({"id": "remaster", "productName": "Reballance",
+            "applicationIdentifier": "com.iwonz.BallanceRemaster"}))
+        folder = self.root / "Builds/macOS"; folder.mkdir(parents=True)
+        (folder / "build-identity.json").write_text(json.dumps({"edition": "remaster", "version": "1.0.0-dev.9",
+            "productName": "Reballance", "applicationIdentifier": "com.iwonz.BallanceRemaster"}))
+        app = folder / "Reballance.app"; (app / "Contents").mkdir(parents=True)
+        (app / "Contents/Info.plist").write_bytes(plistlib.dumps({"CFBundleName": "Reballance"}))
+        with patch.object(package, "ROOT", self.root), patch.object(package.subprocess, "run") as run:
+            with self.assertRaisesRegex(RuntimeError, "Build macOS first"):
+                package.package("macOS")
+            app.rename(folder / "Reballance-dev.app")
+            archive = package.package("macOS")
+        self.assertEqual(Path(run.call_args.args[0][-2]).name, "Reballance-dev.app")
+        self.assertEqual(plistlib.loads((folder / "Reballance-dev.app/Contents/Info.plist").read_bytes())["CFBundleDisplayName"], "Reballance-dev")
+        self.assertEqual(archive.name, "Reballance-1.0.0-dev.9-macOS.zip")
 
     def test_missing_level(self):
         (self.web / "StreamingAssets/BuiltInPackages/Levels/level13.ballance").unlink()

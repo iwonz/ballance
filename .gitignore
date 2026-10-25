@@ -7,6 +7,8 @@
 /[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
+/Builds
+/Builds.noindex/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
@@ -88,4 +90,5 @@ Ballance.sln
 __pycache__/
 .playwright-cli/
 /.utmp/
+/.worktrees/
 .vsconfig

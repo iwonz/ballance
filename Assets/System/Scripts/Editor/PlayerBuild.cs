@@ -135,12 +135,13 @@ namespace Ballance2.Editor
 
     public static string DefaultOutput(BuildTarget target)
     {
+      string product = ReadEdition()?.productName ?? "Ballance";
       switch (target)
       {
-        case BuildTarget.StandaloneOSX: return "Builds/macOS/Ballance.app";
-        case BuildTarget.StandaloneWindows64: return "Builds/Windows/Ballance.exe";
-        case BuildTarget.StandaloneLinux64: return "Builds/Linux/Ballance.x86_64";
-        case BuildTarget.Android: return "Builds/Android/Ballance.apk";
+        case BuildTarget.StandaloneOSX: return "Builds/macOS/" + product + (PlayerSettings.bundleVersion.Contains("-dev.") ? "-dev" : "") + ".app";
+        case BuildTarget.StandaloneWindows64: return "Builds/Windows/" + product + ".exe";
+        case BuildTarget.StandaloneLinux64: return "Builds/Linux/" + product + ".x86_64";
+        case BuildTarget.Android: return "Builds/Android/" + product + ".apk";
         case BuildTarget.iOS: return "Builds/iOS";
         case BuildTarget.WebGL: return "Builds/WebGL";
         default: throw new BuildFailedException("Unsupported build target: " + target);

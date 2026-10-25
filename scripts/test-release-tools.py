@@ -7,8 +7,10 @@ import json
 from pathlib import Path
 import tarfile
 import tempfile
+import shutil
 import unittest
 import zipfile
+from release_identity import asset_name, checkout_edition, parse_tag, validate_build_identity
 
 
 def load(name):
@@ -20,6 +22,7 @@ def load(name):
 
 package = load("package-build")
 pages = load("prepare-pages")
+site = load("prepare-site")
 
 
 class ReleaseTests(unittest.TestCase):
@@ -120,6 +123,118 @@ class ReleaseTests(unittest.TestCase):
     def test_invalid_tag(self):
         with self.assertRaisesRegex(RuntimeError, "release tag"):
             pages.prepare(self.download, self.destination, "../v1.0.0")
+
+    def test_edition_round_trip_and_wrong_product(self):
+        self.tag = "remaster/v1.0.0"
+        self.archive = self.download / asset_name(self.tag)
+        (self.web / "index.html").write_text('productName: "Ballance Remaster", productVersion: "1.0.0"')
+        (self.web / "build-identity.json").write_text(json.dumps({"edition": "remaster", "version": "1.0.0", "productName": "Ballance Remaster", "applicationIdentifier": "com.iwonz.BallanceRemaster"}))
+        self.archive_web()
+        digest = hashlib.sha256(self.archive.read_bytes()).hexdigest()
+        result = pages.prepare(self.download, self.destination, self.tag, digest)
+        self.assertEqual(result["edition"], "remaster")
+        self.assertEqual(result["sha256"], digest)
+        wrong = self.root / "wrong"
+        wrong.mkdir()
+        (self.web / "index.html").write_text('productName: "Ballance", productVersion: "1.0.0"')
+        self.archive_web()
+        with self.assertRaisesRegex(RuntimeError, "edition"):
+            pages.prepare(self.download, wrong, self.tag)
+
+    def test_wrong_application_identity_rejected(self):
+        self.tag = "remaster/v1.0.0"
+        self.archive = self.download / asset_name(self.tag)
+        (self.web / "index.html").write_text('productName: "Ballance Remaster", productVersion: "1.0.0"')
+        (self.web / "build-identity.json").write_text(json.dumps({"edition": "remaster", "version": "1.0.0",
+            "productName": "Ballance Remaster", "applicationIdentifier": "com.MengyuGame.Ballance"}))
+        self.archive_web()
+        with self.assertRaisesRegex(RuntimeError, "edition"):
+            pages.prepare(self.download, self.destination, self.tag)
+
+    def test_pinned_checksum_and_cross_edition_rejected(self):
+        self.archive_web()
+        with self.assertRaisesRegex(RuntimeError, "pinned"):
+            pages.prepare(self.download, self.destination, self.tag, "0" * 64)
+        with self.assertRaisesRegex(RuntimeError, "archive version"):
+            pages.prepare(self.download, self.destination, "remaster/v1.0.0")
+        self.assertEqual(list(self.destination.iterdir()), [])
+
+    def test_checkout_identity_prevents_relabeling(self):
+        self.assertEqual(parse_tag("v1.0.11"), ("original", "1.0.11", True))
+        self.assertEqual(asset_name("original/v1.0.12", "Windows"), "Ballance-Original-1.0.12-Windows.zip")
+        self.assertEqual(asset_name("remaster/v1.0.0-dev.1", "Android"), "Ballance-Remaster-1.0.0-dev.1-Android.apk")
+        settings = self.root / "ProjectSettings"
+        settings.mkdir()
+        descriptor = {"id": "remaster", "productName": "Ballance Remaster", "applicationIdentifier": "com.iwonz.BallanceRemaster"}
+        (settings / "Edition.json").write_text(json.dumps(descriptor))
+        self.assertEqual(checkout_edition(self.root), descriptor)
+        with self.assertRaisesRegex(RuntimeError, "Missing build identity"):
+            validate_build_identity(self.root, self.web, "1.0.0")
+        built = {"edition": "remaster", "version": "1.0.0", "productName": descriptor["productName"], "applicationIdentifier": descriptor["applicationIdentifier"]}
+        (self.web / "build-identity.json").write_text(json.dumps(built))
+        self.assertEqual(validate_build_identity(self.root, self.web, "1.0.0"), "remaster/v1.0.0")
+        with self.assertRaisesRegex(RuntimeError, "do not relabel"):
+            validate_build_identity(self.root, self.web, "1.0.1")
+
+    def site_fixture(self):
+        (self.web / "index.html").write_text('<html><link href="TemplateData/style.css"><script>var buildUrl = "Build"; '
+            'var config = {streamingAssetsUrl: "StreamingAssets", productVersion: "1.0.0"};</script></html>')
+        self.archive_web()
+        downloads = self.root / "pair"
+        shutil.copytree(self.download, downloads / "original")
+        original_digest = hashlib.sha256(self.archive.read_bytes()).hexdigest()
+        self.archive.unlink()
+        Path(str(self.archive) + ".sha256").unlink()
+        self.tag = "remaster/v1.0.0"
+        self.archive = self.download / asset_name(self.tag)
+        (self.web / "index.html").write_text('productName: "Ballance Remaster", productVersion: "1.0.0"')
+        (self.web / "build-identity.json").write_text(json.dumps({"edition": "remaster", "version": "1.0.0", "productName": "Ballance Remaster", "applicationIdentifier": "com.iwonz.BallanceRemaster"}))
+        self.archive_web()
+        shutil.copytree(self.download, downloads / "remaster")
+        source = self.root / "site"
+        source.mkdir()
+        (source / "index.html").write_text('<a href="original.html">Original</a><a href="remaster/">Remaster</a>')
+        manifest = source / "releases.json"
+        manifest.write_text(json.dumps({"schema": 1, "editions": {
+            "original": {"tag": "v1.0.0", "sha256": original_digest},
+            "remaster": {"tag": self.tag, "sha256": hashlib.sha256(self.archive.read_bytes()).hexdigest()}}}))
+        return downloads, source, manifest
+
+    def test_two_editions_and_original_page_directory(self):
+        downloads, source, manifest = self.site_fixture()
+        identities = site.prepare(downloads, self.destination, source, manifest)
+        self.assertEqual(set(identities), {"original", "remaster"})
+        host = (self.destination / "original.html").read_text()
+        for path in ('"original/Build"', '"original/StreamingAssets"', '"original/TemplateData/style.css"'):
+            self.assertIn(path, host)
+        self.assertFalse((self.destination / "original/index.html").exists())
+        self.assertTrue((self.destination / "remaster/index.html").is_file())
+        self.assertEqual(json.loads((self.destination / "release.json").read_text())["editions"], identities)
+
+    def test_pair_failure_never_publishes_half_a_site(self):
+        downloads, source, manifest = self.site_fixture()
+        with self.assertRaisesRegex(RuntimeError, "Combined"):
+            site.prepare(downloads, self.destination, source, manifest, limit=1)
+        self.assertEqual(list(self.destination.iterdir()), [])
+        (downloads / "remaster" / self.archive.name).write_bytes(b"bad")
+        with self.assertRaisesRegex(RuntimeError, "checksum"):
+            site.prepare(downloads, self.destination, source, manifest)
+        self.assertEqual(list(self.destination.iterdir()), [])
+
+    def test_unready_cross_edition_and_bad_manifest_rejected(self):
+        downloads, source, manifest = self.site_fixture()
+        valid = json.loads(manifest.read_text())
+        for value in (None, {"tag": "v1.0.0", "sha256": "0" * 64},
+                      {"tag": "remaster/v1.0.0", "sha256": "not-a-hash"}):
+            valid["editions"]["remaster"] = value
+            manifest.write_text(json.dumps(valid))
+            with self.assertRaises(RuntimeError):
+                site.prepare(downloads, self.destination, source, manifest)
+        self.assertEqual(list(self.destination.iterdir()), [])
+
+    def test_original_template_requires_path_audit_on_change(self):
+        with self.assertRaisesRegex(RuntimeError, "Unrecognized"):
+            site.original_host('<html><base href="original/"></html>')
 
 
 if __name__ == "__main__":

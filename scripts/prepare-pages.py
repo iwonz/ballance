@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
 """Validate and extract one Web release for the GitHub Pages workflow (Python 3.12+)."""
+import argparse
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
-import sys
+import re
 import tarfile
 
 
-def prepare(download, destination):
+def prepare(download, destination, tag):
+    if not re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?", tag):
+        raise RuntimeError("Expected a release tag such as v1.0.10")
+    version = tag[1:]
     archives = list(download.glob("Ballance-*-WebGL.tar.gz"))
     if len(archives) != 1:
         raise RuntimeError("Expected exactly one Web release archive")
     archive = archives[0]
+    if archive.name != f"Ballance-{version}-WebGL.tar.gz":
+        raise RuntimeError("Web archive version does not match the release tag")
     expected = Path(str(archive) + ".sha256").read_text().split()[0]
     with archive.open("rb") as stream:
         actual = hashlib.file_digest(stream, "sha256").hexdigest()
@@ -30,7 +37,18 @@ def prepare(download, destination):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     module.validate_web(destination)
+    versions = re.findall(r'productVersion:\s*"([^"]+)"', (destination / "index.html").read_text())
+    if versions != [version]:
+        raise RuntimeError("Embedded Web player version does not match the release tag")
+    (destination / "release.json").write_text(json.dumps({
+        "tag": tag, "version": version, "archive": archive.name, "sha256": actual,
+    }, indent=2) + "\n")
 
 
 if __name__ == "__main__":
-    prepare(Path(sys.argv[1]), Path(sys.argv[2]))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("download", type=Path)
+    parser.add_argument("destination", type=Path)
+    parser.add_argument("tag", help="release tag matching the Web player, for example v1.0.10")
+    args = parser.parse_args()
+    prepare(args.download, args.destination, args.tag)

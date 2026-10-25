@@ -41,3 +41,5 @@ When a request changes scope, update the same change's artifacts before continui
 ## Finish a change
 
 Run the relevant checks, review the diff for unintended behavior or asset churn, and update the verification record with outcomes and limits. Report what changed, why, what was checked, and anything still unverified. Commit/push/publish when the user requests it; preparing repository context does not require a new binary release.
+
+Every published release must include its matching Web archive and checksum and deploy that version to GitHub Pages. Attach verified assets before publishing, wait for the Pages workflow, and verify the public release identity and browser behavior before reporting delivery complete. A missing Web asset or failed Pages deployment is a failed release delivery, not an optional follow-up. Follow [the release guide](docs/build-and-release.md#github-pages).

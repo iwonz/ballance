@@ -224,7 +224,10 @@ and CI requirements. Native rebuild provenance lives in
 [Pages workflow](../.github/workflows/github-pages.yml) deploys existing release
 assets; it does not build Unity.
 [prepare-pages.py](../scripts/prepare-pages.py) checks checksum, archive safety,
-size, and complete Web content. gzip fallback and single-threaded physics avoid
+size, complete Web content, and tag/archive/player version agreement. Every release
+must pass this deployment; missing Web assets fail rather than skip the workflow.
+The generated `release.json` is checked over HTTP after deployment to confirm the
+requested release is live. gzip fallback and single-threaded physics avoid
 custom server headers. Asset requests must retain the repository URL prefix.
 The [release guide](build-and-release.md#github-pages) owns setup and rollback steps.
 Test the served URL, menu, first level, control, fall/rebirth, and return to menu;

@@ -65,6 +65,11 @@ submits builds to a mobile store.
 
 ## GitHub Pages
 
+Every release must include its matching Web archive and checksum and deploy that
+version to GitHub Pages, including releases whose main changes are documentation
+or tooling. Release delivery is complete only after the Pages workflow and public
+site checks succeed. Do not reuse or rename an older player as a new version.
+
 Web uses gzip with **Decompression Fallback**, single-threaded Wasm physics, and
 relative URLs. Custom Content-Encoding or COOP/COEP headers are unnecessary.
 The player works below a repository prefix such as `/ballance/`. Generated Web
@@ -78,14 +83,20 @@ files are release assets, not source-controlled content.
    intended release commit using the [validation guide](validation.md).
 4. Create a draft release on that commit's tag. Attach
    `Ballance-<version>-WebGL.tar.gz` and the matching `.sha256` file, plus the other
-   verified platform assets and checksums.
+   verified platform assets and checksums. Use a tag such as `v1.0.10`, matching
+   Player Settings -> Version and every archive filename.
 5. Publish the release. **Publish Web to GitHub Pages** validates checksum, safe
-   extraction, required content, and the size limit, then deploys the site.
-6. Confirm the workflow succeeds and test the public URL, including a loaded level.
+   extraction, required content, size, and the embedded Web player version, then
+   deploys the site. Missing Web assets fail this workflow.
+6. Wait for the workflow's public `release.json` tag check to pass, then test the
+   public URL, including menu, level loading, and controls. Include the release and
+   successful Pages run links in the delivery report. If rollout fails, repair and
+   rerun it before declaring the release delivered.
 
 The current fork's URL is [iwonz.github.io/ballance](https://iwonz.github.io/ballance/)
-unless a custom domain is configured. A release without a Web archive leaves the
-site unchanged. To redeploy or roll back, manually dispatch the workflow with an
+unless a custom domain is configured. The site's `release.json` identifies its tag,
+player version, archive, and verified SHA-256. To redeploy or explicitly roll back,
+manually dispatch the workflow with an
 existing release tag; it deploys that release's checked archive. The workflow needs
 no Unity license or Unity secrets.
 
@@ -97,8 +108,9 @@ python3 -m http.server 8000 --directory Builds
 ```
 
 For a deployment-equivalent check, download/extract the release through
-`scripts/prepare-pages.py` into an empty directory and serve it under a repository
-subpath. The extraction limit is 1 GB uncompressed. Built-in packages are under
+`python3 scripts/prepare-pages.py <download-dir> <empty-site-dir> <release-tag>`
+and serve the result under a repository subpath. The download directory must contain
+exactly one Web archive and its checksum. The extraction limit is 1 GB uncompressed. Built-in packages are under
 `StreamingAssets/BuiltInPackages`, with same-origin URLs retaining the site prefix.
 Built-in mods are compiled into the player. New external C# DLL mods require Mono;
 Web/Android IL2CPP require adding their source and rebuilding.

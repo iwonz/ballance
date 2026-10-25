@@ -12,7 +12,7 @@ from release_identity import EDITIONS, asset_name, parse_tag
 
 def prepare(download, destination, tag, pinned_sha256=None):
     edition, version, legacy = parse_tag(tag)
-    archives = list(download.glob("Ballance-*-WebGL.tar.gz"))
+    archives = list(download.glob("*-WebGL.tar.gz"))
     if len(archives) != 1:
         raise RuntimeError("Expected exactly one Web release archive")
     archive = archives[0]

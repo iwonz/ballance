@@ -32,7 +32,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalEmissionWithReflectionShpereBlend"
       #define USE_SPHERE
       #define USE_SPHERE_REFLECTION
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"
@@ -61,7 +61,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalEmissionWithReflectionShpereBlend"
       #define USE_SPHERE
       #define USE_SPHERE_REFLECTION
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"

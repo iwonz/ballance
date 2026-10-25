@@ -8,13 +8,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * StringUtils.cs
 * 
-* 用途：
-* 字符串工具类
+* Purpose:
+* String helpers.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -22,74 +22,74 @@ using UnityEngine;
 namespace Ballance2.Utils
 {
   /// <summary>
-  /// 字符串工具类
+  /// String helpers.
   /// </summary>
   /// <remarks>
-  /// 提供了许多字符串处理工具函数。
+  /// String processing utilities.
   /// </remarks>
   public static class StringUtils
   {
     /// <summary>
-    /// 检测字符串是否为空
+    /// Check whether a string is empty.
     /// </summary>
-    /// <param name="text">要检测的字符串</param>
-    /// <returns>如果字符串是否为空或者 null，则返回 true，否则返回 false</returns>
+    /// <param name="text">String to check.</param>
+    /// <returns>True if null or empty; otherwise false.</returns>
     public static bool isNullOrEmpty(string text)
     {
       return string.IsNullOrEmpty(text);
     }
     /// <summary>
-    /// 检测字符串是否为空或空白
+    /// Check whether a string is empty or whitespace.
     /// </summary>
-    /// <param name="text">要检测的字符串</param>
-    /// <returns>如果字符串是否为空、空白，或者 null，则返回 true，否则返回 false</returns>
+    /// <param name="text">String to check.</param>
+    /// <returns>True if null, empty, or whitespace; otherwise false.</returns>
     public static bool IsNullOrWhiteSpace(string text)
     {
       return string.IsNullOrWhiteSpace(text);
     }
     /// <summary>
-    /// 检测字符串是否是URL
+    /// Check whether a string is a URL.
     /// </summary>
-    /// <param name="text">要检测的字符串</param>
-    /// <returns>如果是一个有效的 URL, 则返回 true，否则返回 false</returns>
+    /// <param name="text">String to check.</param>
+    /// <returns>True for a valid URL; otherwise false.</returns>
     public static bool IsUrl(string text)
     {
       return !isNullOrEmpty(text) && Regex.IsMatch(text, "(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
     }
     /// <summary>
-    /// 检测字符串是否是整数
+    /// Check whether a string is an integer.
     /// </summary>
-    /// <param name="text">要检测的字符串</param>
-    /// <returns>检测字符串是否是整数", "如果是一个有效的整数字符串, 则返回 true，否则返回 false</returns>
+    /// <param name="text">String to check.</param>
+    /// <returns>True for a valid integer string; otherwise false.</returns>
     public static bool IsNumber(string text)
     {
       return !isNullOrEmpty(text) && Regex.IsMatch(text, "^-?[1-9]\\d*$");
     }
     /// <summary>
-    /// 检测字符串是否是浮点数
+    /// Check whether a string is a floating-point number.
     /// </summary>
-    /// <param name="text">要检测的字符串</param>
-    /// <returns>如果是一个有效的浮点数字符串, 则返回 true，否则返回 false</returns>
+    /// <param name="text">String to check.</param>
+    /// <returns>True for a valid floating-point string; otherwise false.</returns>
     public static bool IsFloatNumber(string text)
     {
       return !isNullOrEmpty(text) && Regex.IsMatch(text, "^(-?\\d+)(\\.\\d+)?");
     }
     /// <summary>
-    /// 检测字符串是否是包名
+    /// Check whether a string is a package identifier.
     /// </summary>
-    /// <param name="text">要检测的字符串</param>
-    /// <returns>如果是一个有效的包名字符串, 则返回 true，否则返回 false</returns>
+    /// <param name="text">String to check.</param>
+    /// <returns>True for a valid package identifier; otherwise false.</returns>
     public static bool IsPackageName(string text)
     {
       if (isNullOrEmpty(text)) return false;
       return Regex.IsMatch(text, "^([a-zA-Z]+[.][a-zA-Z]+)[.]*.*");
     }
     /// <summary>
-    /// 比较两个版本字符串的先后
+    /// Compare two version strings.
     /// </summary>
-    /// <param name="version1">版本1</param>
-    /// <param name="version2">版本2</param>
-    /// <returns>1 小于 2 返回 -1 ，大于返回 1，等于返回 0</returns>
+    /// <param name="version1">Version 1.</param>
+    /// <param name="version2">Version 2.</param>
+    /// <returns>-1 if version 1 is earlier, 1 if later, and 0 if equal.</returns>
     public static int CompareTwoVersion(string version1, string version2)
     {
       if (version1 == version2) return 0;
@@ -113,18 +113,18 @@ namespace Ballance2.Utils
       return ver1 < ver2 ? -1 : 1;
     }
     /// <summary>
-    /// 替换字符串的 &lt;br&gt; 转为换行符
+    /// Replace &lt;br&gt; with a newline.
     /// </summary>
-    /// <param name="str">要替换的字符串</param>
-    /// <returns>经过处理的字符串</returns>
+    /// <param name="str">String to process.</param>
+    /// <returns>Processed string.</returns>
     public static string ReplaceBrToLine(string str)
     {
       return str.Replace("<br>", "\n").Replace("<br/>", "\n").Replace("<br />", "\n"); ;
     }
     /// <summary>
-    /// 颜色字符串转为 Color
+    /// Convert a color string to Color.
     /// 
-    /// <br/>转换的颜色字符串支持 Color 中定义的颜色名称，如下：
+    /// <br/>Supports named colors defined by Color, listed below:
     /// <br/>* black ： Color.black
     /// <br/>* blue ： Color.blue
     /// <br/>* clear ： Color.clear
@@ -135,10 +135,10 @@ namespace Ballance2.Utils
     /// <br/>* red ： Color.red
     /// <br/>* white ： Color.white
     /// <br/>* yellow ： Color.yellow
-    /// <br/>或者是十六进制颜色字符串，例如 `#ffffff` 格式，或者是 `255,255,255` 格式的颜色数值字符串。
+    /// <br/>Also supports hexadecimal strings such as #ffffff and RGB strings such as 255,255,255.
     /// </summary>
-    /// <param name="color">要转换的颜色字符串</param>
-    /// <returns>返回转换的颜色，如果转换失败，默认返回 Color.black</returns>
+    /// <param name="color">Color string to convert.</param>
+    /// <returns>Parsed color; Color.black on failure.</returns>
     public static Color StringToColor(string color)
     {
       switch (color)
@@ -179,26 +179,26 @@ namespace Ballance2.Utils
     }
     
     /// <summary>
-    /// 尝试把字符串数组转为参数数组
+    /// Convert a string array to an argument array.
     /// </summary>
     /// <remarks>
-    /// 此函数只能转换基本数据类型：float int bool string。
+    /// Only float, int, bool, and string values are supported.
     /// </remarks>
-    /// <param name="arr">要转换的字符串数组</param>
-    /// <returns>转换的参数数组</returns>
+    /// <param name="arr">String array to convert.</param>
+    /// <returns>Converted argument array.</returns>
     public static object[] TryConvertStringArrayToValueArray(string[] arr)
     {
       return TryConvertStringArrayToValueArray(arr, 0);
     }
     /// <summary>
-    /// 尝试把字符串数组转为参数数组
+    /// Convert a string array to an argument array.
     /// </summary>
     /// <remarks>
-    /// 此函数只能转换基本数据类型：float int bool string。
+    /// Only float, int, bool, and string values are supported.
     /// </remarks>
-    /// <param name="arr">要转换的字符串数组</param>
-    /// <param name="startIndex">数组转换起始索引</param>
-    /// <returns>转换的参数数组</returns>
+    /// <param name="arr">String array to convert.</param>
+    /// <param name="startIndex">Starting array index.</param>
+    /// <returns>Converted argument array.</returns>
     public static object[] TryConvertStringArrayToValueArray(string[] arr, int startIndex)
     {
       object[] rs = new object[arr.Length];
@@ -211,13 +211,13 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 尝试转换字符串为参数
+    /// Convert a string to an argument value.
     /// </summary>
     /// <remarks>
-    /// 此函数只能转换基本数据类型：float int bool string。
+    /// Only float, int, bool, and string values are supported.
     /// </remarks>
-    /// <param name="value">要转换的字符串</param>
-    /// <returns>如果转换失败则返回原字符串</returns>
+    /// <param name="value">String to convert.</param>
+    /// <returns>The original string if conversion fails.</returns>
     public static object TryConvertStringToValue(string value)
     {
       object rs = null;
@@ -242,10 +242,10 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 尝试把参数数组转为字符串
+    /// Convert an argument array to a string.
     /// </summary>
-    /// <param name="arr">要转换的参数</param>
-    /// <returns>转换的字符串</returns>
+    /// <param name="arr">Arguments to convert.</param>
+    /// <returns>Converted string.</returns>
     public static string ValueArrayToString(object[] arr)
     {
       StringBuilder sb = new StringBuilder();
@@ -264,11 +264,11 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 比较Bytes
+    /// Compare byte arrays.
     /// </summary>
-    /// <param name="inV">bytes数组1</param>
-    /// <param name="outV">bytes数组2</param>
-    /// <returns>返回两个Bytes是否相等</returns>
+    /// <param name="inV">First byte array.</param>
+    /// <param name="outV">Second byte array.</param>
+    /// <returns>Whether the byte arrays are equal.</returns>
     public static bool TestBytesMatch(byte[] inV, byte[] outV)
     {
       bool rs = true;
@@ -289,11 +289,11 @@ namespace Ballance2.Utils
       return rs;
     }
     /// <summary>
-    /// 比较Bytes (指定长度)
+    /// Compare a specified number of bytes.
     /// </summary>
-    /// <param name="inV">bytes数组1</param>
-    /// <param name="outV">bytes数组2</param>
-    /// <returns>返回两个Bytes是否相等</returns>
+    /// <param name="inV">First byte array.</param>
+    /// <param name="outV">Second byte array.</param>
+    /// <returns>Whether the byte arrays are equal.</returns>
     public static bool TestBytesMatchN(byte[] inV, byte[] outV, int len)
     {
       bool rs = true;
@@ -312,10 +312,10 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 修复UTF8的BOM头
+    /// Remove a UTF-8 BOM.
     /// </summary>
-    /// <param name="buffer">内容数组</param>
-    /// <returns>返回处理完成的数组</returns>
+    /// <param name="buffer">Content buffer.</param>
+    /// <returns>Processed buffer.</returns>
     public static byte[] FixUtf8BOM(byte[] buffer)
     {
       byte[] bomBuffer = new byte[] { 0xef, 0xbb, 0xbf };
@@ -328,20 +328,20 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 计算字符串的MD5值
+    /// Calculate a string's MD5 hash.
     /// </summary>
-    /// <param name="buffer">字符串</param>
-    /// <returns>返回MD5值</returns>
+    /// <param name="buffer">String.</param>
+    /// <returns>MD5 hash.</returns>
     public static string MD5String(string input)
     {
       byte[] inputBytes = Encoding.UTF8.GetBytes(input);
       return MD5(inputBytes);
     }
     /// <summary>
-    /// 计算字节数组的MD5值
+    /// Calculate a byte array's MD5 hash.
     /// </summary>
-    /// <param name="inputBytes">字节数组</param>
-    /// <returns>返回MD5</returns>
+    /// <param name="inputBytes">Byte array.</param>
+    /// <returns>MD5 hash.</returns>
     public static string MD5(byte[] inputBytes)
     {
       // Step 1, calculate MD5 hash from input
@@ -358,64 +358,64 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// Encoding.ASCII.GetString 函数包装
+    /// Wrapper for Encoding.ASCII.GetString.
     /// </summary>
-    /// <param name="inputBytes">字节数组</param>
-    /// <returns>返回解码的字符串</returns>
+    /// <param name="inputBytes">Byte array.</param>
+    /// <returns>Decoded string.</returns>
     public static string GetASCIIBytes(byte[] inputBytes)
     {
       return Encoding.ASCII.GetString(inputBytes);
     }
     /// <summary>
-    /// Encoding.UTF8.GetString 函数包装
+    /// Wrapper for Encoding.UTF8.GetString.
     /// </summary>
-    /// <param name="inputBytes">字节数组</param>
-    /// <returns>返回解码的字符串</returns>
+    /// <param name="inputBytes">Byte array.</param>
+    /// <returns>Decoded string.</returns>
     public static string GetUtf8Bytes(byte[] inputBytes)
     {
       return Encoding.UTF8.GetString(inputBytes);
     }
     /// <summary>
-    /// Encoding.Unicode.GetString 函数包装
+    /// Wrapper for Encoding.Unicode.GetString.
     /// </summary>
-    /// <param name="inputBytes">字节数组</param>
-    /// <returns>返回解码的字符串</returns>
+    /// <param name="inputBytes">Byte array.</param>
+    /// <returns>Decoded string.</returns>
     public static string GetUnicodeBytes(byte[] inputBytes)
     {
       return Encoding.Unicode.GetString(inputBytes);
     }
     /// <summary>
-    /// Encoding.ASCII.GetBytes 函数包装
+    /// Wrapper for Encoding.ASCII.GetBytes.
     /// </summary>
-    /// <param name="input">输入字符串</param>
-    /// <returns>返回字节数组</returns>
+    /// <param name="input">Input string.</param>
+    /// <returns>Byte array.</returns>
     public static byte[] StringToASCIIBytes(string input)
     {
       return Encoding.ASCII.GetBytes(input);
     }
     /// <summary>
-    /// Encoding.UTF8.GetBytes 函数包装
+    /// Wrapper for Encoding.UTF8.GetBytes.
     /// </summary>
-    /// <param name="input">输入字符串</param>
-    /// <returns>返回字节数组</returns>
+    /// <param name="input">Input string.</param>
+    /// <returns>Byte array.</returns>
     public static byte[] StringToUtf8Bytes(string input)
     {
       return Encoding.UTF8.GetBytes(input);
     }
     /// <summary>
-    /// Encoding.Unicode.GetBytes 函数包装
+    /// Wrapper for Encoding.Unicode.GetBytes.
     /// </summary>
-    /// <param name="input">输入字符串</param>
-    /// <returns>返回字节数组</returns>
+    /// <param name="input">Input string.</param>
+    /// <returns>Byte array.</returns>
     public static byte[] StringToUnicodeBytes(string input)
     {
       return Encoding.Unicode.GetBytes(input);
     }
     /// <summary>
-    /// 在 input 查找 find ，如果找到，则从input找到find的末尾位置截取input至结尾。 
+    /// Find a substring and return the remainder of input after its end.
     /// </summary>
-    /// <param name="input">要截取的字符串</param>
-    /// <param name="find">要查找的字符串</param>
+    /// <param name="input">Input string to slice.</param>
+    /// <param name="find">Substring to find.</param>
     /// <returns></returns>
     public static string RemoveStringByStringStart(string input, string find)
     {

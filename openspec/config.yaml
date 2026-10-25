@@ -1,0 +1,38 @@
+schema: spec-driven
+
+context: |
+  All maintained prose, code comments, and artifacts are English.
+  Read AGENTS.md, openspec/README.md, and the relevant rows of docs/architecture.md.
+  This is a Unity game, not a web application. Preserve serialized names, GUIDs,
+  package/event identifiers, save formats, localized game text, and legal notices.
+  Current behavior belongs in openspec/specs; architecture and commands belong in
+  docs; proposed behavior belongs in changes until verified and synchronized.
+  iOS is deferred. Do not infer supported platforms from legacy code alone.
+  Use the existing Unity/C#/native/Python tools and avoid unrelated refactoring.
+
+rules:
+  proposal:
+    - Identify affected capabilities and downstream callers, assets, packaging, and checks.
+    - Distinguish implemented behavior, requested changes, and known gaps.
+    - For no behavior change, explain why and set skip_specs in the change metadata.
+  specs:
+    - Specify observable behavior with SHALL and WHEN/THEN scenarios, including relevant failure cases.
+    - Keep source navigation in docs/architecture.md; link it from Purpose instead of copying class inventories.
+    - Do not turn an unverified assumption or known defect into a baseline guarantee.
+  design:
+    - Always create a concise design, including for small changes; state why no architectural change is needed when applicable.
+    - Cover compatibility, data ownership, cleanup, platform differences, and validation where affected.
+  tasks:
+    - Include a check or observable acceptance condition for each task.
+    - Include documentation/spec synchronization and a verification.md record before archive.
+
+operations:
+  apply:
+    guidance:
+      - Complete proposal, applicable delta specs, design, and tasks before implementation.
+      - Keep tasks and the design current as evidence changes; add no extra approval gate when the user already authorized the work.
+      - Use docs/validation.md to select relevant checks and report actual results.
+  archive:
+    guidance:
+      - Require completed tasks and verification.md with checks, results, and untested limits.
+      - Synchronize delta specs, archive the change, then run strict OpenSpec and repository context validation again.

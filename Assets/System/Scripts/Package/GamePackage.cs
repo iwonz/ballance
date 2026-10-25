@@ -14,26 +14,26 @@ using UnityEngine.Profiling;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GamePackage.cs
 * 
-* 用途：
-* 游戏模块的声明以及模块功能提供。
-* 负责：模块运行环境初始化卸载、资源读取相关。
+* Purpose:
+* Game package definition and operations.
+* Own package code initialization/unloading and resource access.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Package
 {
   /// <summary>
-  /// 模块包实例
+  /// Game package instance.
   /// </summary>
   public class GamePackage
   {
     /// <summary>
-    /// 标签
+    /// Tag.
     /// </summary>
     public string TAG
     {
@@ -53,7 +53,7 @@ namespace Ballance2.Package
     {
       LoadI18NResource();
 
-      //模块代码环境初始化
+      // Initialize package code.
       if (Type == GamePackageType.Module)
         return Task.FromResult(LoadPackageCodeBase());
       return Task.FromResult(true);
@@ -65,7 +65,7 @@ namespace Ballance2.Package
       if(!IsUnloadCodeExecuted())
         RunPackageBeforeUnLoadCode();
 
-      //释放AssetBundle
+      // Release the AssetBundle.
       if (AssetBundle != null)
       {
         AssetBundle.Unload(true);
@@ -78,7 +78,7 @@ namespace Ballance2.Package
         PackageEntry = null;
     }
 
-    #region 系统包
+    #region System package
 
 #if UNITY_EDITOR
     private static GamePackage _SystemPackage = new GameEditorSystemPackage();
@@ -87,7 +87,7 @@ namespace Ballance2.Package
 #endif
 
     /// <summary>
-    /// 获取系统核心的模块包，包名是 system 。
+    /// Get the core system package, identified by GamePackageManager.SYSTEM_PACKAGE_NAME.
     /// </summary>
     /// <returns></returns>
     public static GamePackage GetSystemPackage() { 
@@ -96,7 +96,7 @@ namespace Ballance2.Package
 
     #endregion
 
-    #region 常量定义
+    #region Constants
 
     public const int FLAG_CODE_BASE_LOADED = 0x000000001;
     public const int FLAG_CODE_ENTRY_CODE_RUN = 0x000000008;
@@ -106,36 +106,36 @@ namespace Ballance2.Package
 
     #endregion
 
-    #region 模块运行环境
+    #region Package code environment
 
     /// <summary>
-    /// C# 程序集
+    /// C# assembly.
     /// </summary>
     public Assembly CSharpAssembly { get; protected set; }
     /// <summary>
-    /// 程序入口
+    /// Package entry point.
     /// </summary>
     public GamePackageEntry PackageEntry = new GamePackageEntry();
     
     internal int flag = 0;
 
     /// <summary>
-    /// 获取是否可以卸载
+    /// Whether the package is protected from unloading.
     /// </summary>
     /// <returns></returns>
     public bool IsNotUnLoadable() { return (flag & FLAG_PACK_NOT_UNLOADABLE) == FLAG_PACK_NOT_UNLOADABLE; }
     /// <summary>
-    /// 获取是否是系统包
+    /// Whether this is a system package.
     /// </summary>
     /// <returns></returns>
     public bool IsSystemPackage() { return (flag & FLAG_PACK_SYSTEM_PACKAGE) == FLAG_PACK_SYSTEM_PACKAGE; }
     /// <summary>
-    /// 获取入口代码是否已经运行过
+    /// Whether entry code has run.
     /// </summary>
     /// <returns></returns>
     public bool IsEntryCodeExecuted() { return (flag & FLAG_CODE_ENTRY_CODE_RUN) == FLAG_CODE_ENTRY_CODE_RUN; }
     /// <summary>
-    /// 获取出口代码是否已经运行过
+    /// Whether unload code has run.
     /// </summary>
     /// <returns></returns>
     public bool IsUnloadCodeExecuted() { return (flag & FLAG_CODE_UNLOD_CODE_RUN) == FLAG_CODE_UNLOD_CODE_RUN; }
@@ -149,9 +149,9 @@ namespace Ballance2.Package
     }
 
     /// <summary>
-    /// 设置当前模块的标志位
+    /// Set package flags.
     /// </summary>
-    /// <param name="flag">标志位，（GamePackage.FLAG_*）</param>
+    /// <param name="flag">Flags from GamePackage.FLAG_*.</param>
     public void SetFlag(int flag)  {
 
       if((this.flag & FLAG_PACK_NOT_UNLOADABLE) == FLAG_PACK_NOT_UNLOADABLE && (flag & FLAG_PACK_NOT_UNLOADABLE) != FLAG_PACK_NOT_UNLOADABLE) {
@@ -165,18 +165,18 @@ namespace Ballance2.Package
       this.flag = flag;
     }
     /// <summary>
-    /// 获取当前模块的标志位
+    /// Get package flags.
     /// </summary>
     public int GetFlag() { return flag; }
 
     /// <summary>
-    /// 加载运行环境代码
+    /// Load package code.
     /// </summary>
     /// <returns></returns>
     protected bool LoadPackageCodeBase() {
-      //判断是否初始化
+      // Check initialization.
       if((FLAG_CODE_BASE_LOADED & flag) == FLAG_CODE_BASE_LOADED) {
-        Log.E(TAG, "不能重复初始化");
+        Log.E(TAG, "Cannot initialize twice.");
         return false;
       }
       if (IsSystemPackage())
@@ -205,10 +205,10 @@ namespace Ballance2.Package
 
       #else
 
-      //加载C#程序集
+      // Load the C# assembly.
       CSharpAssembly = LoadCodeCSharp(PackageName + ".dll");
       if (CSharpAssembly == null) {
-        Log.E(TAG, "无法加载DLL：" + PackageName + ".dll");
+        Log.E(TAG, "Cannot load DLL: " + PackageName + ".dll");
         return false;
       }
       type = CSharpAssembly.GetType(PackageName + ".PackageEntry");
@@ -217,7 +217,7 @@ namespace Ballance2.Package
       
       if (type == null)
       {
-        Log.W(TAG, "未找到 PackageEntry ");
+        Log.W(TAG, "PackageEntry not found.");
         GameErrorChecker.LastError = GameError.ClassNotFound;
         return false;
       }
@@ -225,10 +225,10 @@ namespace Ballance2.Package
       {
         try {
           object CSharpPackageEntry = Activator.CreateInstance(type);
-          MethodInfo methodInfo = type.GetMethod("Main");  //根据方法名获取MethodInfo对象
+          MethodInfo methodInfo = type.GetMethod("Main");  // Find MethodInfo by method name.
           if (type == null)
           {
-            Log.W(TAG, "未找到 PackageEntry.Main()");
+            Log.W(TAG, "PackageEntry.Main() not found.");
             GameErrorChecker.LastError = GameError.FunctionNotFound;
           } 
           else  
@@ -240,12 +240,12 @@ namespace Ballance2.Package
             } 
             else
             {
-              Log.W(TAG, "模块 PackageEntry.Main 返回了未知类型");
+              Log.W(TAG, "PackageEntry.Main returned an unknown type.");
               return false;
             }
           }
         } catch (System.Exception e) {
-          Log.W(TAG, "模块 PackageEntry.Main 执行失败: " + e.ToString());
+          Log.W(TAG, "PackageEntry.Main failed: " + e.ToString());
           return false;
         }
       }
@@ -254,9 +254,9 @@ namespace Ballance2.Package
     }    
 
     /// <summary>
-    /// 运行模块初始化代码，模块的 初始化代码 只能运行一次，不能重复运行。
+    /// Run package initialization once; repeated execution is not allowed.
     /// </summary>
-    /// <returns>返回是否成功</returns>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool RunPackageExecutionCode()
     {
       if (Type != GamePackageType.Module)
@@ -285,9 +285,9 @@ namespace Ballance2.Package
       return true;
     }
     /// <summary>
-    /// 运行模块卸载回调，模块的 卸载回调 只能运行一次，不能重复运行。
+    /// Run the package unload callback once; repeated execution is not allowed.
     /// </summary>
-    /// <returns>返回是否成功</returns>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool RunPackageBeforeUnLoadCode()
     {
       if (Type != GamePackageType.Module)
@@ -318,7 +318,7 @@ namespace Ballance2.Package
 
     #endregion
 
-    #region 模块信息
+    #region Package metadata
 
     private int VerConverter(string s)
     {
@@ -336,19 +336,19 @@ namespace Ballance2.Package
 
       if (attributeName == null)
       {
-        LoadError = "PackageDef.xml 配置存在错误 : name 丢失";
+        LoadError = "Invalid PackageDef.xml: name is missing.";
         GameErrorChecker.SetLastErrorAndLog(GameError.MissingAttribute, TAG, "Package attribute name is null");
         return false;
       }
       if (attributeVersion == null)
       {
-        LoadError = "PackageDef.xml 配置存在错误 : version 丢失";
+        LoadError = "Invalid PackageDef.xml: version is missing.";
         GameErrorChecker.SetLastErrorAndLog(GameError.MissingAttribute, TAG, "Package attribute version is null");
         return false;
       }
       if (nodeBaseInfo == null)
       {
-        LoadError = "PackageDef.xml 配置存在错误 : BaseInfo 丢失";
+        LoadError = "Invalid PackageDef.xml: BaseInfo is missing.";
         GameErrorChecker.SetLastErrorAndLog(GameError.MissingAttribute, TAG, "Package node BaseInfo is null");
         return false;
       }
@@ -378,11 +378,11 @@ namespace Ballance2.Package
           }
         }
 
-      //兼容性检查
+      // Check compatibility.
       if (MinVersion > GameConst.GameBulidVersion)
       {
         Log.E(TAG, "MinVersion {0} greater than game version {1}", MinVersion, GameConst.GameBulidVersion);
-        LoadError = "模块版本与当前游戏不兼容，模块所需版本 >=" + MinVersion;
+        LoadError = "Package is incompatible with this game version. Required version >=" + MinVersion;
         GameErrorChecker.LastError = GameError.PackageIncompatible;
         IsCompatible = false;
         return false;
@@ -392,7 +392,7 @@ namespace Ballance2.Package
         IsCompatible = true;
       }
 
-      //参数
+      // Arguments.
       XmlNode nodeEntryCode = nodePackage.SelectSingleNode("EntryCode");
       if (nodeEntryCode != null)
         EntryCode = nodeEntryCode.InnerText;
@@ -404,72 +404,72 @@ namespace Ballance2.Package
     }
 
     /// <summary>
-    /// 获取模块文件路径
+    /// Get the package file path.
     /// </summary>
     public string PackageFilePath { get; protected set; }
     /// <summary>
-    /// 获取模块包名
+    /// Get the package identifier.
     /// </summary>
     public string PackageName { get; protected set; }
     /// <summary>
-    /// 获取模块版本号
+    /// Get the package version number.
     /// </summary>
     public int PackageVersion { get; protected set; }
     /// <summary>
-    /// 获取基础信息
+    /// Get package metadata.
     /// </summary>
     public GamePackageBaseInfo BaseInfo { get; protected set; }
     /// <summary>
-    /// 获取模块更新时间
+    /// Get the package update time.
     /// </summary>
     public DateTime UpdateTime { get; protected set; }
     /// <summary>
-    /// 获取获取是否是系统必须包
+    /// Whether this package is required by the system.
     /// </summary>
     public bool SystemPackage { get; internal set; }
 
     /// <summary>
-    /// 获取模块加载错误
+    /// Get the package load error.
     /// </summary>
     public string LoadError { get; protected set; } = "";
     /// <summary>
-    /// 获取模块PackageDef文档
+    /// Get the PackageDef document.
     /// </summary>
     public XmlDocument PackageDef { get; protected set; }
     /// <summary>
-    /// 获取模块AssetBundle
+    /// Get the package AssetBundle.
     /// </summary>
     public AssetBundle AssetBundle { get; protected set; }
     /// <summary>
-    /// 获取表示模块目标游戏内核版本
+    /// Get the target game build version.
     /// </summary>
     public int TargetVersion { get; protected set; } = GameConst.GameBulidVersion;
     /// <summary>
-    /// 获取表示模块可以正常使用的最低游戏内核版本
+    /// Get the minimum supported game build version.
     /// </summary>
     public int MinVersion { get; protected set; } = GameConst.GameBulidVersion;
     /// <summary>
-    /// 获取模块是否兼容当前内核
+    /// Whether the package is compatible with the current game build.
     /// </summary>
     public bool IsCompatible { get; protected set; }
 
     /// <summary>
-    /// 获取模块入口代码
+    /// Get package entry code.
     /// </summary>
     public string EntryCode { get; protected set; }
     /// <summary>
-    /// 获取模块类型
+    /// Get the package type.
     /// </summary>
     public GamePackageType Type { get; protected set; } = GamePackageType.Asset;
 
     internal GamePackageStatus _Status = GamePackageStatus.NotLoad;
 
     /// <summary>
-    /// 获取模块加载状态
+    /// Get the package load state.
     /// </summary>
     public GamePackageStatus Status { get { return _Status; } }
     /// <summary>
-    /// 转为字符串显示
+    /// Format for display.
     /// </summary>
     /// <returns></returns>
     public override string ToString()
@@ -477,7 +477,7 @@ namespace Ballance2.Package
       return "Package: " + PackageName + "(" + PackageVersion + ") => " + _Status;
     }
     /// <summary>
-    /// 展示所有资源
+    /// List all resources.
     /// </summary>
     /// <returns></returns>
     public virtual string ListResource()
@@ -496,13 +496,13 @@ namespace Ballance2.Package
 
     #endregion
 
-    #region 资源读取
+    #region Resource access
 
     /// <summary>
-    /// 读取模块资源包中的资源
+    /// Read an asset from the package.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回资源实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The asset, or null if not found.</returns>
     public virtual T GetAsset<T>(string pathorname) where T : UnityEngine.Object
     {
       if (AssetBundle == null)
@@ -515,73 +515,73 @@ namespace Ballance2.Package
     }
 
     /// <summary>
-    /// 读取模块资源包中的文字资源
+    /// Read a text asset from the package.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回TextAsset实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The TextAsset, or null if not found.</returns>
     public virtual TextAsset GetTextAsset(string pathorname) { return GetAsset<TextAsset>(pathorname); }
 
     /// <summary>
-    /// 读取模块资源包中的 Prefab 资源
+    /// Read a prefab from the package.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 GameObject 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The GameObject, or null if not found.</returns>
     public virtual GameObject GetPrefabAsset(string pathorname) { return GetAsset<GameObject>(pathorname); }
     /// <summary>
-    /// 读取模块资源包中的 Texture 资源
+    /// Read a Texture from the package.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 Texture 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The Texture, or null if not found.</returns>
     public virtual Texture GetTextureAsset(string pathorname) { return GetAsset<Texture>(pathorname); }
     /// <summary>
-    /// 读取模块资源包中的 Texture2D 资源
+    /// Read a Texture2D from the package.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 Texture2D 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The Texture2D, or null if not found.</returns>
     public virtual Texture2D GetTexture2DAsset(string pathorname) { return GetAsset<Texture2D>(pathorname); }
     /// <summary>
-    /// 读取模块资源包中的 Sprite 资源
+    /// Read a Sprite from the package.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 Sprite 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The Sprite, or null if not found.</returns>
     public virtual Sprite GetSpriteAsset(string pathorname) { return GetAsset<Sprite>(pathorname); }
     /// <summary>
-    /// 读取模块资源包中的 Material 资源
+    /// Read a Material from the package.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 Material 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The Material, or null if not found.</returns>
     public virtual Material GetMaterialAsset(string pathorname) { return GetAsset<Material>(pathorname); }
     /// <summary>
-    /// 读取模块资源包中的 PhysicMaterial 资源
+    /// Read a PhysicsMaterial from the package.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 PhysicMaterial 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The PhysicsMaterial, or null if not found.</returns>
     public virtual PhysicsMaterial GetPhysicMaterialAsset(string pathorname) { return GetAsset<PhysicsMaterial>(pathorname); }
     /// <summary>
-    /// 读取模块资源包中的 AudioClip 资源
+    /// Read an AudioClip from the package.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 AudioClip 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The AudioClip, or null if not found.</returns>
     public virtual AudioClip GetAudioClipAsset(string pathorname) { return GetAsset<AudioClip>(pathorname); }
 
     #endregion
 
-    #region 模块操作
+    #region Package operations
 
     private Dictionary<string, string> preI18NResource = new Dictionary<string, string>();
 
     /// <summary>
-    /// 在当前模块中预加载的国际化语言资源寻找字符串
+    /// Find a string in the package's preloaded language resources.
     /// </summary>
-    /// <param name="key">键</param>
-    /// <returns>返回国际化字符串，如果未找到，则返回null</returns>
+    /// <param name="key">Key.</param>
+    /// <returns>Localized string, or null if not found.</returns>
     public string GetPackageI18NResourceInPre(string key) {
       if(preI18NResource.TryGetValue(key, out var s))
         return s;
       return null;
     }
     /// <summary>
-    /// 预加载国际化语言资源
+    /// Preload language resources.
     /// </summary>
     protected void PreLoadI18NResource(string resString) {
       if (resString != null)
@@ -593,7 +593,7 @@ namespace Ballance2.Package
       }
     }
     /// <summary>
-    /// 加载模块的国际化语言资源
+    /// Load the package's language resources.
     /// </summary>
     private void LoadI18NResource()
     {
@@ -605,16 +605,16 @@ namespace Ballance2.Package
       }
     }
 
-    //自定义数据,方便操作
+    // Custom data for convenient access.
 
     private Dictionary<string, object> packageCustomData = new Dictionary<string, object>();
 
     /// <summary>
-    /// 添加自定义数据
+    /// Add custom data.
     /// </summary>
-    /// <param name="name">数据名称</param>
-    /// <param name="data">数据值</param>
-    /// <returns>返回数据值</returns>
+    /// <param name="name">Data name.</param>
+    /// <param name="data">Data value.</param>
+    /// <returns>The data value.</returns>
     public object AddCustomProp(string name, object data)
     {
       if (packageCustomData.ContainsKey(name))
@@ -626,10 +626,10 @@ namespace Ballance2.Package
       return data;
     }
     /// <summary>
-    /// 获取自定义数据
+    /// Get custom data.
     /// </summary>
-    /// <param name="name">数据名称</param>
-    /// <returns>返回数据值</returns>
+    /// <param name="name">Data name.</param>
+    /// <returns>The data value.</returns>
     public object GetCustomProp(string name)
     {
       if (packageCustomData.ContainsKey(name))
@@ -637,11 +637,11 @@ namespace Ballance2.Package
       return null;
     }
     /// <summary>
-    /// 设置自定义数据
+    /// Set custom data.
     /// </summary>
-    /// <param name="name">数据名称</param>
+    /// <param name="name">Data name.</param>
     /// <param name="data"></param>
-    /// <returns>返回旧的数据值，如果之前没有该数据，则返回null</returns>
+    /// <returns>The previous value, or null if none existed.</returns>
     public object SetCustomProp(string name, object data)
     {
       if (packageCustomData.ContainsKey(name))
@@ -653,10 +653,10 @@ namespace Ballance2.Package
       return null;
     }
     /// <summary>
-    /// 清除自定义数据
+    /// Remove custom data.
     /// </summary>
-    /// <param name="name">数据名称</param>
-    /// <returns>返回是否成功</returns>
+    /// <param name="name">Data name.</param>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool RemoveCustomProp(string name)
     {
       if (packageCustomData.ContainsKey(name))

@@ -4,13 +4,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameGlobalErrorUI.cs
 * 
-* 用途：
-* 全局错误UI逻辑控制
+* Purpose:
+* Global error UI controller.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

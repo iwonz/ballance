@@ -4,37 +4,37 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Tranfo
 {
   /// <summary>
-  /// 变球器接口
+  /// Ball transformer interface.
   /// </summary>
   public interface ITranfoBase
   {
     /// <summary>
-    /// 获取当前变球器目标变球类型
+    /// Get the transformer's target ball type.
     /// </summary>
     /// <returns></returns>
     string GetTargetBallType();
     /// <summary>
-    /// 获取变球器动画控制器
+    /// Get the transformer animation controller.
     /// </summary>
     /// <returns></returns>
     ITranfoAminControl GetTranfoAminControl();
     /// <summary>
-    /// 获取变球器颜色
+    /// Get the transformer color.
     /// </summary>
     /// <returns></returns>
     Color GetTranfoColor();
     /// <summary>
-    /// 获取 Transform
+    /// Get the Transform.
     /// </summary>
     Transform GetTransform();
     /// <summary>
-    /// 变球完成，重置回调
+    /// Reset callback after transformation finishes.
     /// </summary>
     void ResetTranfo();
   }
 
   /// <summary>
-  /// 基础变球器
+  /// Base transformer.
   /// </summary>
   public class TranfoBase : ModulBase, ITranfoBase
   {
@@ -56,10 +56,10 @@ namespace Ballance2.Game.GamePlay.Tranfo
       base.Start();
 
       _Tigger.onTriggerEnter = (_, other) => {
-        //球，并且球类型于目标类型不一致
+        // A ball whose type differs from the target type.
         if (!_TranfoActived && other.tag == "Ball" && other.name != _TargetBallType)
         {
-          //触发变球
+          // Trigger transformation.
           _TranfoActived = true;
           GamePlayManager.Instance.ActiveTranfo(this, _TargetBallType);
         }

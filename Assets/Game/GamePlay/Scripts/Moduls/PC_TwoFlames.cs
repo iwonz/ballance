@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Moduls
 {
   /// <summary>
-  /// 检查点火焰组件
+  /// Checkpoint flame component.
   /// </summary>
   public class PC_TwoFlames : ModulBase 
   {
@@ -22,11 +22,11 @@ namespace Ballance2.Game.GamePlay.Moduls
 
       if (!IsPreviewMode) 
       {
-        //Tigger 进入事件
+        // Trigger-enter event.
         CheckPointTigger.onTriggerEnter = (s, otherBody) => {
           if (!CheckPointActived && otherBody.tag == "Ball")
           {
-            //触发下一关
+            // Advance to the next sector.
             this.CheckPointActived = true;
             this.Flame.SetActive(false);
             GamePlayManager.Instance.SectorManager.NextSector();
@@ -62,7 +62,7 @@ namespace Ballance2.Game.GamePlay.Moduls
       this.gameObject.SetActive(false);
     }
 
-    //设置火焰激活状态
+    // Set flame activation state.
     public void InternalActive()
     {
       this.FlameSmallLeft.SetActive(false);

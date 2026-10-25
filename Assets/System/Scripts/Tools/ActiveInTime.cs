@@ -3,20 +3,20 @@ using UnityEngine;
 /*
 * Copyright(c) 2021 imengyu
 *
-* 模块名：     
+* Module:
 * ActiveInTime.cs
 * 
-* 用途：
-* 一个小组件，让物体在激活后指定秒内自动失活。
+* Purpose:
+* Deactivate an object automatically after a configured active duration.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Sys.Tools
 {
   /// <summary>
-  /// 一个小组件，让物体在激活后指定秒内自动失活
+  /// Deactivate an object automatically after a configured active duration.
   /// </summary>
   public class ActiveInTime : MonoBehaviour
   {

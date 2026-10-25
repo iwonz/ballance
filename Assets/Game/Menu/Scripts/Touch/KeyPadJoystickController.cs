@@ -21,7 +21,7 @@ namespace Ballance2.Menu.Touch
   public delegate void KeyPadJoystickValueChanged(float valX, float valY);
   
   /// <summary>
-  /// 模拟摇杆UI控制
+  /// Joystick UI controller.
   /// </summary>
   [RequireComponent(typeof(SimpleTouchController))]
   public class KeyPadJoystickController : MonoBehaviour

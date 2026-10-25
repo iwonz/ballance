@@ -4,23 +4,23 @@ using UnityEngine.EventSystems;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * SkyBoxUtils.cs
 * 
-* 用途：
-* UI 穿透脚本。添加此脚本至UI从而使控件穿透鼠标事件。
+* Purpose:
+* Allow pointer events to pass through a UI control.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Utils
 {
   /// <summary>
-  /// UI 穿透脚本。添加此脚本至UI从而使控件穿透事件。
+  /// Allow events to pass through a UI control.
   /// </summary>
   [AddComponentMenu("Ballance/UI/UIRayIgnore")]
-  [Tooltip("UI 穿透脚本。添加此脚本至UI从而使控件穿透鼠标事件")]
+  [Tooltip("UI raycast passthrough. Add this component to let mouse events pass through the control.")]
   public class UIRayIgnore : UIBehaviour, ICanvasRaycastFilter
   {
     private bool isEnabled = true;

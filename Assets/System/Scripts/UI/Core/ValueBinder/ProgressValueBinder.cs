@@ -4,13 +4,13 @@ using Ballance2.UI.Core.Controls;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * ProgressValueBinder.cs
 * 
-* 用途：
-* Progress控件数据绑定器
+* Purpose:
+* Progress data binder.
 *
-* 作者：
+* Author:
 * mengyu
 */
 namespace Ballance2.UI.Core.ValueBinder

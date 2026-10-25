@@ -20,9 +20,9 @@ Shader "LikeVirtools/BlinnPhongSpeicalFlatEmissionTransparent"
 
     Pass
     {
-      // 开启深度写入
+      // Enable depth writes.
       ZWrite On
-      // 设置颜色通道的写掩码，0为不写入任何颜色
+      // Set the color write mask; 0 disables all color writes.
       ColorMask 0
     }
     Pass
@@ -47,7 +47,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalFlatEmissionTransparent"
       #define USING_LIGHT_MULTI_COMPILE
       #define USE_TRANSPARENT
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"

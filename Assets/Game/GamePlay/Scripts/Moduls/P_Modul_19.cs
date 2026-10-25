@@ -4,7 +4,7 @@ using BallancePhysics.Wapper;
 namespace Ballance2.Game.GamePlay.Moduls
 {
   /// <summary>
-  /// 双向推板机关
+  /// Two-way pusher mechanism.
   /// </summary>
   public class P_Modul_19 : ModulBase 
   {

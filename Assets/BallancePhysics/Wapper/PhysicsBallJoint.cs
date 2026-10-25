@@ -7,10 +7,10 @@ namespace BallancePhysics.Wapper
   
   public class PhysicsBallJoint : PhysicsConstraintBase
   {
-    [Tooltip("连接点位置参照")]
+    [Tooltip("Reference frame for the connection point.")]
     
     public Transform JointPositionRef = null;
-    [Tooltip("连接到的另外一个物理物体，如果为空，则连接到世界物体")]
+    [Tooltip("The other physics object to connect; leave empty to connect to the world.")]
     
     public PhysicsObject Other = null;
 

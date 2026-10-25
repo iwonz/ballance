@@ -24,7 +24,7 @@ namespace mod.speedball {
       GamePackageEntry entry = new GamePackageEntry();
       entry.OnLoad = (package) => {
         /*
-        此处功能是监听GamePlayManager上的EventBeforeStart事件，在关卡开始之前设置倍速球设置
+        Set the ball speed multiplier through the gameplay lifecycle event.
         */
         GameManager.GameMediator.RegisterEventHandler(package, GameEventNames.EVENT_LEVEL_BUILDER_START, TAG, (evtName, param) => {
           GamePlayManager.Instance.BallManager.BallSpeedFactor = ballSpeedChoices[ballSpeedChoice];
@@ -51,7 +51,7 @@ namespace mod.speedball {
       entry.OnBeforeUnLoad = (package) => {
         return true;
       };
-      entry.Version = 1; //返回版本号
+      entry.Version = 1; // Return the version number.
       return entry;
     }
   }

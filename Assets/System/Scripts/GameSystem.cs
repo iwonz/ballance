@@ -9,45 +9,45 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameSystem.cs
 * 
-* 用途：
-* 游戏的基础系统与入口管理。
-* 此管理器用来管理基础系统初始化和一些基础服务。
-* 与GameManager不同，GameManager管理的是上层的服务，而此服务管理的是基础服务。
+* Purpose:
+* Base game system and entry management.
+* Initialize the base system and services.
+* GameManager manages higher-level services; this class manages the base framework.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
 
 /*
 
-此类用于为整个框架的初始化提供一个包装，具体的初始化代码抽离出来放在 
-Assets\System\Scripts\Services\Init\GameSystemInit.cs 中。
+Wrap framework initialization; the implementation is in
+Assets/System/Scripts/Services/Init/GameSystemInit.cs.
 
-此类还负责提供注册必要的系统服务功能，获取系统服务功能（同GameManager.GetSystemService）。
+Also registers and resolves required system services, like GameManager.GetSystemService.
 
-索引器通过调用 GameSystem.Init / GameSystem.PreInit 来启动框架。
+The entry point starts the framework through GameSystem.Init and GameSystem.PreInit.
 
 */
 
 namespace Ballance2
 {
   /// <summary>
-  /// 基础系统
+  /// Base system.
   /// </summary>
   public static class GameSystem
   {
     private const string TAG = "GameSystem";
 
-    #region 系统入口
+    #region System entry points
 
     /// <summary>
-    /// 系统接管器回调
+    /// System lifecycle handler.
     /// </summary>
-    /// <param name="act">当前操作</param>
+    /// <param name="act">Current operation.</param>
     public delegate void SysHandler(int act);
 
     private static SysHandler sysHandler = null;
@@ -58,9 +58,9 @@ namespace Ballance2
     public const int ACTION_PRE_INT = 4;
 
     /// <summary>
-    /// 注册系统接管器
+    /// Register the system lifecycle handler.
     /// </summary>
-    /// <param name="handler">系统接管器</param>
+    /// <param name="handler">System lifecycle handler.</param>
     public static void RegSysHandler(SysHandler handler)
     {
       if (sysHandler != null)
@@ -72,7 +72,7 @@ namespace Ballance2
       sysHandler = handler;
     }
     /// <summary>
-    /// 退出程序
+    /// Quit the player.
     /// </summary>
     public static void QuitPlayer()
     {
@@ -85,16 +85,16 @@ namespace Ballance2
 
     #endregion
 
-    #region 系统服务
+    #region System services
 
-    //系统服务容器
+    // System service registry.
     private static Dictionary<string, object> systemService = new Dictionary<string, object>();
 
     /// <summary>
-    /// 注册系统服务
+    /// Register a system service.
     /// </summary>
-    /// <param name="name">服务名称</param>
-    /// <param name="classObject">服务对象</param>
+    /// <param name="name">Service name.</param>
+    /// <param name="classObject">Service object.</param>
     /// <returns></returns>
     public static bool RegSystemService<T>() where T : GameService<T>
     {
@@ -120,9 +120,9 @@ namespace Ballance2
       return true;
     }
     /// <summary>
-    /// 取消注册系统服务
+    /// Unregister a system service.
     /// </summary>
-    /// <param name="name">服务</param>
+    /// <param name="name">Service.</param>
     /// <returns></returns>
     public static bool UnRegSystemService(string name)
     {
@@ -132,16 +132,16 @@ namespace Ballance2
         return false;
       }
 
-      //释放
+      // Release resources.
       var gameService = systemService[name] as GameService<System.Object>;
       gameService.Destroy();
 
       return systemService.Remove(name);
     }
     /// <summary>
-    /// 获取系统服务
+    /// Get a system service.
     /// </summary>
-    /// <param name="name">服务名称</param>
+    /// <param name="name">Service name.</param>
     /// <returns></returns>
     public static T GetSystemService<T>() where T : GameService<T>
     {
@@ -153,10 +153,10 @@ namespace Ballance2
 
     #endregion
 
-    #region 调试提供
+    #region Debug providers
 
     /// <summary>
-    /// 系统调试提供者
+    /// System debug provider.
     /// </summary>
     public interface SysDebugProvider
     {
@@ -168,14 +168,14 @@ namespace Ballance2
     private static SysDebugProviderCheck sysDebugProviderCheck = null;
 
     /// <summary>
-    /// 注册系统级调试提供者
+    /// Register a system-level debug provider.
     /// </summary>
     public static void RegSysDebugProvider(SysDebugProviderCheck providerCheck)
     {
       sysDebugProviderCheck = providerCheck;
     }
     /// <summary>
-    /// 启动系统级调试
+    /// Start system-level debugging.
     /// </summary>
     public static void StartRunDebugProvider()
     {
@@ -189,12 +189,12 @@ namespace Ballance2
 
     #endregion
 
-    #region 初始化
+    #region Initialization
 
     private static bool sysInit = false;
 
     /// <summary>
-    /// 载入静态资源入口，必须调用，否则系统无法加载静态资源。
+    /// Supply the static resource entry; required before the system can load static resources.
     /// </summary>
     /// <param name="gameEntry"></param>
     internal static void FillResEntry(GameStaticResEntry gameEntry) { gameStaticResEntryInstance = gameEntry; }
@@ -202,12 +202,12 @@ namespace Ballance2
     private static GameStaticResEntry gameStaticResEntryInstance = null;
 
     /// <summary>
-    /// 设置当前是否是重启模式。为true时Destroy完成后会重新启动。
+    /// Restart mode: when true, restart after Destroy completes.
     /// </summary>
     public static bool IsRestart = false;
 
     /// <summary>
-    /// 预初始化。仅初始化I18N与设置。
+    /// Pre-initialize only language resources and settings.
     /// </summary>
     public static void PreInit()
     {
@@ -222,7 +222,7 @@ namespace Ballance2
       sysHandler(ACTION_PRE_INT);
     }
     /// <summary>
-    /// 初始化主入口
+    /// Main initialization entry point.
     /// </summary> 
     public static void Init()
     {
@@ -256,7 +256,7 @@ namespace Ballance2
       }
     }
     /// <summary>
-    /// 消毁
+    /// Destroy.
     /// </summary>
     public static void Destroy()
     {
@@ -299,7 +299,7 @@ namespace Ballance2
       }
     }
     /// <summary>
-    /// 强制停止游戏
+    /// Force the game to stop.
     /// </summary>
     public static void ForceInterruptGame()
     {

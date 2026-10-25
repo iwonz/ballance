@@ -4,13 +4,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * ToggleExValueBinder.cs
 * 
-* 用途：
-* ToggleEx控件数据绑定器
+* Purpose:
+* ToggleEx data binder.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

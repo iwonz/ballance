@@ -5,13 +5,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2022 mengyu
 *
-* 模块名：     
+* Module:
 * GlobalGameScriptErrDialog.cs
 * 
-* 用途：
-* 全局游戏脚本错误的对话框逻辑。
+* Purpose:
+* Global script error dialog logic.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

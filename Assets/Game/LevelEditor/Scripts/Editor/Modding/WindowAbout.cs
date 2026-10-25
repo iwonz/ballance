@@ -7,15 +7,15 @@ namespace Ballance2.Editor.Modding
     {
         public WindowAbout()
         {
-            titleContent = new GUIContent("关于 Ballance 项目");
+            titleContent = new GUIContent("About Ballance");
         }
 
-        [@MenuItem("Ballance/帮助", false, 104)]
+        [@MenuItem("Ballance/Help", false, 104)]
         static void ShowHelp()
         {
 
         }
-        [@MenuItem("Ballance/关于", false, 109)]
+        [@MenuItem("Ballance/About", false, 109)]
         static void ShowAbout()
         {
             EditorWindow.GetWindowWithRect(typeof(WindowAbout), new Rect(200, 150, 390, 500));
@@ -51,15 +51,15 @@ namespace Ballance2.Editor.Modding
 
             GUILayout.Space(16);
             GUILayout.Label("Ballance Rebuild Project", DefaultCenteredLargeText);
-            GUILayout.Label("Ballance 重制项目（Unity）", DefaultCenteredText);
+            GUILayout.Label("Ballance Remake (Unity)", DefaultCenteredText);
 
             EditorGUILayout.Space(3);
-            GUILayout.Label("这是一个使用 Unity 制作的 Ballance 重制项目，\n这是作者很早就想做的一个小小梦想，\n" +
-                "作者就是一个普通学生，开发水平不足请谅解。\n你可以在项目github上获取更多信息。", DefaultCenteredText);
+            GUILayout.Label("A remake of Ballance in Unity.\nThis project began as the original author's long-standing personal goal.\n" +
+                "The original author was a student learning game development.\nSee the project on GitHub for more information.", DefaultCenteredText);
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("项目地址：github.com/imengyu/Ballance2", LinkLabel))
+            if (GUILayout.Button("Original project: github.com/imengyu/Ballance2", LinkLabel))
                 EditorUtility.OpenWithDefaultApp("https://github.com/imengyu/Ballance2");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -79,9 +79,9 @@ namespace Ballance2.Editor.Modding
             GUILayout.FlexibleSpace();
 
             GUILayout.BeginVertical(GUILayout.Width(270));
-            if (GUILayout.Button("开发帮助", ButtonMid))
+            if (GUILayout.Button("Development Help", ButtonMid))
                 ShowHelp();
-            if (GUILayout.Button("关闭", ButtonMid))
+            if (GUILayout.Button("Close", ButtonMid))
                 Close();
             GUILayout.EndVertical();
 

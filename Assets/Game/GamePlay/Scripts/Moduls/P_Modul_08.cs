@@ -28,7 +28,7 @@ namespace Ballance2.Game.GamePlay.Moduls
         _ForceState++;
         if (_ForceState > 3) 
           _ForceState = 0;
-        //切换方向
+        // Switch direction.
         if (_ForceState == 0 || _ForceState == 2)
           P_Modul_08_Schaukel_Force.Force = 0;
         else if (_EnableForce && _ForceState == 1) {

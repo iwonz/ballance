@@ -12,13 +12,13 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 创建约束
+    /// Create the constraint.
     /// </summary>
     protected override void DoCreate() {
       DoCreateConstraint();
     }
     /// <summary>
-    /// 销毁约束
+    /// Destroy the constraint.
     /// </summary>
     /// <param name="handle"></param>
     protected override void DoDestroy(IntPtr handle) {

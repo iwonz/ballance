@@ -15,13 +15,13 @@ namespace Ballance2.UI.Core.Controls
   {
     private class ScrollItemWithRect
     {
-      // scroll item 身上的 RectTransform组件
+      // Scroll item's RectTransform.
       public RectTransform item;
 
-      // scroll item 在scrollview中的位置
+      // Scroll item position within the scroll view.
       public Rect rect;
 
-      // rect 是否需要更新
+      // Whether the rect needs updating.
       public bool rectDirty = true;
     }
 
@@ -31,7 +31,7 @@ namespace Ballance2.UI.Core.Controls
     // for hide and show
     public enum ItemLayoutType
     {
-      // 最后一位表示滚动方向
+      // The last bit encodes scrolling direction.
       Vertical = 1,                   // 0001
       Horizontal = 2,                 // 0010
       VerticalThenHorizontal = 4,     // 0100
@@ -44,7 +44,7 @@ namespace Ballance2.UI.Core.Controls
     ItemLayoutType m_layoutType = ItemLayoutType.Vertical;
     protected ItemLayoutType layoutType { get { return m_layoutType; } }
 
-    // const int 代替 enum 减少 (int)和(CriticalItemType)转换
+    // Integer constants avoid repeated enum casts.
     protected static class CriticalItemType
     {
       public const int UpToHide = 0;
@@ -52,18 +52,18 @@ namespace Ballance2.UI.Core.Controls
       public const int UpToShow = 2;
       public const int DownToShow = 3;
     }
-    // 只保存4个临界index
+    // Keep only four boundary indices.
     protected int[] criticalItemIndex = new int[4];
     Rect refRect;
 
     // resource management
     SimpleObjPool<RectTransform> itemPool = null;
 
-    [Tooltip("初始化时池内item数量")]
+    [Tooltip("Initial number of pooled items.")]
     public int poolSize;
-    [Tooltip("默认item尺寸")]
+    [Tooltip("Default item size.")]
     public Vector2 defaultItemSize;
-    [Tooltip("item的模板")]
+    [Tooltip("Item template.")]
     public RectTransform itemTemplate;
     public delegate void UpdateFunc(int index, RectTransform item);
     public delegate Vector2 ItemSizeFunc(int index);
@@ -195,13 +195,13 @@ namespace Ballance2.UI.Core.Controls
 
       if (newDataCount != managedItems.Count)
       {
-        if (managedItems.Count < newDataCount) //增加
+        if (managedItems.Count < newDataCount) // Increment.
         {
           if (!keepOldItems)
           {
             foreach (var itemWithRect in managedItems)
             {
-              // 重置所有rect
+              // Reset all rects.
               itemWithRect.rectDirty = true;
             }
           }
@@ -211,13 +211,13 @@ namespace Ballance2.UI.Core.Controls
             managedItems.Add(new ScrollItemWithRect());
           }
         }
-        else //减少 保留空位 避免GC
+        else // Keep spare capacity to avoid garbage collection.
         {
           for (int i = 0, count = managedItems.Count; i < count; ++i)
           {
             if (i < newDataCount)
             {
-              // 重置所有rect
+              // Reset all rects.
               if (!keepOldItems)
               {
                 managedItems[i].rectDirty = true;
@@ -229,7 +229,7 @@ namespace Ballance2.UI.Core.Controls
               }
             }
 
-            // 超出部分 清理回收item
+            // Recycle items outside the required range.
             if (i >= newDataCount)
             {
               managedItems[i].rectDirty = true;
@@ -248,7 +248,7 @@ namespace Ballance2.UI.Core.Controls
         {
           for (int i = 0, count = managedItems.Count; i < count; ++i)
           {
-            // 重置所有rect
+            // Reset all rects.
             managedItems[i].rectDirty = true;
           }
         }
@@ -282,17 +282,17 @@ namespace Ballance2.UI.Core.Controls
 
         if (hasItem && shouldShow)
         {
-          // 应显示且已显示
+          // Should be visible and already is.
           SetDataForItemAtIndex(managedItems[i].item, i);
           continue;
         }
 
         if (hasItem == shouldShow)
         {
-          // 不应显示且未显示
+          // Should be hidden and already is.
           //if (firstIndex != -1)
           //{
-          //    // 已经遍历完所有要显示的了 后边的先跳过
+          //     // All visible items have been visited; skip the rest for now.
           //    break;
           //}
           continue;
@@ -300,7 +300,7 @@ namespace Ballance2.UI.Core.Controls
 
         if (hasItem && !shouldShow)
         {
-          // 不该显示 但是有
+          // Should be hidden but exists.
           RecycleOldItem(managedItems[i].item);
           managedItems[i].item = null;
           continue;
@@ -308,7 +308,7 @@ namespace Ballance2.UI.Core.Controls
 
         if (shouldShow && !hasItem)
         {
-          // 需要显示 但是没有
+          // Should be visible but is missing.
           RectTransform item = GetNewItem(i);
           OnGetItemForDataIndex(item, i);
           managedItems[i].item = item;
@@ -357,11 +357,11 @@ namespace Ballance2.UI.Core.Controls
 
         for (int i = CriticalItemType.UpToHide; i <= CriticalItemType.DownToShow; i++)
         {
-          if (i <= CriticalItemType.DownToHide) //隐藏离开可见区域的item
+          if (i <= CriticalItemType.DownToHide) // Hide items leaving the visible area.
           {
             dirty = dirty || CheckAndHideItem(i);
           }
-          else  //显示进入可见区域的item
+          else  // Show items entering the visible area.
           {
             dirty = dirty || CheckAndShowItem(i);
           }
@@ -377,17 +377,17 @@ namespace Ballance2.UI.Core.Controls
       {
         RecycleOldItem(item);
         managedItems[criticalIndex].item = null;
-        //Debug.Log("回收了 " + criticalIndex);
+        // Debug.Log("Recycled " + criticalIndex);
 
         if (criticalItemType == CriticalItemType.UpToHide)
         {
-          // 最上隐藏了一个
+          // One item hidden at the top.
           criticalItemIndex[criticalItemType + 2] = Mathf.Max(criticalIndex, criticalItemIndex[criticalItemType + 2]);
           criticalItemIndex[criticalItemType]++;
         }
         else
         {
-          // 最下隐藏了一个
+          // One item hidden at the bottom.
           criticalItemIndex[criticalItemType + 2] = Mathf.Min(criticalIndex, criticalItemIndex[criticalItemType + 2]);
           criticalItemIndex[criticalItemType]--;
         }
@@ -408,19 +408,19 @@ namespace Ballance2.UI.Core.Controls
       {
         RectTransform newItem = GetNewItem(criticalIndex);
         OnGetItemForDataIndex(newItem, criticalIndex);
-        //Debug.Log("创建了 " + criticalIndex);
+        // Debug.Log("Created " + criticalIndex);
         managedItems[criticalIndex].item = newItem;
 
 
         if (criticalItemType == CriticalItemType.UpToShow)
         {
-          // 最上显示了一个
+          // One item shown at the top.
           criticalItemIndex[criticalItemType - 2] = Mathf.Min(criticalIndex, criticalItemIndex[criticalItemType - 2]);
           criticalItemIndex[criticalItemType]--;
         }
         else
         {
-          // 最下显示了一个
+          // One item shown at the bottom.
           criticalItemIndex[criticalItemType - 2] = Mathf.Max(criticalIndex, criticalItemIndex[criticalItemType - 2]);
           criticalItemIndex[criticalItemType]++;
         }
@@ -464,12 +464,12 @@ namespace Ballance2.UI.Core.Controls
         int dir = (int)layoutType & flagScrollDirection;
         if (dir == 1)
         {
-          // 垂直滚动 只计算y向
+          // Vertical scrolling uses only Y.
           return (outRect.yMax >= inRect.yMax) && (outRect.yMin <= inRect.yMin);
         }
         else // = 0
         {
-          // 水平滚动 只计算x向
+          // Horizontal scrolling uses only X.
           return (outRect.xMax >= inRect.xMax) && (outRect.xMin <= inRect.xMin);
         }
       }
@@ -566,7 +566,7 @@ namespace Ballance2.UI.Core.Controls
     {
       initialized = true;
 
-      // 根据设置来控制原ScrollRect的滚动方向
+      // Apply the configured direction to the underlying ScrollRect.
       int dir = (int)layoutType & flagScrollDirection;
       vertical = (dir == 1);
       horizontal = (dir == 0);
@@ -591,7 +591,7 @@ namespace Ballance2.UI.Core.Controls
        * 
        */
 
-      // refRect是在Content节点下的 viewport的 rect
+      // refRect is the viewport rect relative to Content.
       viewRect.GetWorldCorners(viewWorldConers);
       rectCorners[0] = content.transform.InverseTransformPoint(viewWorldConers[0]);
       rectCorners[1] = content.transform.InverseTransformPoint(viewWorldConers[2]);
@@ -600,15 +600,15 @@ namespace Ballance2.UI.Core.Controls
 
     void MovePos(ref Vector2 pos, Vector2 size)
     {
-      // 注意 所有的rect都是左下角为基准
+      // All rects use the bottom-left corner as their origin.
       switch (layoutType)
       {
         case ItemLayoutType.Vertical:
-          // 垂直方向 向下移动
+          // Move downward vertically.
           pos.y -= size.y;
           break;
         case ItemLayoutType.Horizontal:
-          // 水平方向 向右移动
+          // Move right horizontally.
           pos.x += size.x;
           break;
         case ItemLayoutType.VerticalThenHorizontal:
@@ -636,7 +636,7 @@ namespace Ballance2.UI.Core.Controls
     {
       if (!managedItems[index].rectDirty)
       {
-        // 已经是干净的了
+        // Already clean.
         return;
       }
 
@@ -648,7 +648,7 @@ namespace Ballance2.UI.Core.Controls
         firstItem.rectDirty = false;
       }
 
-      // 当前item之前的最近的已更新的rect
+      // Nearest updated rect before the current item.
       int nearestClean = 0;
       for (int i = index; i >= 0; --i)
       {
@@ -659,7 +659,7 @@ namespace Ballance2.UI.Core.Controls
         }
       }
 
-      // 需要更新 从 nearestClean 到 index 的尺寸
+      // Update sizes from nearestClean through index.
       Rect nearestCleanRect = managedItems[nearestClean].rect;
       Vector2 curPos = GetLeftTop(nearestCleanRect);
       Vector2 size = nearestCleanRect.size;

@@ -8,13 +8,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * PackagePackerWindow.cs
 * 
-* 用途：
-* 打包模块代码
+* Purpose:
+* Package module code.
 *
-* 作者：
+* Author:
 * mengyu
 *
 * 
@@ -28,7 +28,7 @@ namespace Ballance2.Editor.Modding
     {
         public WindowPackagePacker()
         {
-            titleContent = new GUIContent("打包 Ballance 模块包");
+            titleContent = new GUIContent("Pack Ballance Package");
         }
 
         private SerializedObject serializedObject;
@@ -47,7 +47,7 @@ namespace Ballance2.Editor.Modding
 
         private GUIStyle groupBox = null;
         private int tab = 0;
-        private string[] tabText = new string[] {  "选择 Packages 下的模块", "选择 PackageDef.xml" };
+        private string[] tabText = new string[] {  "Select a package under Packages", "Select PackageDef.xml" };
         private int selectedMod = 0;
         private Vector2 scrollRect = new Vector2();
 
@@ -77,8 +77,8 @@ namespace Ballance2.Editor.Modding
             EditorGUILayout.BeginVertical(groupBox);
 
             EditorGUILayout.Space(20);
-            EditorGUILayout.HelpBox(new GUIContent(@"使用这个工具来打包你的模块包，
-你需要先使用“生成”工具来在 Assets/Packages 下生成你的模块包。"), true);
+            EditorGUILayout.HelpBox(new GUIContent(@"Pack your package with this tool.
+First generate a package template under Assets/Packages."), true);
             EditorGUILayout.Space(15);
 
             tab = GUILayout.Toolbar(tab, tabText);
@@ -87,28 +87,28 @@ namespace Ballance2.Editor.Modding
             if (tab == 1)
             {
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.PropertyField(pPackDefFile, new GUIContent("请选择 PackageDef.xml "));
-                if (GUILayout.Button("编辑器中选中的条目", GUILayout.Width(130)))
+                EditorGUILayout.PropertyField(pPackDefFile, new GUIContent("Select PackageDef.xml."));
+                if (GUILayout.Button("Editor selection", GUILayout.Width(130)))
                     SelectInEditor();
                 EditorGUILayout.EndHorizontal();
             }
             else
             {
                 EditorGUILayout.BeginHorizontal();
-                selectedMod = EditorGUILayout.Popup(new GUIContent("选择一个模块文件夹 "), selectedMod, packsPathArr);
-                if (GUILayout.Button("刷新", GUILayout.Width(80)))
+                selectedMod = EditorGUILayout.Popup(new GUIContent("Select a level folder "), selectedMod, packsPathArr);
+                if (GUILayout.Button("Refresh", GUILayout.Width(80)))
                     LoadModsPath();
                 EditorGUILayout.EndHorizontal();
             }
 
 
-            EditorGUILayout.PropertyField(pPackTarget, new GUIContent("目标平台 "));
+            EditorGUILayout.PropertyField(pPackTarget, new GUIContent("Target platform "));
 
             GUILayout.Space(50);
 
-            if (GUILayout.Button("打包至DebugFolder"))
+            if (GUILayout.Button("Pack to DebugFolder"))
                 DoPack(false);
-            if (GUILayout.Button("打包至自定义目录"))
+            if (GUILayout.Button("Pack to Custom Folder"))
                 DoPack(true);
 
             GUILayout.Space(5);
@@ -119,15 +119,15 @@ namespace Ballance2.Editor.Modding
             {
                 EditorGUILayout.BeginScrollView(scrollRect, GUI.skin.GetStyle("window"));
                 GUILayout.Space(3);
-                GUILayout.Label("打包完成！");
-                GUILayout.Label(packPackageName + " 包内所有资源:");
+                GUILayout.Label("Packing complete!");
+                GUILayout.Label(packPackageName + " package resources:");
                 foreach(string s in allAssetsPath)
                     GUILayout.Label(s);
                 EditorGUILayout.EndScrollView();
 
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("清空结果"))  isResult = false;
-                if (GUILayout.Button("关闭窗口")) { isClosed = true; Close(); }
+                if (GUILayout.Button("Clear Results"))  isResult = false;
+                if (GUILayout.Button("Close Window")) { isClosed = true; Close(); }
                 EditorGUILayout.EndHorizontal();
             }
 
@@ -152,7 +152,7 @@ namespace Ballance2.Editor.Modding
         private void LoadModsPath()
         {
             packsPath.Clear();
-            packsPath.Add("请选择");
+            packsPath.Add("Select...");
             packsPath.Add("core");
 
             DirectoryInfo direction = new DirectoryInfo(GamePathManager.DEBUG_PACKAGE_FOLDER);
@@ -172,12 +172,12 @@ namespace Ballance2.Editor.Modding
         {
             if(Selection.activeObject == null)
             {
-                EditorUtility.DisplayDialog("提示", "请先在编辑器中选择你的 PackageDef.xml 哦", "好的");
+                EditorUtility.DisplayDialog("Information", "Select your PackageDef.xml in the editor first.", "OK");
                 return;
             }
             if(Selection.activeObject.GetType() != typeof(TextAsset))
             {
-                EditorUtility.DisplayDialog("提示", "你选择的 PackageDef.xml 哦文件格式不对，必须是 TextAsset ", "好的");
+                EditorUtility.DisplayDialog("Information", "The selected PackageDef.xml must be a TextAsset.", "OK");
                 return;
             }
             packDefFile = Selection.activeObject as TextAsset;
@@ -193,7 +193,7 @@ namespace Ballance2.Editor.Modding
                 if (selectedMod == 0)
                 {
                     isError = true;
-                    errStr = "请选择你的模块";
+                    errStr = "Select your package.";
                     return;
                 } 
                 else if (selectedMod == 1)
@@ -208,7 +208,7 @@ namespace Ballance2.Editor.Modding
                     if(packDefFile  == null)
                     {
                         isError = true;
-                        errStr = "没有在此目录下找到 PackageDef.xml ，请先使用生成工具生成";
+                        errStr = "PackageDef.xml was not found in this folder. Generate a template first.";
                         return;
                     }
                 }
@@ -217,24 +217,24 @@ namespace Ballance2.Editor.Modding
             if (packDefFile == null)
             {
                 isError = true;
-                errStr = "请选择你的 PackageDef.xml ";
+                errStr = "Select your PackageDef.xml.";
                 return;
             }
             if (packTarget == BuildTarget.NoTarget)
             {
                 isError = true;
-                errStr = "请选择目标平台";
+                errStr = "Select the target platform.";
                 return;
             }
             if(!BuildPipeline.IsBuildTargetSupported(BuildPipeline.GetBuildTargetGroup(packTarget), packTarget))
             {
                 isError = true;
-                errStr = "你的 Unity 似乎不支持目标平台 "  + packTarget + " 的编译，可能你没有安装对应模块";
+                errStr = "This Unity installation cannot build for target "  + packTarget + ". The corresponding module may be missing.";
                 return;
             }
             string dir = "";
             if (selectedMod != 1 && chooseFolder)
-                dir = EditorUtility.OpenFolderPanel("保存模块包", EditorPrefs.GetString("ModMakerDefSaveDir", GamePathManager.DEBUG_PATH), "");
+                dir = EditorUtility.OpenFolderPanel("Save Package", EditorPrefs.GetString("ModMakerDefSaveDir", GamePathManager.DEBUG_PATH), "");
             else
             {
                 dir = selectedMod != 1 ? (DebugSettings.Instance.DebugFolder + "/" + packTarget + "/Packages/") : (DebugSettings.Instance.DebugFolder + "/" + packTarget + "/Core/");
@@ -254,13 +254,13 @@ namespace Ballance2.Editor.Modding
                     return;
                 } else {
                     isError = false;
-                    EditorUtility.DisplayDialog("提示", "打包成功！", "好的");
+                    EditorUtility.DisplayDialog("Information", "Package built successfully!", "OK");
                 }
             }
             else
             {
                 isError = true;
-                errStr = "您取消了保存 ";
+                errStr = "Save cancelled.";
             }
         }
     }

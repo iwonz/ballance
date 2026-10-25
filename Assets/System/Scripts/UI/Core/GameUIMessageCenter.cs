@@ -5,22 +5,22 @@ using static Ballance2.Services.GameManager;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameUIMessageUtils.cs
 * 
-* 用途：
-* UI 消息中心，方便处理UI事件。
+* Purpose:
+* UI message center for event handling.
 *
-* 此类提供了简单事件的绑定、数值同步绑定两个功能。
+* Provides simple event binding and synchronized value binding.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Core
 {
   /// <summary>
-  /// UI 消息中心，方便处理UI事件
+  /// UI message center for event handling.
   /// </summary>
   [RequireComponent(typeof(RectTransform))]
   [AddComponentMenu("Ballance/UI/MessageCenter")]
@@ -30,10 +30,10 @@ namespace Ballance2.UI.Core
     private static Dictionary<string, GameUIMessageCenter> messageCenters = new Dictionary<string, GameUIMessageCenter>();
 
     /// <summary>
-    /// 查找系统中的 UI 消息中心
+    /// Find a UI message center.
     /// </summary>
-    /// <param name="name">名字</param>
-    /// <returns>找到则返回 UI 消息中心实例，否则返回null</returns>
+    /// <param name="name">Name.</param>
+    /// <returns>UI message center instance, or null if absent.</returns>
     public static GameUIMessageCenter FindGameUIMessageCenter(string name)
     {
       if (messageCenters.ContainsKey(name))
@@ -45,7 +45,7 @@ namespace Ballance2.UI.Core
     private Dictionary<string, List<VoidDelegate>> events = new Dictionary<string, List<VoidDelegate>>();
 
     /// <summary>
-    /// 注册数据更新器（该方法无需手动调用）
+    /// Register a data binder; called automatically.
     /// </summary>
     /// <param name="binder"></param>
     /// <returns></returns>
@@ -60,7 +60,7 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 取消注册数据更新器（该方法无需手动调用）
+    /// Unregister a data binder; called automatically.
     /// </summary>
     /// <param name="binder"></param>
     /// <returns></returns>
@@ -75,11 +75,11 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 订阅数据更新器
+    /// Subscribe to a data binder.
     /// </summary>
-    /// <param name="binderName">数据更新器名称</param>
-    /// <param name="callbackFun">数据更新回调</param>
-    /// <returns>返回一个可供更新数据的回调，调用此回调更新控件上的数据</returns>
+    /// <param name="binderName">Data binder name.</param>
+    /// <param name="callbackFun">Value update callback.</param>
+    /// <returns>Callback that updates the control's displayed value.</returns>
     public GameUIControlValueBinderSupplierCallback SubscribeValueBinder(string binderName, GameUIControlValueBinderUserUpdateCallback callbackFun)
     {
       if (valueBinders.TryGetValue(binderName, out GameUIControlValueBinder binder))
@@ -98,9 +98,9 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 使用数据更新器获取控件实例
+    /// Get the control instance through its data binder.
     /// </summary>
-    /// <param name="binderName">数据更新器名称</param>
+    /// <param name="binderName">Data binder name.</param>
     /// <returns></returns>
     public GameObject GetComponentInstance(string binderName)
     {
@@ -110,11 +110,11 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 取消订阅数据更新器
+    /// Unsubscribe from a data binder.
     /// </summary>
-    /// <param name="binderName">数据更新器名称</param>
-    /// <param name="callbackFun">数据更新回调</param>
-    /// <returns>返回是否成功</returns>
+    /// <param name="binderName">Data binder name.</param>
+    /// <param name="callbackFun">Value update callback.</param>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool UnSubscribeValueBinder(string binderName, GameUIControlValueBinderUserUpdateCallback callbackFun)
     {
       if (valueBinders.TryGetValue(binderName, out GameUIControlValueBinder binder))
@@ -126,10 +126,10 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 订阅单一消息
+    /// Subscribe to a single message.
     /// </summary>
-    /// <param name="evtName">消息名称</param>
-    /// <param name="callBack">消息回调</param>
+    /// <param name="evtName">Message name.</param>
+    /// <param name="callBack">Message callback.</param>
     public void SubscribeEvent(string evtName, VoidDelegate callBack)
     {
       if (!events.TryGetValue(evtName, out var handlers))
@@ -141,10 +141,10 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 取消订阅单一消息
+    /// Unsubscribe from a single message.
     /// </summary>
-    /// <param name="evtName">消息名称</param>
-    /// <param name="callBack">消息回调</param>
+    /// <param name="evtName">Message name.</param>
+    /// <param name="callBack">Message callback.</param>
     public bool UnSubscribeEvent(string evtName, VoidDelegate callBack)
     {
       if (events.TryGetValue(evtName, out var handlers))
@@ -156,9 +156,9 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 发送单一消息
+    /// Send a single message.
     /// </summary>
-    /// <param name="evtName">消息名称</param>
+    /// <param name="evtName">Message name.</param>
     public void NotifyEvent(string evtName)
     {
       if (events.TryGetValue(evtName, out var handlers))
@@ -175,7 +175,7 @@ namespace Ballance2.UI.Core
       messageCenters.Remove(Name);
     }
 
-    [Tooltip("消息中心名字")]
+    [Tooltip("Message center name.")]
     public string Name = "";
   }
 }

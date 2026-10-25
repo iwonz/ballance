@@ -12,7 +12,7 @@ using Ballance2.Game;
 namespace Ballance2.Menu.Touch
 {
   /// <summary>
-  /// 手机键盘UI控制
+  /// Mobile keyboard UI controller.
   /// </summary>
   [RequireComponent(typeof(KeypadGridLayout))]
   public class SimpleTouchDirectionKeyController : UIBehaviour
@@ -52,14 +52,14 @@ namespace Ballance2.Menu.Touch
     private void HandleTouchPos(Vector2 pos) {
       float spx = (rect.width / SplitCount.x);
       float spy = (rect.height / SplitCount.y);
-      //9格，直接算出是哪个按扭
+      // Calculate the button directly from the nine-cell grid.
       float x = pos.x - rect.x - SplitStart.x * spx;
       float y = pos.y - rect.y - SplitStart.y * spy;
       int xg = (int)Mathf.Floor(x / spx);
       int yg = (int)Mathf.Floor(y / spy);
-      switch(yg) {//y 上中下
-        case 2: //上
-          if(xg == 0) { //x 左右
+      switch(yg) {// Y: top, middle, bottom.
+        case 2: // Top.
+          if(xg == 0) { // X: left and right.
             ClearState(KeyPadJoystickDirection.LeftForward);
             if((currentState & KeyPadJoystickDirection.Left) == KeyPadJoystickDirection.None)
               CallKeyPadJoystickDirectionChanged(true, KeyPadJoystickDirection.Left);
@@ -74,8 +74,8 @@ namespace Ballance2.Menu.Touch
           if((currentState & KeyPadJoystickDirection.Forward) == KeyPadJoystickDirection.None)
             CallKeyPadJoystickDirectionChanged(true, KeyPadJoystickDirection.Forward);
           break;
-        case 1: //中
-          if(xg == 0) { //x 左右
+        case 1: // Middle.
+          if(xg == 0) { // X: left and right.
             ClearState(KeyPadJoystickDirection.Left);
             if((currentState & KeyPadJoystickDirection.Left) == KeyPadJoystickDirection.None)
               CallKeyPadJoystickDirectionChanged(true, KeyPadJoystickDirection.Left);
@@ -88,8 +88,8 @@ namespace Ballance2.Menu.Touch
             ClearState();
           }
           break;
-        case 0: //下
-          if(xg == 0) { //x 左右
+        case 0: // Bottom.
+          if(xg == 0) { // X: left and right.
             ClearState(KeyPadJoystickDirection.LeftBack);
             if((currentState & KeyPadJoystickDirection.Left) == KeyPadJoystickDirection.None)
               CallKeyPadJoystickDirectionChanged(true, KeyPadJoystickDirection.Left);

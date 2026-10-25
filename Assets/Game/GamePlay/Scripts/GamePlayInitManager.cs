@@ -12,9 +12,9 @@ namespace Ballance2.Game.GamePlay
     private static List<GameObject> objects = new List<GameObject>();
 
     /// <summary>
-    /// 游戏玩模块初始化
+    /// Initialize the gameplay module.
     /// </summary>
-    /// <param name="callback">完成回调</param>
+    /// <param name="callback">Completion callback.</param>
     public static void GamePlayInit(bool isPreview, GameManager.VoidDelegate callback) {
       Log.D("GamePlay", "GamePlayInit");
 
@@ -62,7 +62,7 @@ namespace Ballance2.Game.GamePlay
       });
     } 
     /// <summary>
-    /// 游戏玩模块卸载
+    /// Unload the gameplay module.
     /// </summary>
     public static void GamePlayUnload() {
       Log.D("GamePlay", "GamePlayUnload");

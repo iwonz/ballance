@@ -4,13 +4,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * UnityLogCatcher.cs
 * 
-* 用途：
-* Unity日志捕捉器，用于捕捉Unity日志并将其显示至游戏内控制台。
+* Purpose:
+* Capture Unity logs for the in-game console.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

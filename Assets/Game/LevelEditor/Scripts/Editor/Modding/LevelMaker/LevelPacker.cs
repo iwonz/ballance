@@ -25,7 +25,7 @@ namespace Ballance2.Editor.Modding.LevelMaker
           allAssetsPath.Add(projLevelDirPath + "/LevelPreview.png");
           allAssetsPath.Add(projLevelDirPath + "/Level.prefab");
 
-          //打包
+          // Package content.
           AssetBundleBuild assetBundleBuild = new AssetBundleBuild();
           assetBundleBuild.assetBundleName = sourceName;
           assetBundleBuild.assetBundleVariant = "ballance";
@@ -34,7 +34,7 @@ namespace Ballance2.Editor.Modding.LevelMaker
           if(!Directory.Exists(dirTargetPath))
             Directory.CreateDirectory(dirTargetPath);
 
-          //打包
+          // Package content.
           var ass = BuildPipeline.BuildAssetBundles(dirTargetPath, new AssetBundleBuild[]{
             assetBundleBuild
           }, BuildAssetBundleOptions.ChunkBasedCompression, packTarget);

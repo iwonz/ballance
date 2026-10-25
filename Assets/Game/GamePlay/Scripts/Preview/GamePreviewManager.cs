@@ -10,7 +10,7 @@ using UnityEngine.InputSystem.LowLevel;
 namespace Ballance2.Game.GamePlay
 {
   /// <summary>
-  /// 关卡预览管理器，负责关卡预览模式时的一些控制行为。
+  /// Control level preview behavior.
   /// </summary>
   public class GamePreviewManager : GameSingletonBehavior<GamePreviewManager>
   {
@@ -40,10 +40,10 @@ namespace Ballance2.Game.GamePlay
       SoundManager = GameSoundManager.Instance;
       var SystemPackage = GamePackage.GetSystemPackage();
 
-      //注册全局事件
+      // Register global events.
       Mediator.SubscribeSingleEvent(SystemPackage, "CoreGamePreviewManagerInitAndStart", "GamePreviewManager", (evtName, param) => {
         GamePreviewUI = GamePlayPreviewUIControl.Instance;
-        SoundManager.PlayFastVoice("core.sounds:Misc_StartLevel.wav", GameSoundType.Normal); //播放开始音乐
+        SoundManager.PlayFastVoice("core.sounds:Misc_StartLevel.wav", GameSoundType.Normal); // Play the level-start sound.
         GamePreviewUI.gameObject.SetActive(true);
         GamePreviewUI.SetLevelInfo(param[0] as string, param[1] as string, param[2] as string);
         GamePreviewUI.SetFreeCamera(GamePreviewFreeCamera);
@@ -52,13 +52,13 @@ namespace Ballance2.Game.GamePlay
         MusicManager.EnableBackgroundMusic();
         GamePreviewMinimapCamera.gameObject.SetActive(true);
         GamePreviewCamera.gameObject.SetActive(true);
-        SectorManager.ActiveAllModulsForPreview(); //激活机关
+        SectorManager.ActiveAllModulsForPreview(); // Activate mechanisms.
 
         UIManager.CloseAllPage();
         UIManager.MaskBlackFadeOut(1);
         _IsLoaded = true;
 
-        //ESC键
+        // Escape key.
         escKeyId = UIManager.ListenKey(KeyCode.Escape, (key, down) => {
           if (down) {
             if (_IsGamePlaying)
@@ -75,7 +75,7 @@ namespace Ballance2.Game.GamePlay
         GameUIManager.Instance.DeleteKeyListen(escKeyId);
         escKeyId = 0;
       }
-      //取消注册全局事件
+      // Unregister global events.
       Mediator.UnRegisterSingleEvent("CoreGamePreviewManagerInitAndStart");
     }
 
@@ -106,17 +106,17 @@ namespace Ballance2.Game.GamePlay
     }
 
     /// <summary>
-    /// 初始化灯光和天空盒
+    /// Initialize lighting and skybox.
     /// </summary>
-    /// <param name="skyBoxPre">A-K 或者空，为空则使用 customSkyMat 材质</param>
-    /// <param name="customSkyMat">自定义天空盒材质</param>
-    /// <param name="lightColor">灯光颜色</param>
+    /// <param name="skyBoxPre">A-K, or empty to use customSkyMat.</param>
+    /// <param name="customSkyMat">Custom skybox material.</param>
+    /// <param name="lightColor">Light color.</param>
     public void CreateSkyAndLight(string skyBoxPre, Material customSkyMat, Color lightColor) {
       GamePreviewCameraSkyBox.material = customSkyMat == null ? SkyBoxUtils.MakeSkyBox(skyBoxPre) : customSkyMat;
       Ballance2.Services.GameManager.GameLight.color = lightColor;
     }
     /// <summary>
-    /// 隐藏天空盒和关卡灯光
+    /// Hide the skybox and level lighting.
     /// </summary>
     public void HideSkyAndLight() {
       GamePreviewCameraSkyBox.material = null;

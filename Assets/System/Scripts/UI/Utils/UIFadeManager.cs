@@ -6,53 +6,53 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * UIFadeManager.cs
 * 
-* 用途：
-* 渐变自管理类。
-* 负责渐变自动化脚本的管理与执行。
-* 该组件有绑定一个实例至 GameUIManager 上，可使用 GameUIManager.UIFadeManager 快速访问。
+* Purpose:
+* Fade manager.
+* Manage and execute automated fades.
+* GameUIManager owns an instance available through GameUIManager.UIFadeManager.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 /*
 
-渐变工具，可以对多种物体进行渐变，显示/隐藏。
-目前支持Material，Material数组，Image，Text，AudioSource的淡出淡入效果。
+Fade objects in/out and optionally show or hide them.
+Supports Material, Material arrays, Image, Text, and AudioSource.
 
-注意，如果多个物体共享同一个材质，运行渐变后会导致全部使用此材质的物体都会改变效果，如果需要单独渐变，要在对象上用一个单独的材质。
+Fading a shared material affects all its users. Assign a separate material when only one object should fade.
 
-使用方法，可以调用
+Usage:
 
-//产生一个渐变，对象是当前物体，并且渐变完成后自动隐藏物体
-//最后一个参数为null表示它会自动去当前物体的MeshRenderer上查找材质来进行渐变。
+// Create a fade for this object and hide it when the fade finishes.
+// A null final argument automatically finds the material on the object's MeshRenderer.
 var fadeObject = AddFadeOut(gameObject, 1.0f, true, null);
 
-//创建的fadeObject随时可以停止，或者设置当前的渐变值。
-fadeObject.Delete(); //停止
-fadeObject.ResetTo(0.5f); //设置当前的渐变值为 0.5f
+// The returned fadeObject can be stopped or assigned a current fade value.
+fadeObject.Delete(); // Stop.
+fadeObject.ResetTo(0.5f); // Set the current fade value to 0.5.
 
 */
 
 namespace Ballance2.UI.Utils
 {
   /// <summary>
-  /// 渐变工具，可以对多种物体进行渐变，显示/隐藏。目前支持Material，Material数组，Image，Text，AudioSource的淡出淡入效果。
+  /// Fade Material, Material arrays, Image, Text, or AudioSource, optionally showing or hiding objects.
   /// </summary>
   /// <remarks>
-  /// 该组件有绑定一个实例至 <see>Ballance2.Services.GameUIManager</see> 上，可使用 `GameUIManager.UIFadeManager` 快速访问。
-  /// 注意，如果多个物体共享同一个材质，运行渐变后会导致全部使用此材质的物体都会改变效果，如果需要单独渐变，要在对象上用一个单独的材质。
+  /// Access the instance owned by GameUIManager through GameUIManager.UIFadeManager.
+  /// Fading a shared material affects all its users; use a separate material for an independent fade.
   /// </remarks>
   /// <example>
-  /// //产生一个渐变，对象是当前物体，并且渐变完成后自动隐藏物体
-  /// //最后一个参数为null表示它会自动去当前物体的MeshRenderer上查找材质来进行渐变。
+  /// // Fade this object and hide it on completion.
+  /// // A null final argument uses the material on this object's MeshRenderer.
   /// var fadeObject = GameUIManager.UIFadeManager.AddFadeOut(this.gameObject, 1.0f, true, null);
-  /// //创建的fadeObject随时可以停止，或者设置当前的渐变值。
-  /// fadeObject.Delete(); //停止
-  /// fadeObject.ResetTo(0.5f); //设置当前的渐变值为 0.5f
+  /// // Stop the returned fadeObject or set its current fade value at any time.
+  /// fadeObject.Delete(); // Stop.
+  /// fadeObject.ResetTo(0.5f); // Set the current fade value to 0.5.
   /// </example>
   public class UIFadeManager : MonoBehaviour
   {
@@ -118,7 +118,7 @@ namespace Ballance2.UI.Utils
                 }
                 fadeObject.runEnd = true;
 
-                //恢复材质渲染模式为原来的
+                // Restore the original material rendering mode.
                 if(fadeObject.material != null && (fadeObject.material.shader == null || fadeObject.material.shader.name == "Standard")) {
                   if (fadeObject.material != null && fadeObject.oldMatRenderMode != MaterialUtils.RenderingMode.Fade)
                   {
@@ -171,12 +171,12 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 运行淡出动画
+    /// Run a fade-out animation.
     /// </summary>
-    /// <param name="gameObject">执行对象</param>
-    /// <param name="timeInSecond">执行时间</param>
-    /// <param name="hidden">执行完毕是否将对象设置为不激活</param>
-    /// <param name="material">执行材质</param>
+    /// <param name="gameObject">Target object.</param>
+    /// <param name="timeInSecond">Duration.</param>
+    /// <param name="hidden">Deactivate the object when finished.</param>
+    /// <param name="material">Target material.</param>
     public FadeObject AddFadeOut(GameObject gameObject, float timeInSecond, bool hidden, Material material)
     {
       FadeObject fadeObject = FindFadeObjectByGameObject(gameObject, FadeType.FadeOut);
@@ -199,7 +199,7 @@ namespace Ballance2.UI.Utils
 
         fadeObject.material.color = new Color(fadeObject.material.color.r, fadeObject.material.color.g, fadeObject.material.color.b, 1);
         if(fadeObject.material.shader == null || fadeObject.material.shader.name == "Standard") {
-          //如果标准材质模式不是Fade，设置材质渲染模式为Fade
+          // Switch the standard material to Fade mode if necessary.
           var oldRenderMode = MaterialUtils.GetMaterialRenderingMode(fadeObject.material);
           if (oldRenderMode != MaterialUtils.RenderingMode.Fade)
           {
@@ -214,11 +214,11 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 运行淡入动画
+    /// Run a fade-in animation.
     /// </summary>
-    /// <param name="gameObject">执行对象</param>
-    /// <param name="timeInSecond">执行时间</param>
-    /// <param name="material">执行材质</param>
+    /// <param name="gameObject">Target object.</param>
+    /// <param name="timeInSecond">Duration.</param>
+    /// <param name="material">Target material.</param>
     public FadeObject AddFadeIn(GameObject gameObject, float timeInSecond, Material material)
     {
       FadeObject fadeObject = FindFadeObjectByGameObject(gameObject, FadeType.FadeIn);
@@ -240,7 +240,7 @@ namespace Ballance2.UI.Utils
       {
         fadeObject.material.color = new Color(fadeObject.material.color.r, fadeObject.material.color.g, fadeObject.material.color.b, 0);
         if(fadeObject.material.shader == null || fadeObject.material.shader.name == "Standard") {
-          //设置材质渲染模式为Fade
+          // Set material rendering mode to Fade.
           var oldRenderMode = MaterialUtils.GetMaterialRenderingMode(fadeObject.material);
           if (oldRenderMode != MaterialUtils.RenderingMode.Fade)
           {
@@ -257,12 +257,12 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 运行淡出动画
+    /// Run a fade-out animation.
     /// </summary>
-    /// <param name="gameObject">执行对象</param>
-    /// <param name="timeInSecond">执行时间</param>
-    /// <param name="hidden">执行完毕是否将对象设置为不激活</param>
-    /// <param name="materials">执行材质数组</param>
+    /// <param name="gameObject">Target object.</param>
+    /// <param name="timeInSecond">Duration.</param>
+    /// <param name="hidden">Deactivate the object when finished.</param>
+    /// <param name="materials">Target materials.</param>
     public FadeObject AddFadeOut2(GameObject gameObject, float timeInSecond, bool hidden, Material[] materials)
     {
       FadeObject fadeObject = FindFadeObjectByGameObject(gameObject, FadeType.FadeOut);
@@ -289,11 +289,11 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 运行淡入动画
+    /// Run a fade-in animation.
     /// </summary>
-    /// <param name="gameObject">执行对象</param>
-    /// <param name="timeInSecond">执行时间</param>
-    /// <param name="material">执行材质</param>
+    /// <param name="gameObject">Target object.</param>
+    /// <param name="timeInSecond">Duration.</param>
+    /// <param name="material">Target material.</param>
     public FadeObject AddFadeIn2(GameObject gameObject, float timeInSecond, Material[] materials)
     {
       FadeObject fadeObject = FindFadeObjectByGameObject(gameObject, FadeType.FadeIn);
@@ -321,11 +321,11 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 运行淡出动画
+    /// Run a fade-out animation.
     /// </summary>
-    /// <param name="image">执行对象</param>
-    /// <param name="timeInSecond">执行时间</param>
-    /// <param name="hidden">执行完毕是否将对象设置为不激活</param>
+    /// <param name="image">Target image.</param>
+    /// <param name="timeInSecond">Duration.</param>
+    /// <param name="hidden">Deactivate the object when finished.</param>
     public FadeObject AddFadeOut(Image image, float timeInSecond, bool hidden)
     {
       if (image != null)
@@ -351,10 +351,10 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 运行淡入动画
+    /// Run a fade-in animation.
     /// </summary>
-    /// <param name="image">执行对象</param>
-    /// <param name="timeInSecond">执行时间</param>
+    /// <param name="image">Target image.</param>
+    /// <param name="timeInSecond">Duration.</param>
     public FadeObject AddFadeIn(Image image, float timeInSecond)
     {
       if (image != null)
@@ -381,11 +381,11 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 运行淡出动画
+    /// Run a fade-out animation.
     /// </summary>
-    /// <param name="text">执行对象</param>
-    /// <param name="timeInSecond">执行时间</param>
-    /// <param name="hidden">执行完毕是否将对象设置为不激活</param>
+    /// <param name="text">Target text.</param>
+    /// <param name="timeInSecond">Duration.</param>
+    /// <param name="hidden">Deactivate the object when finished.</param>
     public FadeObject AddFadeOut(Text text, float timeInSecond, bool hidden)
     {
       if (text != null)
@@ -411,10 +411,10 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 运行淡入动画
+    /// Run a fade-in animation.
     /// </summary>
-    /// <param name="text">执行对象</param>
-    /// <param name="timeInSecond">执行时间</param>
+    /// <param name="text">Target text.</param>
+    /// <param name="timeInSecond">Duration.</param>
     public FadeObject AddFadeIn(Text text, float timeInSecond)
     {
       if (text != null)
@@ -441,10 +441,10 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 运行声音淡出
+    /// Fade audio out.
     /// </summary>
-    /// <param name="audio">执行对象</param>
-    /// <param name="timeInSecond">执行时间</param>
+    /// <param name="audio">Target audio source.</param>
+    /// <param name="timeInSecond">Duration.</param>
     public FadeObject AddAudioFadeOut(AudioSource audio, float timeInSecond)
     {
       if (audio != null)
@@ -470,10 +470,10 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 运行声音淡入
+    /// Fade audio in.
     /// </summary>
-    /// <param name="audio">执行对象</param>
-    /// <param name="timeInSecond">执行时间</param>    
+    /// <param name="audio">Target audio source.</param>
+    /// <param name="timeInSecond">Duration.</param>
     public FadeObject AddAudioFadeIn(AudioSource audio, float timeInSecond)
     {
       if (audio != null)
@@ -502,7 +502,7 @@ namespace Ballance2.UI.Utils
   }
 
   /// <summary>
-  /// 渐变类型
+  /// Fade type.
   /// </summary>
   public enum FadeType
   {
@@ -512,7 +512,7 @@ namespace Ballance2.UI.Utils
   }
 
   /// <summary>
-  /// 渐变管理对象信息
+  /// Fade operation state.
   /// </summary>
   public class FadeObject
   {
@@ -548,9 +548,9 @@ namespace Ballance2.UI.Utils
     public FadeType fadeType;
 
     /// <summary>
-    /// 强制重置当前渐变透明度至指定的值
+    /// Force the fade alpha to a value.
     /// </summary>
-    /// <param name="alpha">透明度值</param>
+    /// <param name="alpha">Alpha value.</param>
     public void ResetTo(float alpha) {
       this.alpha = alpha;
 
@@ -570,7 +570,7 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 移除当前渐变
+    /// Remove this fade.
     /// </summary>
     public void Delete() {
       fadeManager.fadeObjects.Remove(this);

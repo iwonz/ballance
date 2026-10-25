@@ -1,20 +1,20 @@
 /*
  * Copyright (c) 2020  mengyu
  * 
- * 模块名：     
+ * Module:
  * GameSingletonManager.cs
  *
- * 用途：
- * 单例对象基类，用于管理一些单例.
+ * Purpose:
+ * Base class for singleton objects.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Base
 {
   /// <summary>
-  /// 单例对象基类
+  /// Singleton object base class.
   /// </summary>
   /// <typeparam name="T"></typeparam>
   public class GameSingletonManager<T> where T : class

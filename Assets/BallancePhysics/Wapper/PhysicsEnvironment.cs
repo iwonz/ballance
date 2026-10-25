@@ -14,59 +14,59 @@ namespace BallancePhysics.Wapper
   [DefaultExecutionOrder(10)]
   [DisallowMultipleComponent]
   /// <summary>
-  /// 物理世界承载组件
+  /// Component hosting the physics world.
   /// </summary>
   public class PhysicsEnvironment : MonoBehaviour
   {
-    [Tooltip("世界的引力。默认值是 (0, -9.8, 0). (模拟开始后更改此值无效)")]
+    [Tooltip("World gravity; default (0, -9.8, 0). Changes after simulation starts have no effect.")]
     /// <summary>
-    /// 世界的引力。默认值是 (0, -9.8, 0). (模拟开始后更改此值无效)
+    /// World gravity, default (0, -9.8, 0). Changes after simulation starts have no effect.
     /// </summary>
     /// <returns></returns>
     public Vector3 Gravity = new Vector3(0, -9.81f, 0);
-    [Tooltip("指定y坐标低于这个值的时候自动失活物体. 大于 0 的时候不启用")]
+    [Tooltip("Deactivate objects below this Y coordinate. Positive values disable this threshold.")]
     /// <summary>
-    /// 指定y坐标低于这个值的时候自动失活物体. 大于 0 的时候不启用
+    /// Automatically deactivate objects below this Y coordinate. Positive values disable the cutoff.
     /// </summary>
     /// <returns></returns>
     public float DePhysicsFall = -5000;
-    [Tooltip("模拟速率（10-100，一秒钟进行物理模拟的速率）(模拟开始后更改此值无效)")]
+    [Tooltip("Simulation steps per second (10-100). Changes after simulation starts have no effect.")]
     /// <summary>
-    /// 模拟速率（10-100，一秒钟进行物理模拟的速率）(模拟开始后更改此值无效)
+    /// Simulation frequency, 10-100 steps per second. Changes after simulation starts have no effect.
     /// </summary>
     public int SimulationRate = 66;
-    [Tooltip("用于物理对象模拟的时间乘以的因子。因此，如果“物理时间因子”为2.0，而不是1.0（正常速度），则物理对象下落的速度将加倍。")]
+    [Tooltip("Simulation time multiplier. A value of 2.0 makes physics run twice as fast as the normal value of 1.0.")]
     /// <summary>
-    /// 用于物理对象模拟的时间乘以的因子。因此，如果“物理时间因子”为2.0，而不是1.0（正常速度），则物理对象下落的速度将加倍。
+    /// Physics time multiplier: 2.0 makes objects fall twice as fast as the normal value of 1.0.
     /// </summary>
     public float TimeFactor = 1;
-    [Tooltip("是否在销毁环境时自动删除所有碰撞层")]
+    [Tooltip("Delete all collision surfaces when the environment is destroyed.")]
     /// <summary>
-    /// 是否在销毁环境时自动删除所有碰撞层
+    /// Delete all collision surfaces when the environment is destroyed.
     /// </summary>
     public bool DeleteAllSurfacesWhenDestroy = true;
-    [Tooltip("是否启用模拟")]
+    [Tooltip("Enable simulation.")]
     /// <summary>
-    /// 是否启用模拟
+    /// Enable simulation.
     /// </summary>
     public bool Simulate = true;
-    [Tooltip("是否自动创建")]
+    [Tooltip("Create automatically.")]
     /// <summary>
-    /// 是否自动创建
+    /// Create automatically.
     /// </summary>
     public bool AutoCreate = true;
 
     /// <summary>
-    /// 所有物理环境
+    /// All physics environments.
     /// </summary>
-    /// <typeparam name="int">Unity场景的buildIndex</typeparam>
+    /// <typeparam name="int">Unity scene buildIndex.</typeparam>
     /// <typeparam name="PhysicsWorld"></typeparam>
     /// <returns></returns>
     public static Dictionary<int, PhysicsEnvironment> PhysicsWorlds { get; } = new Dictionary<int, PhysicsEnvironment>();
     /// <summary>
-    /// 获取当前场景的物理环境
+    /// Get the physics environment for the current scene.
     /// </summary>
-    /// <returns>如果当前场景没有创建物理环境，则返回null</returns>
+    /// <returns>Null if the current scene has no physics environment.</returns>
     public static PhysicsEnvironment GetCurrentScensePhysicsWorld()
     {
       int currentScenseIndex = SceneManager.GetActiveScene().buildIndex;
@@ -76,7 +76,7 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 获取当前物理环境的底层指针
+    /// Get the native pointer for this physics environment.
     /// </summary>
     /// <value></value>
     public IntPtr Handle { get; private set; } = IntPtr.Zero;
@@ -101,7 +101,7 @@ namespace BallancePhysics.Wapper
     private GameTimeMachine.GameTimeMachineTimeTicket fixedUpdateTicket = null;
 
     /// <summary>
-    /// 手动创建物理环境
+    /// Create the physics environment manually.
     /// </summary>
     public void Create()
     {
@@ -129,14 +129,14 @@ namespace BallancePhysics.Wapper
     private bool destroyLock = false;
 
     /// <summary>
-    /// 获取当前物理环境是否创建
+    /// Whether the physics environment has been created.
     /// </summary>
     public bool IsCreated()
     {
       return Handle != IntPtr.Zero;
     }
     /// <summary>
-    /// 手动销毁物理环境
+    /// Destroy the physics environment manually.
     /// </summary>
     public void Destroy()
     {
@@ -189,47 +189,47 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 获取上一帧的物理执行时间 (秒)
+    /// Get the previous frame's simulation time in seconds.
     /// </summary>
     /// <value></value>
     public float PhysicsTime { get; private set; }
     /// <summary>
-    /// 获取当前激活的物理对象个数
+    /// Get the number of active physics objects.
     /// </summary>
     /// <value></value>
     public int PhysicsActiveBodies { get { return _PhysicsActiveBodies; } }
     /// <summary>
-    /// 获取当前所有的物理对象个数
+    /// Get the total number of physics objects.
     /// </summary>
     /// <value></value>
     public int PhysicsBodies { get; private set; }
     /// <summary>
-    /// 获取当前模拟的物理时间
+    /// Get the current simulation time.
     /// </summary>
     /// <value></value>
     public double PhysicsSimuateTime { get { return _PhysicsSimuateTime; } }
     /// <summary>
-    /// 获取当前正在恒力推动的物理对象个数
+    /// Get the number of objects receiving constant forces.
     /// </summary>
     /// <value></value>
     public int PhysicsConstantPushBodies { get { return _PhysicsConstantPushBodies; } }
     /// <summary>
-    /// 获取当前坠落回收物理对象个数
+    /// Get the number of objects collected after falling.
     /// </summary>
     /// <value></value>
     public int PhysicsFallCollectBodies { get { return _PhysicsFallCollectBodies; } }
     /// <summary>
-    /// 获取当前固定物理对象个数
+    /// Get the number of static physics objects.
     /// </summary>
     /// <value></value>
     public int PhysicsFixedBodies { get { return _PhysicsFixedBodies; } }
     /// <summary>
-    /// 获取当前更新物理对象个数
+    /// Get the number of updated physics objects.
     /// </summary>
     /// <value></value>
     public int PhysicsUpdateBodies { get { return _PhysicsUpdateBodies; } }
     /// <summary>
-    /// 获取物理力大小系数。
+    /// Get the physics force scale.
     /// </summary>
     public float PhysicsFactorFinalValue = 1;
 
@@ -254,7 +254,7 @@ namespace BallancePhysics.Wapper
 
         PhysicsFactorFinalValue = TimeFactor;//(Time.fixedDeltaTime / (1.0f / SimulationRate));
         
-        //设置计数
+        // Set counters.
 
 	      float startTime = Time.realtimeSinceStartup;
         PhysicsBodies = objects.Count;
@@ -263,20 +263,20 @@ namespace BallancePhysics.Wapper
         _PhysicsFallCollectBodies = 0;
         _PhysicsFixedBodies = 0;
 
-        //先更新推力
+        // Update forces first.
         float[] dat = new float[4];
         LinkedListNode<PhysicsObject> obj = objects.First;
   
-        //模拟
+        // Simulate.
         Profiler.BeginSample("PhysicsEnvironmentSimulate");
         PhysicsApi.API.environment_simulate_dtime(Handle, /* Time.fixedDeltaTime */(1.0f / SimulationRate) * TimeFactor);
         Profiler.EndSample();
 
         PhysicsApi.API.do_update_all(Handle);
-        //获取一些参数
+        // Read simulation statistics.
         PhysicsApi.API.get_stats(Handle, ref _PhysicsActiveBodies, ref _PhysicsSimuateTime);
 
-        //更新位置到C#
+        // Copy transforms back to C#.
         obj = objects.First;
         while (obj != null) {
           var bodyCurrent = obj.Value;
@@ -300,7 +300,7 @@ namespace BallancePhysics.Wapper
           t.rotation = new Quaternion(dat[0], dat[1], dat[2], dat[3]);
           _PhysicsUpdateBodies++;
 
-          //坠落回收
+          // Collect fallen objects.
           if(DePhysicsFall < 0 && p.y < DePhysicsFall) {
             //DePhysics and DeActive
             nextNeedUnFallCollectObjects.Add(bodyCurrent);
@@ -319,13 +319,13 @@ namespace BallancePhysics.Wapper
 
         Profiler.EndSample();
 
-        //更新碰撞处理器
+        // Update collision handlers.
         if(GameTimeMachine.FixedUpdateTick % 12 == 0) {
           Profiler.BeginSample("PhysicsEnvironmentContactEvent");
           PhysicsApi.API.do_update_all_physics_contact_detection(Handle);
           Profiler.EndSample();
         }
-        //需要反物理化坠落的物体
+        // Objects to remove from physics after falling.
         if(nextNeedUnFallCollectObjects.Count > 0) {
           for (var i = nextNeedUnFallCollectObjects.Count - 1; i >= 0; i--)
           {
@@ -340,7 +340,7 @@ namespace BallancePhysics.Wapper
           nextNeedUnFallCollectObjects.Clear();
         }
 
-        //结束时间
+        // End time.
         PhysicsTime = Time.realtimeSinceStartup - startTime;
       }
     }
@@ -373,7 +373,7 @@ namespace BallancePhysics.Wapper
     private LinkedList<PhysicsObject> objects = new LinkedList<PhysicsObject>();
 
     /// <summary>
-    /// [由PhysicsObject自动调用，请勿手动调用]
+    /// Called automatically by PhysicsObject; do not call manually.
     /// </summary>
     /// <param name="id"></param>
     /// <param name="body"></param>
@@ -387,7 +387,7 @@ namespace BallancePhysics.Wapper
       objects.AddLast(body);
     }
     /// <summary>
-    /// [由PhysicsObject自动调用，请勿手动调用]
+    /// Called automatically by PhysicsObject; do not call manually.
     /// </summary>
     /// <param name="body"></param>
     internal void RemovePhysicsObject(PhysicsObject body)
@@ -397,10 +397,10 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 通过名称获取碰撞子组信息。如果没有指定名称的子组，则自动生成
+    /// Get a collision subgroup by name, creating it if necessary.
     /// </summary>
-    /// <param name="name">子组名称</param>
-    /// <returns>返回碰撞组子ID</returns>
+    /// <param name="name">Subgroup name.</param>
+    /// <returns>Collision subgroup ID.</returns>
     public int GetSystemGroup(string name)
     {
       if (Handle == IntPtr.Zero || string.IsNullOrEmpty(name))
@@ -412,14 +412,14 @@ namespace BallancePhysics.Wapper
       return i;
     }
     /// <summary>
-    /// 删除物理系统中的所有碰撞层
+    /// Delete all collision surfaces in the physics system.
     /// </summary>
     public void DeleteAllSurfaces() { PhysicsApi.API.delete_all_surfaces(Handle); }
     /// <summary>
-    /// 通过ID查找世界中的物理物体
+    /// Find a physics object in the world by ID.
     /// </summary>
     /// <param name="id">ID</param>
-    /// <returns>如果未找到则返回null</returns>
+    /// <returns>Null if not found.</returns>
     public PhysicsObject GetObjectById(int id)
     {
       LinkedListNode<PhysicsObject> obj = objects.First;
@@ -432,13 +432,13 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 从指定位置发射射线，返回第一个碰撞物体。
+    /// Cast a ray from the given position and return the first hit object.
     /// </summary>
-    /// <param name="startPoint">射线发射位置</param>
-    /// <param name="dirction">射线方向向量</param>
-    /// <param name="rayLength">射线长度</param>
-    /// <param name="distance">第一个碰撞物体的距离</param>
-    /// <returns>如果有物体碰撞，则返回第一个物体，否则返回null</returns>
+    /// <param name="startPoint">Ray origin.</param>
+    /// <param name="dirction">Ray direction vector.</param>
+    /// <param name="rayLength">Ray length.</param>
+    /// <param name="distance">Distance to the first hit object.</param>
+    /// <returns>The first hit object, or null if nothing was hit.</returns>
     public PhysicsObject RaycastingOne(Vector3 startPoint, Vector3 dirction, float rayLength, out float distance)
     {
       if (Handle == IntPtr.Zero)
@@ -450,14 +450,14 @@ namespace BallancePhysics.Wapper
       return GetObjectById(id);
     }
     /// <summary>
-    /// 从指定位置发射射线，获取射线是否与指定物体碰撞。
+    /// Cast a ray from the given position and test whether it hits the specified object.
     /// </summary>
-    /// <param name="obj">指定物体</param>
-    /// <param name="startPoint">射线发射位置</param>
-    /// <param name="dirction">射线方向向量</param>
-    /// <param name="rayLength">射线长度</param>
-    /// <param name="distance">第一个碰撞物体的距离</param>
-    /// <returns>如果射线有和物体碰撞，则返回true，否则返回false</returns>
+    /// <param name="obj">Object to test.</param>
+    /// <param name="startPoint">Ray origin.</param>
+    /// <param name="dirction">Ray direction vector.</param>
+    /// <param name="rayLength">Ray length.</param>
+    /// <param name="distance">Distance to the first hit object.</param>
+    /// <returns>True if the ray hits the object; otherwise false.</returns>
     public bool RaycastingObject(PhysicsObject obj, Vector3 startPoint, Vector3 dirction, float rayLength, out float distance)
     {
       if (Handle == IntPtr.Zero)
@@ -472,76 +472,76 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 射线处理标志
+    /// Raycast flags.
     /// </summary>
     public enum RaySolverFlag
     {
       /// <summary>
-      /// 射线将会碰撞全部物体
+      /// Hit all objects.
       /// </summary>
       All = 0,
       /// <summary>
-      /// 射线将会碰撞幻影
+      /// Hit phantoms.
       /// </summary>
       Phantoms = 1,
       /// <summary>
-      /// 射线将会碰撞可移动的物体
+      /// Hit movable objects.
       /// </summary>
       Movings = 2,
       /// <summary>
-      /// 射线将会碰撞不可移动的物体
+      /// Hit immovable objects.
       /// </summary>
       Statics = 4
     }
     /// <summary>
-    /// 射线碰撞结果
+    /// Raycast results.
     /// </summary>
     public struct RayCastResult
     {
       /// <summary>
-      /// 碰撞的物体
+      /// Hit objects.
       /// </summary>
       public List<PhysicsObject> HitObjects;
 
       /// <summary>
-      /// 获取碰撞的物体数量
+      /// Get the number of hit objects.
       /// </summary>
       /// <returns></returns>
       public int GetHitObjectsCount() { return HitObjects.Count; }
       /// <summary>
-      /// 获取第几个碰撞的物体
+      /// Get a hit object by index.
       /// </summary>
-      /// <param name="index">索引</param>
+      /// <param name="index">Index.</param>
       /// <returns></returns>
       public PhysicsObject GetHitObjectsAt(int index) { return HitObjects[index]; }
 
       /// <summary>
-      /// 碰撞的物体距离射线发射原点的位置
+      /// Distances from the ray origin to hit objects.
       /// </summary>
       public List<float> HitDistances;
 
       
       /// <summary>
-      /// 获取碰撞的距离射线发射原点的位置信息数量
+      /// Get the number of hit-distance entries.
       /// </summary>
       /// <returns></returns>
       public int GetHitDistancesCount() { return HitDistances.Count; }
       /// <summary>
-      /// 获取指定第几个碰撞的距离射线发射原点的位置信息
+      /// Get a hit distance by index.
       /// </summary>
-      /// <param name="index">索引</param>
+      /// <param name="index">Index.</param>
       /// <returns></returns>
       public float GetHitDistancesAt(int index) { return HitDistances[index]; }
     }
 
     /// <summary>
-    /// 从指定位置发射射线，获取射线碰撞的全部物体
+    /// Cast a ray from the given position and get all hit objects.
     /// </summary>
-    /// <param name="flags">射线处理标志</param>
-    /// <param name="startPoint">射线发射位置</param>
-    /// <param name="dirction">射线方向向量</param>
-    /// <param name="rayLength">射线长度</param>
-    /// <returns>返回碰撞信息</returns>
+    /// <param name="flags">Raycast flags.</param>
+    /// <param name="startPoint">Ray origin.</param>
+    /// <param name="dirction">Ray direction vector.</param>
+    /// <param name="rayLength">Ray length.</param>
+    /// <returns>Collision information.</returns>
     public RayCastResult Raycasting(RaySolverFlag flags, Vector3 startPoint, Vector3 dirction, float rayLength)
     {
       if (Handle == IntPtr.Zero)

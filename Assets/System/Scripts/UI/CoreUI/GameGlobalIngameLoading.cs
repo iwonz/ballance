@@ -4,13 +4,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2022  mengyu
 *
-* 模块名：     
+* Module:
 * GameGlobalIngameLoading.cs
 * 
-* 用途：
-* 开始时的加载中对象脚本
+* Purpose:
+* Initial loading object behavior.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

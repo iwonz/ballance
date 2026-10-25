@@ -4,30 +4,30 @@ using UnityEngine;
 namespace BallancePhysics.Wapper
 {
   /// <summary>
-  /// **提示：** Ballance中没有使用这个组件，这个力是会推动两个物体移动的，功能与 PhysicsConstraintForce 不一样，
-  /// 如果需要恒力，请使用 [PhysicsConstraintForce](BallancePhysics.Wapper.PhysicsConstraintForce) 组件。
+  /// Ballance does not use this component. It can move both objects, unlike PhysicsConstraintForce.
+  /// For a constant force, use [PhysicsConstraintForce](BallancePhysics.Wapper.PhysicsConstraintForce).
   /// </summary>
   [AddComponentMenu("BallancePhysics/PhysicsForce")]
   public class PhysicsForce : PhysicsComponent
   {
     /// <summary>
-    /// 物体1参照点
+    /// Reference point on object 1.
     /// </summary>
-    [Tooltip("物体1参照点")]
+    [Tooltip("Reference point on object 1.")]
     public Transform Position1Ref;
-    [Tooltip("物体2参照点")]
+    [Tooltip("Reference point on object 2.")]
     /// <summary>
-    /// 物体2参照点
+    /// Reference point on object 2.
     /// </summary>
     public Transform Position2Ref;
-    [Tooltip("力的大小")]
+    [Tooltip("Force magnitude.")]
     [SerializeField]
     private float _Force = 1.0f;
-    [Tooltip("连接到的另外一个物体")]
+    [Tooltip("The other object to connect.")]
     public PhysicsObject Other = null;
 
     /// <summary>
-    /// 力的大小
+    /// Force magnitude.
     /// </summary>
     /// <value></value>
     public float Force { 
@@ -39,9 +39,9 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 是否推动物体2
+    /// Apply force to object 2.
     /// </summary>
-    [Tooltip("是否推动物体2")]
+    [Tooltip("Apply force to object 2 as well.")]
     public bool PushObject2 = false;
 
     protected override void DoCreate()

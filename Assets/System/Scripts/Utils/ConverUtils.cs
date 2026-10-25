@@ -1,13 +1,13 @@
 ﻿/*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * ConverUtils.cs
 * 
-* 用途：
-* 字符串转换类
+* Purpose:
+* String conversion helpers.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -17,7 +17,7 @@ using System;
 namespace Ballance2.Utils
 {
   /// <summary>
-  /// 字符串转换类
+  /// String conversion helpers.
   /// </summary>
   public static class ConverUtils
   {
@@ -30,12 +30,12 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 字符串转为枚举
+    /// Convert a string to an enum.
     /// </summary>
-    /// <param name="stringValue">要转换的字符串</param>
-    /// <param name="defaultValue">默认值</param>
-    /// <param name="paramName">参数名称（用于错误日志）</param>
-    /// <returns>转换成功的枚举，如果输入字符串无法转为枚举，则返回默认值</returns>
+    /// <param name="stringValue">String to convert.</param>
+    /// <param name="defaultValue">Default value.</param>
+    /// <param name="paramName">Parameter name used in error logs.</param>
+    /// <returns>Parsed enum value, or the default if parsing fails.</returns>
     public static T StringToEnum<T>(string stringValue, T defaultValue, string paramName = "") where T : struct
     {
       if (string.IsNullOrEmpty(stringValue))
@@ -50,12 +50,12 @@ namespace Ballance2.Utils
       return outValue;
     }
     /// <summary>
-    /// 字符串转为数字
+    /// Convert a string to an integer.
     /// </summary>
-    /// <param name="stringValue">要转换的字符串</param>
-    /// <param name="defaultValue">默认值</param>
-    /// <param name="paramName">参数名称（用于错误日志）</param>
-    /// <returns>转换成功的数字，如果输入字符串无法转为数字，则返回默认值</returns>
+    /// <param name="stringValue">String to convert.</param>
+    /// <param name="defaultValue">Default value.</param>
+    /// <param name="paramName">Parameter name used in error logs.</param>
+    /// <returns>Parsed integer, or the default if parsing fails.</returns>
     public static int StringToInt(string stringValue, int defaultValue, string paramName = "")
     {
       if (string.IsNullOrEmpty(stringValue))
@@ -70,12 +70,12 @@ namespace Ballance2.Utils
       return outValue;
     }
     /// <summary>
-    /// 字符串转为长整型数字
+    /// Convert a string to a long integer.
     /// </summary>
-    /// <param name="stringValue">要转换的字符串</param>
-    /// <param name="defaultValue">默认值</param>
-    /// <param name="paramName">参数名称（用于错误日志）</param>
-    /// <returns>转换成功的长整型数字，如果输入字符串无法转为长整型数字，则返回默认值</returns>
+    /// <param name="stringValue">String to convert.</param>
+    /// <param name="defaultValue">Default value.</param>
+    /// <param name="paramName">Parameter name used in error logs.</param>
+    /// <returns>Parsed long integer, or the default if parsing fails.</returns>
     public static long StringToLong(string stringValue, long defaultValue, string paramName = "")
     {
       if (string.IsNullOrEmpty(stringValue))
@@ -90,12 +90,12 @@ namespace Ballance2.Utils
       return outValue;
     }
     /// <summary>
-    /// 字符串转为布尔类型
+    /// Convert a string to a boolean.
     /// </summary>
-    /// <param name="stringValue">要转换的字符串</param>
-    /// <param name="defaultValue">默认值</param>
-    /// <param name="paramName">参数名称（用于错误日志）</param>
-    /// <returns>转换成功的布尔类型，如果输入字符串无法转为布尔类型，则返回默认值</returns>
+    /// <param name="stringValue">String to convert.</param>
+    /// <param name="defaultValue">Default value.</param>
+    /// <param name="paramName">Parameter name used in error logs.</param>
+    /// <returns>Parsed boolean, or the default if parsing fails.</returns>
     public static bool StringToBoolean(string stringValue, bool defaultValue, string paramName = "")
     {
       if (string.IsNullOrEmpty(stringValue))
@@ -112,12 +112,12 @@ namespace Ballance2.Utils
       return outValue;
     }
     /// <summary>
-    /// 字符串转为浮点数
+    /// Convert a string to a float.
     /// </summary>
-    /// <param name="stringValue">要转换的字符串</param>
-    /// <param name="defaultValue">默认值</param>
-    /// <param name="paramName">参数名称（用于错误日志）</param>
-    /// <returns>转换成功的浮点数，如果输入字符串无法转为浮点数，则返回默认值</returns>
+    /// <param name="stringValue">String to convert.</param>
+    /// <param name="defaultValue">Default value.</param>
+    /// <param name="paramName">Parameter name used in error logs.</param>
+    /// <returns>Parsed float, or the default if parsing fails.</returns>
     public static float StringToFloat(string stringValue, float defaultValue, string paramName = "")
     {
       if (string.IsNullOrEmpty(stringValue))

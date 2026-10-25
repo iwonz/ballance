@@ -24,16 +24,16 @@ namespace Ballance2.Game.GamePlay
     private string LevelPassStateDataPath;
 
     private void Start() {
-      //指令
+      // Commands.
       InitCommand();
     }
 
-    //加载。此函数由系统自动调用
+    // Load; called automatically by the system.
     internal void Load() {
       HighscoreDataPath = Application.persistentDataPath + "/HighscoreData.json";
       LevelPassStateDataPath = Application.persistentDataPath + "/LevelPassStateData.json";
       
-      //加载关卡高分数据
+      // Load level high scores.
       if (GameManager.Instance.FileExists(HighscoreDataPath)) {
         using (StreamReader reader = File.OpenText(HighscoreDataPath))
         {
@@ -55,7 +55,7 @@ namespace Ballance2.Game.GamePlay
         Data = DefaultHighscoreDataGenerator.DefaultHighscoreData;
         LevelNames = new List<string>(DefaultHighscoreDataGenerator.DefaultHighscoreLevelNamesData);
       }
-      //加载关卡过关状态数据
+      // Load level completion state.
       if (GameManager.Instance.FileExists(LevelPassStateDataPath))
       { 
         using (StreamReader reader = File.OpenText(LevelPassStateDataPath))
@@ -67,15 +67,15 @@ namespace Ballance2.Game.GamePlay
         LevelPassStateData = new Dictionary<string, bool>();
       }
     }
-    //保存。此函数由系统自动调用
+    // Save; called automatically by the system.
     internal void Save() {
-      //保存关卡高分数据
+      // Save level high scores.
       JObject obj = new JObject();
       obj["data"] = JsonConvert.SerializeObject(Data);
       obj["names"] = JsonConvert.SerializeObject(LevelNames);
       GameManager.Instance.WriteFile(HighscoreDataPath, false, obj.ToString());
 
-      //保存关卡过关状态数据
+      // Save level completion state.
       GameManager.Instance.WriteFile(LevelPassStateDataPath, false, JsonConvert.SerializeObject(LevelPassStateData));
     }
 
@@ -91,7 +91,7 @@ namespace Ballance2.Game.GamePlay
       HighscoreManagerGameObject = null;
     }
 
-    //添加指令
+    // Add commands.
     private void InitCommand() {
       if (HighscoreManagerCommand == 0) {
         HighscoreManagerCommand = GameManager.Instance.GameDebugCommandServer.RegisterCommand("highscore", (keyword, fullCmd, argsCount, args) => {
@@ -123,75 +123,75 @@ namespace Ballance2.Game.GamePlay
             return false;
           }
         }, 1, "highscore <clear/open-all/load/save>\n"
-           + "  clear    ▶ 清除当前本地存储的所有高分数据（慎用！不可恢复！）\n"
-           + "  open-all ▶ 解锁全部内置关卡\n"
-           + "  load     ▶ 手动加载高分数据\n"
-           + "  save     ▶ 手动保存高分数据");
+           + "  clear    ▶ Permanently delete all locally saved high scores (cannot be undone!)\n"
+           + "  open-all ▶ Unlock all built-in levels\n"
+           + "  load     ▶ Load high scores manually\n"
+           + "  save     ▶ Save high scores manually");
       }
     } 
 
     /// <summary>
-    /// 解锁全部内置关卡
+    /// Unlock all built-in levels.
     /// </summary>
     public void UnLockAllInternalLevel() {
       foreach(var key in DefaultHighscoreDataGenerator.DefaultHighscoreLevelNamesData)
         LevelPassStateData[key] = true;
     }
     /// <summary>
-    /// 获取指定关卡的分数列表
+    /// Get the score list for a level.
     /// </summary>
-    /// <param name="levelName">关卡名称</param>
-    /// <returns>指定关卡的分数列表，如果没有，则返回null</returns>
+    /// <param name="levelName">Level name.</param>
+    /// <returns>The level's score list, or null if none exists.</returns>
     public List<HighscoreDataItem> GetData(string levelName) {
       if (Data.TryGetValue(levelName, out var list))
         return list;
       return null;
     }
     /// <summary>
-    /// 获取分数管理器中有存储数据的所有关卡名称
+    /// Get names of all levels stored in the score manager.
     /// </summary>
-    /// <param name="levelName">关卡名称</param>
-    /// <returns>所有关卡名称数组</returns>
+    /// <param name="levelName">Level name.</param>
+    /// <returns>Array of all level names.</returns>
     public List<string> GetLevelNames() {
       return LevelNames;
     }
     /// <summary>
-    /// 在指定关卡添加用户的分数数据
+    /// Add a player's score for a level.
     /// </summary>
-    /// <param name="levelName">关卡名称</param>
-    /// <param name="userName">名字</param>
-    /// <param name="score">分数</param>
+    /// <param name="levelName">Level name.</param>
+    /// <param name="userName">Player name.</param>
+    /// <param name="score">Score.</param>
     public void AddItem(string levelName, string userName, int score) {
-      //获取或者创建数据
+      // Get or create data.
       var list = GetData(levelName);
       if (list == null) {
         list = new List<HighscoreDataItem>();
         Data[levelName] = list;
       }
       
-      //设置已经过关
+      // Mark the level as completed.
       AddLevelPassState(levelName);
 
-      //插入数据
+      // Insert data.
       HighscoreDataItem item = new HighscoreDataItem(userName, score, DateTime.Now.ToString("yyyy/M/d"));
 
       for (var i = 0; i < list.Count; i++)
       {
-        //插入到指定位置
+        // Insert at the appropriate position.
         if (score > list[i].score) {
           list.Insert(i, item);
           return;
         }
       }
-      //插入到最后
+      // Append at the end.
       list.Add(item);
     }
     /// <summary>
-    /// 检查指定分数是否在关卡有新的高分
+    /// Check whether the score is a new high score for the level.
     /// </summary>
-    /// <param name="levelName">关卡名称</param>
-    /// <param name="score">分数</param>
-    /// <returns>是否有新的高分</returns>
+    /// <param name="levelName">Level name.</param>
+    /// <param name="score">Score.</param>
+    /// <returns>Whether this is a new high score.</returns>
     public bool CheckLevelHighScore(string levelName, int score) {
       var list = GetData(levelName);
       if (list == null)
@@ -203,16 +203,16 @@ namespace Ballance2.Game.GamePlay
       return true;
     }
     /// <summary>
-    /// 设置指定关卡已经过关
+    /// Mark a level as completed.
     /// </summary>
-    /// <param name="levelName">关卡名称</param>
+    /// <param name="levelName">Level name.</param>
     public void AddLevelPassState(string levelName) {
       LevelPassStateData[levelName] = true;
     }
     /// <summary>
-    /// 检查指定关卡是否有过关
+    /// Check whether a level has been completed.
     /// </summary>
-    /// <param name="levelName">关卡名称</param>
+    /// <param name="levelName">Level name.</param>
     /// <returns></returns>
     public bool CheckLevelPassState(string levelName) {
       if (LevelPassStateData.TryGetValue(levelName, out var pass))
@@ -220,10 +220,10 @@ namespace Ballance2.Game.GamePlay
       return false;
     }
     /// <summary>
-    /// 添加默认分数至指定关卡的分数数据中
+    /// Add default scores for a level.
     /// </summary>
-    /// <param name="levelName">关卡名称</param>
-    /// <param name="data">默认数据，可为 null null 时根据在 DefaultHighscoreData 中定义的 defaultHighscoreData.DefaultHightScoreLev01_11Data 加载数据</param>
+    /// <param name="levelName">Level name.</param>
+    /// <param name="data">Default data; null uses DefaultHighscoreDataGenerator.DefaultHightScoreLev01To11Data.</param>
     public void TryAddDefaultLevelHighScore(string levelName, List<HighscoreDataItem> data) {
       if (!Data.ContainsKey(levelName)) {
         Data[levelName] = data != null ? data : DefaultHighscoreDataGenerator.DefaultHightScoreLev01To11Data;

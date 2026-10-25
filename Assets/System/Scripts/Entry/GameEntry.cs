@@ -17,14 +17,14 @@ using UnityEngine.Android;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameEntry.cs
 * 
-* 用途：
-* 此模块为整个游戏的入口，负责启动整个游戏框架，以及全局的配置、调试、命令行设置。
-* 并且负责用户协议对话框的显示，用户点击用户协议相关。
+* Purpose:
+* Game entry point: start the framework and configure global settings, debugging, and command-line options.
+* Also manages the user agreement dialog and its actions.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -34,37 +34,37 @@ namespace Ballance2.Entry
   {
     public static GameEntry Instance { get; private set; }
 
-    #region 全局静态配置属性
+    #region Global configuration properties
 
-    [Tooltip("启用调试模式。Editor下默认为调试模式")]
+    [Tooltip("Enable debug mode; enabled by default in the editor.")]
     public bool DebugMode = false;
-    [Tooltip("目标帧率（DebugSetFrameRate 为 true 时有效）")]
+    [Tooltip("Target frame rate when DebugSetFrameRate is true.")]
     [Range(10, 120)]
     public int DebugTargetFrameRate = 60;
-    [Tooltip("是否设置固定帧率（仅Editor中有效）")]
+    [Tooltip("Set a fixed frame rate (editor only).")]
     public bool DebugSetFrameRate = true;
-    [Tooltip("调试类型")]
+    [Tooltip("Debug mode.")]
     public GameDebugType DebugType = GameDebugType.NoDebug;
-    [Tooltip("当前调试中需要初始化的包名")]
+    [Tooltip("Package name to initialize for this debug session.")]
     [Reorderable("DebugInitPackages", true, "PackageName")]
     public List<GameDebugPackageInfo> DebugInitPackages = null;
-    [Tooltip("自定义调试用例入口事件名称。进入调试之后会发送一个指定的全局事件，自定义调试用例可以根据这个事件作为调试入口。")]
+    [Tooltip("Global event dispatched on entering custom debug mode; use it as the entry point for the custom test.")]
     public string DebugCustomEntryEvent = "DebugEntry";
-    [Tooltip("自定义调试用例入口事件的参数")]
+    [Tooltip("Arguments for the custom debug entry event.")]
     [Reorderable("DebugCustomEntryEventParamas")]
     public List<GameDebugCustomEventParamas> DebugCustomEntryEventParamas = null;
     [SerializeField]
-    [Tooltip("自定义调试用例入口事件名称预设")]
+    [Tooltip("Preset custom debug entry event name.")]
     [Reorderable("DebugCustomEntries", true, "", true, true)]
     public List<string> DebugCustomEntries = new List<string>();
-    [Tooltip("是否在系统或自定义调试模式中加载用户自定义模块包")]
+    [Tooltip("Load user packages in system or custom debug mode.")]
     public bool DebugLoadCustomPackages = true;
-    [Tooltip("是否在系统或自定义调试模式中跳过Intro")]
+    [Tooltip("Skip the intro in system or custom debug mode.")]
     public bool DebugSkipIntro = false;
 
     #endregion
 
-    #region 静态引入
+    #region Static references
 
     public Camera GameBaseCamera = null;
     public RectTransform GameCanvas = null;
@@ -103,7 +103,7 @@ namespace Ballance2.Entry
     }
 
     /// <summary>
-    /// 退出游戏
+    /// Quit the game.
     /// </summary>
     public void QuitGame()
     {
@@ -164,24 +164,24 @@ namespace Ballance2.Entry
     }
   }
   /// <summary>
-  /// 调试类型
+  /// Debug type.
   /// </summary>
   public enum GameDebugType
   {
     /// <summary>
-    /// 正常运行。
+    /// Normal execution.
     /// </summary>
     NoDebug,
     /// <summary>
-    /// 完整的调试，包括系统调试和自定义调试，包含完整的游戏运行环境。
+    /// Full debugging, including system and custom tests with the complete game environment.
     /// </summary>
     FullDebug,
     /// <summary>
-    /// 自定义调试。不包含系统测试，包含半完整的游戏运行环境。
+    /// Custom debugging without system tests, using a partial game environment.
     /// </summary>
     CustomDebug,
     /// <summary>
-    /// 系统调试。此模式不会加载游戏运行环境。
+    /// System debugging without loading the gameplay environment.
     /// </summary>
     SystemDebug
   }

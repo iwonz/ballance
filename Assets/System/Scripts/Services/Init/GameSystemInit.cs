@@ -10,13 +10,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameSystemInit.cs
 * 
-* 用途：
-* 框架上层初始化
+* Purpose:
+* Higher-level framework initialization.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -25,7 +25,7 @@ namespace Ballance2.Services.Init
 {
 
   /// <summary>
-  /// 上层初始化器
+  /// Higher-level initializer.
   /// </summary>
   class GameSystemInit : MonoBehaviour
   {
@@ -43,14 +43,14 @@ namespace Ballance2.Services.Init
     private static readonly string TAG = "GameSystemInit";
 
     /// <summary>
-    /// 处理System的消息
+    /// Handle system lifecycle messages.
     /// </summary>
     /// <param name="act"></param>
     private static void SysHandler(int act)
     {
       if (act == GameSystem.ACTION_INIT)
       {
-        //初始化设置
+        // Initialize settings.
         GameSettingsManager.Init();
         
         GameObject newGameManager = CloneUtils.CreateEmptyObjectWithParent(gameEntryInstance.transform);
@@ -67,7 +67,7 @@ namespace Ballance2.Services.Init
         });
 
   #if !UNITY_EDITOR
-        //初始化物理引擎
+        // Initialize the physics engine.
         PhysicsApi.SecretKey = "666dccad4ae697b45aac145f18f49c5b";
         PhysicsSystemInit.DoInit();
   #endif
@@ -89,13 +89,13 @@ namespace Ballance2.Services.Init
         }
         
         GameManager.GameMediator = null;
-        //释放其他组件
+        // Release other components.
         I18NProvider.ClearAllLanguageResources();
         GameSettingsManager.Destroy();
         GameStaticResourcesPool.ReleaseAll();
 
 #if !UNITY_EDITOR
-        //释放物理引擎
+        // Release the physics engine.
         PhysicsSystemInit.DoDestroy();
 #endif
       }
@@ -110,9 +110,9 @@ namespace Ballance2.Services.Init
       }
       else if (act == GameSystem.ACTION_PRE_INT)
       {
-        //初始化设置
+        // Initialize settings.
         GameSettingsManager.Init();
-        //初始化I18N 和系统字符串资源
+        // Initialize localization and system string resources.
         I18NProvider.SetCurrentLanguage(
           (SystemLanguage)
             GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME)

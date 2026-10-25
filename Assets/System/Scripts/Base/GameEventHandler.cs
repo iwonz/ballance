@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 2020  mengyu
  * 
- * 模块名：     
+ * Module:
  * GameEventHandler.cs
  *
- * 用途：
- * 事件接收器实例，用于取消注册事件接收器。
+ * Purpose:
+ * Event handler instance used to unregister a listener.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 using Ballance2.Package;
@@ -16,25 +16,25 @@ using static Ballance2.Services.GameManager;
 namespace Ballance2.Base
 {
   /// <summary>
-  /// 事件接收器实例
+  /// Event handler instance.
   /// </summary>
   public class GameEventHandler {
 
     /// <summary>
-    /// 所属模块
+    /// Owning package.
     /// </summary>
     public GamePackage BelongPackage { get; private set; }
     /// <summary>
-    /// 接收器名称
+    /// Handler name.
     /// </summary>
     public string Name { get; private set; }
     /// <summary>
-    /// 获取是否被释放
+    /// Whether it has been released.
     /// </summary>
     public bool Destroyed { get; private set; } = false;
 
     /// <summary>
-    /// 取消注册当前事件接收器
+    /// Unregister this event handler.
     /// </summary>
     public void UnRegister() {
       if (unregisterCallback != null) {
@@ -54,10 +54,10 @@ namespace Ballance2.Base
     }
 
     /// <summary>
-    /// 手动调用回调
+    /// Invoke the callback manually.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <param name="pararms">参数</param>
+    /// <param name="evtName">Event name.</param>
+    /// <param name="pararms">Arguments.</param>
     /// <returns></returns>
     public bool CallEventHandler(string evtName, params object[] pararms)
     {

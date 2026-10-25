@@ -4,13 +4,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * DropdownValueBinder.cs
 * 
-* 用途：
-* Dropdown 控件数据绑定器
+* Purpose:
+* Dropdown data binder.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

@@ -9,20 +9,20 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * KeyChoose.cs
 * 
-* 用途：
-* 一个键盘按键选择组件。
+* Purpose:
+* Keyboard key selection component.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Core.Controls
 {
   /// <summary>
-  /// 一个键盘按键选择组件
+  /// Keyboard key selection component.
   /// </summary>
   [AddComponentMenu("Ballance/UI/Controls/KeyChoose")]
   public class KeyChoose : MonoBehaviour
@@ -41,7 +41,7 @@ namespace Ballance2.UI.Core.Controls
     public KeyChooseEvent onValueChanged = new KeyChooseEvent();
 
     /// <summary>
-    /// 获取或设置按钮选中的键
+    /// Get or set the selected key.
     /// </summary>
     public KeyCode value
     {

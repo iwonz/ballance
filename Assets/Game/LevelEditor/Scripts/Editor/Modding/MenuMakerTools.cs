@@ -8,7 +8,7 @@ namespace Ballance2.Editor.Modding
 {
   class MenuMakerTools
   {
-    [@MenuItem("Ballance/工具/复制Debug文件夹到预设输出目录", false, 103)]
+    [@MenuItem("Ballance/Tools/Copy Debug Folder to Default Output", false, 103)]
     static void CopyDebugFolderToOutput()
     {
       WindowChoosePlatform choosePlatformWindow = EditorWindow.GetWindowWithRect<WindowChoosePlatform>(new Rect(200, 150, 450, 250));
@@ -20,7 +20,7 @@ namespace Ballance2.Editor.Modding
 
         if (target == BuildTarget.StandaloneWindows || target == BuildTarget.StandaloneWindows64)
         {
-          //Windows 直接复制到输出目录
+          // Copy directly to the Windows output directory.
           string folder = DebugSettings.Instance.OutputFolder;
           if (Directory.Exists(debugFolder) && Directory.Exists(folder))
           {
@@ -28,13 +28,13 @@ namespace Ballance2.Editor.Modding
             CopyDebugFolder("Packages", debugFolder, folder);
             CopyDebugFolder("Levels", debugFolder, folder);
 
-            EditorUtility.DisplayDialog("提示", "复制成功", "确定");
+            EditorUtility.DisplayDialog("Information", "Copy complete.", "OK");
           }
-          else EditorUtility.DisplayDialog("错误", "Output文件夹不存在：\n" + debugFolder + "\n▼\n" + folder, "确定");
+          else EditorUtility.DisplayDialog("Error", "Output folder does not exist:\n" + debugFolder + "\n▼\n" + folder, "OK");
         }
         else if (target == BuildTarget.StandaloneLinux64)
         {
-          //Windows 直接复制到输出目录
+          // Copy directly to the Windows output directory.
           string folder = DebugSettings.Instance.OutputAppLinux + "/Ballance_Data/";
           if (Directory.Exists(debugFolder) && Directory.Exists(folder))
           {
@@ -42,13 +42,13 @@ namespace Ballance2.Editor.Modding
             CopyDebugFolder("Packages", debugFolder, folder);
             CopyDebugFolder("Levels", debugFolder, folder);
 
-            EditorUtility.DisplayDialog("提示", "复制成功", "确定");
+            EditorUtility.DisplayDialog("Information", "Copy complete.", "OK");
           }
-          else EditorUtility.DisplayDialog("错误", "Output文件夹不存在：\n" + debugFolder + "\n▼\n" + folder, "确定");
+          else EditorUtility.DisplayDialog("Error", "Output folder does not exist:\n" + debugFolder + "\n▼\n" + folder, "OK");
         }
         else if (target == BuildTarget.StandaloneOSX)
         {
-          //Mac 直接复制到输出目录
+          // Copy directly to the macOS output directory.
           string folder = DebugSettings.Instance.OutputAppMac + "/Contents/";
           if (Directory.Exists(debugFolder) && Directory.Exists(folder))
           {
@@ -56,13 +56,13 @@ namespace Ballance2.Editor.Modding
             CopyDebugFolder("Packages", debugFolder, folder);
             CopyDebugFolder("Levels", debugFolder, folder);
 
-            EditorUtility.DisplayDialog("提示", "复制成功", "确定");
+            EditorUtility.DisplayDialog("Information", "Copy complete.", "OK");
           }
-          else EditorUtility.DisplayDialog("错误", "Output文件夹不存在：\n" + debugFolder + "\n▼\n" + folder, "确定");
+          else EditorUtility.DisplayDialog("Error", "Output folder does not exist:\n" + debugFolder + "\n▼\n" + folder, "OK");
         }
         else if (target == BuildTarget.Android || target == BuildTarget.iOS || target == BuildTarget.WSAPlayer || target == BuildTarget.Switch)
         {
-          //IOS/Android 则复制到 StreamAssets
+          // Copy to StreamingAssets for iOS/Android.
           string folder = "Assets/StreamingAssets/BuiltInPackages";
           if (Directory.Exists(debugFolder))
           {
@@ -73,25 +73,25 @@ namespace Ballance2.Editor.Modding
             CopyDebugFolder("Packages", debugFolder, folder);
             CopyDebugFolder("Levels", debugFolder, folder);
 
-            EditorUtility.DisplayDialog("提示", "复制成功", "确定");
+            EditorUtility.DisplayDialog("Information", "Copy complete.", "OK");
           }
-          else EditorUtility.DisplayDialog("错误", "debugFolder 文件夹不存在：\n" + debugFolder + "\n▼\n" + folder, "确定");
+          else EditorUtility.DisplayDialog("Error", "Debug folder does not exist:\n" + debugFolder + "\n▼\n" + folder, "OK");
         }
         else
         {
-          EditorUtility.DisplayDialog("错误", "暂不支持此平台", "确定");
+          EditorUtility.DisplayDialog("Error", "This platform is not supported.", "OK");
         }
       };
       choosePlatformWindow.Show();
     }
-    [@MenuItem("Ballance/工具/复制Debug文件夹到自定义目录", false, 103)]
+    [@MenuItem("Ballance/Tools/Copy Debug Folder to Custom Output", false, 103)]
     static void CopyDebugFolder()
     {
       WindowChoosePlatform choosePlatformWindow = EditorWindow.GetWindowWithRect<WindowChoosePlatform>(new Rect(200, 150, 450, 250));
       choosePlatformWindow.OnChoose = (target) =>
       {
         string debugFolder = DebugSettings.Instance.DebugFolder + "/";
-        string folder = EditorUtility.OpenFolderPanel("选择输出目录", EditorPrefs.GetString("CopyDebugFolderDefSaveDir", GamePathManager.DEBUG_PATH), "");
+        string folder = EditorUtility.OpenFolderPanel("Select Output Folder", EditorPrefs.GetString("CopyDebugFolderDefSaveDir", GamePathManager.DEBUG_PATH), "");
         if (string.IsNullOrEmpty(folder))
           return;
         if (Directory.Exists(folder) && Directory.Exists(folder))
@@ -103,13 +103,13 @@ namespace Ballance2.Editor.Modding
           CopyDebugFolder("Packages", debugFolder, folder);
           CopyDebugFolder("Levels", debugFolder, folder);
 
-          EditorUtility.DisplayDialog("提示", "复制成功", "确定");
+          EditorUtility.DisplayDialog("Information", "Copy complete.", "OK");
         }
-        else EditorUtility.DisplayDialog("错误", "文件夹不存在：\n" + debugFolder + "\n▼\n" + folder, "确定");
+        else EditorUtility.DisplayDialog("Error", "Folder does not exist:\n" + debugFolder + "\n▼\n" + folder, "OK");
       };
       choosePlatformWindow.Show();
     }
-    [@MenuItem("Ballance/工具/清空 BuiltInPackages 目录", false, 103)]
+    [@MenuItem("Ballance/Tools/Clear BuiltInPackages Folder", false, 103)]
     static void ClearBuiltInPackages() {
       Directory.Delete("Assets/StreamingAssets/BuiltInPackages", true);
     }

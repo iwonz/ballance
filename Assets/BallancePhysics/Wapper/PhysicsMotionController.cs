@@ -9,7 +9,7 @@ namespace BallancePhysics.Wapper
   
   
   /// <summary>
-  /// Ballance PhysicsMotionController 组件
+  /// Ballance PhysicsMotionController component.
   /// </summary>
   public class PhysicsMotionController : MonoBehaviour
   {

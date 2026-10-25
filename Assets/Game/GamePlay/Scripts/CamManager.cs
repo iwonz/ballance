@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay
 {
   /// <summary>
-  /// 摄像机管理器，负责游戏中的摄像机运动控制。
+  /// Manage camera movement during gameplay.
   /// </summary>
   public class CamManager : MonoBehaviour
   {
@@ -57,48 +57,48 @@ namespace Ballance2.Game.GamePlay
     [SerializeField]
     private float _CamRotateTargetDegree = 0;
 
-    #region 公共属性
+    #region Public properties
 
     /// <summary>
-    /// 获取球参照的摄像机旋转方向变换 [R]
+    /// Camera orientation transform used as the ball's reference [R].
     /// </summary>
     public Transform CamDirectionRef { get; private set; }
     /// <summary>
-    /// 获取摄像机右侧向量 [R]
+    /// Camera right vector [R].
     /// </summary>
     public Vector3 CamRightVector { get; private set; } = Vector3.right;
     /// <summary>
-    ///  获取摄像机左侧向量 [R]
+    /// Camera left vector [R].
     /// </summary>
     public Vector3 CamLeftVector { get; private set; } = Vector3.left;
     /// <summary>
-    /// 获取摄像机向前向量 [R]
+    /// Camera forward vector [R].
     /// </summary>
     public Vector3 CamForwerdVector  { get; private set; } = Vector3.forward;
     /// <summary>
-    /// 获取摄像机向后向量 [R]
+    /// Camera backward vector [R].
     /// </summary>
     public Vector3 CamBackVector  { get; private set; } = Vector3.back;
     /// <summary>
-    /// 摄像机跟随速度 [RW]
+    /// Camera follow speed [RW].
     /// </summary>
     public float CamFollowSpeed  { get; set; } = 0.05f;
     /// <summary>
-    ///  获取摄像机是否空格键升高了 [R]
+    /// Whether Space has raised the camera [R].
     /// </summary>
     public bool CamIsSpaced { get; private set; } = false;
     /// <summary>
-    /// 获取当前摄像机方向 [R] 设置请使用 RotateTo 方法
+    /// Current camera direction [R]; use RotateTo to change it.
     /// </summary>
     public float CamRotateValue  { get; private set; } = 0;
     /// <summary>
-    /// 获取摄像机跟随脚本 [R]
+    /// Camera follow component [R].
     /// </summary>
     public CamFollow CamFollow  { get { return _CamFollow;  } }
         
     #endregion
 
-    #region 初始化
+    #region Initialization
 
     private void Start() {
       InitCommand();
@@ -114,7 +114,7 @@ namespace Ballance2.Game.GamePlay
       DestroyEvent();
     }
     private void Update() {
-      //摄像机水平旋转
+      // Horizontal camera rotation.
       if (this._CamIsRotateing) {
         this._CamRotateTick += Time.deltaTime;
 
@@ -130,7 +130,7 @@ namespace Ballance2.Game.GamePlay
           this.ResetVector();
         }
       }
-      //摄像机垂直向上
+      // Raise the camera vertically.
       if (this._CamIsRotateingUp) {
         this._CamRotateUpTick += Time.deltaTime;
         
@@ -148,30 +148,30 @@ namespace Ballance2.Game.GamePlay
 
     #endregion
 
-    #region 事件
+    #region Events
 
     /// <summary>
-    /// 空格键升起摄像机状态变化事件
+    /// Space-key camera elevation changed.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventRotateUpStateChanged;
     /// <summary>
-    /// 摄像机旋转方向变化事件
+    /// Camera rotation direction changed.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventRotateDirectionChanged;
     /// <summary>
-    /// 摄像机是否跟踪目标变化事件
+    /// Camera following state changed.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventCamFollowChanged;
     /// <summary>
-    /// 摄像机对准目标变化事件
+    /// Camera look-at state changed.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventCamLookChanged;
     /// <summary>
-    /// 摄像机跟踪目标变化事件
+    /// Camera follow target changed.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventCamFollowTargetChanged;
@@ -190,7 +190,7 @@ namespace Ballance2.Game.GamePlay
 
     #endregion
 
-    #region 指令
+    #region Commands
 
     private int _CommandId = 0;
     private void InitCommand() {
@@ -213,15 +213,15 @@ namespace Ballance2.Game.GamePlay
         else if (type == "no-look")
           this.SetCamLook(false);
         return true;
-      }, 1, "cam <left/right/up/down> 摄像机管理器命令" +
-              "  left      ▶ 向左旋转摄像机" + 
-              "  right     ▶ 向右旋转摄像机" + 
-              "  up        ▶ 空格键升起摄像机" + 
-              "  down      ▶ 空格放开落下摄像机" + 
-              "  follow    ▶ 开启摄像机跟随" + 
-              "  no-follow ▶ 关闭摄像机跟随" + 
-              "  look      ▶ 开启摄像机看球" + 
-              "  no-look   ▶ 关闭摄像机看球"
+      }, 1, "cam <left/right/up/down/follow/no-follow/look/no-look> Camera commands" +
+              "  left      ▶ Rotate the camera left" +
+              "  right     ▶ Rotate the camera right" +
+              "  up        ▶ Raise the camera as when holding Space" +
+              "  down      ▶ Lower the camera as when releasing Space" +
+              "  follow    ▶ Enable camera follow" +
+              "  no-follow ▶ Disable camera follow" +
+              "  look      ▶ Enable looking at the ball" +
+              "  no-look   ▶ Disable looking at the ball"
       );
     }
     private void DestroyCommand() {
@@ -230,15 +230,15 @@ namespace Ballance2.Game.GamePlay
   
     #endregion
 
-    #region 公共方法
+    #region Public methods
 
     /// <summary>
-    /// 摄像机面对向量重置
+    /// Reset camera-facing vectors.
     /// </summary>
     /// <returns></returns>
     public void ResetVector()
     {
-      //根据摄像机朝向重置几个球推动的方向向量
+      // Recalculate ball movement vectors from the camera orientation.
       var y = -this._CamOrientTransform.localEulerAngles.y - 90;
       this.CamRightVector = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.right;
       this.CamLeftVector = Quaternion.AngleAxis(-y, Vector3.up) * Vector3.left;
@@ -254,9 +254,9 @@ namespace Ballance2.Game.GamePlay
     }
 
     /// <summary>
-    /// 通过RestPoint占位符设置摄像机的方向和位置
+    /// Set camera position and orientation from a RestPoint placeholder.
     /// </summary>
-    /// <param name="go">RestPoint占位符</param>
+    /// <param name="go">RestPoint placeholder.</param>
     public void SetPosAndDirByRestPoint(GameObject go) 
     {
       var rot = go.transform.eulerAngles.y;
@@ -273,9 +273,9 @@ namespace Ballance2.Game.GamePlay
       this._UpdateStateForDebugStats();
     }
     /// <summary>
-    /// 空格键向上旋转
+    /// Tilt upward with Space.
     /// </summary>
-    /// <param name="enable">状态</param>
+    /// <param name="enable">Enabled state.</param>
     public void RotateUp(bool enable)
     {
       this.CamIsSpaced = enable;
@@ -297,23 +297,23 @@ namespace Ballance2.Game.GamePlay
       this._UpdateStateForDebugStats();
     }
     /// <summary>
-    /// 摄像机向右旋转
+    /// Rotate the camera right.
     /// </summary>
     public void RotateRight()
     {
       this.RotateDregree(-90);
     }
     /// <summary>
-    /// 摄像机向左旋转
+    /// Rotate the camera left.
     /// </summary>
     public void RotateLeft()
     {
       this.RotateDregree(90);
     }
     /// <summary>
-    /// 摄像机旋转指定度数
+    /// Rotate the camera by an angle.
     /// </summary>
-    /// <param name="deg">度数，正数往右，负数往左</param>
+    /// <param name="deg">Angle in degrees; positive rotates right, negative left.</param>
     public void RotateDregree(float deg)
     {
       this.CamRotateValue = this.CamRotateValue + deg;
@@ -325,7 +325,7 @@ namespace Ballance2.Game.GamePlay
       this._UpdateStateForDebugStats();
     }
     /// <summary>
-    /// 设置主摄像机天空盒材质
+    /// Set the main camera skybox material.
     /// </summary>
     /// <param name="mat"></param>
     public void SetSkyBox(Material mat)
@@ -333,7 +333,7 @@ namespace Ballance2.Game.GamePlay
       this._SkyBox.material = mat;
     }
     /// <summary>
-    /// 指定摄像机是否开启跟随球
+    /// Enable following the ball.
     /// </summary>
     /// <param name="enable"></param>
     public void SetCamFollow(bool enable)
@@ -343,7 +343,7 @@ namespace Ballance2.Game.GamePlay
       this._UpdateStateForDebugStats();
     }
     /// <summary>
-    /// 指定摄像机是否开启看着球
+    /// Enable looking at the ball.
     /// </summary>
     /// <param name="enable"></param>
     public void SetCamLook(bool enable)
@@ -353,10 +353,10 @@ namespace Ballance2.Game.GamePlay
       this._UpdateStateForDebugStats();
     }
     /// <summary>
-    /// 指定当前摄像机跟踪的目标
+    /// Set the camera follow target.
     /// </summary>
-    /// <param name="target">目标</param>
-    /// <param name="noUpdatePos">禁止设置目标时是否禁止位置同步</param>
+    /// <param name="target">Target.</param>
+    /// <param name="noUpdatePos">Skip position synchronization when setting the target.</param>
     public void SetTarget(Transform target, bool noUpdatePos)
     {
       if (noUpdatePos)
@@ -367,7 +367,7 @@ namespace Ballance2.Game.GamePlay
     }
 
     /// <summary>
-    /// 获取当前摄像机跟踪的目标
+    /// Get the camera follow target.
     /// </summary>
     /// <value></value>
     public Transform Target {
@@ -375,7 +375,7 @@ namespace Ballance2.Game.GamePlay
     }
 
     /// <summary>
-    /// 禁用所有摄像机功能
+    /// Disable all camera behavior.
     /// </summary>
     public void DisbleAll()
     {

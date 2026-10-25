@@ -9,14 +9,14 @@
 #pragma comment(lib, "netapi32.lib")
 
 
-#define DEFAULT_PORT 2566//默认端口号 
-#define BACKLOG 5/*最大监听数*/ 
-#define RECV_BUFFER_SIZE 512//接收发送缓冲区大小 
-#define SEND_BUFFER_SIZE 2048//接收发送缓冲区大小 
+#define DEFAULT_PORT 2566// Default port.
+#define BACKLOG 5/* Maximum pending connections. */
+#define RECV_BUFFER_SIZE 512// Receive/send buffer size.
+#define SEND_BUFFER_SIZE 2048// Receive/send buffer size.
 
-SOCKET sockfd, new_fd; /*socket句柄和建立连接后的句柄*/
-struct sockaddr_in my_addr; /*本方地址信息结构体，下面有具体的属性赋值*/
-struct sockaddr_in their_addr; /*对方地址信息*/
+SOCKET sockfd, new_fd; /* Listening socket and accepted connection socket. */
+struct sockaddr_in my_addr; /* Local address structure, populated below. */
+struct sockaddr_in their_addr; /* Remote address information. */
 int port = DEFAULT_PORT;
 int sin_size;
 int timeout = 300;
@@ -53,7 +53,7 @@ bool serverLoop()
 
   int len = sizeof(SOCKADDR);
   new_fd = accept(sockfd, (SOCKADDR*)&their_addr, &len);
-  //在这里阻塞 挂起等待
+  // Block here while waiting.
 
   if (new_fd == SOCKET_ERROR)
   {
@@ -62,7 +62,7 @@ bool serverLoop()
     return false;
   }
 
-  //设置超时时间
+  // Set the timeout.
   setsockopt(new_fd, SOL_SOCKET, SO_RCVTIMEO, (char*)&recvTimeout, sizeof(int));
   setsockopt(new_fd, SOL_SOCKET, SO_SNDTIMEO, (char*)&sendTimeout, sizeof(int));
 
@@ -73,20 +73,20 @@ bool serverLoop()
     memset(recv_buf, 0, sizeof(recv_buf));
 
     int recv_len = recv(new_fd, recv_buf, RECV_BUFFER_SIZE, 0);
-    if (recv_len <= 0) //这里 即使链接断开 也能继续监听 服务端不关闭
+    if (recv_len <= 0) // Continue listening after a client disconnects; keep the server running.
     {
       closesocket(new_fd);
       printf_s("Connection close\n");
 
       sin_size = sizeof(struct sockaddr_in);
-      new_fd = accept(sockfd, (struct sockaddr*)&their_addr, &sin_size);//在这里阻塞知道接收到消息，参数分别是socket句柄，接收到的地址信息以及大小 
+      new_fd = accept(sockfd, (struct sockaddr*)&their_addr, &sin_size);// Block until data arrives; arguments are the socket, receive buffer, and size.
       if (new_fd == SOCKET_ERROR) {
         printf_s("Server receive failed\n");
         return false;
       }
       else {
 
-        //设置超时时间
+        // Set the timeout.
         setsockopt(new_fd, SOL_SOCKET, SO_RCVTIMEO, (char*)&recvTimeout, sizeof(int));
         setsockopt(new_fd, SOL_SOCKET, SO_SNDTIMEO, (char*)&sendTimeout, sizeof(int));
 
@@ -100,7 +100,7 @@ bool serverLoop()
     SendBackInfoHeader sendBackHeader = { 0 };
 
     if (strcmp(recv_buf, "") != 0) {
-      //处理API数据
+      // Process API data.
       if (strncmp(recv_buf, "Loader_GetLastError", 20) == 0) {
         int result = Loader_GetLastError();
         sendBackHeader.bufferSize = sizeof(int);
@@ -145,23 +145,23 @@ bool startServer() {
     return false;
   }
 
-  sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);//建立socket 
+  sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);// Create the socket.
   if (sockfd == SOCKET_ERROR) {
     printf_s("socket failed : % d", errno);
     return false;
   }
 
-  my_addr.sin_family = AF_INET;/*该属性表示接收本机或其他机器传输*/
-  my_addr.sin_port = htons(port);/*端口号*/
-  my_addr.sin_addr.s_addr = htonl(INADDR_ANY);/*IP，括号内容表示本机IP*/
-  ZeroMemory(&my_addr.sin_zero, sizeof(my_addr.sin_zero));/*将其他属性置0*/
+  my_addr.sin_family = AF_INET;/* Accept traffic from this machine or other machines. */
+  my_addr.sin_port = htons(port);/* Port number. */
+  my_addr.sin_addr.s_addr = htonl(INADDR_ANY);/* IP address; the value selects the local interface. */
+  ZeroMemory(&my_addr.sin_zero, sizeof(my_addr.sin_zero));/* Zero the remaining fields. */
 
-  if (bind(sockfd, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) < 0) {//绑定地址结构体和socket
+  if (bind(sockfd, (struct sockaddr*)&my_addr, sizeof(struct sockaddr)) < 0) {// Bind the address to the socket.
     printf_s("bind error");
     return false;
   }
 
-  if (listen(sockfd, BACKLOG) == SOCKET_ERROR)//开启监听 ，第二个参数是最大监听数 
+  if (listen(sockfd, BACKLOG) == SOCKET_ERROR)// Start listening; the second argument is the connection backlog.
   {
     printf_s("listen error");
     return false;
@@ -197,11 +197,11 @@ bool stopServer()
 #define CKCID_3DENTITY 33
 #define CKCID_3DOBJECT 41
 
-//主函数
+// Main entry point.
 
 int main(int argc, char const* argv[])
 {
-  //路径
+  // Path.
   char fullPath[512];
   GetModuleFileName(0, fullPath, 512);
   for (int i = strlen(fullPath) - 1; i >= 0; i--)
@@ -215,7 +215,7 @@ int main(int argc, char const* argv[])
   char recv_buf[15];
   sprintf_s(recv_buf, "Test string");
 
-  //初始化库
+  // Initialize the library.
   if (Loader_Init(GetConsoleWindow(), fullPath))
     return -1;
 
@@ -223,14 +223,14 @@ int main(int argc, char const* argv[])
   strcpy(filePath, fullPath);
   strcat(filePath, "\\1.NMO");
 
-  //读取文件
+  // Read the file.
   void* nmoFile = Loader_SolveNmoFileRead(filePath, nullptr);
   if (!nmoFile) {
     printf("Load failed");
     return -1;
   }
 
-  //文件对象循环
+  // Iterate file objects.
   int classId = 0;
   void* objPtr = 0;
   char objName[512];
@@ -280,30 +280,30 @@ int main(int argc, char const* argv[])
   } while (objPtr);
 
 
-  //关闭文件
+  // Close the file.
   Loader_SolveNmoFileDestroy(nmoFile);
 
-  //卸载
+  // Unload.
   return Loader_Destroy();
 #endif
 #if 0
   return 0;
 
-  //参数
+  // Arguments.
   for (int i = 1; i < argc; i++)
   {
-    //Port 参数
+    // Port argument.
     if (strcmp(argv[i - 1], "-port") == 0 && strcmp(argv[i], "") != 0) {
       port = atoi(argv[i]);
       printf_s("Args port: %d\n", port);
     }
   }
 
-  //初始化库
+  // Initialize the library.
   if (Loader_Init(GetConsoleWindow(), fullPath))
     return -1;
 
-  //开启服务器
+  // Start the server.
   if (!startServer())
     return -1;
 
@@ -311,10 +311,10 @@ int main(int argc, char const* argv[])
     return -1;
 
 
-  //停止服务
+  // Stop the service.
   stopServer();
 
-  //卸载
+  // Unload.
   return Loader_Destroy();
 #endif
 }

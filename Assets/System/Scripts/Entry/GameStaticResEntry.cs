@@ -6,13 +6,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameStaticResEntry.cs
 * 
-* 用途：
-* 静态 Prefab 资源引入脚本.该脚本绑定在 GameEntry 上。
+* Purpose:
+* Static prefab resource references attached to GameEntry.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -21,12 +21,12 @@ namespace Ballance2.Entry
   public class GameStaticResEntry : MonoBehaviour
   {
     /// <summary>
-    /// 静态 Prefab 资源引入
+    /// Static prefab references.
     /// </summary>
     [Reorderable("GamePrefab", true, "Name")]
     public List<GameObjectInfo> GamePrefab = null;
     /// <summary>
-    /// 静态资源引入
+    /// Static resource references.
     /// </summary>
     [Reorderable("GameAssets", true, "Name")]
     public List<GameAssetsInfo> GameAssets = null;

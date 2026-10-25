@@ -7,13 +7,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2022  mengyu
 *
-* 模块名：     
+* Module:
 * DebugManager.cs
 * 
-* 用途：
-* 调试管理器，复制管理调试控制台，输出等等。
+* Purpose:
+* Manage the debug console and diagnostic output.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -36,18 +36,18 @@ namespace Ballance2.DebugTools
       var SystemPackage = GamePackage.GetSystemPackage();
       var GameUIManager = GameManager.GetSystemService<GameUIManager>();
 
-      //创建Graphy
+      // Create Graphy.
       GameGraphy = GameObject.Instantiate(GameStaticResourcesPool.FindStaticPrefabs("PrefabGraphy"));
       GameGraphy.name = "GameGraphy";
 
-      //创建控制台
+      // Create the console.
       GlobalDebugConsole = GameUIManager.InitViewToCanvas(GameStaticResourcesPool.FindStaticPrefabs("GameDebugConsole"), "GameDebugConsole", true);
       DebugConsole = GlobalDebugConsole.GetComponent<DebugConsole>();
-      //创建输出窗口
+      // Create the output window.
       GameDebugStatsArea = GameUIManager.InitViewToCanvas(GameStaticResourcesPool.FindStaticPrefabs("GameDebugStats"), "GameDebugStats", true);
       
 #if UNITY_ANDROID || UNITY_IOS
-      //创建一个按扭方便手机上打开调试窗口
+      // Create a button to open the debug window on mobile.
       GameDebugFloatButton = GameUIManager.InitViewToCanvas(GameStaticResourcesPool.FindStaticPrefabs("GameDebugFloatButton"), "GameDebugFloatButton", true);
       GameDebugFloatButton.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => {
         SwitchConsoleVisible();
@@ -61,13 +61,13 @@ namespace Ballance2.DebugTools
         GameManager.Instance.GameSettings.SetBool("DebugMode", false);
         GameManager.Instance.RestartGame();
         return true;
-      }, 0, "quit-dev > 退出开发者模式");
+      }, 0, "quit-dev > Exit developer mode");
 
-      //F12 打开调试窗口
+      // F12 opens the debug window.
       F12KeyListen = GameUIManager.ListenKey(KeyCode.F12, (key, down) => {
         if(down) SwitchConsoleVisible();
       });
-      //Esc 关闭调试窗口
+      // Escape closes the debug window.
       ESCKeyListen = GameUIManager.ListenKey(KeyCode.Escape, (key, down) => {
         if(down && GlobalDebugConsole.gameObject.activeSelf) 
           SwitchConsoleVisible();

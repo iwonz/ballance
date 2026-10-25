@@ -7,21 +7,21 @@ using static Ballance2.Services.GameManager;
 namespace Ballance2.Game.GamePlay.Tranfo
 {
   /// <summary>
-  /// 变球器接口
+  /// Ball transformer interface.
   /// </summary>
   public interface ITranfoAminControl
   {
     /// <summary>
-    /// 变球器动画触发逻辑
+    /// Transformer animation logic.
     /// </summary>
-    /// <param name="tranfo">变球器实例</param>
-    /// <param name="targetType">目标类型</param>
-    /// <param name="ballChangeCallback">变球动画完成，开始实际变球时需要调用此回调</param>
+    /// <param name="tranfo">Transformer instance.</param>
+    /// <param name="targetType">Target type.</param>
+    /// <param name="ballChangeCallback">Call when the animation finishes and the actual ball replacement should begin.</param>
     void PlayAnim(ITranfoBase tranfo, string targetType, VoidDelegate ballChangeCallback);
   }
 
   /// <summary>
-  /// 默认的变球器动画控制器
+  /// Default transformer animation controller.
   /// </summary>
   public class TranfoAminControl : GameSingletonBehavior<TranfoAminControl>, ITranfoAminControl
   {
@@ -51,7 +51,7 @@ namespace Ballance2.Game.GamePlay.Tranfo
         "Misc_Trafo"
       );
   
-      //获取变球器的颜色点材质
+      // Get the transformer's color indicator material.
       Renderer renderer = _AnimTrafo_Ringpart1.GetComponent<Renderer>();
       _AnimTrafo_RingParts_Color1 = renderer.materials[1];
       renderer = _AnimTrafo_Ringpart2.GetComponent<Renderer>();
@@ -61,7 +61,7 @@ namespace Ballance2.Game.GamePlay.Tranfo
       renderer = _AnimTrafo_Ringpart4.GetComponent<Renderer>();
       _AnimTrafo_RingParts_Color4 = renderer.materials[1];
 
-      //获取变球器电流材质
+      // Get the transformer's electric effect material.
       renderer = _AnimTrafo_Flashfield.GetComponent<Renderer>();
       _AnimTrafo_FlashfieldMat = renderer.material;
       _AnimTrafo.SetActive(false);
@@ -96,25 +96,25 @@ namespace Ballance2.Game.GamePlay.Tranfo
       transform.position = tranfoTransform.position;
       transform.eulerAngles = tranfoTransform.eulerAngles;
 
-      //隐藏占位变球器
+      // Hide the placeholder transformer.
       if (placeholder != null)
         placeholder.SetActive(false);
 
       _AnimTrafo_Flashfield.SetActive(true);
       _Flashfield = true;
 
-      //设置变球器颜色
+      // Set the transformer color.
       _AnimTrafo_RingParts_Color1.color = color;
       _AnimTrafo_RingParts_Color2.color = color;
       _AnimTrafo_RingParts_Color3.color = color;
       _AnimTrafo_RingParts_Color4.color = color;
 
-      //播放动画和声音
+      // Play animation and sound.
       _Misc_Trafo.Play();
       _AnimTrafo_Animation.speed = 1;
       _AnimTrafo_Animation.Play("TranfoAnimation");
 
-      //延时关闭
+      // Turn off after a delay.
       StartCoroutine(PlayAnimCoroutine(placeholder, ballChangeCallback));
     }
 
@@ -129,7 +129,7 @@ namespace Ballance2.Game.GamePlay.Tranfo
       yield return new WaitForSeconds(0.2f);
 
       _AnimTrafo_Animation.speed = 0;
-      //隐藏本体，显示占位变球器
+      // Hide the main object and show the placeholder transformer.
       _AnimTrafo.SetActive(false);
       if (placeholder != null) 
         placeholder.SetActive(true);

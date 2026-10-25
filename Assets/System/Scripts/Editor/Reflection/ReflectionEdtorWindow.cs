@@ -10,7 +10,7 @@ public class ReflectionEdtorWindow : EditorWindow
     GUIStyle style;
 
 
-    [MenuItem("Tools/反射查看器",priority =1100)]
+    [MenuItem("Tools/Reflection Viewer",priority =1100)]
     public static void ShowWindow()
     {
         GetWindow(typeof(ReflectionEdtorWindow));
@@ -24,14 +24,14 @@ public class ReflectionEdtorWindow : EditorWindow
 
     void OnGUI()
     {
-        titleContent.text = "反射查看器";
+        titleContent.text = "Reflection Viewer";
 
         EditorGUIStyleData.Init();
 
         MainGUI();
     }
 
-    #region 主面板
+    #region Main panel
 
     WindowStatus m_status = WindowStatus.AppDomain;
     Assembly m_currentAssembly;
@@ -55,18 +55,18 @@ public class ReflectionEdtorWindow : EditorWindow
 
     void MainGUI()
     {
-        //顶部面板
+        // Top panel.
         TopPanel();
 
         switch (m_status)
         {
             case WindowStatus.AppDomain:
-                //程序集
+                // Assembly.
                 AllAssemvlyGUI();
                 break;
 
             case WindowStatus.Assembly:
-                //类
+                // Class.
                 AllClassGUI();
                 break;
 
@@ -89,7 +89,7 @@ public class ReflectionEdtorWindow : EditorWindow
 
         if(m_status == WindowStatus.AppDomain)
         {
-            content += "应用程序视图：";
+            content += "Application view:";
             content += AppDomain.CurrentDomain.FriendlyName;
         }
         else if(m_status == WindowStatus.Assembly)
@@ -99,7 +99,7 @@ public class ReflectionEdtorWindow : EditorWindow
                 m_status = WindowStatus.AppDomain;
                 return;
             }
-            content += "程序集视图：" + m_currentAssembly.FullName;
+            content += "Assembly view:" + m_currentAssembly.FullName;
         }
         else if (m_status == WindowStatus.Class)
         {
@@ -110,7 +110,7 @@ public class ReflectionEdtorWindow : EditorWindow
                 return;
             }
 
-            content += "类视图：" +  m_currentClass.FullName;
+            content += "Class view:" +  m_currentClass.FullName;
         }
         else if (m_status == WindowStatus.Method)
         {
@@ -121,7 +121,7 @@ public class ReflectionEdtorWindow : EditorWindow
                 return;
             }
 
-            content += "方法详细视图：" + m_currentClass.FullName + " " + m_currentMethod.Name;
+            content += "Method details:" + m_currentClass.FullName + " " + m_currentMethod.Name;
         }
 
         GUILayout.Label(content, "PreLabel");
@@ -129,11 +129,11 @@ public class ReflectionEdtorWindow : EditorWindow
         GUILayout.BeginHorizontal();
 
         GUI.SetNextControlName("Search");
-        GUILayout.Label("在当前页面下搜索:", GUILayout.Width(110));
+        GUILayout.Label("Search this page:", GUILayout.Width(110));
 
         m_searchTmp = GUILayout.TextField(m_searchTmp, "SearchTextField");
 
-        if(GUILayout.Button("清除", "SearchCancelButton", GUILayout.Width(50)))
+        if(GUILayout.Button("Clear", "SearchCancelButton", GUILayout.Width(50)))
         {
             m_searchTmp = "";
         }
@@ -157,7 +157,7 @@ public class ReflectionEdtorWindow : EditorWindow
 
     #endregion
 
-    #region 程序集
+    #region Assemblies
 
     Assembly[] m_asb;
     Vector2 m_assemvlyPos = Vector2.zero;
@@ -218,7 +218,7 @@ public class ReflectionEdtorWindow : EditorWindow
         GUILayout.Label(content, EditorGUIStyleData.RichText, GUILayout.Width(400));
         GUILayout.Label(content2, EditorGUIStyleData.RichText);
 
-        if (GUILayout.Button("查看详细信息", GUILayout.Width(200)))
+        if (GUILayout.Button("View Details", GUILayout.Width(200)))
         {
             m_status = WindowStatus.Assembly;
             m_currentAssembly = assembly;
@@ -230,7 +230,7 @@ public class ReflectionEdtorWindow : EditorWindow
 
     #endregion
 
-    #region 命名空间
+    #region Namespaces
 
     //Module[] m_module;
 
@@ -241,7 +241,7 @@ public class ReflectionEdtorWindow : EditorWindow
 
     #endregion
 
-    #region 类
+    #region Classes
 
     Vector2 m_classSpace = Vector2.zero;
 
@@ -278,10 +278,10 @@ public class ReflectionEdtorWindow : EditorWindow
         }
         else
         {
-            EditorGUILayout.LabelField("没有选中类");
+            EditorGUILayout.LabelField("No class selected.");
         }
 
-        if (GUILayout.Button("返回上一层"))
+        if (GUILayout.Button("Back"))
         {
             m_status = WindowStatus.AppDomain;
             m_currentAssembly = null;
@@ -325,7 +325,7 @@ public class ReflectionEdtorWindow : EditorWindow
         GUILayout.Label(content2, EditorGUIStyleData.RichText, GUILayout.Width(60));
         GUILayout.Label(content3, EditorGUIStyleData.RichText);
 
-        if (GUILayout.Button("查看详细信息", GUILayout.Width(200)))
+        if (GUILayout.Button("View Details", GUILayout.Width(200)))
         {
             m_status = WindowStatus.Class;
             m_currentClass = classType;
@@ -337,7 +337,7 @@ public class ReflectionEdtorWindow : EditorWindow
     }
 
     int toolbarOption = 0;
-    string[] toolbarTexts = {"方法", "字段" , "属性"};
+    string[] toolbarTexts = {"Methods", "Fields" , "Properties"};
     void ClassGUI()
     {
         toolbarOption = GUILayout.Toolbar(toolbarOption, toolbarTexts, GUILayout.Width(Screen.width));
@@ -360,7 +360,7 @@ public class ReflectionEdtorWindow : EditorWindow
 
     #endregion
 
-    #region 方法
+    #region Methods
 
     string m_callContent = "";
 
@@ -385,18 +385,18 @@ public class ReflectionEdtorWindow : EditorWindow
         }
         else
         {
-            EditorGUILayout.LabelField("没有选中类");
+            EditorGUILayout.LabelField("No class selected.");
         }
 
         if(m_callContent != "")
         {
             EditorGUILayout.TextArea(m_callContent);
-            if(GUILayout.Button("关闭", "toolbarbutton"))
+            if(GUILayout.Button("Close", "toolbarbutton"))
             {
                 m_callContent = "";
             }
 
-            if (GUILayout.Button("复制到剪贴板"))
+            if (GUILayout.Button("Copy to Clipboard"))
             {
                 TextEditor tx = new TextEditor();
                 tx.text = m_callContent;
@@ -405,7 +405,7 @@ public class ReflectionEdtorWindow : EditorWindow
             }
         }
 
-        if (GUILayout.Button("返回上一层"))
+        if (GUILayout.Button("Back"))
         {
             m_status = WindowStatus.Assembly;
             m_currentClass = null;
@@ -472,14 +472,14 @@ public class ReflectionEdtorWindow : EditorWindow
 
         if(!method.IsPublic)
         {
-            if (GUILayout.Button("生成调用代码", GUILayout.Width(200)))
+            if (GUILayout.Button("Generate Invocation Code", GUILayout.Width(200)))
             {
                 m_callContent = GenerateCallCode(m_currentAssembly, m_currentClass, method);
                 GUI.FocusControl("Search");
             }
         }
 
-        if (GUILayout.Button("查看详细信息", GUILayout.Width(200)))
+        if (GUILayout.Button("View Details", GUILayout.Width(200)))
         {
             m_status = WindowStatus.Method;
             m_currentMethod = method;
@@ -494,9 +494,9 @@ public class ReflectionEdtorWindow : EditorWindow
         {
             m_classSpace = GUILayout.BeginScrollView(m_classSpace);
 
-            GUILayout.Label("特性：", "WhiteLargeLabel");
+            GUILayout.Label("Attributes:", "WhiteLargeLabel");
             object[] objs = m_currentMethod.GetCustomAttributes(false);
-            //特性
+            // Attributes.
             for (int i = 0; i < objs.Length; i++)
             {
                 GUILayout.BeginHorizontal("box");
@@ -507,7 +507,7 @@ public class ReflectionEdtorWindow : EditorWindow
 
             GUILayout.EndScrollView();
 
-            if (GUILayout.Button("返回上一层"))
+            if (GUILayout.Button("Back"))
             {
                 m_status = WindowStatus.Class;
                 m_currentMethod = null;
@@ -516,7 +516,7 @@ public class ReflectionEdtorWindow : EditorWindow
         }
         else
         {
-            GUILayout.Label("没有选中方法");
+            GUILayout.Label("No method selected.");
         }
     }
 
@@ -573,12 +573,12 @@ public class ReflectionEdtorWindow : EditorWindow
         //flags
         content += "\tBindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;\n";
 
-        //获取程序集
+        // Get assemblies.
         content += "\tAssembly ab = Assembly.Load(\""+ ab.FullName.Split(',')[0]+"\");\n";
-        //获取Type
+        // Get Type.
         content += "\tType type = ab.GetType(\"" + type.FullName + "\");\n";
 
-        //获取Method
+        // Get Method.
         content += "\tMethodInfo mi = type.GetMethod(\"" + method.Name + "\", flags);\n";
 
         if (method.IsGenericMethod)
@@ -602,7 +602,7 @@ public class ReflectionEdtorWindow : EditorWindow
         }
 
 
-        //调用
+        // Invoke.
         if (infos.Length != 0)
         {
             content += "\n";
@@ -834,7 +834,7 @@ public class ReflectionEdtorWindow : EditorWindow
 
     #endregion
 
-    #region 字段
+    #region Fields
 
     void AllFieleGUI()
     {
@@ -857,18 +857,18 @@ public class ReflectionEdtorWindow : EditorWindow
         }
         else
         {
-            EditorGUILayout.LabelField("没有选中类");
+            EditorGUILayout.LabelField("No class selected.");
         }
 
         if (m_callContent != "")
         {
             EditorGUILayout.TextArea(m_callContent);
-            if (GUILayout.Button("关闭", "toolbarbutton"))
+            if (GUILayout.Button("Close", "toolbarbutton"))
             {
                 m_callContent = "";
             }
 
-            if (GUILayout.Button("复制到剪贴板"))
+            if (GUILayout.Button("Copy to Clipboard"))
             {
                 TextEditor tx = new TextEditor();
                 tx.text = m_callContent;
@@ -877,7 +877,7 @@ public class ReflectionEdtorWindow : EditorWindow
             }
         }
 
-        if (GUILayout.Button("返回上一层"))
+        if (GUILayout.Button("Back"))
         {
             m_status = WindowStatus.Assembly;
             m_currentClass = null;
@@ -916,14 +916,14 @@ public class ReflectionEdtorWindow : EditorWindow
         GUILayout.Label(content2, EditorGUIStyleData.RichText, GUILayout.Width(50));
         GUILayout.Label(content3, EditorGUIStyleData.RichText);
 
-        //if (GUILayout.Button("查看详细信息", GUILayout.Width(200)))
+        // if (GUILayout.Button("View details", GUILayout.Width(200)))
         //{
         //    m_searchAssemblyContent = "";
         //}
 
         if(!info.IsPublic)
         {
-            if (GUILayout.Button("生成调用代码", GUILayout.Width(200)))
+            if (GUILayout.Button("Generate Invocation Code", GUILayout.Width(200)))
             {
                 m_callContent = GenerateSetValueCode(m_currentAssembly, m_currentClass, info);
                 GUI.FocusControl("Search");
@@ -937,10 +937,10 @@ public class ReflectionEdtorWindow : EditorWindow
     {
         string content = "";
 
-        //常量不能被修改
+        // Constants cannot be modified.
         if (!field.IsLiteral)
         {
-            //生成Set方法
+            // Generate the setter.
             content += "public static void Set_" + field.Name + "Reflection(";
 
             if (field.IsStatic)
@@ -955,13 +955,13 @@ public class ReflectionEdtorWindow : EditorWindow
             //flags
             content += "\tBindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;\n";
 
-            //获取程序集
+            // Get assemblies.
             content += "\tAssembly ab = Assembly.Load(\"" + assembly.FullName.Split(',')[0] + "\");\n";
-            //获取Type
+            // Get Type.
             content += "\tType type = ab.GetType(\"" + type.FullName + "\");\n";
-            //获取FieldInfo
+            // Get FieldInfo.
             content += "\tFieldInfo fi = type.GetField(\"" + field.Name + "\", flags);\n\n";
-            //调用
+            // Invoke.
             content += "\t";
 
             if (field.IsStatic)
@@ -977,19 +977,19 @@ public class ReflectionEdtorWindow : EditorWindow
             content += "\n\n";
         }
 
-        //生成Get方法
+        // Generate the getter.
         content += "public static " + GetTypeName(field.FieldType) + " Get_" + field.Name + "()\n";
         content += "{\n";
 
         //flags
         content += "\tBindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;\n";
-        //获取程序集
+        // Get assemblies.
         content += "\tAssembly ab = Assembly.Load(\"" + assembly.FullName.Split(',')[0] + "\");\n";
-        //获取Type
+        // Get Type.
         content += "\tType type = ab.GetType(\"" + type.FullName + "\");\n";
-        //获取FieldInfo
+        // Get FieldInfo.
         content += "\tFieldInfo fi = type.GetField(\"" + field.Name + "\", flags);\n\n";
-        //调用
+        // Invoke.
         content += "\treturn ("+GetTypeName(field.FieldType) +")";
 
         if (field.IsStatic)
@@ -1008,7 +1008,7 @@ public class ReflectionEdtorWindow : EditorWindow
 
     #endregion
 
-    #region  属性
+    #region Properties
 
     void AllPropertyGUI()
     {
@@ -1031,18 +1031,18 @@ public class ReflectionEdtorWindow : EditorWindow
         }
         else
         {
-            EditorGUILayout.LabelField("没有选中类");
+            EditorGUILayout.LabelField("No class selected.");
         }
 
         if (m_callContent != "")
         {
             EditorGUILayout.TextArea(m_callContent);
-            if (GUILayout.Button("关闭", "toolbarbutton"))
+            if (GUILayout.Button("Close", "toolbarbutton"))
             {
                 m_callContent = "";
             }
 
-            if (GUILayout.Button("复制到剪贴板"))
+            if (GUILayout.Button("Copy to Clipboard"))
             {
                 TextEditor tx = new TextEditor();
                 tx.text = m_callContent;
@@ -1051,7 +1051,7 @@ public class ReflectionEdtorWindow : EditorWindow
             }
         }
 
-        if (GUILayout.Button("返回上一层"))
+        if (GUILayout.Button("Back"))
         {
             m_status = WindowStatus.Assembly;
             m_currentClass = null;

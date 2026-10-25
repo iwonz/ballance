@@ -1,11 +1,11 @@
 using UnityEngine;
 
 /// <summary>
-/// 设置 targetFrameRate 的脚本
+/// Set targetFrameRate.
 /// </summary>
 public class SetFps : MonoBehaviour
 {
-  [Tooltip("目标FPS")]
+  [Tooltip("Target FPS.")]
   public int FPS = 60;
   
   private void Start() {

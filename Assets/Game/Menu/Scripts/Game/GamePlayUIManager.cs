@@ -68,11 +68,11 @@ namespace Ballance2.Menu
         GamePreviewManager.Instance.QuitLevel();
       });
 
-      //高分默认数据
+      // Default high-score data.
       var HighscoreEntryName = PageHighscoreEntry.Content.Find("InputField").GetComponent<InputField>();
       HighscoreEntryName.text = PlayerPrefs.GetString("LastEnterHighscoreEntry", I18N.Tr("core.ui.PlayerName"));
 
-      //过关之后的下一关按扭
+      // Next-level button after completion.
       var ButtonNext = PageGameWin.Content.Find("ButtonNext").gameObject;
       PageGameWin.OnShow = (p) => {
         ButtonNext.SetActive(GamePlayManager.Instance.NextLevelName != "");
@@ -82,12 +82,12 @@ namespace Ballance2.Menu
         PlayerPrefs.SetString("LastEnterHighscoreEntry", HighscoreEntryName.text);
         WinScoreUIControl.Instance.SaveHighscore(HighscoreEntryName.text);
 
-        //当前有新的高分，跳转到高分页，否则直接进入下一关菜单
+        // Show the high-score page for a new high score; otherwise show the next-level menu.
         GameUIManager.GoPage("PageGameWin");
         if (WinScoreUIControl.Instance.ThisTimeHasNewHighscore) {
           GameTimer.Delay(0.2f, () => {
             GameUIManager.GoPage("PageHighscore");
-            //高分页加载当前关卡数据
+            // Load the current level's data on the high-score page.
             HighscoreUIControl.Instance.LoadLevelData(GamePlayManager.Instance.CurrentLevelName);
           });
         }

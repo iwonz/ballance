@@ -69,7 +69,7 @@ namespace Ballance2.Game
         this.menuSoundTime -= Time.deltaTime;
         if (this.menuSoundTime < 0) {
           this.menuSound.Play();
-          //随机时间播放Menu_atmo
+          // Play Menu_atmo at random intervals.
           this.menuSoundTime = Random.Range(1, 10);
         }
       }
@@ -109,10 +109,10 @@ namespace Ballance2.Game
         RenderSettings.fogColor = new Color(0.827f, 0.784f, 0.581f);
     }
     /// <summary>
-    /// 切换主菜单关卡LightZone模式
+    /// Toggle LightZone mode in the main menu level.
     /// </summary>
-    /// <param name="on">是否是LightZone模式</param>
-    /// <param name="isClick">是否是用户点击所触发的</param>
+    /// <param name="on">Whether LightZone mode is enabled.</param>
+    /// <param name="isClick">Whether the change came from a user click.</param>
     private void SwitchLightZone(bool on, bool isClick) {
       if(on) 
       {

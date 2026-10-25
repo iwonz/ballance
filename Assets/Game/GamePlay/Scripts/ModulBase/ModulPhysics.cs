@@ -6,14 +6,14 @@ namespace Ballance2.Game.GamePlay
 {
   public class ModulPhysics : ModulBase 
   {
-    [Tooltip("机关对应物理物体，请在编辑器中设置此字段")]
+    [Tooltip("Mechanism physics object; assign in the editor.")]
     /// <summary>
-    /// 机关对应物理物体
+    /// Physics body for the mechanism.
     /// </summary>
     public PhysicsObject PhysicsObject;
-    [Tooltip("设置物理物体球碰撞声音组，可以在编辑器中设置此字段")]
+    [Tooltip("Ball collision sound group for the physics object; assign in the editor.")]
     /// <summary>
-    /// 物理物体球碰撞声音组
+    /// Ball collision sound group for the physics body.
     /// </summary>
     public string PhysicsObjectCollIDName;
 

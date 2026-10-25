@@ -10,7 +10,7 @@ using UnityEngine.UI;
 namespace Ballance2.Menu
 {
   /// <summary>
-  /// 主游戏菜单控制器类
+  /// Main gameplay menu controller.
   /// </summary>
   public class GamePlayUIControl : GameSingletonBehavior<GamePlayUIControl> 
   {
@@ -36,9 +36,9 @@ namespace Ballance2.Menu
     private void Start() {
       _ScoreBoardActive.gameObject.SetActive(false);
 
-        //手机端还需要创建键盘
+        // Create a touch keyboard on mobile.
         #if (UNITY_ANDROID || UNITY_IOS)
-        //当前设备存在触摸屏时，才允许显示屏幕键盘
+        // Show the on-screen keyboard only when the device has a touchscreen.
         if (UnityEngine.InputSystem.Touchscreen.current != null)
         {
             _CurrentMobileKeyPadShow = true;
@@ -58,7 +58,7 @@ namespace Ballance2.Menu
         }
       #endif
 
-      //创建调试信息
+      // Create debug information.
       if (GameManager.DebugMode) {
         DebugStatValues["CurrentBall"] = GuiStats.AddStat("CurrentBall");
         DebugStatValues["CurrentStatus"] = GuiStats.AddStat("CurrentStatus");
@@ -98,16 +98,16 @@ namespace Ballance2.Menu
     }
 
     private void DestroyMobileKeyPad() {
-      //销毁键盘
+      // Destroy the keyboard.
       if (_CurrentMobileKeyPad != null) {
         Destroy(_CurrentMobileKeyPad.gameObject);
         _CurrentMobileKeyPad = null;
       }
     }
     internal void ReBuildMobileKeyPad() {
-      //销毁键盘
+      // Destroy the keyboard.
       DestroyMobileKeyPad();
-      //读取键盘设置
+      // Read keyboard settings.
       var settings = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME);
       var controlKeypadSettting = settings.GetString(SettingConstants.SettingsControlKeypad);
 
@@ -122,15 +122,15 @@ namespace Ballance2.Menu
         keyPad = KeypadUIManager.GetKeypad(controlKeypadSettting);
       }
 
-      //创建键盘
+      // Create the keyboard.
       _CurrentMobileKeyPad = GameUIManager.Instance.InitViewToCanvas(keyPad.prefab, "GameMobileKeypad", false);
-      //当屏幕键盘不显示
+      // When the on-screen keyboard is hidden.
       if (!_CurrentMobileKeyPadShow)
         _CurrentMobileKeyPad.gameObject.SetActive(false);
     }
 
     /// <summary>
-    /// 闪烁分数面板
+    /// Flash the points display.
     /// </summary>
     public void TwinklePoint() 
     {
@@ -138,15 +138,15 @@ namespace Ballance2.Menu
       GameUIManager.Instance.UIFadeManager.AddFadeOut(_ScoreBoardActive, 1, true);
     }
     /// <summary>
-    /// 设置分数面板文字
+    /// Set the points display text.
     /// </summary>
-    /// <param name="score">分数</param>
+    /// <param name="score">Score.</param>
     public void SetPointText(int score) 
     {
       _ScoreText.text = score.ToString();
     }
     /// <summary>
-    /// 当前显示的生命球数 +1
+    /// Add one displayed reserve life.
     /// </summary>
     public void AddLifeBall()
     {
@@ -163,7 +163,7 @@ namespace Ballance2.Menu
       }
     }
     /// <summary>
-    /// 当前显示的生命球数 -1
+    /// Remove one displayed reserve life.
     /// </summary>
     public void RemoveLifeBall()
     {
@@ -187,15 +187,15 @@ namespace Ballance2.Menu
       }
     }
     /// <summary>
-    /// 直接设置当前显示的生命球数（无动画效果）
+    /// Set displayed reserve lives directly without animation.
     /// </summary>
-    /// <param name="count">数量</param>
+    /// <param name="count">Count.</param>
     public void SetLifeBallCount(int count)
     {
       if (count != _CurrentShowLifeBallCount) {
         _CurrentShowLifeBallCount = count;
         if (count == -1) {
-          //负1就显示无限大图标
+          // Display the infinity symbol for -1.
           for (var i = _LifeBalls.childCount - 1; i >= 0; i--)
             Destroy(_LifeBalls.GetChild(i).gameObject);
           CloneUtils.CloneNewObjectWithParent(_LifeBoardBallInfPrefab, _LifeBalls);
@@ -203,13 +203,13 @@ namespace Ballance2.Menu
         }
         else {
           if (_LifeBalls.childCount > count) {
-            //显示数量大于目标，删除多余的
+            // Remove excess icons when the displayed count is too high.
             for (var i = _LifeBalls.childCount - 1; i >= count; i--)
               UnityEngine.Object.Destroy(_LifeBalls.GetChild(i).gameObject);
             _MoveLifeLeftBaffle();
           }
           else if (_LifeBalls.childCount < count) {
-            //显示数量小于目标，添加
+            // Add icons when the displayed count is too low.
             for (var i = count - _LifeBalls.childCount; i > 0; i--)
               CloneUtils.CloneNewObjectWithParent(_LifeBoardBallPrefab, _LifeBalls);
             _MoveLifeLeftBaffle();

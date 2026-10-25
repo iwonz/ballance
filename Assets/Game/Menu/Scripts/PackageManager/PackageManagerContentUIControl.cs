@@ -13,13 +13,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2022 mengyu
 *
-* 模块名：     
+* Module:
 * PackageManagerContentUIControl.cs
 * 
-* 用途：
-* 模块管理器内容窗口的对话框逻辑。
+* Purpose:
+* Package manager content dialog logic.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

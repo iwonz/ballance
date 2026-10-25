@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Ballance2.UI.Utils
 {
   /// <summary>
-  /// 这个脚本在激活时激活指定的对象s
+  /// Activate the configured objects when this component is enabled.
   /// </summary>
   public class DefaultSelection : MonoBehaviour
   {

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Other
 {
   /// <summary>
-  /// 闪电控制管理器
+  /// Lightning controller.
   /// </summary>
   public class LevelBrizController : MonoBehaviour {
 

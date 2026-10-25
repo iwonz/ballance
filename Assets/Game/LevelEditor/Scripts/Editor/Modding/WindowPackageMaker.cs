@@ -13,7 +13,7 @@ namespace Ballance2.Editor.Modding
   {
     public WindowPackageMaker()
     {
-      titleContent = new GUIContent("创建 Ballance 模组包");
+      titleContent = new GUIContent("Create Ballance Package");
     }
 
     private string modPackageName = "com.yourname.packagename";
@@ -57,31 +57,31 @@ namespace Ballance2.Editor.Modding
       EditorGUILayout.BeginVertical(groupBox);
 
       EditorGUILayout.Space(20);
-      EditorGUILayout.HelpBox(new GUIContent("使用这个工具来快速生成一个模组包模板，生成文件会输出到 Assets/Packages 下。"), true);
+      EditorGUILayout.HelpBox(new GUIContent("Generate a package template under Assets/Packages."), true);
       EditorGUILayout.Space(15);
 
-      modPackageName = EditorGUILayout.TextField("模组包名", modPackageName);
+      modPackageName = EditorGUILayout.TextField("Package ID", modPackageName);
       if (StringUtils.isNullOrEmpty(modPackageName))
       {
-        EditorGUILayout.HelpBox("必须填写模组包名", MessageType.Error);
+        EditorGUILayout.HelpBox("Package ID is required.", MessageType.Error);
         error = true;
       }
       if (!StringUtils.IsPackageName(modPackageName))
       {
-        EditorGUILayout.HelpBox("包名必须是 xxxx.xxx.xxx 格式", MessageType.Error);
+        EditorGUILayout.HelpBox("Package ID must use the xxxx.xxx.xxx format.", MessageType.Error);
         error = true;
       }
 
-      modName = EditorGUILayout.TextField("模组名称", modName);
-      modAuthor = EditorGUILayout.TextField("模组作者名字", modAuthor);
-      modIntroduction = EditorGUILayout.TextField("模组简介文字", modIntroduction, GUILayout.Height(60));
-      modVersion = EditorGUILayout.IntField("模组版本（默认1）", modVersion);
-      modUserVersion = EditorGUILayout.TextField("模组版本（显示用户看）", modUserVersion);
-      PackageType = (GamePackageType)EditorGUILayout.EnumPopup("模组类型", PackageType);
+      modName = EditorGUILayout.TextField("Package display name", modName);
+      modAuthor = EditorGUILayout.TextField("Package author", modAuthor);
+      modIntroduction = EditorGUILayout.TextField("Package description", modIntroduction, GUILayout.Height(60));
+      modVersion = EditorGUILayout.IntField("Package version (default 1)", modVersion);
+      modUserVersion = EditorGUILayout.TextField("Package version display name", modUserVersion);
+      PackageType = (GamePackageType)EditorGUILayout.EnumPopup("Package type", PackageType);
 
       EditorGUILayout.Space(20);
 
-      if (GUILayout.Button("生成") && !error)
+      if (GUILayout.Button("Generate") && !error)
       {
         Make();
       }
@@ -97,15 +97,15 @@ namespace Ballance2.Editor.Modding
       string folderPath = GamePathManager.DEBUG_PACKAGE_FOLDER + "/" + modPackageName;
       if (Directory.Exists(folderPath))
       {
-        if (!EditorUtility.DisplayDialog("提示", "指定包名模组 " + modPackageName + " 已经在： \n" +
-            folderPath + "\n存在了，是否要替换？", "替换", "取消"))
+        if (!EditorUtility.DisplayDialog("Information", "Package " + modPackageName + " already exists at: \n" +
+            folderPath + "\nReplace it?", "Replace", "Cancel"))
           return;
       }
 
       DirectoryInfo directoryInfo = Directory.CreateDirectory(folderPath);
       if (directoryInfo == null)
       {
-        EditorUtility.DisplayDialog("错误", "创建文件夹失败：\n" + folderPath, "确定");
+        EditorUtility.DisplayDialog("Error", "Failed to create folder:\n" + folderPath, "OK");
         return;
       }
 
@@ -150,7 +150,7 @@ namespace Ballance2.Editor.Modding
       File.Copy(GamePathManager.DEBUG_PACKAGE_FOLDER + "/template_PackageLogo.png", folderPath + "/PackageLogo.png");
 
       AssetDatabase.Refresh();
-      EditorUtility.DisplayDialog("提示", "生成模板成功！", "好的");
+      EditorUtility.DisplayDialog("Information", "Template generated successfully!", "OK");
 
       Close();
     }

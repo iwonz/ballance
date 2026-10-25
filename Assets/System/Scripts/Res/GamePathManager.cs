@@ -9,25 +9,25 @@ using System.IO;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameInit.cs
 * 
-* 用途：
-* 游戏外部资源文件的路径配置与路径转换工具类。
+* Purpose:
+* External resource path configuration and conversion helpers.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Res
 {
   /// <summary>
-  /// 路径管理器
+  /// Path manager.
   /// </summary>
   public static class GamePathManager
   {
     /// <summary>
-    /// 调试模组包存放路径
+    /// Debug package directory.
     /// </summary>
     public const string DEBUG_PACKAGE_FOLDER = "Assets/Packages";
 
@@ -36,7 +36,7 @@ namespace Ballance2.Res
     public const string DEBUG_CORE_FOLDER = "Assets/Game";
     
     /// <summary>
-    /// 调试关卡存放路径
+    /// Debug level directory.
     /// </summary>
     public const string DEBUG_LEVEL_FOLDER = "Assets/Game/Levels";
 
@@ -61,7 +61,7 @@ namespace Ballance2.Res
     }
 
     /// <summary>
-    /// 调试路径（输出目录）<c>（您在调试时请点击菜单 "Ballance">"开发设置">"Debug Settings" 将其更改为自己调试输出存放目录）</c>
+    /// Debug output directory; configure it in Ballance -> Development Settings -> Debug Settings.
     /// </summary>
     public static string DEBUG_PATH
     {
@@ -84,7 +84,7 @@ namespace Ballance2.Res
       }
     }
     /// <summary>
-    /// 输出目录<c>（您在调试时请点击菜单 "Ballance">"开发设置">"Debug Settings" 将其更改为自己调试输出存放目录）</c>
+    /// Output directory; configure it in Ballance -> Development Settings -> Debug Settings.
     /// </summary>
     public static string DEBUG_OUTPUT_PATH
     {
@@ -106,16 +106,16 @@ namespace Ballance2.Res
       }
     }
     /// <summary>
-    /// 调试路径（模组目录）
+    /// Debug package path.
     /// </summary>
     public static string DEBUG_PACKAGES_PATH { get { return DEBUG_PATH + "/Packages/"; } }
     /// <summary>
-    /// 调试路径（关卡目录）
+    /// Debug level path.
     /// </summary>
     public static string DEBUG_LEVELS_PATH { get { return DEBUG_PATH + "/Levels/"; } }
 
     /// <summary>
-    /// 内置模块的文件名
+    /// Built-in package filenames.
     /// </summary>
     internal static readonly string[] builtInPackagesFiles = new string[] {
       "core.assets.skys.ballance",
@@ -126,7 +126,7 @@ namespace Ballance2.Res
       "mod.speedball.ballance",
     };
     /// <summary>
-    /// 内置关卡的文件名
+    /// Built-in level filenames.
     /// </summary>
     private static string[] builtInLevelsFiles = new string[] {
       "level01",
@@ -163,12 +163,12 @@ namespace Ballance2.Res
     }
 
     /// <summary>
-    /// 将资源的相对路径转为资源真实路径
+    /// Resolve a relative resource path to its actual location.
     /// </summary>
-    /// <param name="type">资源种类（core: 核心文件、level：关卡、package：模块）</param>
-    /// <param name="pathorname">相对路径或名称</param>
-    /// <param name="replacePlatform">是否替换文件路径中的 [Platform] 字符串</param>
-    /// <returns>返回资源真实路径</returns>
+    /// <param name="type">Resource category: core, level, or package.</param>
+    /// <param name="pathorname">Relative path or name.</param>
+    /// <param name="replacePlatform">Replace the [Platform] token in the path.</param>
+    /// <returns>Actual resource path.</returns>
     public static string GetResRealPath(string type, string pathorname, bool replacePlatform = true, bool withFileSheme = true)
     {
       string result = null;
@@ -269,10 +269,10 @@ namespace Ballance2.Res
       return withFileSheme ? PathUtils.ToRequestUrl(result) : result;
     }
     /// <summary>
-    /// 将关卡资源的相对路径转为关卡资源真实路径
+    /// Resolve a relative level resource path to its actual location.
     /// </summary>
-    /// <param name="pathorname">关卡的相对路径或名称</param>
-    /// <returns>返回资源真实路径</returns>
+    /// <param name="pathorname">Relative level path or name.</param>
+    /// <returns>Actual resource path.</returns>
     public static string GetLevelRealPath(string pathorname, bool withFileSheme = true)
     {
       string result = "";
@@ -340,10 +340,10 @@ namespace Ballance2.Res
       return newPath;
     }
     /// <summary>
-    /// 分割资源标识符
+    /// Split a resource identifier.
     /// </summary>
-    /// <param name="oldIdentifier">资源标识符</param>
-    /// <param name="outPath">输出资源路径</param>
+    /// <param name="oldIdentifier">Resource identifier.</param>
+    /// <param name="outPath">Resolved resource path.</param>
     /// <returns></returns>
     public static string[] SplitResourceIdentifier(string oldIdentifier, out string outPath)
     {

@@ -31,7 +31,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalEmission"
       #pragma vertex vert
       #pragma fragment frag
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"
@@ -62,7 +62,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalEmission"
       #pragma fragment frag
       #define USING_LIGHT_MULTI_COMPILE
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"

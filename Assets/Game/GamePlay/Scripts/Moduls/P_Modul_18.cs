@@ -27,14 +27,14 @@ namespace Ballance2.Game.GamePlay.Moduls
       base.Start();
 
       if (!IsPreviewMode) {
-        //球进入时给一个方向向上的恒力
+        // Apply an upward constant force while the ball is inside.
         P_Modul_18_Kollisionsquader.onTriggerEnter = (_, other) => {
           if (_CurrentInRangeBall == null && other.tag == "Ball") {
             _CurrentInRangeBall = GamePlayManager.Instance.BallManager.CurrentBall._Rigidbody;
             CurrentBallForce = _CurrentInRangeBall.AddConstantForceLocalCenter(P_Modul_18_Force, transform.TransformVector(Vector3.up));
           }
         };
-        //球离开时去除恒力
+        // Remove the constant force when the ball leaves.
         P_Modul_18_Kollisionsquader.onTriggerExit = (_, other) => {
           if (_CurrentInRangeBall != null && other.tag == "Ball") {
             if (CurrentBallForce != null) {

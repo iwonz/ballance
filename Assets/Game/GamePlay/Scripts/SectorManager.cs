@@ -10,44 +10,44 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay
 {
   /// <summary>
-  /// 节管理器，负责控制关卡游戏中每个小节机关的状态。
+  /// Manage mechanism state for each level sector.
   /// </summary>
   public class SectorManager : MonoBehaviour 
   {
     private const string TAG = "SectorManager";
 
     /// <summary>
-    /// 出生点数据存储结构
+    /// Spawn point data.
     /// </summary>
     public class RestPointsDataStorage {
       /// <summary>
-      /// 出生点占位符对象
+      /// Spawn point placeholder object.
       /// </summary>
       public GameObject point;
       /// <summary>
-      /// 火焰机关 PS_FourFlames/PC_TwoFlames
+      /// Flame mechanism: PS_FourFlames or PC_TwoFlames.
       /// </summary>
       public ModulBase flame;
     }
     /// <summary>
-    /// 小节数据存储结构
+    /// Sector data.
     /// </summary>
     public class SectorDataStorage {
       /// <summary>
-      /// 当前小节的所有机关实例
+      /// All mechanism instances in the current sector.
       /// </summary>
       public List<ModulBase> moduls = new List<ModulBase>();
     }
     /// <summary>
-    /// 机关数据存储结构
+    /// Mechanism data.
     /// </summary>
     public class ModulDataStorage {
       /// <summary>
-      /// 机关实例
+      /// Mechanism instance.
       /// </summary>
       public ModulBase modul;
       /// <summary>
-      /// 占位符原件
+      /// Original placeholder.
       /// </summary>
       public GameObject go;
     }
@@ -71,25 +71,25 @@ namespace Ballance2.Game.GamePlay
       DestroyEvent();
     }
       
-    #region 事件
+    #region Events
 
     /// <summary>
-    /// 小节结束事件
+    /// Sector ended.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventSectorDeactive;
     /// <summary>
-    /// 节更改事件
+    /// Sector changed.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventSectorChanged;
     /// <summary>
-    /// 小节激活事件
+    /// Sector activated.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventSectorActive;
     /// <summary>
-    /// 所有节重置事件
+    /// All sectors reset.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventResetAllSector;
@@ -107,7 +107,7 @@ namespace Ballance2.Game.GamePlay
 
     #endregion
 
-    #region 指令
+    #region Commands
 
     private int _CommandId = 0;
     private void InitCommand() {
@@ -125,11 +125,11 @@ namespace Ballance2.Game.GamePlay
         else if (type == "reset-all")
           this.ResetAllSector(true);
         return true;
-      }, 1, "sector <next/set/reset/reset-all> 节管理器命令" +
-          "  next                  ▶ 进入下一小节" +
-          "  set <sector:number>   ▶ 设置当前激活的小节" +
-          "  reset                 ▶ 重置当前小节机关" + 
-          "  reset-all             ▶ 重置所有小节"
+      }, 1, "sector <next/set/reset/reset-all> Sector manager commands" +
+          "  next                  ▶ Enter the next sector" +
+          "  set <sector:number>   ▶ Set the active sector" +
+          "  reset                 ▶ Reset mechanisms in the current sector" +
+          "  reset-all             ▶ Reset all sectors"
       );
     }
     private void DestroyCommand() {
@@ -141,7 +141,7 @@ namespace Ballance2.Game.GamePlay
     internal void DoInitAllModuls() 
     {
       this.CurrentLevelModulCount = 0;
-      //初次加载后通知每个modul进行备份
+      // Ask each mechanism to back up its state after initial loading.
       foreach(var value in CurrentLevelModuls) {
         if (value != null) {
           value.modul.Backup();
@@ -166,7 +166,7 @@ namespace Ballance2.Game.GamePlay
     }
     internal void ActiveAllModulsForPreview() 
     {
-      //通知每个modul卸载
+      // Notify each mechanism of unloading.
       foreach (var item in CurrentLevelModuls)
         if (item != null)
           item.modul.ActiveForPreview();
@@ -174,7 +174,7 @@ namespace Ballance2.Game.GamePlay
     
     private void DeactiveAllModuls(bool afterUnload, bool afterActive, bool reset) {
       var preview = LevelBuilder.LevelBuilder.Instance.IsPreviewMode;
-      //通知每个modul卸载
+      // Notify each mechanism of unloading.
       foreach (var item in CurrentLevelModuls)
       {
         if (item == null)
@@ -194,7 +194,7 @@ namespace Ballance2.Game.GamePlay
     }
 
     /// <summary>
-    /// 进入下一小节
+    /// Enter the next sector.
     /// </summary>
     public void NextSector() 
     {
@@ -202,20 +202,20 @@ namespace Ballance2.Game.GamePlay
         this.SetCurrentSector(GamePlayManager.Instance.CurrentSector + 1);
     }
     /// <summary>
-    /// 设置当前激活的小节
+    /// Set the active sector.
     /// </summary>
     /// <param name="sector"></param>
     public void SetCurrentSector(int sector) 
     {
       var oldSector = GamePlayManager.Instance.CurrentSector;
       if (oldSector != sector) {
-        //禁用之前一节的所有机关
+        // Deactivate all mechanisms in the previous sector.
         if (oldSector > 0) {
           var s = this.CurrentLevelSectors[oldSector];
           foreach (var value in s.moduls)
             value.Deactive();
 
-          //设置火焰状态
+          // Set flame state.
           var flame = this.CurrentLevelRestPoints[oldSector].flame;
           if (flame != null) {
             if (flame is PC_TwoFlames)
@@ -238,15 +238,15 @@ namespace Ballance2.Game.GamePlay
       }
     }
     /// <summary>
-    /// 激活当前节的机关
+    /// Activate mechanisms in the current sector.
     /// </summary>
-    /// <param name="playCheckPointSound">是否播放节点音乐</param>
+    /// <param name="playCheckPointSound">Play the checkpoint sound.</param>
     public void ActiveCurrentSector(bool playCheckPointSound) 
     {
       var sector = GamePlayManager.Instance.CurrentSector;
       var nowSector = this.CurrentLevelRestPoints[sector];
 
-      //设置火焰状态
+      // Set flame state.
 
       if (nowSector.flame != null)
         nowSector.flame.Active();
@@ -254,17 +254,17 @@ namespace Ballance2.Game.GamePlay
         Log.D(TAG, "No flame found for sector " + sector);
       if (sector < this.CurrentLevelSectorCount) {
         nowSector = this.CurrentLevelRestPoints[sector + 1];
-        //下一关的火焰
+        // Flames for the next sector.
         var flameNext = nowSector.flame;
         if (flameNext != null && flameNext is PC_TwoFlames)
           ((PC_TwoFlames)flameNext).InternalActive();
       }
 
-      //播放音乐
+      // Play music.
       if (playCheckPointSound && sector > 1)
         GameSoundManager.Instance.PlayFastVoice("core.sounds:Misc_Checkpoint.wav", GameSoundType.Normal);
 
-      //如果是最后一个小节，则激活飞船
+      // Activate the balloon in the final sector.
       if (this.CurrentLevelEndBalloon != null) {
         if (sector == this.CurrentLevelSectorCount)
           this.CurrentLevelEndBalloon.Active();
@@ -276,7 +276,7 @@ namespace Ballance2.Game.GamePlay
 
       Log.D(TAG, "Active Sector " + sector);
 
-      //激活当前节的机关
+      // Activate mechanisms in the current sector.
       StartCoroutine(ActiveSectorModuls(sector));
 
       this.EventSectorActive.Emit(sector, playCheckPointSound);
@@ -294,7 +294,7 @@ namespace Ballance2.Game.GamePlay
       {
         s.moduls[i].Active();
 
-        //延时下防止一下生成过多机关
+        // Delay slightly to avoid spawning too many mechanisms at once.
         count++;
         if (count >= 2) {
           count = 0;
@@ -309,7 +309,7 @@ namespace Ballance2.Game.GamePlay
     }
 
     /// <summary>
-    /// 禁用当前节的机关
+    /// Deactivate mechanisms in the current sector.
     /// </summary>
     public void DeactiveCurrentSector()  
     {
@@ -322,7 +322,7 @@ namespace Ballance2.Game.GamePlay
         }
       }
 
-      //调试信息
+      // Debug information.
       if (GameManager.DebugMode) { 
         GamePlayUIControl.Instance.DebugStatValues["Sector"].Value = sector + "(Deactive)/" + this.CurrentLevelSectorCount;
         GamePlayUIControl.Instance.DebugStatValues["Moduls"].Value = "0";
@@ -333,9 +333,9 @@ namespace Ballance2.Game.GamePlay
       this.EventSectorDeactive.Emit(sector);
     }
     /// <summary>
-    /// 重置当前节的机关
+    /// Reset mechanisms in the current sector.
     /// </summary>
-    /// <param name="active">重置机关后是否重新激活</param>
+    /// <param name="active">Reactivate mechanisms after resetting.</param>
     public void ResetCurrentSector(bool active)  
     {
       this.DeactiveCurrentSector();
@@ -344,15 +344,15 @@ namespace Ballance2.Game.GamePlay
       }
     }
     /// <summary>
-    /// 重置所有机关
+    /// Reset all mechanisms.
     /// </summary>
-    /// <param name="active">重置机关后是否重新激活</param>
+    /// <param name="active">Reactivate mechanisms after resetting.</param>
     public void ResetAllSector(bool active) 
     {
-      //通知每个modul卸载
+      // Notify each mechanism of unloading.
       DeactiveAllModuls(false, active, true);
 
-      //重置飞船
+      // Reset the balloon.
       this.CurrentLevelEndBalloon.Reset(ModulBaseResetType.LevelRestart);
 
       Log.D(TAG, "Reset all sector");

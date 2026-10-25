@@ -10,7 +10,7 @@ using UnityEngine.UI;
 namespace Ballance2.Game.GamePlay.Other
 {
     /// <summary>
-    /// 第一关教程控制管理器
+    /// First-level tutorial controller.
     /// </summary>
     public class TutorialController : MonoBehaviour
     {
@@ -75,7 +75,7 @@ namespace Ballance2.Game.GamePlay.Other
                 _Tutorial = true;
                 _TutorialShouldDisablePointDown = true;
 
-                //先隐藏箭头
+                // Hide arrows first.
                 Tut_Richt_Pfeil01.SetActive(false);
                 Tut_Richt_Pfeil02.SetActive(false);
                 Tut_Richt_Pfeil03.SetActive(false);
@@ -83,7 +83,7 @@ namespace Ballance2.Game.GamePlay.Other
                 Pfeil_Rund02.SetActive(false);
                 Pfeil_Rund01.SetActive(false);
                 Pfeil_Hoch.SetActive(false);
-                //-初始化教程UI
+                // Initialize tutorial UI.
                 _TutorialUI = GameUIManager.InitViewToCanvas(GamePackage.GetSystemPackage().GetPrefabAsset("GameTutorialUI.prefab"), "GameTutorialUI", false);
                 var view = _TutorialUI.transform.GetChild(0);
                 var buttonView = _TutorialUI.transform.GetChild(1);
@@ -94,9 +94,9 @@ namespace Ballance2.Game.GamePlay.Other
                 _TutorialUI.gameObject.SetActive(false);
                 StartSeq();
 
-                //移动到球出生位置
+                // Move to the ball spawn position.
                 Pfeil_HochHost.transform.position = GamePlayManager.SectorManager.CurrentLevelRestPoints[1].point.transform.position;
-                //设置箭头跟随摄像机旋转角度
+                // Make arrows follow camera rotation.
                 var constraintSource = new ConstraintSource();
                 constraintSource.sourceTransform = GamePlayManager.CamManager._CamOrientTransform;
                 constraintSource.weight = 1;
@@ -132,16 +132,16 @@ namespace Ballance2.Game.GamePlay.Other
                 _Tutorial = false;
                 GameTimer.Delay(1, () =>
                 {
-                    //删除按键
+                    // Remove key listeners.
                     if (_TutorialCurrWaitkey > 0)
                     {
                         GameUIManager.DeleteKeyListen(_TutorialCurrWaitkey);
                     }
 
-                    //重置恢复
+                    // Reset and restore.
                     GamePlayManager._ShouldStartByCustom = false;
 
-                    //删除UI
+                    // Delete UI.
                     if (_TutorialUI != null)
                     {
                         UnityEngine.Object.Destroy(_TutorialUI.gameObject);
@@ -169,7 +169,7 @@ namespace Ballance2.Game.GamePlay.Other
                     GamePlayManager.EventBeforeStart.Off(startFun);
                     GamePlayManager.EventFall.Off(fallFun);
                     GamePlayManager.EventQuit.Off(quitFun);
-                    //取消注册事件
+                    // Unregister events.
                     if (_EventEntery != null)
                     {
                         GameMediator.Instance.UnRegisterEventHandler("CoreTutorialLevelEventHandler", _EventEntery);
@@ -181,7 +181,7 @@ namespace Ballance2.Game.GamePlay.Other
         }
 
         /// <summary>
-        /// 开启序列
+        /// Start the sequence.
         /// </summary>
         public void StartSeq()
         {
@@ -201,12 +201,12 @@ namespace Ballance2.Game.GamePlay.Other
                 {
                     funQuitLock = true;
                     GameSoundManager.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.Normal);
-                    //按 q 退出
+                    // Press Q to exit.
                     GameUIManager.DeleteKeyListen(step1KeyReturn);
                     HideTutorial();
-                    //恢复球推动键
+                    // Restore ball movement keys.
                     GamePlayManager.BallManager.KeyListener.IsListenKey = true;
-                    //继续游戏运行
+                    // Resume gameplay.
                     GamePlayManager._ShouldStartByCustom = false;
                     GamePlayManager.CanEscPause = true;
                     GamePlayManager.ResumeLevel(true);
@@ -225,13 +225,13 @@ namespace Ballance2.Game.GamePlay.Other
 
                 GameSoundManager.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.Normal);
 
-                //这个时候才开始控制
+                // Enable control at this point.
                 BallManager.SetControllingStatus(BallControlStatus.Control);
                 GamePlayManager._IsCountDownPoint = true;
                 GamePlayManager.CanEscPause = true;
                 _TutorialShouldDisablePointDown = false;
 
-                //绑定当前球
+                // Bind the current ball.
                 var ballWoodConstraintSource = new ConstraintSource();
                 ballWoodConstraintSource.sourceTransform = BallManager.CurrentBall.transform;
                 ballWoodConstraintSource.weight = 1;
@@ -243,7 +243,7 @@ namespace Ballance2.Game.GamePlay.Other
                 Tut_Richt_Pfeil.rotationAxis = Axis.None;
                 _TutorialBallFinded = true;
 
-                //进行下一步，方向键导航
+                // Next step: directional key navigation.
                 GameUIManager.UIFadeManager.AddFadeOut(Pfeil_Hoch, 1, true, null);
                 GameUIManager.UIFadeManager.AddFadeIn(Tut_Richt_Pfeil01, 1, null);
                 GameUIManager.UIFadeManager.AddFadeIn(Tut_Richt_Pfeil02, 1, null);
@@ -252,7 +252,7 @@ namespace Ballance2.Game.GamePlay.Other
 
                 _TutorialUIButtonContinue.gameObject.SetActive(false);
 
-                //按下按键以后几个箭头有拉长的特效        
+                // Stretch arrows when their keys are pressed.
                 GameEventEmitterDelegate FlushBallPushListener = (_) =>
                 {
                     if (BallManager.KeyStateBack)
@@ -274,7 +274,7 @@ namespace Ballance2.Game.GamePlay.Other
                 };
                 BallManager.EventFlushBallPush.On(FlushBallPushListener);
 
-                //-隐藏四个方向箭头
+                // Hide the four directional arrows.
                 GameManager.VoidDelegate hideRichtPfeil = () =>
                 {
                     GameUIManager.UIFadeManager.AddFadeOut(Tut_Richt_Pfeil01, 1, true, null);
@@ -295,7 +295,7 @@ namespace Ballance2.Game.GamePlay.Other
                     ShowTutorialText();
                 });
 
-                //这个按键箭头最多15秒后隐藏
+                // Hide the key arrow after at most 15 seconds.
                 GameTimer.Delay(15.000f, () =>
                 {
                     if (_TutorialStep == 4)
@@ -305,7 +305,7 @@ namespace Ballance2.Game.GamePlay.Other
                         hideRichtPfeil();
                     }
                 });
-                //或者到达木桥那里隐藏隐藏
+                // Or hide it when the ball reaches the wooden bridge.
                 Tut_KeyEnd.onTriggerEnter = (e, v) =>
                 {
                     if (_TutorialStep == 4)
@@ -320,7 +320,7 @@ namespace Ballance2.Game.GamePlay.Other
             {
                 GameSoundManager.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.Normal);
 
-                //进行下一步，空格俯瞰
+                // Next step: overhead view with Space.
                 GameUIManager.UIFadeManager.AddFadeOut(Pfeil_Rund01, 1, true, null);
                 GameUIManager.UIFadeManager.AddFadeOut(Pfeil_Rund02, 1, true, null);
 
@@ -339,20 +339,20 @@ namespace Ballance2.Game.GamePlay.Other
                 GameSoundManager.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.Normal);
                 _TutorialUIButtonQuit.gameObject.SetActive(false);
                 GameUIManager.DeleteKeyListen(step1KeyQ);
-                //恢复球推动键
+                // Restore ball movement keys.
                 GamePlayManager.BallManager.KeyListener.IsListenKey = true;
 
-                //进行下一步
+                // Advance to the next step.
                 HideTutorial();
 
-                //出生球序列
+                // Ball spawn sequence.
                 GamePlayManager._Start(true, () =>
                 {
 
-                    //这是出生球但是不能控制
+                    // Spawn the ball without enabling control.
                     GamePlayManager.BallManager.SetControllingStatus(BallControlStatus.LockMode);
 
-                    //显示箭头
+                    // Show arrows.
                     GameUIManager.UIFadeManager.AddFadeIn(Pfeil_Rund01, 1, null);
                     GameUIManager.UIFadeManager.AddFadeIn(Pfeil_Rund02, 1, null);
 
@@ -362,7 +362,7 @@ namespace Ballance2.Game.GamePlay.Other
                     _TutorialCurrWaitkey = GameUIManager.WaitKey(KeyCode.Return, true, funStep1,GamepadButton.A);
                 });
 
-                //-移动箭头至指定位置
+                // Move arrows to the specified position.
                 commonTurHide = () =>
                 {
                     GameSoundManager.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.Normal);
@@ -379,7 +379,7 @@ namespace Ballance2.Game.GamePlay.Other
                     GameSoundManager.PlayFastVoice("core.sounds:Hit_Stone_Kuppel.wav", GameSoundType.Normal);
                 };
 
-                //下面设置几个触发器触发的教程
+                // Configure tutorials activated by triggers.
                 Tut_ExtraLife.onTriggerEnter = (s, o) =>
                 {
                     if (_TutorialStep < 5)
@@ -404,7 +404,7 @@ namespace Ballance2.Game.GamePlay.Other
                 };
                 Tut_Rampe.onTriggerEnter = (body, other) =>
                 {
-                    //石球上坡提示
+                    // Stone ball uphill hint.
                     if (other != null && other.gameObject.tag == "Ball" && other.gameObject.name == "BallStone")
                     {
                         if (_TutorialStep < 7)
@@ -456,7 +456,7 @@ namespace Ballance2.Game.GamePlay.Other
             _TutorialUIButtonContinue.onClick.AddListener(() =>
             {
 
-                //防止按键安得太快
+                // Prevent advancing too quickly through key presses.
                 if (funStepLock)
                     return;
                 funStepLock = true;
@@ -473,13 +473,13 @@ namespace Ballance2.Game.GamePlay.Other
             });
             _TutorialUIButtonQuit.onClick.AddListener(() => funQuit());
 
-            //先暂停球推动键
+            // Temporarily disable ball movement keys.
             GamePlayManager.BallManager.KeyListener.IsListenKey = false;
 
             GameTimer.Delay(0.5f, () =>
             {
                 ShowTutorialText();
-                //步骤1，按 q 退出，按回车继续
+                // Step 1: Q exits; Enter continues.
                 step1KeyReturn = GameUIManager.WaitKey(KeyCode.Return, true, () => funSeq(), GamepadButton.A);
                 step1KeyQ = GameUIManager.WaitKey(KeyCode.Q, true, () => funQuit(), GamepadButton.B);
             });
@@ -521,7 +521,7 @@ namespace Ballance2.Game.GamePlay.Other
         }
 
         /// <summary>
-        /// 隐藏教程
+        /// Hide the tutorial.
         /// </summary>
         public void HideTutorial()
         {

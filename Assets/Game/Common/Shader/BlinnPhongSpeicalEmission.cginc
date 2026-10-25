@@ -7,12 +7,12 @@
 
 float2 GetSphereUV(float3 r)
 {
-  // 开根号对过渡向量m求模（反射向量r+摄像机向量(0,0,1)为过渡向量m）
+  // Magnitude of the intermediate vector (reflection plus camera direction).
   float m = sqrt(r.x * r.x + r.y * r.y + (r.z + 1.0) * (r.z + 1.0)); 
-  // 求过渡向量m的单位向量
+  // Normalize the intermediate vector.
   float3 n = float3(r.x / m, r.y / m, r.z / m);
-  // 顶点值域为[-1,1],转为UV的值域[0,1]
-  // 在边缘处UV信息也是更靠近图片里面，才形成镜面水晶球的效果吧
+  // Map vertex coordinates from [-1, 1] to UV coordinates [0, 1].
+  // UVs near the edge sample farther inside the texture, producing a reflective glass-ball effect.
   return float2(0.5 * n.x + 0.5,0.5 * n.y + 0.5);
 }
 
@@ -50,7 +50,7 @@ sampler2D _ReflectionTex;
 float4 _ReflectionTex_ST;
 #endif
       
-//定义Properties中的变量
+// Variables declared in Properties.
 fixed4 _Color;
 fixed4 _AmbientColor;
 fixed4 _Emission;
@@ -86,7 +86,7 @@ half4 fragForwardAdd (VertexOutputBase i) : SV_Target // backward compatibility 
   fixed4 albedo = tex2D(_MainTex, i.uv) * _Color;
   #endif
 
-  //球型环境贴图
+  // Spherical environment map.
   #ifdef USE_SPHERE_REFLECTION
   albedo *= tex2D(_ReflectionTex, i.uv2);
   #endif 
@@ -121,9 +121,9 @@ VertexOutputBase vertForwardBase (VertexInput v)
 
   o.pos = UnityObjectToClipPos(v.vertex);
   o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-  //法线转化到世界空间
+  // Transform the normal to world space.
   o.worldNormal = UnityObjectToWorldNormal(v.normal);
-  //顶点位置转化到世界空间 
+  // Transform the vertex position to world space.
   o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
   
   #ifdef LIGHTPROBE_SH
@@ -131,17 +131,17 @@ VertexOutputBase vertForwardBase (VertexInput v)
   #endif
 
   #ifdef USE_SPHERE
-  // 将顶点信息转换到摄像机坐标
+  // Transform the vertex into camera space.
   float3 posEyeSpace = mul(UNITY_MATRIX_MV,v.vertex).xyz;
-  // 获取摄像机的入射向量
+  // Get the incident view vector.
   float3 I = posEyeSpace - float3(0,0,0);
-  // 将顶点的法线向量转换到摄像机坐标
+  // Transform the vertex normal into camera space.
   float3 N = mul((float3x3)UNITY_MATRIX_MV,v.normal);
-  // 求法线单位向量
+  // Normalize the normal.
   N = normalize(N);
-  // 根据入射向量和法线向量求反射向量
+  // Calculate the reflected vector from the incident vector and normal.
   float3 R = reflect(I,N);
-  // 根据反射向量获取最终的UV信息
+  // Calculate the final UVs from the reflected vector.
   o.uv2 = GetSphereUV(R);
   #endif
 
@@ -159,24 +159,24 @@ half4 fragForwardBase (VertexOutputBase i) : SV_Target  // backward compatibilit
   fixed4 albedo = tex2D(_MainTex, i.uv) * _Color;
   #endif
 
-  //球型环境贴图
+  // Spherical environment map.
   #ifdef USE_SPHERE_REFLECTION
   albedo *= tex2D(_ReflectionTex, i.uv2);
   #endif
 
-  //环境光
+  // Ambient light.
   fixed3 ambient = (UNITY_LIGHTMODEL_AMBIENT.xyz + _AmbientColor) * albedo;
   
   #ifdef LIGHTPROBE_SH
   ambient.rgb *= i.SHLighting;
   #endif
 
-  //世界空间下光线方向
+  // Light direction in world space.
   float3 worldLight = normalize(UnityWorldSpaceLightDir(i.worldPos.xyz));
   float3 worldView = normalize(UnityWorldSpaceViewDir(i.worldPos.xyz));
-  //需要再次normalize
+  // Normalize again after interpolation.
   fixed3 worldNormal = normalize(i.worldNormal);
-  //计算Diffuse
+  // Calculate diffuse lighting.
   fixed3 diffuse = _LightColor0.rgb * albedo.rgb * saturate(dot(worldNormal, worldLight));
 
   #ifdef FLAT_EMISSION
@@ -185,17 +185,17 @@ half4 fragForwardBase (VertexOutputBase i) : SV_Target  // backward compatibilit
   fixed3 emission = _Emission.rgb * albedo.rgb * _Emission.a;
   #endif
 
-  //光照
+  // Lighting.
   UNITY_LIGHT_ATTENUATION(atten, i, i.worldPos.xyz);
 
   #ifdef NO_SPECULAR
   fixed3 color = max(diffuse, emission) * atten + ambient;
   #else
-  //计算半角向量（光线方向 + 视线方向，结果归一化）
+  // Calculate the half vector from the light and view directions.
   fixed3 halfDir = normalize(worldLight + worldView);
-  //计算Specular（Blinn-Phong计算的是）
+  // Calculate Blinn-Phong specular lighting.
   fixed3 specular = _LightColor0.rgb * _SpecColor.rgb * pow(saturate(dot(halfDir, worldNormal)), _Gloss);
-  //结果为diffuse + ambient + specular
+  // Combine diffuse, ambient, and specular lighting.
   fixed3 color = (max(diffuse, emission) + specular) * atten + ambient;
   #endif
 

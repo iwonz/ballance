@@ -4,12 +4,12 @@ using Newtonsoft.Json;
 namespace Ballance2.Game.GamePlay
 {
   /// <summary>
-  /// 用于 高分管理器生成默认数据
+  /// Generate default data for the high score manager.
   /// </summary>
   public static class DefaultHighscoreDataGenerator {
 
     /// <summary>
-    /// 默认关卡名字数据
+    /// Default level names.
     /// </summary>
     /// <value></value>
     public static readonly string[] DefaultHighscoreLevelNamesData = new string[] {
@@ -31,7 +31,7 @@ namespace Ballance2.Game.GamePlay
     private static Dictionary<string, List<HighscoreDataItem>> _DefaultHighscoreData = null;
 
     /// <summary>
-    /// 默认关卡高分数据
+    /// Default level high scores.
     /// </summary>
     /// <value></value>
     public static List<HighscoreDataItem> DefaultHightScoreLev01To11Data {
@@ -51,7 +51,7 @@ namespace Ballance2.Game.GamePlay
       }
     }
     /// <summary>
-    /// 12关高分数据
+    /// Level 12 high scores.
     /// </summary>
     /// <value></value>
     public static List<HighscoreDataItem> DefaultHightScoreLev12Data {
@@ -71,7 +71,7 @@ namespace Ballance2.Game.GamePlay
       }
     }
     /// <summary>
-    /// 所有的默认关卡高分数据
+    /// All default level high scores.
     /// </summary>
     /// <value></value>
     public static Dictionary<string, List<HighscoreDataItem>> DefaultHighscoreData {

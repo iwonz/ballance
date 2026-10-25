@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Ballance2.Game {
 
   /// <summary>
-  /// Intro 管理
+  /// Intro management.
   /// </summary>
   public class IntroManager : MonoBehaviour {
 
@@ -15,7 +15,7 @@ namespace Ballance2.Game {
 
     private static RectTransform IntroUI = null;
 
-    //进入Intro场景
+    // Enter the Intro logical scene.
     private static void OnEnterIntro(GamePackage thisGamePackage) {
 
       Log.D(TAG, "Into intro ui");
@@ -30,14 +30,14 @@ namespace Ballance2.Game {
 
       GameUIManager.MaskBlackFadeIn(0.3f);
 
-      //进入音乐
+      // Start intro music.
       GameSoundManager.PlayFastVoice("core.sounds.music:Music_Theme_4_1.wav", GameSoundType.Background);
 
       GameTimer.Delay(5, () => {
-        //黑色渐变进入
+        // Fade in from black.
         GameUIManager.MaskBlackFadeIn(1);
         GameTimer.Delay(1, () => {
-          //进入菜单
+          // Enter the menu.
           GameManager.Instance.RequestEnterLogicScense("MenuLevel");
         });
       });
@@ -50,7 +50,7 @@ namespace Ballance2.Game {
     }
 
     public static void Init(GamePackage package) {
-      //注册场景切换
+      // Register logical scene transitions.
       GameManager.GameMediator.RegisterEventHandler(package, GameEventNames.EVENT_LOGIC_SECNSE_ENTER, "Intro", (evtName, param) => {
         var scense = param[0];
         if(scense.ToString() == "Intro") 

@@ -10,19 +10,19 @@ using Ballance2.Res;
 /*
  * Copyright (c) 2022  mengyu
  * 
- * 模块名：     
+ * Module:
  * GameLevelLoaderNMO.cs
  * 
- * 用途：
- * 用于加载 nmo 关卡文件。
+ * Purpose:
+ * Load NMO level files.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Game.LevelBuilder
 {
-  //NMO 资源
+  // NMO resources.
   public class LevelNMOAssets : LevelAssets 
   {
     public LevelNMOAssets(string path) : base(path, false) {}
@@ -63,13 +63,13 @@ namespace Ballance2.Game.LevelBuilder
     }
   }
 
-  //NMO 关卡加载器
+  // NMO level loader.
   public class LevelLoaderNMO 
   {
     private static Dictionary<string, float> modelRotationCorrecting = new Dictionary<string, float>();
 
     private static void initAllModelRotationCorrecting() {
-      //从nmo导入的机关，旋转有问题，需要转一下
+      // Correct the rotation of mechanisms imported from NMO.
       if (modelRotationCorrecting.Count == 0) {
         modelRotationCorrecting.Add("PC_CheckPoints", 90);
         modelRotationCorrecting.Add("PS_LevelStart", 90);
@@ -108,9 +108,9 @@ namespace Ballance2.Game.LevelBuilder
       yield break;
     }
     private static string CreateJsonFromNMO(LevelNMOAssets assets) {
-      //生成JSON以供加载器加载
+      // Generate JSON for the loader.
 
-      //基本信息全是未知
+      // Basic metadata is unknown.
       JObject level = new JObject();
       level.Add(new JProperty("name", assets.Path));
       level.Add(new JProperty("author", "unknow"));
@@ -118,7 +118,7 @@ namespace Ballance2.Game.LevelBuilder
       level.Add(new JProperty("introduction", "unknow"));
       level.Add(new JProperty("allowPreview", false));
 
-      //关卡基础信息。目前nmo没有这些信息，所以这些信息是固定的
+      // NMO lacks this level configuration, so use fixed defaults.
       JObject levelInfo = new JObject();
       levelInfo.Add(new JProperty("firstBall", "BallWood"));
       levelInfo.Add(new JProperty("levelScore", 100));
@@ -141,26 +141,26 @@ namespace Ballance2.Game.LevelBuilder
         }
       }
 
-      //从组信息生成关卡信息
+      // Generate level configuration from group data.
       var groupList = assets.result.groupList;
 
-      JObject sectors = new JObject();//小节
-      JObject internalObjects = new JObject(); //基础元件
-      JArray floors = new JArray(); //路面
-      JArray groups = new JArray(); //组
+      JObject sectors = new JObject();// Sectors.
+      JObject internalObjects = new JObject(); // Internal objects.
+      JArray floors = new JArray(); // Floors.
+      JArray groups = new JArray(); // Groups.
 
-      //查找小节组以填充组信息
+      // Find sector groups to populate grouping data.
       int sector = 0;
       foreach (var key in groupList.Keys) {
         if (key.StartsWith("Sector_")) {
-          //节信息
+          // Sector information.
           if (int.TryParse(key.Substring(7), out var index)) {
             if (sector < index) sector = index;
-            //组信息
+            // Group information.
             sectors.Add(new JProperty(index.ToString(), new JArray(groupList[key])));
           }
         } else if (key.StartsWith("P_")) {
-          //机关信息
+          // Mechanism information.
           groups.Add(new JObject(
             new JProperty("name", key),
             new JProperty("rotationCorrecting", new JObject(
@@ -205,22 +205,22 @@ namespace Ballance2.Game.LevelBuilder
             internalObjects.Add("PE_LevelEnd", array[0]);
         }
       }
-      //有多少小节
+      // Number of sectors.
       levelInfo.Add(new JProperty("sectorCount", sector));
 
-      //死亡区信息
+      // Death-zone information.
       if (groupList.TryGetValue("DepthTestCubes", out var depthTestCubes)) 
         levelInfo.Add(new JProperty("depthTestCubes", new JArray(depthTestCubes)));
-      //路面
+      // Floors.
       if (groupList.TryGetValue("Phys_Floors", out var arrayFloors)) {
 
         if (groupList.TryGetValue("Sound_HitID_02", out var arrayWood)) {
-          //原版木制路面只是声音的不同，所以这里以Sound_HitID_02判断路面是不是木制路面
+          // Original wooden floors differ by sound, so identify them through Sound_HitID_02.
           floors.Add(new JObject(
             new JProperty("name", "Phys_FloorWoods"),
             new JProperty("objects", new JArray(arrayWood))
           ));
-          //去掉路面组中的木制路面,防止重复添加
+          // Remove wooden floors from the general floor group to avoid duplicates.
           arrayFloors.RemoveAll((v) => arrayWood.Contains(v));
         }
 
@@ -229,14 +229,14 @@ namespace Ballance2.Game.LevelBuilder
           new JProperty("objects", new JArray(arrayFloors))
         ));
       }
-      //钢轨
+      // Rails.
       if (groupList.TryGetValue("Phys_FloorRails", out var arrayRails)) {
         floors.Add(new JObject(
           new JProperty("name", "Phys_FloorRails"),
           new JProperty("objects", new JArray(arrayRails))
         ));
       }
-      //挡板
+      // Barriers.
       if (groupList.TryGetValue("Phys_FloorStopper", out var stopperRails)) {
         floors.Add(new JObject(
           new JProperty("name", "Phys_FloorStopper"),

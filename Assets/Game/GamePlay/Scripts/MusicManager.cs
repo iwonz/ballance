@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay {
   
   /// <summary>
-  /// 背景音乐管理器，控制游戏中的背景音乐。
+  /// Manage gameplay background music.
   /// </summary>
   public class MusicManager : MonoBehaviour 
   {
@@ -38,7 +38,7 @@ namespace Ballance2.Game.GamePlay {
       DestroyEvent();
     }
 
-    //加载内置音乐
+    // Load built-in music.
     private void InitInternalMusics() {
       List<AudioClip> atmos = new List<AudioClip>();
       atmos.Add(GameSoundManager.Instance.LoadAudioResource("core.sounds.music:Music_Atmo_1.wav"));
@@ -73,20 +73,20 @@ namespace Ballance2.Game.GamePlay {
       public List<AudioClip> atmos = null;
     }
   
-    #region 事件
+    #region Events
 
     /// <summary>
-    /// 音乐主题变化事件
+    /// Music theme changed.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventMusicThemeChanged;
     /// <summary>
-    /// 音乐禁用事件
+    /// Music disabled.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventMusicDisable;
     /// <summary>
-    /// 音乐启用事件
+    /// Music enabled.
     /// </summary>
     [HideInInspector]
     public GameEventEmitterStorage EventMusicEnable;
@@ -103,7 +103,7 @@ namespace Ballance2.Game.GamePlay {
 
     #endregion
 
-    #region 指令
+    #region Commands
 
     private int _CommandId = 0;
     private void InitCommand() {
@@ -114,9 +114,9 @@ namespace Ballance2.Game.GamePlay {
         else if (type == "disable")
           this.DisableBackgroundMusic();
         return true;
-      }, 1, "bgm <enable/disable> 背景音乐管理器命令" + 
-          "  enable  ▶ 开启背景音乐" + 
-          "  disable ▶ 关闭背景音乐"
+      }, 1, "bgm <enable/disable> Background music commands" +
+          "  enable  ▶ Enable background music" +
+          "  disable ▶ Disable background music"
       );
     }
     private void DestroyCommand() {
@@ -125,21 +125,21 @@ namespace Ballance2.Game.GamePlay {
   
     #endregion
 
-    #region 控制
+    #region Controls
 
     private void FixedUpdate() 
     {
       if (CurrentAudioEnabled && CurrentAudioTheme != null) 
       {
         var musicsCount = CurrentAudioTheme.musics.Count;
-        //随机时间播放随机音乐
+        // Play a random track after a random interval.
         if (_CurrentAudioTick > 0)
           _CurrentAudioTick -= Time.fixedDeltaTime;
         else
         {
           if (_CurrentIsAtmo || _CurrentForceAtmo) 
           {
-            //随机播放atmo音效
+            // Play random ambient sounds.
             _CurrentIsAtmo = false;
             if (!CurrentAudioSource.isPlaying)
             {
@@ -180,7 +180,7 @@ namespace Ballance2.Game.GamePlay {
     }
 
     /// <summary>
-    /// 设置当前背景音乐预设
+    /// Select the background music preset.
     /// </summary>
     /// <param name="theme"></param>
     public bool SetCurrentTheme(int theme) 
@@ -201,7 +201,7 @@ namespace Ballance2.Game.GamePlay {
       }
     }
     /// <summary>
-    /// 开启音乐
+    /// Enable music.
     /// </summary>
     public void EnableBackgroundMusic() 
     {
@@ -215,7 +215,7 @@ namespace Ballance2.Game.GamePlay {
       {
         this._CurrentAudioTick = Random.Range(2, this.CurrentAudioTheme.maxInterval / 3);
 
-        ///淡入当前正在播放的音乐
+        /// Fade in the current track.
         if (this.CurrentAudioSource.isPlaying)
           GameUIManager.Instance.UIFadeManager.AddAudioFadeIn(this.CurrentAudioSource, 1);
         else
@@ -224,9 +224,9 @@ namespace Ballance2.Game.GamePlay {
       }
     }
     /// <summary>
-    /// 暂停音乐
+    /// Pause music.
     /// </summary>
-    /// <param name="fast">是否快速停止（没有渐变）</param>
+    /// <param name="fast">Stop immediately without fading.</param>
     public void DisableBackgroundMusic(bool fast = false) 
     {
       if (_LastDisablerTimer > 0) {
@@ -239,7 +239,7 @@ namespace Ballance2.Game.GamePlay {
         this.CurrentAudioSource.Stop();
       }
       else {
-        ///淡出当前正在播放的音乐
+        /// Fade out the current track.
         if (this.CurrentAudioSource.isPlaying)
           GameUIManager.Instance.UIFadeManager.AddAudioFadeOut(this.CurrentAudioSource, 1);
         else
@@ -248,7 +248,7 @@ namespace Ballance2.Game.GamePlay {
       this.EventMusicDisable.Emit(null);
     }
     /// <summary>
-    /// 暂停音乐（Atmo除外）
+    /// Pause music except ambient sounds.
     /// </summary>
     public void DisableBackgroundMusicWithoutAtmo() 
     {
@@ -257,13 +257,13 @@ namespace Ballance2.Game.GamePlay {
         GameUIManager.Instance.UIFadeManager.AddAudioFadeOut(this.CurrentAudioSource, 1);
     }
     /// <summary>
-    /// 从当前时间开始暂停音乐指定秒
+    /// Pause music for the specified duration starting now.
     /// </summary>
     public void DisableInSec(float sec) 
     {
       if (sec <= 0 || !this.CurrentAudioEnabled)
         return;
-      //淡出当前正在播放的音乐
+      // Fade out the current track.
       if (this.CurrentAudioSource.isPlaying)
         GameUIManager.Instance.UIFadeManager.AddAudioFadeOut(this.CurrentAudioSource, 1);
 
@@ -277,7 +277,7 @@ namespace Ballance2.Game.GamePlay {
         this.CurrentAudioSource.Stop();
         this.EventMusicDisable.Emit(null);
       });
-      //定时开启
+      // Re-enable on a timer.
       _LastDisablerTimer = GameTimer.Delay(sec*1000, () => {
         this._LastDisablerTimer = 0;
         this.CurrentAudioEnabled = true;
@@ -285,17 +285,17 @@ namespace Ballance2.Game.GamePlay {
       });
     }
     /// <summary>
-    /// 删除音乐主题
+    /// Remove a music theme.
     /// </summary>
-    /// <param name="theme">主题ID</param>
+    /// <param name="theme">Theme ID.</param>
     public bool DeleteMusicTheme(int theme) {
       return MusicThemes.Remove(theme);
     }
     /// <summary>
-    /// 添加音乐主题
+    /// Add a music theme.
     /// </summary>
-    /// <param name="theme">主题</param>
-    /// <param name="themeId">主题ID</param>
+    /// <param name="theme">Theme.</param>
+    /// <param name="themeId">Theme ID.</param>
     public void AddMusicTheme(int themeId, MusicThemeDataStorage theme) {
       if (MusicThemes.ContainsKey(themeId))
         MusicThemes[themeId] = theme;

@@ -8,7 +8,7 @@ namespace Ballance2.Editor
     {
         public EditorIcons()
         {
-            titleContent = new GUIContent("Unity 系统内置图标查看");
+            titleContent = new GUIContent("Unity Built-in Icon Viewer");
         }
 
         [MenuItem("Tools/GUI/Editor Icon")]
@@ -33,8 +33,8 @@ namespace Ballance2.Editor
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
             GUILayout.BeginHorizontal();
-            GUILayout.BeginVertical(window, GUILayout.Width(120));//鼠标放在按钮上的样式
-            GUILayout.Label("鼠标放在按钮上的样式");
+            GUILayout.BeginVertical(window, GUILayout.Width(120));// Button hover style.
+            GUILayout.Label("Style when hovering over the button.");
 
             foreach (MouseCursor item in Enum.GetValues(typeof(MouseCursor)))
             {

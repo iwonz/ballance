@@ -16,13 +16,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2022 mengyu
 *
-* 模块名：     
+* Module:
 * PackageManagerContentUIControl.cs
 * 
-* 用途：
-* 模块管理器窗口的对话框逻辑。
+* Purpose:
+* Package manager window dialog logic.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -101,7 +101,7 @@ namespace Ballance2.Menu
     private Dictionary<string, PackageStateChange> packageStateChanges = new Dictionary<string, PackageStateChange>();
     private List<PackageInfoItem> packageItems = new List<PackageInfoItem>();
 
-    //条目更新函数
+    // Entry update callback.
     private void ItemUpdateFn(int index, RectTransform item) {
       
       var data = packageItems[index];
@@ -126,7 +126,7 @@ namespace Ballance2.Menu
       TextIntrod.text = data.introduction;
       ImageLogo.sprite = data.logo;
 
-      //跳转设置按扭
+      // Open settings button.
       if(data.hasSettingsUI) {
         ButtonSettings.gameObject.SetActive(true);
         ButtonSettings.onClick.RemoveAllListeners();
@@ -140,7 +140,7 @@ namespace Ballance2.Menu
       if(!data.systemPackage) {
         TextNotUnloadableText.gameObject.SetActive(false);
 
-        //卸载按扭
+        // Unload button.
         if(data.notUnLoadable)
           ButtonUnload.gameObject.SetActive(false);
         else {
@@ -152,7 +152,7 @@ namespace Ballance2.Menu
         }
 
         if(packageStateChanges.TryGetValue(name, out var pack))
-          ToggleEnable.isOn = pack.newState;//缓存中的状态
+          ToggleEnable.isOn = pack.newState;// Cached state.
         else
           ToggleEnable.isOn = data.enableLoad;
 
@@ -171,12 +171,12 @@ namespace Ballance2.Menu
       }
     }
 
-    //更新状态文字
+    // Update status text.
     private void UpdateStatusText() {
       TextStatus.text = I18N.TrF("core.ui.PackageManagerStatus", "", packageItems.Count, gamePackageManager.loadedPackages.Count);
     }
 
-    //选择模块查看信息
+    // Select a package to inspect its information.
     private void SelectPackage(string name) {
       var pack = gamePackageManager.FindRegisteredPackage(name);
       if(pack != null) {
@@ -267,15 +267,15 @@ namespace Ballance2.Menu
       ScrollView.UpdateData(false);
     }
 
-    //加载列表
+    // Load the list.
     private void LoadList() {
-      //加载列表
+      // Load the list.
       foreach(var pack in gamePackageManager.registeredPackages.Values) 
         AddPackageToList(pack);
       ScrollView.UpdateData(false);
       UpdateStatusText();
 
-      //监听模块注册，移除事件
+      // Listen for package registration and removal.
       GameManager.GameMediator.RegisterEventHandler(GamePackage.GetSystemPackage(), GameEventNames.EVENT_PACKAGE_REGISTERED, TAG, (evtName, param) => {
         var packageName = param[0] as string;
         if(gamePackageManager.registeredPackages.TryGetValue(packageName, out var pack)) {
@@ -295,9 +295,9 @@ namespace Ballance2.Menu
       });
     }
 
-    //保存和返回
+    // Save and return.
     private void Save() { 
-      //移除状态一致的条目
+      // Remove entries whose state is unchanged.
       List<string> sameNames = new List<string>();
       foreach(var pack in packageItems) {
         if(packageStateChanges.ContainsKey(pack.name) && packageStateChanges[pack.name].newState == pack.enableLoad) 
@@ -308,15 +308,15 @@ namespace Ballance2.Menu
       sameNames.Clear();
 
       if(packageStateChanges.Count > 0) {
-        //保存状态至模块管理器中
+        // Apply states to the package manager.
         foreach(var change in packageStateChanges) {
           if(gamePackageManager.registeredPackages.ContainsKey(change.Value.name)) 
             gamePackageManager.registeredPackages[change.Value.name].enableLoad = change.Value.newState;
         }
         packageStateChanges.Clear();
-        //保存状态
+        // Save state.
         gamePackageManager.SavePackageRegisterInfo();
-        //重启游戏
+        // Restart the game.
         GameManager.Instance.RestartGame();
       } else {
         gameUIManager.BackPreviusPage();
@@ -334,7 +334,7 @@ namespace Ballance2.Menu
       }
     }
   
-    //模块设置UI控制器
+    // Package settings UI controller.
     public class PackageSettingsUIControlInfo<T> {
       public PackageSettingsUIControlInfo(GameUIControlValueBinderSupplierCallback valueBinderSupplierCallback, T control) {
         ValueBinderSupplierCallback = valueBinderSupplierCallback;
@@ -351,7 +351,7 @@ namespace Ballance2.Menu
       private bool isCustomControl;
 
       /// <summary>
-      /// 获取当前设置界面所属UI页
+      /// Get the page containing these settings.
       /// </summary>
       /// <value></value>
       public GameUIPage Page { get; private set; }
@@ -386,11 +386,11 @@ namespace Ballance2.Menu
       }
 
       /// <summary>
-      /// 向设置UI添加一个按扭条目
+      /// Add a button to the settings UI.
       /// </summary>
-      /// <param name="name">条目名称</param>
-      /// <param name="title">按扭文字</param>
-      /// <param name="onClick">按扭点击回调</param>
+      /// <param name="name">Entry name.</param>
+      /// <param name="title">Button text.</param>
+      /// <param name="onClick">Button click callback.</param>
       /// <returns></returns>
       public PackageSettingsUIControlInfo<Button> AddButton(string name, string title, GameManager.VoidDelegate onClick) {
         if (CheckIsCustomControl())
@@ -405,10 +405,10 @@ namespace Ballance2.Menu
         return new PackageSettingsUIControlInfo<Button>(null, cls);
       }
       /// <summary>
-      /// 向设置UI添加一个副标题条目
+      /// Add a subtitle to the settings UI.
       /// </summary>
-      /// <param name="name">条目名称</param>
-      /// <param name="title">副标题文字</param>
+      /// <param name="name">Entry name.</param>
+      /// <param name="title">Subtitle text.</param>
       /// <returns></returns>
       public PackageSettingsUIControlInfo<Text> AddSubTitle(string name, string title) {
         if (CheckIsCustomControl())
@@ -421,10 +421,10 @@ namespace Ballance2.Menu
         return new PackageSettingsUIControlInfo<Text>(null, cls);
       }
       /// <summary>
-      /// 向设置UI添加一个文字条目
+      /// Add text to the settings UI.
       /// </summary>
-      /// <param name="name">条目名称</param>
-      /// <param name="title">文字内容</param>
+      /// <param name="name">Entry name.</param>
+      /// <param name="title">Text content.</param>
       /// <returns></returns>
       public PackageSettingsUIControlInfo<Text> AddText(string name, string title) {
         if (CheckIsCustomControl())
@@ -437,11 +437,11 @@ namespace Ballance2.Menu
         return new PackageSettingsUIControlInfo<Text>(null, cls);
       }
       /// <summary>
-      /// 向设置UI添加一个按键选择器条目
+      /// Add a key selector to the settings UI.
       /// </summary>
-      /// <param name="name">条目名称</param>
-      /// <param name="title">标题文字</param>
-      /// <param name="valueUpdateCallback">参数更改回调</param>
+      /// <param name="name">Entry name.</param>
+      /// <param name="title">Title text.</param>
+      /// <param name="valueUpdateCallback">Value change callback.</param>
       /// <returns></returns>
       public PackageSettingsUIControlInfo<KeyChoose> AddKeyChoose(string name, string title, GameUIControlValueBinderUserUpdateCallback valueUpdateCallback) {
         if (CheckIsCustomControl())
@@ -457,11 +457,11 @@ namespace Ballance2.Menu
         return new PackageSettingsUIControlInfo<KeyChoose>(MessageCenter.SubscribeValueBinder(valueBinder, valueUpdateCallback), cls);
       }
       /// <summary>
-      /// 向设置UI添加一个选择器条目
+      /// Add an option selector to the settings UI.
       /// </summary>
-      /// <param name="name">条目名称</param>
-      /// <param name="title">标题文字</param>
-      /// <param name="valueUpdateCallback">参数更改回调</param>
+      /// <param name="name">Entry name.</param>
+      /// <param name="title">Title text.</param>
+      /// <param name="valueUpdateCallback">Value change callback.</param>
       /// <returns></returns>
       public PackageSettingsUIControlInfo<Updown> AddUpdown(string name, string title, GameUIControlValueBinderUserUpdateCallback valueUpdateCallback) {
         if (CheckIsCustomControl())
@@ -477,11 +477,11 @@ namespace Ballance2.Menu
         return new PackageSettingsUIControlInfo<Updown>(MessageCenter.SubscribeValueBinder(valueBinder, valueUpdateCallback), cls);
       }
       /// <summary>
-      /// 向设置UI添加一个开关条目
+      /// Add a toggle to the settings UI.
       /// </summary>
-      /// <param name="name">条目名称</param>
-      /// <param name="title">标题文字</param>
-      /// <param name="valueUpdateCallback">参数更改回调</param>
+      /// <param name="name">Entry name.</param>
+      /// <param name="title">Title text.</param>
+      /// <param name="valueUpdateCallback">Value change callback.</param>
       /// <returns></returns>
       public PackageSettingsUIControlInfo<ToggleEx> AddToggle(string name, string title, GameUIControlValueBinderUserUpdateCallback valueUpdateCallback) {
         if (CheckIsCustomControl())
@@ -497,11 +497,11 @@ namespace Ballance2.Menu
         return new PackageSettingsUIControlInfo<ToggleEx>(MessageCenter.SubscribeValueBinder(valueBinder, valueUpdateCallback), cls);
       }
       /// <summary>
-      /// 向设置UI添加一个输入框条目
+      /// Add an input field to the settings UI.
       /// </summary>
-      /// <param name="name">条目名称</param>
-      /// <param name="title">标题文字</param>
-      /// <param name="valueUpdateCallback">参数更改回调</param>
+      /// <param name="name">Entry name.</param>
+      /// <param name="title">Title text.</param>
+      /// <param name="valueUpdateCallback">Value change callback.</param>
       /// <returns></returns>
       public PackageSettingsUIControlInfo<InputField> AddInput(string name, GameUIControlValueBinderUserUpdateCallback valueUpdateCallback) {
         if (CheckIsCustomControl())
@@ -516,11 +516,11 @@ namespace Ballance2.Menu
         return new PackageSettingsUIControlInfo<InputField>(MessageCenter.SubscribeValueBinder(valueBinder, valueUpdateCallback), cls);
       }
       /// <summary>
-      /// 向设置UI添加一个滑块条目
+      /// Add a slider to the settings UI.
       /// </summary>
-      /// <param name="name">条目名称</param>
-      /// <param name="title">标题文字</param>
-      /// <param name="valueUpdateCallback">参数更改回调</param>
+      /// <param name="name">Entry name.</param>
+      /// <param name="title">Title text.</param>
+      /// <param name="valueUpdateCallback">Value change callback.</param>
       /// <returns></returns>
       public PackageSettingsUIControlInfo<Slider> AddSlider(string name, GameUIControlValueBinderUserUpdateCallback valueUpdateCallback) {
         if (CheckIsCustomControl())
@@ -538,12 +538,12 @@ namespace Ballance2.Menu
     private Dictionary<string, PackageSettingsUI> packageSettingsUIs = new Dictionary<string, PackageSettingsUI>();
 
     /// <summary>
-    /// 注册模块的设置界面
+    /// Register a package settings page.
     /// </summary>
-    /// <param name="package">模块</param>
-    /// <param name="customPagePrefab">自定义页面内容预制体名称，如果不为空，则会在当前模组包中寻找对应页面预制体。使用这个选项后无法再使用 PackageSettingsUI 的相关自动生成控件方法。</param>
-    /// <param name="customPageTemplatePrefab">自定义页面模板，如果为空，泽使用默认的 PageCommon 模板</param>
-    /// <returns>返回设置页面控制器，你可以通过控制器自定义模块的设置页面</returns>
+    /// <param name="package">Package.</param>
+    /// <param name="customPagePrefab">Custom content prefab name, resolved in this package when nonempty. Using it disables PackageSettingsUI automatic control generation.</param>
+    /// <param name="customPageTemplatePrefab">Custom page template; null uses PageCommon.</param>
+    /// <returns>Settings page controller for customizing the package settings UI.</returns>
     public PackageSettingsUI RegisterPackageSettingsUI(GamePackage package, string customPagePrefab = null, string customPageTemplatePrefab = null) {
       if (packageSettingsUIs.ContainsKey(package.PackageName)) 
         return packageSettingsUIs[package.PackageName];
@@ -555,9 +555,9 @@ namespace Ballance2.Menu
       return ui;
     }
     /// <summary>
-    /// 删除模块的设置界面
+    /// Delete a package settings page.
     /// </summary>
-    /// <param name="package">模块</param>
+    /// <param name="package">Package.</param>
     public bool DeletePackageSettingsUI(GamePackage package) {
       if (!packageSettingsUIs.ContainsKey(package.PackageName)) {
         GameErrorChecker.SetLastErrorAndLog(GameError.AlreadyRegistered, TAG, "DeletePackageSettingsUI " + package.PackageName + "  fail: not register");

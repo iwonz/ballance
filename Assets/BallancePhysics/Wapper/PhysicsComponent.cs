@@ -9,7 +9,7 @@ namespace BallancePhysics.Wapper
   public class PhysicsComponent : MonoBehaviour
   {
     /// <summary>
-    /// 获取组件句柄。如果当前约束还未创建，则返回 IntPtr.Zero 
+    /// Get the component handle, or IntPtr.Zero if the constraint has not been created.
     /// </summary>
     /// <value></value>
     public IntPtr Handle { get; protected set; } = IntPtr.Zero;
@@ -26,7 +26,7 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 手动创建当前组件
+    /// Create this component manually.
     /// </summary>
     
     public void Create() {
@@ -34,7 +34,7 @@ namespace BallancePhysics.Wapper
         DoCreate();
     }
     /// <summary>
-    /// 手动销毁当前组件
+    /// Destroy this component manually.
     /// </summary>
     
     public void Destroy() {

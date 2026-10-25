@@ -6,28 +6,28 @@ using UnityEngine;
 /*
  * Copyright (c) 2020  mengyu
  * 
- * 模块名：     
+ * Module:
  * GameEvent.cs
  *
- * 用途：
- * 游戏全局事件的说明与存储类。
+ * Purpose:
+ * Global game event definitions and storage.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Base
 {
   /// <summary>
-  /// 全局事件存储类
+  /// Global event storage.
   /// </summary>
   [Serializable]
   public class GameEvent
   {
     /// <summary>
-    /// 全局事件存储类的构造函数
+    /// Construct global event storage.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
+    /// <param name="evtName">Event name.</param>
     public GameEvent(string evtName)
     {
       _EventName = evtName;
@@ -35,7 +35,7 @@ namespace Ballance2.Base
     }
 
     /// <summary>
-    /// 释放
+    /// Release resources.
     /// </summary>
     public void Dispose()
     {
@@ -45,7 +45,7 @@ namespace Ballance2.Base
     }
     
     /// <summary>
-    /// 取消注册此事件。 同 GameMediator.UnRegisterGlobalEvent。
+    /// Unregister this event; equivalent to GameMediator.UnRegisterGlobalEvent.
     /// </summary>
     public void Delete() {
       if(!_Unregistered) {
@@ -54,7 +54,7 @@ namespace Ballance2.Base
     }
 
     /// <summary>
-    /// 分发此事件。同 GameMediator.DispatchGlobalEvent。
+    /// Dispatch this event; equivalent to GameMediator.DispatchGlobalEvent.
     /// </summary>
     public void Dispatch(params object [] param) {
       if(!_Unregistered) {
@@ -69,136 +69,136 @@ namespace Ballance2.Base
     private List<GameEventHandler> _EventHandlers;
 
     /// <summary>
-    /// 获取事件名称
+    /// Get the event name.
     /// </summary>
     public string EventName { get { return _EventName; } }
     /// <summary>
-    /// 获取事件的接收器列表
+    /// Get the event handler list.
     /// </summary>
     public List<GameEventHandler> EventHandlers { get { return _EventHandlers; } }
   }
 
   /// <summary>
-  /// 游戏内部事件说明
+  /// Internal game event definitions.
   /// </summary>
   public static class GameEventNames
   {
     /// <summary>
-    /// 全局（基础管理器）全部初始化完成时触发该事件
+    /// Raised after all base managers finish initialization.
     /// </summary>
     /// <remarks>
-    /// 事件参数：无
+    /// Event arguments: none.
     /// </remarks>
     public const string EVENT_BASE_INIT_FINISHED = "EVENT_BASE_INIT_FINISHED";
 
     /// <summary>
-    /// GameManager初始化完成时触发该事件，在这个事件后子模块接管控制流程，游戏主逻辑开始运行
+    /// Raised after GameManager initialization, when packages take over the main game flow.
     /// </summary>
     /// <remarks>
-    /// 事件参数：无
+    /// Event arguments: none.
     /// </remarks>
     public const string EVENT_GAME_MANAGER_INIT_FINISHED = "EVENT_GAME_MANAGER_INIT_FINISHED";
 
     /// <summary>
-    /// 全局（UI管理器）全部初始化完成时触发该事件
+    /// Raised after UI manager initialization.
     /// </summary>
     /// <remarks>
-    /// 事件参数：无
+    /// Event arguments: none.
     /// </remarks>
     public const string EVENT_UI_MANAGER_INIT_FINISHED = "EVENT_UI_MANAGER_INIT_FINISHED";
 
     /// <summary>
-    /// 全局对话框（Alert，Confirm）关闭时触发该事件
+    /// Raised when a global Alert or Confirm dialog closes.
     /// </summary>
     /// <remarks>
-    /// 事件参数：
-    /// 【0】对话框ID
-    /// 【1】用户是否选择了 Confirm（对于 Alert 永远是false）
+    /// Event arguments:
+    /// [0] Dialog ID.
+    /// [1] Whether the user chose Confirm; always false for Alert.
     /// </remarks>
     public const string EVENT_GLOBAL_ALERT_CLOSE = "EVENT_GLOBAL_ALERT_CLOSE";
 
     /// <summary>
-    /// 游戏即将退出时触发该事件
+    /// Raised before the game quits.
     /// </summary>
     /// <remarks>
-    /// 事件参数：无
+    /// Event arguments: none.
     /// </remarks>
     public const string EVENT_BEFORE_GAME_QUIT = "EVENT_BEFORE_GAME_QUIT";
 
     /// <summary>
-    /// 模块加载成功事件
+    /// Package loaded successfully.
     /// </summary>
     /// <remarks>
-    /// 事件参数：
-    /// 【0】对应模块包名
-    /// 【1】对应模块对象
+    /// Event arguments:
+    /// [0] Package name.
+    /// [1] Package object.
     /// </remarks>
     public const string EVENT_PACKAGE_LOAD_SUCCESS = "EVENT_PACKAGE_LOAD_SUCCESS";
 
     /// <summary>
-    /// 模块加载失败事件
+    /// Package load failed.
     /// </summary>
     /// <remarks>
-    /// 事件参数：
-    /// 【0】对应模块包名
-    /// 【1】对应模块对象
-    /// 【2】错误信息
+    /// Event arguments:
+    /// [0] Package name.
+    /// [1] Package object.
+    /// [2] Error message.
     /// </remarks>
     public const string EVENT_PACKAGE_LOAD_FAILED = "EVENT_PACKAGE_LOAD_FAILED";
 
     /// <summary>
-    /// 模块注册事件
+    /// Package registered.
     /// </summary>
     /// <remarks>
-    /// 事件参数：
-    /// 【0】对应模块包名
+    /// Event arguments:
+    /// [0] Package name.
     /// </remarks>
     public const string EVENT_PACKAGE_REGISTERED = "EVENT_PACKAGE_REGISTERED";
     /// <summary>
-    /// 模块已注销事件
+    /// Package unregistered.
     /// </summary>
     /// <remarks>
-    /// 事件参数：
-    /// 【0】对应模块包名
+    /// Event arguments:
+    /// [0] Package name.
     /// </remarks>
     public const string EVENT_PACKAGE_UNREGISTERED = "EVENT_PACKAGE_UNREGISTERED";
 
     /// <summary>
-    /// 模块卸载事件
+    /// Package unloaded.
     /// </summary>
     /// <remarks>
-    /// 事件参数：
-    /// 【0】对应模块包名
-    /// 【1】对应模块对象
+    /// Event arguments:
+    /// [0] Package name.
+    /// [1] Package object.
     /// </remarks>
     public const string EVENT_PACKAGE_UNLOAD = "EVENT_PACKAGE_UNLOAD";
 
     /// <summary>
-    /// 屏幕分辨率更改事件
+    /// Screen resolution changed.
     /// </summary>
     /// <remarks>
-    /// 事件参数：
-    /// 【0】新的屏幕宽度
-    /// 【1】新的屏幕高度
-    /// 【2】新的屏幕刷新率
+    /// Event arguments:
+    /// [0] New screen width.
+    /// [1] New screen height.
+    /// [2] New refresh rate.
     /// </remarks>
     public const string EVENT_SCREEN_SIZE_CHANGED = "EVENT_SCREEN_SIZE_CHANGED";
 
     /// <summary>
-    /// 进入逻辑场景事件
+    /// Entered a logical scene.
     /// </summary>
     /// <remarks>
-    /// 事件参数：
-    /// 【0】场景名称
+    /// Event arguments:
+    /// [0] Scene name.
     /// </remarks>
     public const string EVENT_LOGIC_SECNSE_ENTER = "EVENT_LOGIC_SECNSE_ENTER";
 
     /// <summary>
-    /// 退出逻辑场景事件
+    /// Left a logical scene.
     /// </summary>
     /// <remarks>
-    /// 事件参数：
-    /// 【0】场景名称
+    /// Event arguments:
+    /// [0] Scene name.
     /// </remarks>
     public const string EVENT_LOGIC_SECNSE_QUIT = "EVENT_LOGIC_SECNSE_QUIT";
   
@@ -217,10 +217,10 @@ namespace Ballance2.Base
   }
   
   /// <summary>
-  /// 事件接收器回调
+  /// Event handler callback.
   /// </summary>
-  /// <param name="evtName">事件名称</param>
-  /// <param name="pararms">参数</param>
-  /// <returns>返回是否中断其他事件的分发</returns>
+  /// <param name="evtName">Event name.</param>
+  /// <param name="pararms">Arguments.</param>
+  /// <returns>Whether to stop dispatching to the remaining handlers.</returns>
   public delegate bool GameEventHandlerDelegate(string evtName, params object[] pararms);
 }

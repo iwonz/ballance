@@ -4,13 +4,13 @@ using System.Text;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * DebugUtils.cs
 * 
-* 用途：
-* 调试工具类
+* Purpose:
+* Debug helpers.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -18,15 +18,15 @@ using System.Text;
 namespace Ballance2.Utils
 {
   /// <summary>
-  /// 调试工具类
+  /// Debug helpers.
   /// </summary>
   public class DebugUtils
   {
     /// <summary>
-    /// 获取当前调用堆栈
+    /// Get the current call stack.
     /// </summary>
-    /// <param name="skipFrame">要跳过的帧，为0不跳过</param>
-    /// <returns>返回调用堆栈详细信息</returns>
+    /// <param name="skipFrame">Number of frames to skip; zero skips none.</param>
+    /// <returns>Detailed call stack.</returns>
     public static string GetStackTrace(int skipFrame)
     {
       StringBuilder stringBuilder = new StringBuilder();
@@ -56,10 +56,10 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 格式化的 byte 数组，以十六进制显示
+    /// Format a byte array as hexadecimal.
     /// </summary>
-    /// <param name="vs">byte 数组</param>
-    /// <returns>返回字符串，请输出或者显示至控制台。</returns>
+    /// <param name="vs">Byte array.</param>
+    /// <returns>Formatted string for display or console output.</returns>
     public static string PrintBytes(byte[] vs)
     {
       StringBuilder sb = new StringBuilder();
@@ -102,10 +102,10 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 格式化出带行号的代码
+    /// Format source code with line numbers.
     /// </summary>
-    /// <param name="code">代码字符串</param>
-    /// <returns>返回字符串，请输出或者显示至控制台。</returns>
+    /// <param name="code">Source code string.</param>
+    /// <returns>Formatted string for display or console output.</returns>
     public static string PrintCodeWithLine(string code)
     {
       string[] lines = code.Split('\n');
@@ -142,56 +142,56 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 格式化出带行号的代码
+    /// Format source code with line numbers.
     /// </summary>
-    /// <param name="code">代码字符串直接数组</param>
-    /// <returns>返回字符串，请输出或者显示至控制台。</returns>
+    /// <param name="code">Source code lines.</param>
+    /// <returns>Formatted string for display or console output.</returns>
     public static string PrintCodeWithLine(byte[] code)
     {
       return PrintCodeWithLine(Encoding.UTF8.GetString(code));
     }
 
     /// <summary>
-    /// 格式化数组为字符串
+    /// Format an array as a string.
     /// </summary>
-    /// <param name="any">要转换的数组</param>
-    /// <returns>返回字符串，请输出或者显示至控制台。</returns>
+    /// <param name="any">Array to convert.</param>
+    /// <returns>Formatted string for display or console output.</returns>
     public static string PrintArrVar(object[] any)
     {
       return StringUtils.ValueArrayToString(any);
     }
 
     /// <summary>
-    /// 从用户输入的参数数组中检查并获取指定位的字符串参数。
+    /// Validate and retrieve a string argument at a given index.
     /// </summary>
     /// <remarks>
-    /// 此函数为自定义控制台调试命令获取参数而设计，如果你需要在控制台调试命令中获取参数，这一个非常有用的方法。
+    /// Designed for reading arguments in custom console commands.
     /// 
-    /// 如果你设置了 required 必填，而用户没有输入参数，方法会自动输出错误信息。
+    /// A missing required argument automatically produces an error message.
     /// </remarks>
     /// <example>
-    /// //注册一个测试控制台指令，获取用户输入的参数：
+    /// // Register a test console command that reads user arguments:
     /// GameDebugCommandServer.RegisterCommand("mycommand", (keyword, fullCmd, argsCount, args) => {
-    ///   //第一个返回值表示返回参数是否成功获取
-    ///   //第二个返回值是参数的值
+    ///   // The first result indicates whether retrieval succeeded.
+    ///   // The second result is the argument value.
     ///   var ox = DebugUtils.CheckIntDebugParam(0, args, out var nx, true, 0)
     ///   if (!ox) return false;
-    ///     Debug.Log("用户输入了：" + nx);
+    ///     Debug.Log("User entered: " + nx);
     ///   return true;
-    /// }, 1, "mycommand <count:number> > 测试控制台指令")
+    /// }, 1, "mycommand <count:number> > Test console command")
     /// </example>
-    /// <param name="index">设置当前需要获取的参数是参数数组的第几个, 索引从 0 开始</param>
-    /// <param name="arr">用户输入的参数数组</param>
-    /// <param name="value">获取到的参数</param>
-    /// <param name="required">是否必填，必填则如果无输入参数，会返回false</param>
-    /// <param name="defaultValue">默认值，若非必填且无输入参数，则会返回默认值</param>
-    /// <returns>返回参数是否成功获取</returns>
+    /// <param name="index">Zero-based index of the argument to retrieve.</param>
+    /// <param name="arr">User argument array.</param>
+    /// <param name="value">Retrieved argument.</param>
+    /// <param name="required">Required arguments return false when absent.</param>
+    /// <param name="defaultValue">Default returned when an optional argument is absent.</param>
+    /// <returns>Whether argument retrieval succeeded.</returns>
     public static bool CheckDebugParam(int index, string[] arr, out string value, bool required = true, string defaultValue = "")
     {
       if (arr.Length <= index)
       {
         if (required)
-          Log.E("Debug", "缺少参数 [{0}]", index);
+          Log.E("Debug", "Missing argument [{0}].", index);
         value = defaultValue;
         return false;
       }
@@ -200,155 +200,155 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 从用户输入的参数数组中检查并获取指定位的整形参数。
+    /// Validate and retrieve an integer argument at a given index.
     /// </summary>
-    /// <param name="index">设置当前需要获取的参数是参数数组的第几个</param>
-    /// <param name="arr">用户输入的参数数组</param>
-    /// <param name="value">获取到的参数</param>
-    /// <param name="required">是否必填，必填则如果无输入参数，会返回false</param>
-    /// <param name="defaultValue">默认值，若非必填且无输入参数，则会返回默认值</param>
-    /// <returns>返回参数是否成功获取</returns>
+    /// <param name="index">Index of the argument to retrieve.</param>
+    /// <param name="arr">User argument array.</param>
+    /// <param name="value">Retrieved argument.</param>
+    /// <param name="required">Required arguments return false when absent.</param>
+    /// <param name="defaultValue">Default returned when an optional argument is absent.</param>
+    /// <returns>Whether argument retrieval succeeded.</returns>
     public static bool CheckIntDebugParam(int index, string[] arr, out int value, bool required = true, int defaultValue = 0)
     {
       if (arr.Length <= index)
       {
         if (required)
-          Log.E("Debug", "缺少参数 [{0}]", index);
+          Log.E("Debug", "Missing argument [{0}].", index);
         value = defaultValue;
         return false;
       }
       if (!int.TryParse(arr[index], out value))
       {
-        Log.E("Debug", "参数 [{0}] 不是有效的 int", index);
+        Log.E("Debug", "Argument [{0}] is not a valid int.", index);
         return false;
       }
       return true;
     }
 
     /// <summary>
-    /// 从用户输入的参数数组中检查并获取指定位的浮点型参数。
+    /// Validate and retrieve a float argument at a given index.
     /// </summary>
-    /// <param name="index">设置当前需要获取的参数是参数数组的第几个</param>
-    /// <param name="arr">用户输入的参数数组</param>
-    /// <param name="value">获取到的参数</param>
-    /// <param name="required">是否必填，必填则如果无输入参数，会返回false</param>
-    /// <param name="defaultValue">默认值，若非必填且无输入参数，则会返回默认值</param>
-    /// <returns>返回参数是否成功获取</returns>
+    /// <param name="index">Index of the argument to retrieve.</param>
+    /// <param name="arr">User argument array.</param>
+    /// <param name="value">Retrieved argument.</param>
+    /// <param name="required">Required arguments return false when absent.</param>
+    /// <param name="defaultValue">Default returned when an optional argument is absent.</param>
+    /// <returns>Whether argument retrieval succeeded.</returns>
     public static bool CheckFloatDebugParam(int index, string[] arr, out float value, bool required = true, float defaultValue = 0)
     {
       if (arr.Length <= index)
       {
         if (required)
-          Log.E("Debug", "缺少参数 [{0}]", index);
+          Log.E("Debug", "Missing argument [{0}].", index);
         value = defaultValue;
         return false;
       }
       if (!float.TryParse(arr[index], out value))
       {
-        Log.E("Debug", "参数 [{0}] 不是有效的 float", index);
+        Log.E("Debug", "Argument [{0}] is not a valid float.", index);
         return false;
       }
       return true;
     }
 
     /// <summary>
-    /// 从用户输入的参数数组中检查并获取指定位的布尔型参数。
+    /// Validate and retrieve a boolean argument at a given index.
     /// </summary>
-    /// <param name="index">设置当前需要获取的参数是参数数组的第几个</param>
-    /// <param name="arr">用户输入的参数数组</param>
-    /// <param name="value">获取到的参数</param>
-    /// <param name="required">是否必填，必填则如果无输入参数，会返回false</param>
-    /// <param name="defaultValue">默认值，若非必填且无输入参数，则会返回默认值</param>
-    /// <returns>返回参数是否成功获取</returns>
+    /// <param name="index">Index of the argument to retrieve.</param>
+    /// <param name="arr">User argument array.</param>
+    /// <param name="value">Retrieved argument.</param>
+    /// <param name="required">Required arguments return false when absent.</param>
+    /// <param name="defaultValue">Default returned when an optional argument is absent.</param>
+    /// <returns>Whether argument retrieval succeeded.</returns>
     public static bool CheckBoolDebugParam(int index, string[] arr, out bool value, bool required = true, bool defaultValue = false)
     {
       if (arr.Length <= index)
       {
         if (required)
-          Log.E("Debug", "缺少参数 [{0}]", index);
+          Log.E("Debug", "Missing argument [{0}].", index);
         value = defaultValue;
         return false;
       }
       if (!bool.TryParse(arr[index], out value))
       {
-        Log.E("Debug", "参数 [{0}] 不是有效的 bool", index);
+        Log.E("Debug", "Argument [{0}] is not a valid bool.", index);
         return false;
       }
       return true;
     }
 
     /// <summary>
-    /// 从用户输入的参数数组中检查并获取指定位的双精浮点数类型参数。
+    /// Validate and retrieve a double argument at a given index.
     /// </summary>
-    /// <param name="index">设置当前需要获取的参数是参数数组的第几个</param>
-    /// <param name="arr">用户输入的参数数组</param>
-    /// <param name="value">获取到的参数</param>
-    /// <param name="required">是否必填，必填则如果无输入参数，会返回false</param>
-    /// <param name="defaultValue">默认值，若非必填且无输入参数，则会返回默认值</param>
-    /// <returns>返回参数是否成功获取</returns>
+    /// <param name="index">Index of the argument to retrieve.</param>
+    /// <param name="arr">User argument array.</param>
+    /// <param name="value">Retrieved argument.</param>
+    /// <param name="required">Required arguments return false when absent.</param>
+    /// <param name="defaultValue">Default returned when an optional argument is absent.</param>
+    /// <returns>Whether argument retrieval succeeded.</returns>
     public static bool CheckDoubleDebugParam(int index, string[] arr, out double value, bool required = true, double defaultValue = 0)
     {
       if (arr.Length <= index)
       {
         if (required)
-          Log.E("Debug", "缺少参数 [{0}]", index);
+          Log.E("Debug", "Missing argument [{0}].", index);
         value = defaultValue;
         return false;
       }
       if (!double.TryParse(arr[index], out value))
       {
-        Log.E("Debug", "参数 [{0}] 不是有效的 double", index);
+        Log.E("Debug", "Argument [{0}] is not a valid double.", index);
         return false;
       }
       return true;
     }
 
     /// <summary>
-    /// 从用户输入的参数数组中检查并获取指定位的字符串参数。
+    /// Validate and retrieve a string argument at a given index.
     /// </summary>
-    /// <param name="index">设置当前需要获取的参数是参数数组的第几个</param>
-    /// <param name="arr">用户输入的参数数组</param>
-    /// <param name="value">获取到的参数</param>
-    /// <param name="required">是否必填，必填则如果无输入参数，会返回false</param>
-    /// <param name="defaultValue">默认值，若非必填且无输入参数，则会返回默认值</param>
-    /// <returns>返回参数是否成功获取</returns>
+    /// <param name="index">Index of the argument to retrieve.</param>
+    /// <param name="arr">User argument array.</param>
+    /// <param name="value">Retrieved argument.</param>
+    /// <param name="required">Required arguments return false when absent.</param>
+    /// <param name="defaultValue">Default returned when an optional argument is absent.</param>
+    /// <returns>Whether argument retrieval succeeded.</returns>
     public static bool CheckStringDebugParam(int index, string[] arr, bool required = true)
     {
       if (arr.Length <= index)
       {
         if (required)
-          Log.E("Debug", "缺少参数 [{0}]", index);
+          Log.E("Debug", "Missing argument [{0}].", index);
         return false;
       }
       if (string.IsNullOrEmpty(arr[index]))
       {
-        Log.E("Debug", "参数 [{0}] 不是有效的字符串(为空)", index);
+        Log.E("Debug", "Argument [{0}] is not a valid string (empty).", index);
         return false;
       }
       return true;
     }
 
     /// <summary>
-    /// 从用户输入的参数数组中检查并获取指定位的枚举型参数。
+    /// Validate and retrieve an enum argument at a given index.
     /// </summary>
-    /// <param name="index">设置当前需要获取的参数是参数数组的第几个</param>
-    /// <param name="arr">用户输入的参数数组</param>
-    /// <param name="value">获取到的参数</param>
-    /// <param name="required">是否必填，必填则如果无输入参数，会返回false</param>
-    /// <param name="defaultValue">默认值，若非必填且无输入参数，则会返回默认值</param>
-    /// <returns>返回参数是否成功获取</returns>
+    /// <param name="index">Index of the argument to retrieve.</param>
+    /// <param name="arr">User argument array.</param>
+    /// <param name="value">Retrieved argument.</param>
+    /// <param name="required">Required arguments return false when absent.</param>
+    /// <param name="defaultValue">Default returned when an optional argument is absent.</param>
+    /// <returns>Whether argument retrieval succeeded.</returns>
     public static bool CheckEnumDebugParam<T>(int index, string[] arr, out T value, bool required = true, T defaultValue = default(T)) where T : struct
     {
       if (arr.Length <= index)
       {
         if (required)
-          Log.E("Debug", "缺少参数 [{0}]", index);
+          Log.E("Debug", "Missing argument [{0}].", index);
         value = defaultValue;
         return false;
       }
       if (!System.Enum.TryParse<T>(arr[index], out value))
       {
-        Log.E("Debug", "参数 [{0}] 不是有效的 {1}", index, typeof(T).Name);
+        Log.E("Debug", "Argument [{0}] is not a valid {1}.", index, typeof(T).Name);
         return false;
       }
       return true;

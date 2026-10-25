@@ -17,12 +17,12 @@ using static Ballance2.Services.GameManager;
 namespace Ballance2.Game.GamePlay
 {
     /// <summary>
-    /// 球管理器，负责管理球的注册、运动控制、特殊效果等等。
+    /// Manage ball registration, movement, and special effects.
     /// </summary>
     public class BallManager : MonoBehaviour
     {
         private const string TAG = "BallManager";
-        //上次移动球的类型
+        // Previously controlled ball type.
         public BallLightningSphere _BallLightningSphere;
         public GameObject _BallWood;
         public GameObject _BallStone;
@@ -33,59 +33,59 @@ namespace Ballance2.Game.GamePlay
         public BallPiecesControllManager BallPiecesControllManager;
 
         /// <summary>
-        /// 获取当前的球名称 [R]
+        /// Current ball name [R].
         /// </summary>
         public string CurrentBallName { get; private set; }
         /// <summary>
-        /// 获取当前的球 [R]
+        /// Current ball [R].
         /// </summary>
         public Ball CurrentBall { get; private set; }
         /// <summary>
-        /// 获取或者设置当前球的推动方向 [RW]
+        /// Current ball force direction [RW].
         /// </summary>
         public BallPushType PushType = BallPushType.None;
         /// <summary>
-        /// 获取或者设置当前用户是否可以控制球 [RW]
+        /// Whether the player can control the ball [RW].
         /// </summary>
         public bool CanControll = false;
         /// <summary>
-        /// 获取或者设置当前用户是否可以控制摄像机 [RW]
+        /// Whether the player can control the camera [RW].
         /// </summary>
         public bool CanControllCamera = false;
         /// <summary>
-        /// 获取当前用户是否按下Shift键 [R]
+        /// Whether Shift is held [R].
         /// </summary>
         public bool ShiftPressed = false;
         /// <summary>
-        /// 获取上升按键状态 [RW]
+        /// Upward movement key state [RW].
         /// </summary>
         public bool KeyStateUp = false;
         /// <summary>
-        /// 获取下降按键状态 [RW]
+        /// Downward movement key state [RW].
         /// </summary>
         public bool KeyStateDown = false;
         /// <summary>
-        /// 获取前进按键状态 [RW]
+        /// Forward movement key state [RW].
         /// </summary>
         public bool KeyStateForward = false;
         /// <summary>
-        /// 获取后退按键状态 [RW]
+        /// Backward movement key state [RW].
         /// </summary>
         public bool KeyStateBack = false;
         /// <summary>
-        /// 获取左按键状态 [RW]
+        /// Left movement key state [RW].
         /// </summary>
         public bool KeyStateLeft = false;
         /// <summary>
-        /// 获取右按键状态 [RW]
+        /// Right movement key state [RW].
         /// </summary>
         public bool KeyStateRight = false;
         /// <summary>
-        /// 球速度倍数，默认1 [RW]
+        /// Ball speed multiplier, default 1 [RW].
         /// </summary>
         public float BallSpeedFactor = 1;
         /// <summary>
-        /// 获取当前球的位置变换实例 [R]
+        /// Current ball transform [R].
         /// </summary>
         public Transform PosFrame
         {
@@ -102,7 +102,7 @@ namespace Ballance2.Game.GamePlay
             _InitSettings();
             _InitKeys();
 
-            //注册内置球
+            // Register built-in ball types.
             RegisterBall("BallWood", _BallWood);
             RegisterBall("BallStone", _BallStone);
             RegisterBall("BallPaper", _BallPaper);
@@ -117,7 +117,7 @@ namespace Ballance2.Game.GamePlay
             _CollectRegisterBalls();
         }
 
-        #region 键盘
+        #region Keyboard
 
         private int settingsCallbackId = 0;
         private KeyListener keyListener = null;
@@ -135,21 +135,21 @@ namespace Ballance2.Game.GamePlay
         private bool _RightPressed = false;
 
         /// <summary>
-        /// 获取主按键监听器
+        /// Get the main key listener.
         /// </summary>
         /// <value></value>
         public KeyListener KeyListener { get => keyListener; }
 
         private void _InitSettings()
         {
-            //初始化控制设置
+            // Initialize control settings.
             var GameSettings = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME);
             settingsCallbackId = GameSettings.RegisterSettingsUpdateCallback(SettingConstants.SettingsControl, (groupName, action) =>
             {
                 _OnControlSettingsChanged();
                 return false;
             });
-            //请求触发设置更新函数
+            // Request a settings update.
             GameSettings.RequireSettingsLoad(SettingConstants.SettingsControl);
         }
         private void _UnInitSettings()
@@ -159,7 +159,7 @@ namespace Ballance2.Game.GamePlay
         }
         private void _OnControlSettingsChanged()
         {
-            //当设置更改时或加载时，更新设置到当前变量
+            // Apply settings to the current fields on load or change.
             var GameSettings = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME);
             keyFront = GameSettings.GetKeyCode(SettingConstants.SettingsControlKeyFront);
             keyUp = GameSettings.GetKeyCode(SettingConstants.SettingsControlKeyUp);
@@ -176,7 +176,7 @@ namespace Ballance2.Game.GamePlay
 
         private void _InitKeys()
         {
-            //初始化键盘侦听
+            // Initialize keyboard listeners.
             keyListener = KeyListener.Get(gameObject);
             keyListener.DisableWhenUIFocused = false;
             keyListener.ClearKeyListen();
@@ -210,7 +210,7 @@ namespace Ballance2.Game.GamePlay
             keyListener.AddKeyListen(keyLeft, _LeftArrow_Key, GamepadButton.DpadLeft);
             keyListener.AddKeyListen(keyRight, _RightArrow_Key, GamepadButton.DpadRight);
 
-            //测试按扭
+            // Test button.
             if (GameManager.DebugMode)
             {
                 keyListener.AddKeyListen(KeyCode.Alpha1, (key, downed) =>
@@ -271,13 +271,13 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 指令
+        #region Commands
 
         private int _CommandId = 0;
 
         private void _AddCommands()
         {
-            //注册控制台指令
+            // Register console commands.
             _CommandId = GameManager.Instance.GameDebugCommandServer.RegisterCommand("balls", (keyword, fullCmd, argsCount, args) =>
             {
                 var type = args[1];
@@ -312,11 +312,11 @@ namespace Ballance2.Game.GamePlay
                     Log.D(TAG, "Set control status to : {0}", n);
                 }
                 return true;
-            }, 0, "balls <next/set/reset/reset-all> 球管理器命令" +
-                "  set-recover-pos <x:number> <y:number> <z:number> ▶ 设置下次球激活位置" +
-                "  set-ball <ballName:string>                       ▶ 设置当前激活球" +
-                "  set-control-status <status:number>               ▶ 设置当前控制模式 status: 0 无控制 1 正常控制 2 释放模式 3 锁定模式 4 释放模式2" +
-                "  play-lighting                                    ▶ 播放出生动画");
+            }, 0, "balls <set-recover-pos/set-ball/set-control-status/play-lighting> Ball manager commands" +
+                "  set-recover-pos <x:number> <y:number> <z:number> ▶ Set the next ball activation position" +
+                "  set-ball <ballName:string>                       ▶ Set the active ball" +
+                "  set-control-status <status:number>               ▶ Set control mode: 0 none, 1 normal, 2 release, 3 locked, 4 release 2" +
+                "  play-lighting                                    ▶ Play the spawn animation");
         }
         private void _DeleteCommands()
         {
@@ -325,55 +325,55 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 事件
+        #region Events
 
         /// <summary>
-        /// 新球注册事件
+        /// Ball registered.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventBallRegistered;
         /// <summary>
-        /// 球删除注册事件
+        /// Ball unregistered.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventBallUnRegister;
         /// <summary>
-        /// 当前球变化事件
+        /// Current ball changed.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventCurrentBallChanged;
         /// <summary>
-        /// 球的下一个出生位置变化事件
+        /// Next ball spawn position changed.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventNextRecoverPosChanged;
         /// <summary>
-        /// 球控制状态变化事件
+        /// Ball control state changed.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventControllingStatusChanged;
         /// <summary>
-        /// 播放烟雾事件
+        /// Play smoke event.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventPlaySmoke;
         /// <summary>
-        /// 播放闪电事件
+        /// Play lightning event.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventPlayLighting;
         /// <summary>
-        /// 刷新球推动力状态事件
+        /// Refresh ball force state.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventFlushBallPush;
         /// <summary>
-        /// 球推动力数值手动更新事件
+        /// Ball force value updated manually.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventSetBallPushValue;
         /// <summary>
-        /// 清除球推动力事件
+        /// Clear ball forces.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventRemoveAllBallPush;
@@ -399,13 +399,13 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 球注册
+        #region Ball registration
 
         private Dictionary<string, BallRegStorage> registerBalls = new Dictionary<string, BallRegStorage>();
 
         private void _CollectRegisterBalls()
         {
-            //清除碎片的定时器
+            // Fragment cleanup timer.
             foreach (var value in registerBalls.Values)
             {
                 if (value.ball._PiecesData != null)
@@ -423,34 +423,34 @@ namespace Ballance2.Game.GamePlay
                     }
                 }
             }
-            //清除
+            // Clear.
             registerBalls.Clear();
         }
 
         /// <summary>
-        /// 注册球
+        /// Register a ball.
         /// </summary>
-        /// <param name="name">球名称</param>
-        /// <param name="gameObject">球游戏对象，必须已经添加到场景中</param>
+        /// <param name="name">Ball name.</param>
+        /// <param name="gameObject">Ball GameObject, already added to the scene.</param>
         public void RegisterBall(string name, GameObject gameObject)
         {
-            //检查是否注册
+            // Check registration.
             if (GetRegisterBall(name) != null)
             {
                 GameErrorChecker.SetLastErrorAndLog(GameError.AlreadyRegistered, TAG, "Ball {0} already registered", name);
                 return;
             }
 
-            //添加刚体组件
+            // Add the rigid-body component.
             PhysicsObject body = gameObject.AddComponent<PhysicsObject>();
-            //查找物理参数
+            // Find physics parameters.
             if (!GamePhysBall.Data.TryGetValue(name, out var physicsData))
             {
                 GameErrorChecker.SetLastErrorAndLog(GameError.ParamNotFound, TAG, "Not fuoud GamePhysBall data for Ball {0} , please add it before call RegisterBall", name);
                 return;
             }
             body.DoNotAutoCreateAtAwake = true;
-            //设置物理参数
+            // Set physics parameters.
             body.Fixed = false;
             body.Mass = physicsData.Mass;
             if (physicsData.BallRadius > 0)
@@ -481,10 +481,10 @@ namespace Ballance2.Game.GamePlay
                 }
             };
 
-            //设置恒力
+            // Set the constant force.
             body.EnableConstantForce = true;
 
-            //添加速度计
+            // Add a speed meter.
             var speedMeter = gameObject.GetComponent<SpeedMeter>();
             if (speedMeter == null)
             {
@@ -500,31 +500,31 @@ namespace Ballance2.Game.GamePlay
             }
 
             var pieces = ball.GetPieces();
-            //设置球相关物理参数
+            // Set ball physics parameters.
             ball._PiecesPhysicsData = physicsData.PiecesPhysicsData;
-            //设置推动物理参数
+            // Set movement force parameters.
             ball._PiecesMinForce = physicsData.PiecesMinForce;
             ball._PiecesMaxForce = physicsData.PiecesMaxForce;
             ball._Force = physicsData.Force;
             ball._UpForce = physicsData.UpForce * 1.5f;
             ball._DownForce = physicsData.DownForce;
             if (pieces != null)
-                ObjectStateBackupUtils.BackUpObjectAndChilds(pieces); //备份碎片的状态
+                ObjectStateBackupUtils.BackUpObjectAndChilds(pieces); // Back up fragment state.
 
-            //还需要设置一个Unity的碰撞器，用于死亡区的检测
+            // A Unity collider is also needed for death-zone detection.
             var collder = gameObject.AddComponent<SphereCollider>();
             collder.radius = physicsData.TiggerBallRadius;
             var rigidbody = gameObject.AddComponent<Rigidbody>();
             rigidbody.isKinematic = true;
             rigidbody.useGravity = false;
 
-            //设置名称
+            // Set the name.
             if (gameObject.name != name)
                 gameObject.name = name;
 
             EventBallRegistered.Emit(ball, body);
 
-            //添加信息
+            // Add metadata.
             registerBalls[name] = new BallRegStorage()
             {
                 name = name,
@@ -534,9 +534,9 @@ namespace Ballance2.Game.GamePlay
             };
         }
         /// <summary>
-        /// 取消注册球
+        /// Unregister a ball.
         /// </summary>
-        /// <param name="name">球名称</param>
+        /// <param name="name">Ball name.</param>
         public bool UnRegisterBall(string name)
         {
             if (registerBalls.TryGetValue(name, out var ball))
@@ -552,9 +552,9 @@ namespace Ballance2.Game.GamePlay
             return false;
         }
         /// <summary>
-        /// 获取注册了的球
+        /// Get a registered ball.
         /// </summary>
-        /// <param name="name">球名称</param>
+        /// <param name="name">Ball name.</param>
         public BallRegStorage GetRegisterBall(string name)
         {
             if (registerBalls.TryGetValue(name, out var ball))
@@ -570,14 +570,14 @@ namespace Ballance2.Game.GamePlay
         private Vector3 nextRecoverPos = Vector3.zero;
 
         /// <summary>
-        /// 获取当前激活的球
+        /// Get the active ball.
         /// </summary>
         public BallRegStorage GetCurrentBall() { return currentBall; }
         /// <summary>
-        /// 设置当前正在控制的球
+        /// Set the controlled ball.
         /// </summary>
-        /// <param name="name">球名称，不可为空</param>
-        /// <param name="status">同时设置新的控制状态, 如果为空，则保持之前的控制状态</param>
+        /// <param name="name">Nonempty ball name.</param>
+        /// <param name="status">New control state; null preserves the previous state.</param>
         public void SetCurrentBall(string name, BallControlStatus status = BallControlStatus.KeepOldStatus)
         {
             if (string.IsNullOrEmpty(name))
@@ -602,7 +602,7 @@ namespace Ballance2.Game.GamePlay
             }
         }
         /// <summary>
-        /// 设置禁用当前正在控制的球
+        /// Disable the currently controlled ball.
         /// </summary>
         public void SetNoCurrentBall()
         {
@@ -610,9 +610,9 @@ namespace Ballance2.Game.GamePlay
             _DeactiveCurrentBall();
         }
         /// <summary>
-        /// 设置当前球的控制的状态
+        /// Set the current ball's control state.
         /// </summary>
-        /// <param name="status">新的状态值,为 KeepOldStatus 时不改变状态只刷新</param>
+        /// <param name="status">New state; KeepOldStatus refreshes without changing it.</param>
         public void SetControllingStatus(BallControlStatus status = BallControlStatus.KeepOldStatus)
         {
             if (status != BallControlStatus.KeepOldStatus)
@@ -626,23 +626,23 @@ namespace Ballance2.Game.GamePlay
             }
         }
         /// <summary>
-        /// 获取当前球的控制的状态
+        /// Get the current ball's control state.
         /// </summary>
         public BallControlStatus GetControllingStatus()
         {
             return controllingStatus;
         }
         /// <summary>
-        /// 设置下一次球出生位置
+        /// Set the next ball spawn position.
         /// </summary>
-        /// <param name="pos">出生位置</param>
+        /// <param name="pos">Spawn position.</param>
         public void SetNextRecoverPos(Vector3 pos)
         {
             EventNextRecoverPosChanged.Emit(pos);
             nextRecoverPos = pos;
         }
         /// <summary>
-        /// 设置下一次球出生位置为当前球位置
+        /// Use the current ball position as the next spawn position.
         /// </summary>
         public void SetNextRecoverPosToNowPos()
         {
@@ -651,9 +651,9 @@ namespace Ballance2.Game.GamePlay
                 SetNextRecoverPos(current.ball.transform.position);
         }
         /// <summary>
-        /// 重置指定球的碎片
+        /// Reset a ball's fragments.
         /// </summary>
-        /// <param name="typeName">球名称，不可为空</param>
+        /// <param name="typeName">Nonempty ball name.</param>
         public void ResetPeices(string typeName)
         {
             var ball = GetRegisterBall(typeName);
@@ -663,18 +663,18 @@ namespace Ballance2.Game.GamePlay
                 Log.W(TAG, "Ball type {0} not found", typeName);
         }
         /// <summary>
-        /// 在下次激活位置（NextRecoverPos）抛出指定球的碎片
+        /// Scatter the ball's fragments at NextRecoverPos.
         /// </summary>
-        /// <param name="typeName">球名称，不可为空</param>
+        /// <param name="typeName">Nonempty ball name.</param>
         public void ThrowPeices(string typeName)
         {
             ThrowPeices(typeName, nextRecoverPos);
         }
         /// <summary>
-        /// 抛出指定球的碎片
+        /// Scatter the ball's fragments.
         /// </summary>
-        /// <param name="typeName">球名称，不可为空</param>
-        /// <param name="pos">抛出位置</param>
+        /// <param name="typeName">Nonempty ball name.</param>
+        /// <param name="pos">Scatter position.</param>
         public void ThrowPeices(string typeName, Vector3 pos)
         {
             var ball = GetRegisterBall(typeName);
@@ -684,7 +684,7 @@ namespace Ballance2.Game.GamePlay
                 Log.W(TAG, "Ball type {0} not found", typeName);
         }
         /// <summary>
-        /// 恢复摄像机相关移动
+        /// Resume camera movement.
         /// </summary>
         public void StartCamMove()
         {
@@ -692,7 +692,7 @@ namespace Ballance2.Game.GamePlay
                 GamePlayManager.Instance.CamManager.SetTarget(currentBall.ball.transform, true);
         }
         /// <summary>
-        /// 停止摄像机相关移动
+        /// Stop camera movement.
         /// </summary>
         public void StopCamMove()
         {
@@ -700,7 +700,7 @@ namespace Ballance2.Game.GamePlay
                 GamePlayManager.Instance.CamManager.SetTarget(null, false);
         }
         /// <summary>
-        /// 重置所有碎片状态
+        /// Reset all fragment states.
         /// </summary>
         public void ResetAllPeices()
         {
@@ -708,7 +708,7 @@ namespace Ballance2.Game.GamePlay
                 item.Value.ball.ResetPieces();
         }
 
-        #region 球状态工作方法
+        #region Ball state operations
 
         private int debugFlushInfoTimer = 0;
 
@@ -799,24 +799,24 @@ namespace Ballance2.Game.GamePlay
         }
         private void _SetCanControl(bool can) { CanControll = can; }
         /// <summary>
-        /// 取消激活当前的球
+        /// Deactivate the current ball.
         /// </summary>
         private void _DeactiveCurrentBall()
         {
             var current = currentActiveBall;
             if (current != null)
             {
-                //隐藏阴影
+                // Hide the shadow.
                 _BallShadowProjector.constraintActive = false;
                 if (_BallShadowProjector.gameObject.activeSelf)
                     _BallShadowProjector.gameObject.SetActive(false);
-                //清除力
+                // Clear forces.
                 RemoveAllBallPush();
-                //取消激活
+                // Deactivate.
                 if (current.rigidbody.IsPhysicalized)
                     _PhysicsOrDePhysicsCurrentBall(false);
                 current.ball.gameObject.SetActive(false);
-                //清空摄像机跟随对象
+                // Clear the camera follow target.
                 GamePlayManager.Instance.CamManager.SetTarget(null, false);
                 currentActiveBall = null;
 
@@ -825,7 +825,7 @@ namespace Ballance2.Game.GamePlay
             }
             if (GameManager.DebugMode)
             {
-                //删除定时器
+                // Delete the timer.
                 if (debugFlushInfoTimer > 0)
                 {
                     GameTimer.DeleteTimer(debugFlushInfoTimer);
@@ -841,22 +841,22 @@ namespace Ballance2.Game.GamePlay
                 current = currentBall;
                 var currentTransform = current.ball.transform;
                 currentActiveBall = currentBall;
-                //设置阴影位置与父级约束    
+                // Set shadow position and parent constraint.
                 var constraintSource = new ConstraintSource();
                 constraintSource.sourceTransform = currentTransform;
                 constraintSource.weight = 1;
                 _BallShadowProjector.SetSource(0, constraintSource);
                 _BallShadowProjector.constraintActive = true;
-                //显示阴影
+                // Show the shadow.
                 if (!_BallShadowProjector.gameObject.activeSelf)
                     _BallShadowProjector.gameObject.SetActive(true);
-                //设置位置
+                // Set position.
                 currentTransform.position = nextRecoverPos;
-                //设置摄像机跟随对象
+                // Set the camera follow target.
                 GamePlayManager.Instance.CamManager.SetTarget(currentTransform, false);
-                //清除力
+                // Clear forces.
                 RemoveAllBallPush();
-                //调试信息
+                // Debug information.
                 if (GameManager.DebugMode)
                 {
                     var _DebugStatValues = GamePlayUIControl.Instance.DebugStatValues;
@@ -870,27 +870,27 @@ namespace Ballance2.Game.GamePlay
                     var GamePhysicsWorld = GamePlayManager.Instance.GamePhysicsWorld;
                     _DebugStatValues["CurrentBall"].Value = current.name;
 
-                    //删除定时器
+                    // Delete the timer.
                     if (debugFlushInfoTimer > 0)
                     {
                         GameTimer.DeleteTimer(debugFlushInfoTimer);
                         debugFlushInfoTimer = 0;
                     }
-                    //每秒更新球位置调试显示数据
+                    // Update the ball position debug display once per second.
                     debugFlushInfoTimer = GameTimer.Timer(0.5f, () =>
                     {
 
                         if (!GameManager.Instance.GameSettings.GetBool("debugDisableBallInfo", false))
                         {
-                            //球位置
+                            // Ball position.
                             Position.SetVector3Value(currentTransform.position);
                             Rotation.SetVector3Value(currentTransform.eulerAngles);
                         }
                         if (!GameManager.Instance.GameSettings.GetBool("debugDisablePhysicsInfo", false))
                         {
-                            //物理时间
+                            // Physics time.
                             PhysicsTime.Value = string.Format("{0:F2} ms", GamePhysicsWorld.PhysicsTime * 1000);
-                            //物理对象信息
+                            // Physics object information.
                             PhysicsObjects.Value = string.Format("All/Active/Update {0}/{1}/{2}\nFixed/FallCollect/Push {3}/{4}/{5}",
                               GamePhysicsWorld.PhysicsBodies,
                               GamePhysicsWorld.PhysicsActiveBodies,
@@ -903,7 +903,7 @@ namespace Ballance2.Game.GamePlay
 
                         if (!GameManager.Instance.GameSettings.GetBool("debugDisableBallInfo", false))
                         {
-                            //球的速度和推动数据
+                            // Ball speed and force data.
                             if (current.rigidbody.IsPhysicalized)
                             {
                                 PhysicsState.Value = string.Format("{0:F2} ContractState: {1}\n{2}",
@@ -936,7 +936,7 @@ namespace Ballance2.Game.GamePlay
             var current = currentActiveBall;
             if (current != null)
             {
-                //激活
+                // Activate.
                 var physicsed = current.rigidbody.IsPhysicalized;
                 current.ball.gameObject.SetActive(true);
                 if (physics && !physicsed)
@@ -944,27 +944,27 @@ namespace Ballance2.Game.GamePlay
                     current.rigidbody.Physicalize();
                     current.rigidbody.ClearConstantForce();
                     current.rigidbody.WakeUp();
-                    //添加球的xyz推动恒力
+                    // Add the ball's constant forces along X, Y, and Z.
                     current.pushForceX = current.rigidbody.AddConstantForceWithPositionAndRef(0, Vector3.right, Vector3.zero, CamManager.CamDirectionRef, current.ball.transform);
                     current.pushForceZ = current.rigidbody.AddConstantForceWithPositionAndRef(0, Vector3.forward, Vector3.zero, CamManager.CamDirectionRef, current.ball.transform);
                     current.pushForceY = current.rigidbody.AddConstantForceWithPositionAndRef(0, Vector3.up, Vector3.zero, CamManager.CamDirectionRef, current.ball.transform);
-                    //激活
+                    // Activate.
                     current.ball.Active();
-                    //启动球的声音
+                    // Start ball sounds.
                     GamePlayManager.Instance.BallSoundManager.AddSoundableBall(current.rigidbody, current.ball._SoundConfig);
-                    //取消推动
+                    // Stop applying movement forces.
                     RemoveAllBallPush();
-                    //需要重新发送按键状态，因为可能在变球时还是按住按键，而此时球已经切换了，球的恒力需要重新设置
+                    // Resend held-key states after switching balls so the new ball receives the correct constant forces.
                     keyListener.ReSendPressingKey();
                 }
                 if (!physics)
                 {
-                    //取消推动
+                    // Stop applying movement forces.
                     RemoveAllBallPush();
-                    //清除正在播放的声音
+                    // Stop playing sounds.
                     GamePlayManager.Instance.BallSoundManager.RemoveSoundableBall(current.rigidbody, current.ball._SoundConfig);
                     GamePlayManager.Instance.BallSoundManager.StopSoundableBallAllSound(current.rigidbody, current.ball._SoundConfig);
-                    //移除球的推动恒力
+                    // Remove the ball's movement forces.
                     if (current.pushForceX != null)
                     {
                         current.pushForceX.Delete();
@@ -980,7 +980,7 @@ namespace Ballance2.Game.GamePlay
                         current.pushForceY.Delete();
                         current.pushForceY = null;
                     }
-                    //取消激活
+                    // Deactivate.
                     current.ball.Deactive();
                     if (physicsed)
                         current.rigidbody.UnPhysicalize(true);
@@ -995,12 +995,12 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 球附加工具方法
+        #region Ball helpers
 
         /// <summary>
-        /// 播放球出生时的烟雾
+        /// Play ball spawn smoke.
         /// </summary>
-        /// <param name="pos">放置位置</param>
+        /// <param name="pos">Placement position.</param>
         public void PlaySmoke(Vector3 pos)
         {
             _BallSmoke.transform.position = pos;
@@ -1008,30 +1008,30 @@ namespace Ballance2.Game.GamePlay
             EventPlaySmoke.Emit(null);
         }
         /// <summary>
-        /// 播放球出生时的闪电效果
+        /// Play the ball spawn lightning effect.
         /// </summary>
-        /// <param name="pos">放置位置</param>
-        /// <param name="smallToBig">是否由小到大</param>
-        /// <param name="lightAnim">是否同时播放灯光效果</param>
-        /// <param name="callback">播放完成后，会调用这个完成回调</param>
+        /// <param name="pos">Placement position.</param>
+        /// <param name="smallToBig">Grow from small to large.</param>
+        /// <param name="lightAnim">Also play the light effect.</param>
+        /// <param name="callback">Called when playback finishes.</param>
         public void PlayLighting(Vector3 pos, bool smallToBig, bool lightAnim, VoidDelegate callback)
         {
             EventPlayLighting.Emit(null);
             _BallLightningSphere.PlayLighting(pos, smallToBig, callback, lightAnim);
         }
         /// <summary>
-        /// 获取当前是否正在运行球出生闪电效果
+        /// Whether the spawn lightning effect is running.
         /// </summary>
         public bool IsLighting() { return _BallLightningSphere.IsLighting(); }
         /// <summary>
-        /// 快速将球锁定并移动至目标位置
+        /// Lock the ball and move it quickly to a target.
         /// </summary>
-        /// <param name="pos">目标位置</param>
-        /// <param name="time">时间 (秒)</param>
-        /// <param name="callback">移动完成后会调用此回调</param>
+        /// <param name="pos">Target position.</param>
+        /// <param name="time">Duration in seconds.</param>
+        /// <param name="callback">Called when movement finishes.</param>
         public void FastMoveTo(Vector3 pos, float time, SmoothFly.CallbackDelegate callback)
         {
-            //锁定
+            // Lock.
             SetControllingStatus(BallControlStatus.LockMode);
 
             if (currentActiveBall != null)
@@ -1052,7 +1052,7 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 键盘事件处理
+        #region Keyboard event handling
 
         private void _UpArrow_Key(KeyCode key, bool down)
         {
@@ -1069,14 +1069,14 @@ namespace Ballance2.Game.GamePlay
             _RightPressed = down;
             if (down)
             {
-                //旋转摄像机
+                // Rotate the camera.
                 if (CanControllCamera && ShiftPressed)
                 {
                     if (reverseRotation)
                         GamePlayManager.Instance.CamManager.RotateLeft();
                     else
                         GamePlayManager.Instance.CamManager.RotateRight();
-                    //按下shift时不许推动
+                    // Do not move the ball while Shift is held.
                     KeyStateRight = false;
                 }
                 else
@@ -1094,14 +1094,14 @@ namespace Ballance2.Game.GamePlay
             _LeftPressed = down;
             if (down)
             {
-                ///旋转摄像机
+                /// Rotate the camera.
                 if (CanControllCamera && ShiftPressed)
                 {
                     if (reverseRotation)
                         GamePlayManager.Instance.CamManager.RotateRight();
                     else
                         GamePlayManager.Instance.CamManager.RotateLeft();
-                    //按下shift时不许推动
+                    // Do not move the ball while Shift is held.
                     KeyStateLeft = false;
                 }
                 else
@@ -1142,38 +1142,38 @@ namespace Ballance2.Game.GamePlay
             ShiftPressed = down;
             if (_LeftPressed)
             {
-                //旋转摄像机
+                // Rotate the camera.
                 if (down && CanControllCamera)
                 {
                     if (reverseRotation)
                         GamePlayManager.Instance.CamManager.RotateRight();
                     else
                         GamePlayManager.Instance.CamManager.RotateLeft();
-                    //禁用左推动
+                    // Disable leftward force.
                     KeyStateLeft = false;
                 }
                 else
                 {
-                    //抬起时重新恢复左推动
+                    // Restore leftward force on release.
                     KeyStateLeft = true;
                 }
                 FlushBallPush();
             }
             else if (_RightPressed)
             {
-                //旋转摄像机
+                // Rotate the camera.
                 if (down && CanControllCamera)
                 {
                     if (reverseRotation)
                         GamePlayManager.Instance.CamManager.RotateLeft();
                     else
                         GamePlayManager.Instance.CamManager.RotateRight();
-                    //禁用右推动
+                    // Disable rightward force.
                     KeyStateRight = false;
                 }
                 else
                 {
-                    //抬起时重新恢复右推动
+                    // Restore rightward force on release.
                     KeyStateRight = true;
                 }
                 FlushBallPush();
@@ -1182,10 +1182,10 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 推动方法
+        #region Force operations
 
         /// <summary>
-        /// 刷新球推动方向按键
+        /// Refresh directional ball input.
         /// </summary>
         public void FlushBallPush()
         {
@@ -1195,7 +1195,7 @@ namespace Ballance2.Game.GamePlay
             var currentBall = currentActiveBall;
             var force = CurrentBall._Force * BallSpeedFactor;
 
-            //前进后退
+            // Forward and backward.
             if (KeyStateForward && KeyStateBack)
                 currentBall.pushForceZ.Force = 0;
             else if (KeyStateForward)
@@ -1204,7 +1204,7 @@ namespace Ballance2.Game.GamePlay
                 currentBall.pushForceZ.Force = -force;
             else
                 currentBall.pushForceZ.Force = 0;
-            //左右
+            // Left and right.
             if (KeyStateLeft && KeyStateRight)
                 currentBall.pushForceX.Force = 0;
             else if (KeyStateLeft)
@@ -1213,7 +1213,7 @@ namespace Ballance2.Game.GamePlay
                 currentBall.pushForceX.Force = force;
             else
                 currentBall.pushForceX.Force = 0;
-            ///上下
+            /// Up and down.
             if (KeyStateUp && KeyStateDown)
                 currentBall.pushForceY.Force = 0;
             else if (KeyStateUp)
@@ -1227,10 +1227,10 @@ namespace Ballance2.Game.GamePlay
         }
 
         /// <summary>
-        /// 设置球推动方向数值，此函数可以用于摇杆控制
+        /// Set the ball force direction values, for example from a joystick.
         /// </summary>
-        /// <param name="x">X轴推动力百分比（[-1,1]）</param>
-        /// <param name="y">Y轴推动力百分比（[-1,1]）</param>
+        /// <param name="x">X-axis force fraction in [-1, 1].</param>
+        /// <param name="y">Y-axis force fraction in [-1, 1].</param>
         public void SetBallPushValue(float x, float y)
         {
             if (CurrentBall == null || currentActiveBall == null || !CanControll)
@@ -1242,7 +1242,7 @@ namespace Ballance2.Game.GamePlay
             currentBall.pushForceZ.Force = y * force;
         }
         /// <summary>
-        /// 去除当前球所有推动方向
+        /// Clear all movement directions for the current ball.
         /// </summary>
         public void RemoveAllBallPush()
         {
@@ -1260,104 +1260,104 @@ namespace Ballance2.Game.GamePlay
     }
 
     /// <summary>
-    /// 指定球的控制状态
+    /// Ball control state.
     /// </summary>
     public enum BallPushType
     {
         /// <summary>
-        /// 无推动
+        /// No movement force.
         /// </summary>
         None = 0,
         /// <summary>
-        /// 前
+        /// Forward.
         /// </summary>
         Forward = 0x2,
         /// <summary>
-        /// 后
+        /// Backward.
         /// </summary>
         Back = 0x4,
         /// <summary>
-        /// 左
+        /// Left.
         /// </summary>
         Left = 0x8,
         /// <summary>
-        /// 右
+        /// Right.
         /// </summary>
         Right = 0x10,
         /// <summary>
-        /// 上升
+        /// Upward.
         /// </summary>
         Up = 0x20,
         /// <summary>
-        /// 下降
+        /// Downward.
         /// </summary>
         Down = 0x40,
     }
     /// <summary>
-    /// 指定球的控制状态
+    /// Ball control state.
     /// </summary>
     public enum BallControlStatus
     {
         /// <summary>
-        /// 用于参数，表示维持之前的状态
+        /// Preserve the previous state when passed as a parameter.
         /// </summary>
         KeepOldStatus = -1,
         /// <summary>
-        /// 没有控制（无控制、无物理效果，无摄像机跟随）
+        /// No control, physics, or camera following.
         /// </summary>
         NoControl = 0,
         /// <summary>
-        /// 正常控制（可控制、物理效果，摄像机跟随）
+        /// Normal control with physics and camera following.
         /// </summary>
         Control = 1,
         /// <summary>
-        /// 释放模式（例如球坠落，球仍然有物理效果，但无法控制，摄像机不跟随，但看着球）
+        /// Released state, such as falling: physics remains active, control and camera following stop, but the camera looks at the ball.
         /// </summary>
         UnleashingMode = 2,
         /// <summary>
-        /// 锁定模式（例如变换球时，无物理效果，无法控制，但摄像机跟随）
+        /// Locked state, such as transformation: no physics or control, with camera following.
         /// </summary>
         LockMode = 3,
         /// <summary>
-        /// 释放模式2（球仍然有物理效果，但无法控制，摄像机跟随看着球）
+        /// Second released state: physics remains active without control; the camera follows and looks at the ball.
         /// </summary>
         FreeMode = 4,
         /// <summary>
-        /// 无物理效果，无法控制，但摄像机不跟随，但看着球
+        /// No physics or control; the camera looks at the ball without following.
         /// </summary>
         LockLookMode = 5,
     }
     /// <summary>
-    /// 球注册信息存储结构
+    /// Ball registration data.
     /// </summary>
     public class BallRegStorage
     {
         /// <summary>
-        /// 球名称
+        /// Ball name.
         /// </summary>
         public string name = "";
         /// <summary>
-        /// 球类实例
+        /// Ball class instance.
         /// </summary>
         public Ball ball = null;
         /// <summary>
-        /// 球的刚体实例, 仅当前球激活时才有此实例
+        /// Ball rigid body, available only while this ball is active.
         /// </summary>
         public PhysicsObject rigidbody = null;
         /// <summary>
-        /// 速度计
+        /// Speed meter.
         /// </summary>
         public SpeedMeter speedMeter = null;
         /// <summary>
-        /// 球的X轴推动力, 仅当前球激活时才有此实例
+        /// X-axis force, available only while this ball is active.
         /// </summary>
         public PhysicsConstantForceData pushForceX = null;
         /// <summary>
-        /// 球的Y轴推动力, 仅当前球激活时才有此实例
+        /// Y-axis force, available only while this ball is active.
         /// </summary>
         public PhysicsConstantForceData pushForceY = null;
         /// <summary>
-        /// 球的Z轴推动力, 仅当前球激活时才有此实例
+        /// Z-axis force, available only while this ball is active.
         /// </summary>
         public PhysicsConstantForceData pushForceZ = null;
     }

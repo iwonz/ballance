@@ -4,29 +4,29 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * UIContentSizeUtils.cs
 * 
-* 用途：
-* UI 组件内容大小计算工具
+* Purpose:
+* UI content size calculation helpers.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Utils
 {
   /// <summary>
-  /// UI 组件内容大小计算工具
+  /// UI content size calculation helpers.
   /// </summary>
   public static class UIContentSizeUtils
   {
     /// <summary>
-    /// 计算一个ContentSizeFitter的合理大小
+    /// Calculate a suitable size for a ContentSizeFitter.
     /// </summary>
     /// <param name="rect">RectTransform</param>
     /// <param name="contentSizeFitter">ContentSizeFitter</param>
-    /// <returns>返回计算后的大小</returns>
+    /// <returns>Calculated size.</returns>
     public static Vector2 GetContentSizeFitterPreferredSize(this RectTransform rect, ContentSizeFitter contentSizeFitter)
     {
       LayoutRebuilder.ForceRebuildLayoutImmediate(rect);

@@ -14,238 +14,238 @@ namespace BallancePhysics.Wapper
   [DisallowMultipleComponent]
   
   /// <summary>
-  /// Ballance 物理物体组件
+  /// Ballance physics object component.
   /// </summary>
   public class PhysicsObject : MonoBehaviour
   {
-    #region 属性
+    #region Properties
 
-    [Tooltip("物体的质量（kg）")]
+    [Tooltip("Object mass in kilograms.")]
     [SerializeField]
     private float m_Mass = 1.0f;
-    [Tooltip("物体的m摩擦力。0表示完全没有摩擦力。0.1=冰。3=非常粗糙。为每个物理对象定义了摩擦力。因此，物体A和物体B之间的滑动运动将取决于两者的摩擦力。对于实际摩擦力，该值必须与其他对象的摩擦系数相乘。")]
+    [Tooltip("Friction coefficient: 0 means no friction, 0.1 resembles ice, and 3 is very rough. Contact friction is the product of the two objects' coefficients.")]
     [SerializeField]
     [Range(0, 3f)]
     private float m_Friction = 0.7f;
-    [Tooltip("物体的弹力。>1.0意味着永不停止的跳跃。<0.2模拟需要额外的CPU。注意不要给弹性赋予不切实际的值：过高的值（如10）会使模拟在一段时间后变得非常不稳定。")]
+    [Tooltip("Elasticity. Values above 1.0 cause perpetual bouncing; values below 0.2 require extra CPU time. Unrealistically high values, such as 10, can destabilize the simulation.")]
     [SerializeField]
     [Range(0, 2f)]
     private float m_Elasticity = 0.4f;
-    [Tooltip("0.0表示线性速度（对象的平移）不受影响，1.0表示每秒减少30%，0.1表示90%，等等，可以用作空气阻力。过低：对象可能会不切实际地加速。")]
+    [Tooltip("Linear velocity damping, usable as air resistance. Zero leaves velocity unchanged. Too little damping can allow unrealistic acceleration; see native IVP damping behavior.")]
     [SerializeField]
     private float m_LinearSpeedDamping = 0.1f;
-    [Tooltip("0.0表示旋转速度（物体的旋转）不受影响，1.0表示每秒减少30%，0.1表示90%，等等，可以用作某种空气阻力。过低：对象可能会不切实际地加速。")]
+    [Tooltip("Angular velocity damping, usable as rotational air resistance. Zero leaves velocity unchanged. Too little damping can allow unrealistic acceleration; see native IVP damping behavior.")]
     [SerializeField]
     private float m_RotSpeedDamping = 0.1f;
-    [Tooltip("球体碰撞器的半径。")]
+    [Tooltip("Sphere collision radius.")]
     [SerializeField]
     private float m_BallRadius = 1;
-    [Tooltip("是否使用球体碰撞器。")]
+    [Tooltip("Use a sphere collision shape.")]
     [SerializeField]
     private bool m_UseBall = false;
-    [Tooltip("如果为true，该算法将在对象周围生成一个额外的凸包。对于可移动对象，此外壳可以将性能提高到与凸面对象相同的水平。对于巨大的静态物体，这种优化毫无意义，因为所有可移动的对象都一直在穿透凸面外壳。")]
+    [Tooltip("Generate an additional convex hull around the object. This can improve movable concave objects' performance but rarely helps large static objects that others constantly penetrate.")]
     [SerializeField]
     private bool m_BuildRootConvexHull = true;
-    [Tooltip("设置当前物体是否启用碰撞。")]
+    [Tooltip("Enable collision for this object.")]
     [SerializeField]
     private bool m_EnableCollision = true;
-    [Tooltip("如果为true，则对象不会受到重力的影响，直到某个事件将其唤醒（如与另一个对象的碰撞、脉冲或连接到其上的弹簧的创建）。例如，当您需要物理化地板上已经存在的许多对象，并且不希望物理引擎通过计算所有需要的碰撞来稳定对象，从而减慢合成速度时，这非常有用。")]
+    [Tooltip("Start asleep until a collision, impulse, or attached spring wakes the object. Useful for objects already resting on a floor, avoiding unnecessary initial stabilization work.")]
     [SerializeField]
     private bool m_StartFrozen = false;
-    [Tooltip("如果为true，该对象将被视为不可移动（重力和力不会对其产生任何影响）。")]
+    [Tooltip("Treat the object as immovable; gravity and forces have no effect.")]
     [SerializeField]
     private bool m_Fixed = false;
-    [Tooltip("物体的质心")]
+    [Tooltip("Object center of mass.")]
     [SerializeField]
     private Vector3 m_ShiftMassCenter = Vector3.zero;
-    [Tooltip("是否自定义处理坠落回收。自定义处理后不会由系统自动反物理对象，你可在 OnFallCallback 事件中自由处理。")]
+    [Tooltip("Handle falling through OnFallCallback instead of automatically removing the physics object.")]
     [SerializeField]
     public bool m_CustomDePhysicsFall = false;
 
-    [Tooltip("在 Awake 时不自动创建刚体")]
+    [Tooltip("Do not automatically create the physics body in Awake.")]
     [SerializeField]
     private bool m_DoNotAutoCreateAtAwake = true;
-    [Tooltip("自动计算 CenterOfMass ")]
+    [Tooltip("Calculate CenterOfMass automatically.")]
     [SerializeField]
     private bool m_AutoMassCenter = true;
-    [Tooltip("是否在gameObject激活时自动切换刚体的激活状态")]
+    [Tooltip("Synchronize physics body activation with the GameObject.")]
     [SerializeField]
     private bool m_AutoControlActive = true;
-    [Tooltip("是否启用施加在这个物体上的恒力")]
+    [Tooltip("Enable the constant force applied to this object.")]
     [SerializeField]
     private bool m_EnableConstantForce = true;
-    [Tooltip("物体的碰撞层")]
+    [Tooltip("Object collision surface.")]
     [SerializeField]
     private int m_Layer = -1;
-    [Tooltip("指定当前碰撞组的名称，为空则不设置。创建之后再修改则必须调用 ForceUpdateCollisionFilterInfo 才能生效")]
+    [Tooltip("Collision group name; empty means unset. Call ForceUpdateCollisionFilterInfo after changing it on an existing object.")]
     [SerializeField]
     private string m_SystemGroupName = "";
-    [Tooltip("指定当前碰撞子组的ID，同一个碰撞组中子组的ID不能重复，默认为0。创建之后再修改则必须调用 ForceUpdateCollisionFilterInfo 才能生效")]
+    [Tooltip("Collision subgroup ID, unique within its group; default 0. Call ForceUpdateCollisionFilterInfo after changing it on an existing object.")]
     [SerializeField]
     private int m_SubSystemId = 0;
-    [Tooltip("指定当前碰撞组不与那个子组碰撞，默认为0。创建之后再修改则必须调用 ForceUpdateCollisionFilterInfo 才能生效")]
+    [Tooltip("Subgroup excluded from collision; default 0. Call ForceUpdateCollisionFilterInfo after changing it on an existing object.")]
     [SerializeField]
     private int m_SubSystemDontCollideWith = 0;
-    [Tooltip("指定当前碰撞组ID, 用于碰撞事件的判断")]
+    [Tooltip("Collision group ID used to filter collision events.")]
     [SerializeField]
     private int m_CollisionID = 0;
 
-    [Tooltip("指定此物体的凸体网格")]
+    [Tooltip("Convex collision mesh.")]
     [SerializeField]
     private List<Mesh> m_Convex = new List<Mesh>();
-    [Tooltip("指定此物体的凹体网格，凹体网格将会销毁更多计算时间，所以推荐使用多个拆分的凸体构成一个凹体")]
+    [Tooltip("Concave collision mesh. It costs more simulation time; prefer several convex parts when practical.")]
     [SerializeField]
     private List<Mesh> m_Concave = new List<Mesh>();
-    [Tooltip("当前物体物理网格生成的碰撞层名称，名称不能重复，否则当前碰撞层名称将不能复用")]
+    [Tooltip("Name of the collision surface generated from this mesh. Keep names unique unless intentionally reusing a surface.")]
     [SerializeField]
     private string m_SurfaceName = "";
-    [Tooltip("当前物体物理网格是否使用已存在的碰撞层，如果为true，则不创建碰撞层，而是使用已有的碰撞层")]
+    [Tooltip("Reuse an existing collision surface instead of creating a new one.")]
     [SerializeField]
     private bool m_UseExistsSurface = false;
     [SerializeField]
     private float m_ExtraRadius = 0.0f;
-    [Tooltip("设置当前物体是否启用重力")]
+    [Tooltip("Enable gravity for this object.")]
     [SerializeField]
     private bool m_EnableGravity = true;
-    [Tooltip("设置当前物体上是否启用碰撞事件")]
+    [Tooltip("Enable collision events for this object.")]
     [SerializeField]
     private bool m_EnableCollisionEvent = false;
-    [Tooltip("设置当前物体碰撞事件调用的休息时间（秒）")]
+    [Tooltip("Minimum interval between collision callbacks, in seconds.")]
     [SerializeField]
     private float m_CollisionEventCallSleep = 0.5f;
 
     #endregion
 
     /// <summary>
-    /// 获取此物体的唯一ID
+    /// Get this object's unique ID.
     /// </summary>
     /// <value></value>
     public int Id { get; private set; } = 0;
     /// <summary>
-    /// 获取此物体的底层引擎指针
+    /// Get this object's native engine pointer.
     /// </summary>
     /// <value></value>
     public IntPtr Handle { get; private set; } = IntPtr.Zero;
     /// <summary>
-    /// 物体的m摩擦力。0表示完全没有摩擦力。0.1=冰。3=非常粗糙。为每个物理对象定义了摩擦力。因此，物体A和物体B之间的滑动运动将取决于两者的摩擦力。对于实际摩擦力，该值必须与其他对象的摩擦系数相乘。
+    /// Friction coefficient: 0 is frictionless, 0.1 resembles ice, and 3 is very rough. Contact friction is the product of both objects' coefficients.
     /// </summary>
     /// <value></value>
     public float Friction { get => m_Friction; set => m_Friction = value; }
     /// <summary>
-    /// 物体的弹力。>1.0意味着永不停止的跳跃。<0.2模拟需要额外的CPU。注意不要给弹性赋予不切实际的值：过高的值（如10）会使模拟在一段时间后变得非常不稳定。
+    /// Elasticity: values above 1.0 cause perpetual bouncing; values below 0.2 need extra CPU work. Unrealistic values such as 10 eventually destabilize simulation.
     /// </summary>
     /// <value></value>
     public float Elasticity { get => m_Elasticity; set => m_Elasticity = value; }
     /// <summary>
-    /// 0.0表示线性速度（对象的平移）不受影响，1.0表示每秒减少30%，0.1表示90%，等等，可以用作空气阻力。过低：对象可能会不切实际地加速。
+    /// Linear damping: 0.0 leaves translation unchanged; 1.0 reduces speed by 30% per second and 0.1 by 90%. This models air resistance; very low values may cause unrealistic acceleration.
     /// </summary>
     /// <value></value>
     public float LinearSpeedDamping { get => m_LinearSpeedDamping; set => m_LinearSpeedDamping = value; }
     /// <summary>
-    /// 0.0表示旋转速度（物体的旋转）不受影响，1.0表示每秒减少30%，0.1表示90%，等等，可以用作某种空气阻力。过低：对象可能会不切实际地加速。
+    /// Angular damping: 0.0 leaves rotation unchanged; 1.0 reduces speed by 30% per second and 0.1 by 90%. This models air resistance; very low values may cause unrealistic acceleration.
     /// </summary>
     /// <value></value>
     public float RotSpeedDamping { get => m_RotSpeedDamping; set => m_RotSpeedDamping = value; }
     /// <summary>
-    /// 是否自定义处理坠落回收。自定义处理后不会由系统自动反物理对象，你可在 OnFallCallback 事件中自由处理。
+    /// Handle falling manually in OnFallCallback instead of automatically removing the object from physics.
     /// </summary>
     /// <value></value>
     public bool CustomDePhysicsFall { get => m_CustomDePhysicsFall; set => m_CustomDePhysicsFall = value; }
     /// <summary>
-    /// 球体碰撞器的半径。
+    /// Sphere collider radius.
     /// </summary>
     /// <value></value>
     public float BallRadius { get => m_BallRadius; set => m_BallRadius = value; }
     /// <summary>
-    /// 是否使用球体碰撞器。
+    /// Use a sphere collider.
     /// </summary>
     /// <value></value>
     public bool UseBall { get => m_UseBall; set => m_UseBall = value; }
     /// <summary>
-    /// 如果为true，该算法将在对象周围生成一个额外的凸包。对于可移动对象，此外壳可以将性能提高到与凸面对象相同的水平。对于巨大的景观来说，这种优化毫无意义，因为所有有趣的对象都一直在穿透凸面外壳。
+    /// Generate an extra convex hull around the object to speed up movable concave objects. This does not help large landscapes whose hulls are constantly penetrated.
     /// </summary>
     /// <value></value>
     public bool BuildRootConvexHull { get => m_BuildRootConvexHull; set => m_BuildRootConvexHull = value; }
     /// <summary>
-    /// 设置当前物体是否启用碰撞。
+    /// Enable collision for this object.
     /// </summary>
     /// <value></value>
     public bool EnableCollision { get => m_EnableCollision; set => m_EnableCollision = value; }
     /// <summary>
-    /// 如果为true，则对象不会受到重力的影响，直到某个事件将其唤醒（如与另一个对象的碰撞、脉冲或连接到其上的弹簧的创建）。例如，当您需要物理化地板上已经存在的许多对象，并且不希望物理引擎通过计算所有需要的碰撞来稳定对象，从而减慢合成速度时，这非常有用。
+    /// Keep the object asleep until a collision, impulse, or newly attached spring wakes it. Useful when initializing many objects already resting on a floor.
     /// </summary>
     /// <value></value>
     public bool StartFrozen { get => m_StartFrozen; set => m_StartFrozen = value; }
     /// <summary>
-    /// 物体的质心
+    /// Center of mass.
     /// </summary>
     /// <value></value>
     public Vector3 ShiftMassCenter { get => m_ShiftMassCenter; set => m_ShiftMassCenter = value; }
     /// <summary>
-    /// 指定是否在 Awake 时不自动创建刚体
+    /// Skip automatic rigid-body creation in Awake.
     /// </summary>
     /// <value></value>
     public bool DoNotAutoCreateAtAwake { get => m_DoNotAutoCreateAtAwake; set => m_DoNotAutoCreateAtAwake = value; }
     /// <summary>
-    /// 是否自动计算 CenterOfMass 
+    /// Calculate CenterOfMass automatically.
     /// </summary>
     /// <value></value>
     public bool AutoMassCenter { get => m_AutoMassCenter; set => m_AutoMassCenter = value; }
     /// <summary>
-    /// 是否在gameObject激活时自动切换刚体的激活状态
+    /// Synchronize rigid-body activation with GameObject activation.
     /// </summary>
     /// <value></value>
     public bool AutoControlActive { get => m_AutoControlActive; set => m_AutoControlActive = value; }
     /// <summary>
-    /// 物体的碰撞层
+    /// Object collision layer.
     /// </summary>
     /// <value></value>
     public int Layer { get => m_Layer; set => m_Layer = value; }
     /// <summary>
-    /// 指定当前碰撞组的名称，为空则不设置。创建之后再修改则必须调用 ForceUpdateCollisionFilterInfo 才能生效
+    /// Collision group name; empty leaves it unset. After creation, call ForceUpdateCollisionFilterInfo to apply changes.
     /// </summary>
     /// <value></value>
     public string SystemGroupName { get => m_SystemGroupName; set => m_SystemGroupName = value; }
     /// <summary>
-    /// 指定当前碰撞子组的ID，同一个碰撞组中子组的ID不能重复，默认为0。创建之后再修改则必须调用 ForceUpdateCollisionFilterInfo 才能生效
+    /// Collision subgroup ID, unique within its group; default 0. After creation, call ForceUpdateCollisionFilterInfo to apply changes.
     /// </summary>
     /// <value></value> 
     public int SubSystemId { get => m_SubSystemId; set => m_SubSystemId = value; }
     /// <summary>
-    /// 指定当前碰撞组不与那个子组碰撞，默认为0。创建之后再修改则必须调用 ForceUpdateCollisionFilterInfo 才能生效
+    /// Subgroup excluded from collisions; default 0. After creation, call ForceUpdateCollisionFilterInfo to apply changes.
     /// </summary>
     /// <value></value> 
     public int SubSystemDontCollideWith{ get => m_SubSystemDontCollideWith; set => m_SubSystemDontCollideWith = value; }
     /// <summary>
-    /// 指定此物体的凸体网格
+    /// Convex meshes for this object.
     /// </summary> 
     public List<Mesh> Convex => m_Convex;
     /// <summary>
-    /// 指定此物体的凹体网格，凹体网格将会销毁更多计算时间，所以推荐使用多个拆分的凸体构成一个凹体
+    /// Concave meshes cost more simulation time; prefer several convex pieces where possible.
     /// </summary> 
     public List<Mesh> Concave => m_Concave;
     /// <summary>
-    /// 当前物体物理网格生成的碰撞层名称，名称不能重复，否则当前碰撞层名称将不能复用
+    /// Collision surface name generated from this object's mesh. It must be unique unless intentionally reusing an existing surface.
     /// </summary>
     /// <value></value>   
     public string SurfaceName { get => m_SurfaceName; set => m_SurfaceName = value; }
     /// <summary>
-    /// 当前物体物理网格是否使用已存在的碰撞层，如果为true，则不创建碰撞层，而是使用已有的碰撞层
+    /// Reuse an existing collision surface instead of creating one.
     /// </summary>
     /// <value></value>
     public bool UseExistsSurface { get => m_UseExistsSurface; set => m_UseExistsSurface = value; }
     /// <summary>
-    /// 当使用“幻影事件”构建块时，此值延迟“离开对象”输出激活。“离开对象”输出仅在对象离开幻影加上此额外半径时激活。
+    /// Extra phantom radius delaying the leave event until the object is outside the phantom plus this margin.
     /// </summary>
     /// <value></value>
     public float ExtraRadius { get => m_ExtraRadius; set => m_ExtraRadius = value; }
     /// <summary>
-    /// 设置当前物体碰撞事件调用的休息时间（秒）
+    /// Minimum interval between collision callbacks, in seconds.
     /// </summary>
     /// <value></value>
     public float CollisionEventCallSleep { get => m_CollisionEventCallSleep; set => m_CollisionEventCallSleep = value; }
     /// <summary>
-    /// 指定当前自定义碰撞组ID, 用于声音组碰撞事件的判断
+    /// Custom collision group ID used by sound collision events.
     /// </summary>
     /// <value></value>
     public int CollisionID { 
@@ -260,7 +260,7 @@ namespace BallancePhysics.Wapper
     private PhysicsEnvironment currentEnvironment = null;
     
     /// <summary>
-    /// 物理化当前物体
+    /// Create the object's native physics body.
     /// </summary>
     public void Physicalize()
     {
@@ -277,9 +277,9 @@ namespace BallancePhysics.Wapper
         bool doNotCreateSurface = false;
 
         if (m_UseBall)
-          doNotCreateSurface = true; //球体就不生成网格
+          doNotCreateSurface = true; // Spheres do not need mesh generation.
         else if (surfaceName == "") {
-          //根据当前物体的Mesh自动生成相对的名字
+          // Generate a name from the object's mesh.
           string scaleName = gameObject.transform.lossyScale != Vector3.one ? ("_" + gameObject.transform.lossyScale.ToString()) : "";
           if(m_Convex.Count == 1)
             surfaceName = m_Convex[0].name + scaleName;
@@ -297,7 +297,7 @@ namespace BallancePhysics.Wapper
           }
         } 
         else if(PhysicsApi.API.surface_exist_by_name(currentEnvironment.Handle, surfaceName) || m_UseExistsSurface) {
-          //检查 SurfaceName 是否存在，否则不生成
+          // Require SurfaceName before generating a surface.
           Debug.LogWarning("Surface " + surfaceName + " already exist");
           doNotCreateSurface = true;
         }
@@ -311,7 +311,7 @@ namespace BallancePhysics.Wapper
           foreach (var mesh in m_Concave)
             pConcavies.Add(PhysicsApi.API.create_polyhedron(mesh.vertices, mesh.triangles, transform.lossyScale));
 
-          //如果不使用球并且没有指定的凹凸网格，则尝试自动获取网格
+          // If no sphere or explicit convex/concave mesh is configured, try to use the object's mesh.
           if(pConvexs.Count == 0 && pConcavies.Count == 0) {
             var meshFilter = GetComponent<MeshFilter>();
             if(meshFilter == null || meshFilter.sharedMesh == null) {
@@ -352,9 +352,9 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 取消物理化当前物体
+    /// Remove the object's native physics body.
     /// </summary>
-    /// <param name="silently">是否静默取消物理化，否则此操作将使周围物体激活</param>
+    /// <param name="silently">Remove silently; otherwise nearby objects are activated.</param>
     public void UnPhysicalize(bool silently = true)
     {
       if (Handle != IntPtr.Zero)
@@ -368,29 +368,29 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 获取当前物体是否已物理化
+    /// Whether the object has a native physics body.
     /// </summary>
     /// <value></value>
     public bool IsPhysicalized { get => Handle != IntPtr.Zero; }
 
     /// <summary>
-    /// 唤醒物体
+    /// Wake the object.
     /// </summary>
     public void WakeUp() {
       checkPhysicalized();
       PhysicsApi.API.physics_wakeup(Handle);
     }
     /// <summary>
-    /// 立即冻结对象，忽略速度
+    /// Freeze the object immediately, ignoring its velocity.
     /// </summary>
-    /// <returns>如果成功则返回true</returns>
+    /// <returns>True on success.</returns>
     public bool Freeze() {
       checkPhysicalized();
       return PhysicsApi.API.physics_freeze(Handle);
     } 
 
     /// <summary>
-    /// 获取当前物体的速度
+    /// Get the object's speed.
     /// </summary>
     /// <value></value>
     public float Speed
@@ -402,7 +402,7 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 获取当前物体的速度向量
+    /// Get the object's velocity vector.
     /// </summary>
     /// <value></value>
     public Vector3 SpeedVector
@@ -415,7 +415,7 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 获取当前物体的旋转速度（物体坐标）
+    /// Get angular velocity in object coordinates.
     /// </summary>
     /// <value></value>
     public Vector3 RotSpeed
@@ -428,7 +428,7 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 获取或设置当前物体的质量（kg）
+    /// Get or set object mass in kilograms.
     /// </summary>
     /// <value></value>
     public float Mass {
@@ -440,7 +440,7 @@ namespace BallancePhysics.Wapper
       }
     } 
     /// <summary>
-    /// 获取当前物体是是固定物体
+    /// Whether this is a static object.
     /// </summary>
     public bool Fixed {
       get {
@@ -455,7 +455,7 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 获取当前物体上是否启用了重力
+    /// Whether gravity is enabled for this object.
     /// </summary>
     public bool EnableGravity {
       get {
@@ -470,13 +470,13 @@ namespace BallancePhysics.Wapper
       }
     }  
 
-    #region 碰撞
+    #region Collisions
 
     /// <summary>
-    /// 检查当前物体是否与其他某个物体相碰撞
+    /// Check whether this object collides with another object.
     /// </summary>
-    /// <param name="other">某个物体</param>
-    /// <returns>如果碰撞返回true，否则返回false</returns>
+    /// <param name="other">Other object.</param>
+    /// <returns>True on collision; otherwise false.</returns>
     public bool IsContact(PhysicsObject other) {
       if(other == null)
         throw new Exception("other is null!");
@@ -485,21 +485,21 @@ namespace BallancePhysics.Wapper
       return PhysicsApi.API.physics_is_contact(Handle, other.Handle);
     }
     /// <summary>
-    /// 启用当前物体的碰撞检测
+    /// Enable collision detection for this object.
     /// </summary>
     public void EnableCollisionDetection() {
       checkPhysicalized();
       PhysicsApi.API.physics_enable_collision_detection(Handle);
     }
     /// <summary>
-    /// 禁用当前物体的碰撞检测
+    /// Disable collision detection for this object.
     /// </summary>
     public void DisableCollisionDetection() {
       checkPhysicalized();
       PhysicsApi.API.physics_enable_collision_detection(Handle);
     }
     /// <summary>
-    /// 强制更新物体的碰撞信息
+    /// Force an update of the object's collision filter information.
     /// </summary>
     public void ForceUpdateCollisionFilterInfo()
     {
@@ -513,7 +513,7 @@ namespace BallancePhysics.Wapper
         m_SubSystemDontCollideWith);
     }  
     /// <summary>
-    /// 获取或设置当前物体上是否启用碰撞事件
+    /// Get or set whether collision callbacks are enabled.
     /// </summary>
     public bool EnableCollisionEvent {
       get => m_EnableCollisionEvent;
@@ -533,21 +533,21 @@ namespace BallancePhysics.Wapper
 
     #endregion
 
-    #region 更改坐标
+    #region Transform updates
 
     /// <summary>
-    /// 将当前物体的坐标（Unity）设置至物理引擎
+    /// Copy the Unity transform to the physics engine.
     /// </summary>
-    /// <param name="optimize_for_repeated_calls">如果当前调用是需要重复调用的，例如每帧更新坐标，请设置为true让物理引擎进行优化</param>
+    /// <param name="optimize_for_repeated_calls">Set true for repeated calls, such as per-frame transform updates, to allow engine optimization.</param>
     public void BeamObjectToNewPosition(bool optimize_for_repeated_calls) {
       BeamObjectToNewPosition(transform.position, transform.rotation, optimize_for_repeated_calls);
     }
     /// <summary>
-    /// 设置物体在物理引擎中的位置
+    /// Set the object's transform in the physics engine.
     /// </summary>
-    /// <param name="pos">新的位置坐标（世界坐标）</param>
-    /// <param name="rot">新的旋转</param>
-    /// <param name="optimize_for_repeated_calls">如果当前调用是需要重复调用的，例如每帧更新坐标，请设置为true让物理引擎进行优化</param>
+    /// <param name="pos">New world position.</param>
+    /// <param name="rot">New rotation.</param>
+    /// <param name="optimize_for_repeated_calls">Set true for repeated calls, such as per-frame transform updates, to allow engine optimization.</param>
     public void BeamObjectToNewPosition(Vector3 pos, Quaternion rot, bool optimize_for_repeated_calls) {
       checkPhysicalized();
       PhysicsApi.API.physics_beam_object_to_new_position(Handle, rot, pos, optimize_for_repeated_calls);
@@ -555,10 +555,10 @@ namespace BallancePhysics.Wapper
 
     #endregion
 
-    #region 推动
+    #region Impulses
 
     /// <summary>
-    /// 是否启用施加在这个物体上的恒力
+    /// Enable constant forces acting on this object.
     /// </summary>
     /// <value></value>
     public bool EnableConstantForce { get => m_EnableConstantForce; set => m_EnableConstantForce = value; }
@@ -567,42 +567,42 @@ namespace BallancePhysics.Wapper
     private Dictionary<int, PhysicsConstantForceData> m_ConstantForces = new Dictionary<int, PhysicsConstantForceData>();
 
     /// <summary>
-    /// 添加施加在这个物体上的恒力
+    /// Add a constant force to this object.
     /// </summary>
-    /// <param name="value">力大小</param>
-    /// <param name="dircetion">力方向</param>
-    /// <returns>返回恒力ID，可使用DeleteConstantForce删除恒力</returns>
+    /// <param name="value">Force magnitude.</param>
+    /// <param name="dircetion">Force direction.</param>
+    /// <returns>Constant force ID; pass it to DeleteConstantForce to remove the force.</returns>
     public PhysicsConstantForceData AddConstantForce(float value, Vector3 dircetion) {
       return AddConstantForceWithPositionAndRef(value, dircetion, Vector3.zero, null, null);
     }
     /// <summary>
-    /// 添加施加在这个物体上的恒力(自动以当前物体为位置参照)
+    /// Add a constant force using this object as the position reference.
     /// </summary>
-    /// <param name="value">力大小（N）</param>
-    /// <param name="dircetion">力方向</param>
-    /// <returns>返回恒力ID，可使用DeleteConstantForce删除恒力</returns>
+    /// <param name="value">Force magnitude in newtons.</param>
+    /// <param name="dircetion">Force direction.</param>
+    /// <returns>Constant force ID; pass it to DeleteConstantForce to remove the force.</returns>
     public PhysicsConstantForceData AddConstantForceLocalCenter(float value, Vector3 dircetion) {
       return AddConstantForceWithPositionAndRef(value, dircetion, Vector3.zero, null, transform);
     }
     /// <summary>
-    /// 添加施加在这个物体上的恒力
+    /// Add a constant force to this object.
     /// </summary>
-    /// <param name="value">力大小（N）</param>
-    /// <param name="dircetion">力方向</param>
-    /// <param name="postion">施加力的位置</param>
-    /// <returns>返回恒力ID，可使用DeleteConstantForce删除恒力</returns>
+    /// <param name="value">Force magnitude in newtons.</param>
+    /// <param name="dircetion">Force direction.</param>
+    /// <param name="postion">Force application position.</param>
+    /// <returns>Constant force ID; pass it to DeleteConstantForce to remove the force.</returns>
     public PhysicsConstantForceData AddConstantForceWithPosition(float value, Vector3 dircetion, Vector3 postion) {
       return AddConstantForceWithPositionAndRef(value, dircetion, postion, null, null);
     }
     /// <summary>
-    /// 添加施加在这个物体上的恒力
+    /// Add a constant force to this object.
     /// </summary>
-    /// <param name="value">力大小（N）</param>
-    /// <param name="dircetion">力方向</param>
-    /// <param name="postion">施加力的位置</param>
-    /// <param name="directionRef">力方向参考物体</param>
-    /// <param name="positionRef">力的位置考物体</param>
-    /// <returns>返回恒力ID，可使用DeleteConstantForce删除恒力</returns>
+    /// <param name="value">Force magnitude in newtons.</param>
+    /// <param name="dircetion">Force direction.</param>
+    /// <param name="postion">Force application position.</param>
+    /// <param name="directionRef">Object providing the direction reference.</param>
+    /// <param name="positionRef">Object providing the position reference.</param>
+    /// <returns>Constant force ID; pass it to DeleteConstantForce to remove the force.</returns>
     public PhysicsConstantForceData AddConstantForceWithPositionAndRef(float value, Vector3 dircetion, Vector3 postion, Transform directionRef, Transform positionRef) {
       if(m_ConstantForce_ID < int.MaxValue - 1) m_ConstantForce_ID++;
       else m_ConstantForce_ID = 0;
@@ -618,24 +618,24 @@ namespace BallancePhysics.Wapper
       return data;
     }
     /// <summary>
-    /// 通过恒力ID获取恒力对象
+    /// Get a constant force by ID.
     /// </summary>
-    /// <param name="forceId">恒力ID</param>
-    /// <returns>如果找到则返回恒力对象，否则返回null</returns>
+    /// <param name="forceId">Constant force ID.</param>
+    /// <returns>The constant force, or null if not found.</returns>
     public PhysicsConstantForceData GetConstantForceByID(int forceId) {
       if(m_ConstantForces.TryGetValue(forceId, out var c)) 
         return c;
       return null;
     }
     /// <summary>
-    /// 删除施加在这个物体上的恒力
+    /// Remove a constant force from this object.
     /// </summary>
-    /// <param name="forceId">AddConstantForce 返回的ID</param>
+    /// <param name="forceId">ID returned by AddConstantForce.</param>
     public void DeleteConstantForce(int forceId) {
       m_ConstantForces.Remove(forceId);
     }
     /// <summary>
-    /// 清除所有施加在这个物体上的恒力
+    /// Remove all constant forces from this object.
     /// </summary>
     public void ClearConstantForce() {
       m_ConstantForces.Clear();
@@ -643,7 +643,7 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 应用恒力
+    /// Apply constant forces.
     /// </summary>
     internal void DoApplyConstantForce() {
       Vector3 finalPos, finalForce;
@@ -653,7 +653,7 @@ namespace BallancePhysics.Wapper
         if(data.Force == 0)
           continue;
 
-        //设置参考物体
+        // Set the reference object.
         if(data.DirectionRef != null)
           finalForce = data.DirectionRef.TransformDirection(data.Direction) * data.Force;
         else
@@ -669,27 +669,27 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 给物体中心坐标处施加一个推动
+    /// Apply an impulse at the object's center.
     /// </summary>
-    /// <param name="impluse">力的方向和大小（世界坐标系）</param>
+    /// <param name="impluse">Impulse direction and magnitude in world coordinates.</param>
     public void Impluse(Vector3 impluse) {
       Impluse(transform.position, impluse);
     }
 
     /// <summary>
-    /// 给物体施加一个推动
+    /// Apply an impulse to the object.
     /// </summary>
-    /// <param name="pos">推动坐标（世界坐标系）</param>
-    /// <param name="impluse">力的方向和大小（世界坐标系）</param>
+    /// <param name="pos">Impulse position in world coordinates.</param>
+    /// <param name="impluse">Impulse direction and magnitude in world coordinates.</param>
     public void Impluse(Vector3 pos, Vector3 impluse) {
       checkPhysicalized();
       if(impluse.sqrMagnitude > 0)
         PhysicsApi.API.physics_impluse(Handle, pos, impluse * currentEnvironment.PhysicsFactorFinalValue);
     }
     /// <summary>
-    /// 给物体施加一个旋转推动
+    /// Apply an angular impulse to the object.
     /// </summary>
-    /// <param name="rotVec">该矢量的每个分量表示施加在该对象相关核心轴上的旋转力。</param>
+    /// <param name="rotVec">Each vector component is the impulse around the corresponding object-core axis.</param>
     public void Torque(Vector3 rotVec) {
       checkPhysicalized();
       if(rotVec.sqrMagnitude > 0) {
@@ -697,9 +697,9 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 为物体添加速度
+    /// Add velocity to the object.
     /// </summary>
-    /// <param name="speed">速度（世界坐标系）</param>
+    /// <param name="speed">Velocity in world coordinates.</param>
     public void AddSpeed(Vector3 speed) {
       checkPhysicalized(); 
       PhysicsApi.API.physics_add_speed(Handle, speed);
@@ -707,10 +707,10 @@ namespace BallancePhysics.Wapper
   
     #endregion
 
-    #region 幻影
+    #region Phantoms
 
     /// <summary>
-    /// 将物理对象转换为幻影体积
+    /// Convert the physics object to a phantom volume.
     /// </summary>
     public void ConvertToPhantom() {
       if(IsPhantom()) 
@@ -721,16 +721,16 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 获取当前物体是否是幻影
+    /// Whether this object is a phantom.
     /// </summary>
     public bool IsPhantom() {
       checkPhysicalized();
       return PhysicsApi.API.physics_is_phantom(Handle);
     }
     /// <summary>
-    /// 检查某个物体是否在当前幻影物体中
+    /// Check whether another object is inside this phantom.
     /// </summary>
-    /// <param name="other">某个物体</param>
+    /// <param name="other">Other object.</param>
     /// <returns></returns>
     public bool IsInsidePhantom(PhysicsObject other) {
       if(other == null)
@@ -742,10 +742,10 @@ namespace BallancePhysics.Wapper
     
     #endregion
 
-    #region motion控制器
+    #region Motion controller
 
     /// <summary>
-    /// 获取当前物体上是否启用了motion控制器
+    /// Whether the motion controller is enabled.
     /// </summary>
     /// <returns></returns>
     public bool IsMotionEnabled() {
@@ -753,9 +753,9 @@ namespace BallancePhysics.Wapper
       return PhysicsApi.API.physics_is_motion_enabled(Handle);
     }
     /// <summary>
-    /// 设置motion控制器的启用状态
+    /// Set the motion controller's enabled state.
     /// </summary>
-    /// <param name="eanble">是否启用</param>
+    /// <param name="eanble">Whether to enable it.</param>
     public void SetMotionEnabled(bool eanble) {
       checkPhysicalized();
       PhysicsApi.API.physics_enable_motion(Handle, eanble);
@@ -763,13 +763,13 @@ namespace BallancePhysics.Wapper
 
     #endregion
 
-    #region 其他工具方法
+    #region Other helpers
 
     /// <summary>
-    /// 通过物理物体底层引擎指针获取物理物体ID
+    /// Get an object ID from its native engine pointer.
     /// </summary>
-    /// <param name="handle">底层引擎指针</param>
-    /// <returns>如果获取失败，则返回0</returns>
+    /// <param name="handle">Native engine pointer.</param>
+    /// <returns>Zero if lookup fails.</returns>
     public static int GetIdByHandle(IntPtr handle) {
       return PhysicsApi.API.physics_get_id(handle);
     }
@@ -782,7 +782,7 @@ namespace BallancePhysics.Wapper
 
     #endregion
 
-    #region 事件
+    #region Events
 
     public delegate void OnPhysicsPhantomEventCallback(PhysicsObject self, PhysicsObject other);
     public delegate void OnPhysicsCollisionEventCallback(PhysicsObject self, PhysicsObject other, Vector3 contact_point_ws, Vector3 speed, Vector3 surf_normal);
@@ -793,46 +793,46 @@ namespace BallancePhysics.Wapper
     public delegate void OnPhysicsContactEventCallback(PhysicsObject self, int col_id);
 
     /// <summary>
-    /// 物理对象进入幻影事件
+    /// Object entered the phantom.
     /// </summary>
     [HideInInspector]
     public OnPhysicsPhantomEventCallback OnPhantomEnter;
     /// <summary>
-    /// 物理对象离开幻影事件
+    /// Object left the phantom.
     /// </summary>
     public OnPhysicsPhantomEventCallback OnPhantomLeave;
     /// <summary>
-    /// 物理对象碰撞事件
+    /// Physics collision event.
     /// </summary>
     [HideInInspector]
     public OnPhysicsCollisionEventCallback OnPhysicsCollision;
     /// <summary>
-    /// 物理对象摩擦创建事件
+    /// Friction contact created.
     /// </summary>
     [HideInInspector]
     public OnPhysicsFrictionEventCallback OnPhysicsFrictionCreated;
     /// <summary>
-    /// 物理对象摩擦删除事件
+    /// Friction contact deleted.
     /// </summary>
     [HideInInspector]
     public OnPhysicsFrictionEventCallback OnPhysicsFrictionDeleted;
     /// <summary>
-    /// 物理对象工具碰撞事件
+    /// Physics tool collision event.
     /// </summary>
     [HideInInspector]
     public OnPhysicsCollDetectionEventCallback OnPhysicsCollDetection;
     /// <summary>
-    /// 物理对象开始接触物体事件
+    /// Object began touching another object.
     /// </summary>
     [HideInInspector]
     public OnPhysicsContactEventCallback OnPhysicsContactOn;
     /// <summary>
-    /// 物理对象停止接触物体事件
+    /// Object stopped touching another object.
     /// </summary>
     [HideInInspector]
     public OnPhysicsContactEventCallback OnPhysicsContactOff;
     /// <summary>
-    /// 物理对象掉落回收事件
+    /// Object fell below the collection threshold.
     /// </summary>
     [HideInInspector]
     public OnPhysicsCallback OnFallCallback;
@@ -841,7 +841,7 @@ namespace BallancePhysics.Wapper
 
     #endregion
 
-    #region 碰撞处理
+    #region Collision handling
 
     private PhantomEventCallback phantomEventCallback = null;
     private CollisionEventCallback collisionEventCallback = null;
@@ -896,7 +896,7 @@ namespace BallancePhysics.Wapper
         var obj = currentEnvironment.GetObjectById(GetIdByHandle(other));
         var vspeed = PhysicsApi.API.ptr_to_vec3(speed);
         if(create > 0) {
-          //摩擦事件
+          // Friction events.
           if(OnPhysicsFrictionCreated != null) {
             OnPhysicsFrictionCreated.Invoke(
               this, 
@@ -909,7 +909,7 @@ namespace BallancePhysics.Wapper
           } 
 
         } else {
-          //摩擦事件
+          // Friction events.
           if(OnPhysicsFrictionDeleted != null) {
             OnPhysicsFrictionDeleted.Invoke(
               this, 
@@ -967,14 +967,14 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 启用当前物体上的接触工具事件发生器
+    /// Enable touch-tool events for this object.
     /// </summary>
     public void EnableContractEventCallback() {
       contractEventCallback = DispatchContractEvent;
       PhysicsApi.API.physics_set_contract_listener(Handle, Marshal.GetFunctionPointerForDelegate(contractEventCallback));
     }
     /// <summary>
-    /// 禁用当前物体上的接触工具事件发生器
+    /// Disable touch-tool events for this object.
     /// </summary>
     public void DisableContractEventCallback() {
       PhysicsApi.API.physics_disable_collision_detection(Handle);
@@ -985,13 +985,13 @@ namespace BallancePhysics.Wapper
     private Dictionary<int, IntPtr> onContractDetection = new Dictionary<int, IntPtr>();
 
     /// <summary>
-    /// 添加指定层的碰撞工具事件处理
+    /// Add a collision-tool handler for a layer.
     /// </summary>
-    /// <param name="col_id">自定义碰撞层ID</param>
-    /// <param name="min_speed">最小速度（m/s）</param>
-    /// <param name="max_speed">最大速度（m/s）</param>
-    /// <param name="sleep_afterwards">碰撞延迟时间（秒），在指定的时间内碰撞不会被重复触发</param>
-    /// <param name="speed_threadhold">速度变换阈值（m/s）</param>
+    /// <param name="col_id">Custom collision layer ID.</param>
+    /// <param name="min_speed">Minimum speed in m/s.</param>
+    /// <param name="max_speed">Maximum speed in m/s.</param>
+    /// <param name="sleep_afterwards">Cooldown in seconds during which the collision cannot trigger again.</param>
+    /// <param name="speed_threadhold">Speed change threshold in m/s.</param>
     public void AddCollDetection(int col_id, float min_speed, float max_speed, float sleep_afterwards, float speed_threadhold) {
       if(onCollDetection.ContainsKey(col_id))
         return;
@@ -999,9 +999,9 @@ namespace BallancePhysics.Wapper
       onCollDetection.Add(col_id, ptr);
     }
     /// <summary>
-    /// 移除指定层的碰撞工具事件处理
+    /// Remove a collision-tool handler for a layer.
     /// </summary>
-    /// <param name="col_id">自定义碰撞层ID</param>
+    /// <param name="col_id">Custom collision layer ID.</param>
     public void DeleteCollDetection(int col_id) {
       if(onCollDetection.ContainsKey(col_id)) {
         PhysicsApi.API.destroy_physics_coll_detection(onCollDetection[col_id]);
@@ -1009,7 +1009,7 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 移除全部碰撞工具事件处理
+    /// Remove all collision-tool handlers.
     /// </summary>
     public void DeleteAllCollDetection() {
       foreach(var coll in onCollDetection)
@@ -1018,11 +1018,11 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 添加指定层的接触工具事件处理
+    /// Add a touch-tool handler for a layer.
     /// </summary>
-    /// <param name="col_id">添加指定层的接触工具事件处理</param>
-    /// <param name="time_delay_start">接触前延时（秒）</param>
-    /// <param name="time_delay_end">接触后延时（秒）</param>
+    /// <param name="col_id">Layer receiving the touch-tool handler.</param>
+    /// <param name="time_delay_start">Delay before the touch-start event, in seconds.</param>
+    /// <param name="time_delay_end">Delay before the touch-end event, in seconds.</param>
     public void AddContractDetection(int col_id, float time_delay_start, float time_delay_end) {
       if(onContractDetection.ContainsKey(col_id))
         return;
@@ -1030,9 +1030,9 @@ namespace BallancePhysics.Wapper
       onContractDetection.Add(col_id, ptr);
     }
     /// <summary>
-    /// 移除指定层的接触工具事件处理
+    /// Remove a touch-tool handler for a layer.
     /// </summary>
-    /// <param name="col_id">自定义碰撞层ID</param>
+    /// <param name="col_id">Custom collision layer ID.</param>
     public void DeleteContractDetection(int col_id) {
       if(onContractDetection.ContainsKey(col_id)) {
         PhysicsApi.API.destroy_physics_contract_detection(onContractDetection[col_id]);
@@ -1040,7 +1040,7 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 移除全部接触工具事件处理
+    /// Remove all touch-tool handlers.
     /// </summary>
     public void DeleteAllContractDetection() {
       foreach(var coll in onContractDetection)
@@ -1050,7 +1050,7 @@ namespace BallancePhysics.Wapper
 
     #endregion
 
-    #region 约束和力和弹簧
+    #region Constraints, forces, and springs
 
     public bool ComponentsCreated { get; private set; }
 
@@ -1096,31 +1096,31 @@ namespace BallancePhysics.Wapper
   }
 
   /// <summary>
-  /// 恒力数据
+  /// Constant force data.
   /// </summary>
   public class PhysicsConstantForceData {
     /// <summary>
-    /// 恒力的位置
+    /// Constant force position.
     /// </summary>
     public Vector3 Pos;
     /// <summary>
-    /// 恒力的ID
+    /// Constant force ID.
     /// </summary>
     public int ID;
     /// <summary>
-    /// 恒力的力大小
+    /// Constant force magnitude.
     /// </summary>
     public float Force;
     /// <summary>
-    /// 恒力的方向
+    /// Constant force direction.
     /// </summary>
     public Vector3 Direction;
     /// <summary>
-    /// 恒力的方向参考对象
+    /// Direction reference object for the constant force.
     /// </summary>
     public Transform DirectionRef;
     /// <summary>
-    /// 恒力的位置参考对象
+    /// Position reference object for the constant force.
     /// </summary>
     public Transform PositionRef;
 
@@ -1132,7 +1132,7 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 删除当前恒力
+    /// Remove this constant force.
     /// </summary>
     public void Delete() {
       obj.DeleteConstantForce(ID);

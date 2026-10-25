@@ -9,21 +9,21 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Balls
 {
   /// <summary>
-  /// Ballance 基础球定义。
-  /// 可继承此类来重写你自己的球。
+  /// Base Ballance ball definition.
+  /// Subclass this type to implement a custom ball.
   /// </summary>
   public class Ball : MonoBehaviour
   {
     /// <summary>
-    /// 球对应刚体
+    /// Ball rigid body.
     /// </summary>
     public PhysicsObject _Rigidbody = null;
     /// <summary>
-    /// 球碎片
+    /// Ball fragments.
     /// </summary>
     public GameObject _Pieces = null;
     /// <summary>
-    /// 球碎片配置数据
+    /// Fragment configuration.
     /// </summary>
     public BallPiecesData _PiecesData;
     
@@ -31,27 +31,27 @@ namespace Ballance2.Game.GamePlay.Balls
     public float _DownForce = 0; 
     public float _Force = 0; 
 
-    #region 球声音配置
+    #region Ball sound configuration
 
     [JsonObject]
     public class BallSoundConfig {
       /// <summary>
-      /// 球的碰撞声音配置
+      /// Ball collision sound configuration.
       /// </summary>
       [JsonProperty]
       public BallHitSoundConfigHit HitSound = new BallHitSoundConfigHit(); 
       /// <summary>
-      /// 球的滚动声音配置
+      /// Ball rolling sound configuration.
       /// </summary>
       [JsonProperty]
       public BallHitSoundConfigRoll RollSound = new BallHitSoundConfigRoll();
       /// <summary>
-      /// 指定当前球是否存在滚动声音
+      /// Whether the ball has rolling sounds.
       /// </summary>
       [JsonProperty]
       public bool HasRollSound = true;
       /// <summary>
-      /// 设置滚动声音的速度曲线计算参考值。此值一般填写球可以到达的最大速度。
+      /// Reference speed for the rolling sound curve, normally the ball's maximum speed.
       /// </summary>
       [JsonProperty]
       public float RollSoundSpeedReference = 0;
@@ -61,48 +61,48 @@ namespace Ballance2.Game.GamePlay.Balls
     }
 
     /// <summary>
-    /// 球的碰撞声音配置
+    /// Ball collision sound configuration.
     /// </summary>
     public BallSoundConfig _SoundConfig = new BallSoundConfig();
 
     #endregion
 
-    #region 碎片配置
+    #region Fragment configuration
 
     /// <summary>
-    /// 球碎片声音
+    /// Fragment sounds.
     /// </summary>
     public string _PiecesSoundName = "";
     /// <summary>
-    /// 碎片抛出最小推力
+    /// Minimum fragment scattering force.
     /// </summary>
     public float _PiecesMinForce = 0;
     /// <summary>
-    /// 碎片抛出最大推力
+    /// Maximum fragment scattering force.
     /// </summary>
     public float _PiecesMaxForce = 5; 
     /// <summary>
-    /// 碎片存活时间（秒）
+    /// Fragment lifetime in seconds.
     /// </summary>
     public float _PiecesTimeLive = 30; 
     /// <summary>
-    /// 碎片碰撞最高速度，用于计算碰撞声音音量
+    /// Maximum collision speed used to calculate fragment sound volume.
     /// </summary>
     public float _PiecesColSoundMaxSpeed = 10; 
     /// <summary>
-    /// 碎片碰撞最低速度，用于计算碰撞声音音量
+    /// Minimum collision speed used to calculate fragment sound volume.
     /// </summary>
     public float _PiecesColSoundMinSpeed = 1; 
     /// <summary>
-    /// 碎片物理数据
+    /// Fragment physics data.
     /// </summary>
     public GamePhysBallPiecesPhysicsData _PiecesPhysicsData = default(GamePhysBallPiecesPhysicsData); 
     /// <summary>
-    /// 物理化碎片自定义处理回调，如果为nil，则碎片将使用默认参数来物理化
+    /// Custom fragment physics callback; null uses the default parameters.
     /// </summary>
     protected PiecesPhysCallback _PiecesPhysCallback = null;  
     /// <summary>
-    /// 配置存在声音的碎片
+    /// Fragments with sound enabled.
     /// </summary>
     public List<string> _PiecesHaveColSound = new List<string>();
 
@@ -110,9 +110,9 @@ namespace Ballance2.Game.GamePlay.Balls
 
     #endregion
 
-    #region 球功能初始化
+    #region Ball initialization
 
-    //初始化碎片
+    // Initialize fragments.
     private void _InitPeices() {
       if (_Pieces != null) {
         AudioClip piecesSound = null;
@@ -159,7 +159,7 @@ namespace Ballance2.Game.GamePlay.Balls
             }
             body.DoNotAutoCreateAtAwake = true;
 
-            //碎片声音
+            // Fragment sounds.
             if (piecesSound != null && _PiecesHaveColSound.IndexOf(body.name) != -1) {
               var sound = GameSoundManager.Instance.RegisterSoundPlayer(GameSoundType.BallEffect, piecesSound, false, true, "PiecesSound" + child.name);
               sound.spatialBlend = 1;
@@ -185,40 +185,40 @@ namespace Ballance2.Game.GamePlay.Balls
   
     #endregion
 
-    #region 公共可继承方法
+    #region Public overridable methods
 
     /// <summary>
-    /// 开始事件
+    /// Start event.
     /// </summary>
     protected virtual void Start() {
       _Rigidbody = gameObject.GetComponent<PhysicsObject>();
       _InitPeices();
     }
     /// <summary>
-    /// 当前球激活事件
+    /// Ball activated.
     /// </summary>
     public virtual void Active() {}
     /// <summary>
-    /// 当前球取消激活事件
+    /// Ball deactivated.
     /// </summary>
     public virtual void Deactive() {}
     /// <summary>
-    /// 当前球获取碎片
+    /// Get this ball's fragments.
     /// </summary>
     public virtual GameObject GetPieces() { return _Pieces; }
     /// <summary>
-    /// 自定义获取碎片控制器
+    /// Provide a custom fragment controller.
     /// </summary>
     public virtual IBallPiecesControllManager GetBallPiecesControllManager() { return GamePlayManager.Instance.BallManager.BallPiecesControllManager; }
     /// <summary>
-    /// 丢出此类球的碎片事件
+    /// Scatter fragments of this ball type.
     /// </summary>
     public virtual void ThrowPieces(Vector3 pos) {
       if (_PiecesData != null)
         GetBallPiecesControllManager().ThrowPieces(_PiecesData, pos, _PiecesMinForce, _PiecesMaxForce, _PiecesTimeLive);
     }
     /// <summary>
-    /// 回收此类的碎片事件
+    /// Collect fragments of this ball type.
     /// </summary>
     public virtual void ResetPieces() {
       if (_PiecesData != null)
@@ -231,9 +231,9 @@ namespace Ballance2.Game.GamePlay.Balls
   [JsonObject]
   public class BallHitSoundConfigBase {
     /// <summary>
-    /// 声音配置
-    /// key 是当前球碰撞的层名称
-    /// value 是播放声音资源名称
+    /// Sound configuration.
+    /// The key is the collision layer name.
+    /// The value is the sound resource name.
     /// </summary>
     [JsonProperty]
     public Dictionary<string, string> Names = new Dictionary<string, string>();
@@ -241,27 +241,27 @@ namespace Ballance2.Game.GamePlay.Balls
   [JsonObject]
   public class BallHitSoundConfigRoll : BallHitSoundConfigBase {
     /// <summary>
-    /// 滚动声音起始延时
+    /// Delay before rolling sound starts.
     /// </summary>
     [JsonProperty]
     public float TimeDelayStart = 0.5f;
     /// <summary>
-    /// 滚动声音末尾延时
+    /// Delay before rolling sound stops.
     /// </summary>
     [JsonProperty]
     public float TimeDelayEnd = 0.5f;
     /// <summary>
-    /// 滚动声音变速基数
+    /// Base rolling sound pitch.
     /// </summary>
     [JsonProperty]
     public float PitchBase = 0.6f;
     /// <summary>
-    /// 滚动声音变速乘数
+    /// Rolling sound pitch multiplier.
     /// </summary>
     [JsonProperty]
     public float PitchFactor = 0.03f;
     /// <summary>
-    /// 滚动声音音量基数
+    /// Base rolling sound volume.
     /// </summary>
     [JsonProperty]
     public float VolumeBase = 0f;
@@ -269,42 +269,42 @@ namespace Ballance2.Game.GamePlay.Balls
   [JsonObject]
   public class BallHitSoundConfigHit : BallHitSoundConfigBase {
     /// <summary>
-    /// 碰撞最高速度，用于计算碰撞声音音量
+    /// Maximum collision speed used to calculate sound volume.
     /// </summary>
     [JsonProperty]
     public float MaxSpeed = 20;
     /// <summary>
-    /// 碰撞最低速度，用于计算碰撞声音音量
+    /// Minimum collision speed used to calculate sound volume.
     /// </summary>
     [JsonProperty]
     public float MinSpeed = 2;
   }
   /// <summary>
-  /// 球碎片数据结构定义
+  /// Ball fragment data structure.
   /// </summary>
   public class BallPiecesData {
     /// <summary>
-    /// 所有的碎片物理体
+    /// All fragment physics bodies.
     /// </summary>
     public List<PhysicsObject> bodys; 
     /// <summary>
-    /// 父级游戏对象
+    /// Parent GameObject.
     /// </summary>
     public GameObject parent;
     /// <summary>
-    /// 淡出延时定时器
+    /// Fade-out delay timer.
     /// </summary>
     public int fadeOutTimerID = 0;
     /// <summary>
-    /// 隐藏延时定时器
+    /// Hide delay timer.
     /// </summary>
     public int delayHideTimerID = 0;
     /// <summary>
-    /// 获取碎片是否已经抛出了
+    /// Whether the fragments have been scattered.
     /// </summary>
     public bool throwed = false; 
     /// <summary>
-    /// 淡出控制对象
+    /// Fade controller.
     /// </summary>
     public List<FadeObject> fadeObjects;
   }

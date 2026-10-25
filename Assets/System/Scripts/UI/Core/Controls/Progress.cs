@@ -5,19 +5,19 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * Progress.cs
 * 
-* 用途：
-* 一个进度条组件组件。
+* Purpose:
+* Progress bar component.
 *
-* 作者：
+* Author:
 * mengyu
 */
 namespace Ballance2.UI.Core.Controls
 {
   /// <summary>
-  /// 进度条组件
+  /// Progress bar component.
   /// </summary>
   [ExecuteInEditMode]
   [AddComponentMenu("Ballance/UI/Controls/Progress")]
@@ -39,7 +39,7 @@ namespace Ballance2.UI.Core.Controls
     }
 
     /// <summary>
-    /// 进度条数值（0-1）
+    /// Progress value from 0 to 1.
     /// </summary>
     /// <value></value>
     public float value

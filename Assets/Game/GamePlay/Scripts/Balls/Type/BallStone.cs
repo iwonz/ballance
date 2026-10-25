@@ -1,7 +1,7 @@
 namespace Ballance2.Game.GamePlay.Balls
 {
   /// <summary>
-  /// 石球定义
+  /// Stone ball definition.
   /// </summary>
   public class BallStone : Ball
   {

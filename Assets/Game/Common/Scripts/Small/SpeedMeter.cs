@@ -4,26 +4,26 @@ using UnityEngine;
 /*
  * Copyright (c) 2020  mengyu
  * 
- * 模块名：     
+ * Module:
  * SpeedMeter.cs
  * 
- * 用途：
- * 速度计组件，用于测量物体的移动速度。
+ * Purpose:
+ * Measure an object's movement speed.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Game
 {
   /// <summary>
-  /// 速度计组件，用于测量物体的移动速度。
+  /// Measure an object's movement speed.
   /// </summary>
   public class SpeedMeter : MonoBehaviour
   {
-    [Tooltip("是否要开始测速")]
+    [Tooltip("Enable speed measurement.")]
     /// <summary>
-    /// 是否要开始测速
+    /// Start measuring speed.
     /// </summary>
     /// <value></value>
     public bool Enabled {
@@ -34,40 +34,40 @@ namespace Ballance2.Game
         else StopUpdate();
       }
     }
-    [Tooltip("测速的目标，如果为空，则对当前物体测速")]
+    [Tooltip("Target to measure; empty means this object.")]
     /// <summary>
-    /// 测速的目标，如果为空，则对当前物体测速
+    /// Object to measure; null measures this object.
     /// </summary>
     /// <value></value>
     public Transform Target;
-    [Tooltip("相对速度计算的最大值")]
+    [Tooltip("Maximum speed used for normalization.")]
     /// <summary>
-    /// 相对速度计算的最大值
+    /// Maximum speed used for normalization.
     /// </summary>
     /// <value></value>
     public float MaxSpeed = 1;
-    [Tooltip("相对速度计算的最小值")]
+    [Tooltip("Minimum speed used for normalization.")]
     /// <summary>
-    /// 相对速度计算的最小值
+    /// Minimum speed used for normalization.
     /// </summary>
     /// <value></value>
     public float MinSpeed = 0;
-    [Tooltip("相对速度计算的最小值")]
+    [Tooltip("Minimum speed used for normalization.")]
     /// <summary>
-    /// 用于 Callback 延迟调用，每 FixedUpdateTick % CallbackDelayMod == 0 时调用一次 Callback
+    /// Invoke Callback when FixedUpdateTick % CallbackDelayMod == 0.
     /// </summary>
     /// <value></value>
     public int CallbackDelayMod = 26;
 
-    [Tooltip("相对速度 0-1")]
+    [Tooltip("Normalized speed, from 0 to 1.")]
     /// <summary>
-    /// 相对速度 0-1, 即 (NowAbsoluteSpeed - MinSpeed) / (MaxSpeed - MinSpeed)
+    /// Normalized speed, 0-1: (NowAbsoluteSpeed - MinSpeed) / (MaxSpeed - MinSpeed).
     /// </summary>
     /// <value></value>
     public float NowRelativeSpeed;
-    [Tooltip("绝对速度 m/s ")]
+    [Tooltip("Absolute speed in meters per second.")]
     /// <summary>
-    /// 绝对速度 m/s 
+    /// Absolute speed in m/s.
     /// /// </summary>
     /// <value></value>
     public float NowAbsoluteSpeed;
@@ -79,7 +79,7 @@ namespace Ballance2.Game
     private bool _Enabled = false;
 
     /// <summary>
-    /// 检查回调, 通过设置这个回调，可以每帧获取一次速度值
+    /// Callback receiving the measured speed on updates.
     /// </summary>
     public SpeedMeterDelegate Callback = null;
 
@@ -140,9 +140,9 @@ namespace Ballance2.Game
     }
     
     /// <summary>
-    /// 手动调用检查一次速度
+    /// Measure speed once manually.
     /// </summary>
-    /// <param name="callback">速度计算回调</param>
+    /// <param name="callback">Speed measurement callback.</param>
     public void TestOnce(SpeedMeterDelegate callback) {
       Enabled = true;
       LastPosIsNull = true;

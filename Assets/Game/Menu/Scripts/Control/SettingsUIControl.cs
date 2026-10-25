@@ -68,8 +68,8 @@ namespace Ballance2.Menu
             var GameSettings = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME);
             var GameUIManager = Ballance2.Services.GameUIManager.Instance;
 
-            //设置数据绑定
-            //声音
+            // Set up data bindings.
+            // Audio.
             var updateVoiceMain = MessageCenter.SubscribeValueBinder("VoiceMain", (val) =>
             {
                 GameSettings.SetFloat(SettingConstants.SettingsVoiceMain, (float)val);
@@ -85,7 +85,7 @@ namespace Ballance2.Menu
                 GameSettings.SetFloat(SettingConstants.SettingsVoiceBackground, (float)val);
                 GameSettings.NotifySettingsUpdate(SettingConstants.SettingsVoice);
             });
-            //视频
+            // Video.
             var updateGrResolution = MessageCenter.SubscribeValueBinder("GrResolution", (val) =>
             {
                 GameSettings.SetInt(SettingConstants.SettingsVideoResolution, Convert.ToInt32(val));
@@ -106,7 +106,7 @@ namespace Ballance2.Menu
             {
                 GameSettings.SetInt(SettingConstants.SettingsVideoVsync, (bool)val ? 1 : 0);
             });
-            //控制
+            // Controls.
             var updateControlKeyForward = MessageCenter.SubscribeValueBinder("ControlKeyForward", (val) =>
             {
                 GameSettings.SetInt(SettingConstants.SettingsControlKeyFront, (int)val);
@@ -156,7 +156,7 @@ namespace Ballance2.Menu
             Resolution[] resolutions = null;
             QualitiesItemData[] qualities = null;
 
-            //设置数据加载
+            // Load settings data.
             MessageCenter.SubscribeEvent("BtnSettingsGraphicsClick", () =>
             {
                 if (updateGrFullScreen != null) updateGrFullScreen.Invoke(GameSettings.GetBool(SettingConstants.SettingsVideoFullScreen, Screen.fullScreen));
@@ -167,7 +167,7 @@ namespace Ballance2.Menu
 
                 if (resolutions == null)
                 {
-                    //加载分辨率设置
+                    // Load resolution settings.
                     resolutions = Screen.resolutions;
                     var GrResolution = MessageCenter.GetComponentInstance("GrResolution").GetComponent<Updown>();
                     var currentResolution = Screen.currentResolution;
@@ -247,7 +247,7 @@ namespace Ballance2.Menu
                 GameUIManager.GoPage("PagePackageManager");
             });
 
-            //语言
+            // Language.
             MessageCenter.SubscribeEvent("BtnSettingsLanguageClick", () => { GameUIManager.GoPage("PageLanguage"); });
             MessageCenter.SubscribeEvent("BtnChineseSimplifiedClick", () => { ApplyLanguage(SystemLanguage.ChineseSimplified); });
             MessageCenter.SubscribeEvent("BtnChineseTraditionalClick", () => { ApplyLanguage(SystemLanguage.ChineseTraditional); });
@@ -260,7 +260,7 @@ namespace Ballance2.Menu
                 GameUIManager.BackPreviusPage();
             });
 
-            //设置保存
+            // Save settings.
             MessageCenter.SubscribeEvent("BtnSettingsGraphicsBackClick", () =>
             {
                 GameSettings.NotifySettingsUpdate(SettingConstants.SettingsVideo);
@@ -277,7 +277,7 @@ namespace Ballance2.Menu
                 GameUIManager.BackPreviusPage();
             });
 
-            //重启游戏
+            // Restart the game.
             MessageCenter.SubscribeEvent("BtnRestartGameClick", () => { GameManager.Instance.RestartGame(); });
         }
 

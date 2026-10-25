@@ -7,13 +7,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * CommonUtils.cs
 * 
-* 用途：
-* 通用帮助类
+* Purpose:
+* General helpers.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -21,7 +21,7 @@ using UnityEngine;
 namespace Ballance2.Utils
 {
   /// <summary>
-  /// 通用帮助类，提供了一些工具方法
+  /// General utility methods.
   /// </summary>
   public class CommonUtils
   {
@@ -31,7 +31,7 @@ namespace Ballance2.Utils
     private static int idPoolSq = 0;
 
     /// <summary>
-    /// 生成随机ID
+    /// Generate a random ID.
     /// </summary>
     /// <returns></returns>
     public static int GenRandomID()
@@ -39,7 +39,7 @@ namespace Ballance2.Utils
       return random.Next(128) * idPoolRm++ / random.Next(idPoolRm, idPoolRm + random.Next(16));
     }
     /// <summary>
-    /// 生成自增长ID
+    /// Generate an incrementing ID.
     /// </summary>
     /// <returns></returns>
     public static int GenAutoIncrementID()
@@ -49,7 +49,7 @@ namespace Ballance2.Utils
       return idPoolSq++;
     }
     /// <summary>
-    /// 生成不重复ID
+    /// Generate a unique ID.
     /// </summary>
     /// <returns></returns>
     public static int GenNonDuplicateID()
@@ -58,19 +58,19 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 生成 min-max 的随机数
+    /// Generate a random number between min and max.
     /// </summary>
-    /// <param name="min">最小值</param>
-    /// <param name="max">最大值</param>
+    /// <param name="min">Minimum value.</param>
+    /// <param name="max">Maximum value.</param>
     /// <returns></returns>
     public static float RandomFloat(float min, float max)
     {
       return UnityEngine.Random.Range(min, max);
     }
     /// <summary>
-    /// 生成 0-max 的随机数
+    /// Generate a random number between zero and max.
     /// </summary>
-    /// <param name="max">最大值</param>
+    /// <param name="max">Maximum value.</param>
     /// <returns></returns>
     public static float RandomFloat(float max)
     {
@@ -78,28 +78,28 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 检查数组是否为空
+    /// Check whether an array is empty.
     /// </summary>
-    /// <param name="arr">要检查的数组</param>
-    /// <returns>如果数组为null或长度为0，则返回true，否则返回false</returns>
+    /// <param name="arr">Array to check.</param>
+    /// <returns>True if the array is null or empty; otherwise false.</returns>
     public static bool IsArrayNullOrEmpty(object[] arr)
     {
       return (arr == null || arr.Length == 0);
     }
     /// <summary>
-    /// 检查 Dictionary 是否为空
+    /// Check whether a dictionary is empty.
     /// </summary>
-    /// <param name="arr">要检查的 Dictionary</param>
-    /// <returns>如果Dictionary为null或长度为0，则返回true，否则返回false</returns>
+    /// <param name="arr">Dictionary to check.</param>
+    /// <returns>True if the dictionary is null or empty; otherwise false.</returns>
     public static bool IsDictionaryNullOrEmpty(IDictionary arr)
     {
       return (arr == null || arr.Keys.Count == 0);
     }
     /// <summary>
-    /// 生成相同的字符串数组
+    /// Create an array containing repeated copies of a string.
     /// </summary>
-    /// <param name="val">字符串</param>
-    /// <param name="count">数组长度</param>
+    /// <param name="val">String value.</param>
+    /// <param name="count">Array length.</param>
     /// <returns></returns>
     public static string[] GenSameStringArray(string val, int count)
     {
@@ -109,12 +109,12 @@ namespace Ballance2.Utils
       return arr;
     }
     /// <summary>
-    /// 检查可变参数
+    /// Validate a variable argument.
     /// </summary>
-    /// <param name="param">可变参数数组</param>
-    /// <param name="index">要检查的参数索引</param>
-    /// <param name="typeName">目标类型</param>
-    /// <returns>检查类型一致则返回true，否则返回false</returns>
+    /// <param name="param">Variable argument array.</param>
+    /// <param name="index">Argument index.</param>
+    /// <param name="typeName">Expected type.</param>
+    /// <returns>True if the type matches; otherwise false.</returns>
     public static bool CheckParam(object[] param, int index, string typeName)
     {
       if (param.Length <= index)
@@ -124,7 +124,7 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 获取 Dictionary 里的string值数组（低性能！）
+    /// Get dictionary values as strings; potentially expensive.
     /// </summary>
     /// <param name="keyValuePairs">Dictionary</param>
     /// <returns></returns>
@@ -133,9 +133,9 @@ namespace Ballance2.Utils
       return GetArrayFromDictionary(keyValuePairs);
     }
     /// <summary>
-    /// 获取 Dictionary 里的值数组（低性能！）
+    /// Get dictionary values as an array; potentially expensive.
     /// </summary>
-    /// <typeparam name="T">类型</typeparam>
+    /// <typeparam name="T">Type.</typeparam>
     /// <param name="keyValuePairs">Dictionary</param>
     /// <returns></returns>
     public static T[] GetArrayFromDictionary<T>(Dictionary<string, T> keyValuePairs)
@@ -144,31 +144,31 @@ namespace Ballance2.Utils
       return ts.ToList<T>().ToArray();
     }
     /// <summary>
-    /// 更改颜色Alpha值，其他不变
+    /// Change only a color's alpha.
     /// </summary>
-    /// <param name="o">原颜色</param>
-    /// <param name="a">Alpha值</param>
-    /// <returns>新生成的颜色对象</returns>
+    /// <param name="o">Original color.</param>
+    /// <param name="a">Alpha value.</param>
+    /// <returns>New color.</returns>
     public static Color ChangeColorAlpha(Color o, float a)
     {
       return new Color(o.r, o.g, o.b, a);
     }
 
     /// <summary>
-    /// 计算两个物体的距离
+    /// Calculate the distance between two objects.
     /// </summary>
-    /// <param name="o1">物体1</param>
-    /// <param name="o2">物体2</param>
+    /// <param name="o1">Object 1.</param>
+    /// <param name="o2">Object 2.</param>
     /// <returns></returns>
     public static float DistanceBetweenTwoObjects(GameObject o1, GameObject o2)
     {
       return (o1.transform.position - o2.transform.position).sqrMagnitude;
     }
     /// <summary>
-    /// 计算两个坐标的距离
+    /// Calculate the distance between two positions.
     /// </summary>
-    /// <param name="o1">坐标1</param>
-    /// <param name="o2">坐标2</param>
+    /// <param name="o1">Position 1.</param>
+    /// <param name="o2">Position 2.</param>
     /// <returns></returns>
     public static float DistanceBetweenTwoPos(Vector3 o1, Vector3 o2)
     {
@@ -176,9 +176,9 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 对象判空
+    /// Check for a null object.
     /// </summary>
-    /// <param name="o">对象</param>
+    /// <param name="o">Object.</param>
     /// <returns></returns>
     public static bool IsObjectNull(UnityEngine.Object o)
     {
@@ -186,18 +186,18 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 判断 Vector3 是有效
+    /// Check whether a Vector3 is valid.
     /// </summary>
-    /// <param name="v">对象</param>
+    /// <param name="v">Vector.</param>
     /// <returns></returns>
     public static bool IsValid(Vector3 v)
     {
       return !float.IsNaN(v.x) && !float.IsNaN(v.y) && !float.IsNaN(v.z);
     }
     /// <summary>
-    /// 判断 Vector2 是否有效
+    /// Check whether a Vector2 is valid.
     /// </summary>
-    /// <param name="v">对象</param>
+    /// <param name="v">Vector.</param>
     /// <returns></returns>
     public static bool IsValid(Vector2 v)
     {
@@ -205,7 +205,7 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 判断网络是否可用
+    /// Check network availability.
     /// </summary>
     public static bool NetAvailable {
       get {
@@ -214,7 +214,7 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 判断网络是否是无线
+    /// Check whether the network is wireless.
     /// </summary>
     public static bool IsWifi {
       get {

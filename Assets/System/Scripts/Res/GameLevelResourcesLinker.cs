@@ -5,20 +5,20 @@ using SubjectNerd.Utilities;
 /*
 * Copyright(c) 2022 mengyu
 *
-* 模块名：     
+* Module:
 * GameLevelResourcesLinker.cs
 * 
-* 用途：
-* 此脚本用于自定义关卡加入自定义资源使用。
+* Purpose:
+* Allow custom levels to supply custom resources.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
 
 namespace Ballance2 {
   /// <summary>
-  /// 关卡资源索引器
+  /// Level resource linker.
   /// </summary>
   public class GameLevelResourcesLinker : MonoBehaviour {
 
@@ -32,9 +32,9 @@ namespace Ballance2 {
     }
 
     /// <summary>
-    /// 查找指定名称的关卡资源索引器
+    /// Find a named level resource linker.
     /// </summary>
-    /// <param name="name">名称</param>
+    /// <param name="name">Name.</param>
     /// <returns></returns>
     public GameLevelResourcesLinker GetLevelResourcesLinker(string name) {
       if(allRes.TryGetValue(name, out var res))
@@ -43,16 +43,16 @@ namespace Ballance2 {
     }
 
     /// <summary>
-    /// 当前关卡资源索引器的名称
+    /// Level resource linker name.
     /// </summary>
     public string Name = "";
     /// <summary>
-    /// 声音资源
+    /// Audio resources.
     /// </summary>
     [Reorderable("AudioAssets", false)]
     public List<AudioClip> AudioAssets = null;
     /// <summary>
-    /// 贴图资源
+    /// Texture resources.
     /// </summary>
     [Reorderable("TextureAssets", false)]
     public List<Texture> TextureAssets = null;

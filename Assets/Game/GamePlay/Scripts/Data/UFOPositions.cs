@@ -27,12 +27,12 @@ namespace Ballance2.Game.GamePlay
   }
   
   /// <summary>
-  /// UFO 动画的位置参数
+  /// UFO animation positions.
   /// </summary>
   public static class UFOPositions
   {
     /// <summary>
-    /// 获取 UFO 动画的位置参数
+    /// Get UFO animation positions.
     /// </summary>
     /// <returns></returns>
     public static List<UFOPositionItem> Data;

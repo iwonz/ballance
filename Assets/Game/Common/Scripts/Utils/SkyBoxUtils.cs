@@ -6,20 +6,20 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * SkyBoxUtils.cs
 * 
-* 用途：
-* 天空盒生成工具类
+* Purpose:
+* Skybox generation helpers.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Game.Utils
 {
   /// <summary>
-  /// 天空盒生成器
+  /// Skybox generator.
   /// </summary>
   public static class SkyBoxUtils
   {
@@ -29,10 +29,10 @@ namespace Ballance2.Game.Utils
     private static GamePackageManager GamePackageManager = null;
 
     /// <summary>
-    /// 创建预制的天空盒
+    /// Create a predefined skybox.
     /// </summary>
-    /// <param name="s">天空盒名字，（必须是 A~K ，对应原版游戏11个天空）</param>
-    /// <returns>返回创建好的天空盒材质</returns>
+    /// <param name="s">Skybox name A-K, matching the original game's eleven skies.</param>
+    /// <returns>The generated skybox material.</returns>
     public static Material MakeSkyBox(string s)
     {
       if (GamePackageManager == null) GamePackageManager = GameManager.GetSystemService<GamePackageManager>();
@@ -52,14 +52,14 @@ namespace Ballance2.Game.Utils
       return MakeCustomSkyBox(SkyLeft, SkyRight, SkyFront, SkyBack, SkyDown, null);
     }
     /// <summary>
-    /// 创建自定义天空盒
+    /// Create a custom skybox.
     /// </summary>
-    /// <param name="SkyLeft">左边的图像</param>
-    /// <param name="SkyRight">右边的图像</param>
-    /// <param name="SkyFront">前边的图像</param>
-    /// <param name="SkyBack">后边的图像</param>
-    /// <param name="SkyDown">下边的图像</param>
-    /// <param name="SkyTop">上边的图像</param>
+    /// <param name="SkyLeft">Left image.</param>
+    /// <param name="SkyRight">Right image.</param>
+    /// <param name="SkyFront">Front image.</param>
+    /// <param name="SkyBack">Back image.</param>
+    /// <param name="SkyDown">Bottom image.</param>
+    /// <param name="SkyTop">Top image.</param>
     public static Material MakeCustomSkyBox(Texture SkyLeft, Texture SkyRight, Texture SkyFront, Texture SkyBack, Texture SkyDown, Texture SkyTop)
     {
       Material m = new Material(Shader.Find("Skybox/6 Sided"));

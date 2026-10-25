@@ -4,32 +4,32 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameUIControlValueBinder.cs
 * 
-* 用途：
-* UI控件数据绑定器。该绑定器用在需要绑定的UI控件上。
+* Purpose:
+* UI control data binder.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Core
 {
   /// <summary>
-  /// UI控件数据绑定器。该绑定器用在需要绑定的UI控件上。
+  /// UI control data binder.
   /// </summary>
   [AddComponentMenu("Ballance/UI/ValueBinder/Custom")]
   [RequireComponent(typeof(RectTransform))]
   public class GameUIControlValueBinder : MonoBehaviour
   {
     /// <summary>
-    /// 指定对应UI消息中心名字
+    /// Target UI message center name.
     /// </summary>
     public string MessageCenterName = null;
 
     /// <summary>
-    /// 指定绑定器的名称，可在UI消息中心使用该名称查找
+    /// Binder name used for lookup in the UI message center.
     /// </summary>
     public string Name = "";
 
@@ -66,9 +66,9 @@ namespace Ballance2.UI.Core
     protected virtual void BinderBegin() { }
 
     /// <summary>
-    /// 通知UI更新事件
+    /// Notify a UI value update.
     /// </summary>
-    /// <param name="newval">新的数值</param>
+    /// <param name="newval">New value.</param>
     public void NotifyUserUpdate(object newval)
     {
       UserUpdateCallbacks.ForEach((a) => a.Invoke(newval));

@@ -6,7 +6,7 @@ public class EditorStyleViewer : EditorWindow
     private Vector2 scrollPosition = Vector2.zero;
     private string search = string.Empty;
 
-    [MenuItem("Tools/GUI/GUI样式查看器")]
+    [MenuItem("Tools/GUI/GUI Style Viewer")]
     public static void Init()
     {
         EditorWindow.GetWindow(typeof(EditorStyleViewer));
@@ -15,9 +15,9 @@ public class EditorStyleViewer : EditorWindow
     void OnGUI()
     {
         GUILayout.BeginHorizontal("HelpBox");
-        GUILayout.Label("单击示例将复制其名到剪贴板", "label");
+        GUILayout.Label("Click an example to copy its name to the clipboard.", "label");
         GUILayout.FlexibleSpace();
-        GUILayout.Label("查找:");
+        GUILayout.Label("Search:");
         search = EditorGUILayout.TextField(search);
         GUILayout.EndHorizontal();
 

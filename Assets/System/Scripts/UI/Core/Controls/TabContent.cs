@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Ballance2.UI.Core.Controls
 {
   /// <summary>
-  /// 一个Tab组件
+  /// Tab control.
   /// </summary>
   [Serializable]
   public class TabContent : UIBehaviour

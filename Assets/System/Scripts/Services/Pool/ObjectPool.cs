@@ -4,9 +4,9 @@ using UnityEngine.Events;
 namespace Ballance2.Services.Pool
 {
   /// <summary>
-  /// 对象池泛型版
+  /// Generic object pool.
   /// </summary>
-  /// <typeparam name="T">泛型类</typeparam>
+  /// <typeparam name="T">Element type.</typeparam>
   public class ObjectPool<T> where T : class
   {
     private readonly Stack<T> m_Stack = new Stack<T>();
@@ -18,10 +18,10 @@ namespace Ballance2.Services.Pool
     public int countInactive { get { return m_Stack.Count; } }
 
     /// <summary>
-    /// 使用指定回调创建池
+    /// Create a pool with callbacks.
     /// </summary>
-    /// <param name="actionOnGet">创建回调</param>
-    /// <param name="actionOnRelease">释放回调</param>
+    /// <param name="actionOnGet">Acquisition callback.</param>
+    /// <param name="actionOnRelease">Callback when releasing an object.</param>
     public ObjectPool(UnityAction<T> actionOnGet, UnityAction<T> actionOnRelease)
     {
       m_ActionOnGet = actionOnGet;
@@ -29,9 +29,9 @@ namespace Ballance2.Services.Pool
     }
 
     /// <summary>
-    /// 获取一个可用对象
+    /// Get an available object.
     /// </summary>
-    /// <returns>返回对象，如果没有可用对象，则返回null</returns>
+    /// <returns>The object, or null when none is available.</returns>
     public T Get()
     {
       T element = m_Stack.Pop();
@@ -41,9 +41,9 @@ namespace Ballance2.Services.Pool
     }
 
     /// <summary>
-    /// 释放对象并回退
+    /// Release and return an object.
     /// </summary>
-    /// <param name="element">对象</param>
+    /// <param name="element">Object.</param>
     public void Release(T element)
     {
       if (m_Stack.Count > 0 && ReferenceEquals(m_Stack.Peek(), element))

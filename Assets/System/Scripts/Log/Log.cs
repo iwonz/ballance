@@ -4,26 +4,26 @@ using Ballance2.Utils;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * Log.cs
 * 
-* 用途：
-* 基础日志静态类。此类提供一些静态方可输出日志至控制台或文件，或
-* 可注册日志观察者以获取系统输出的日志，供自己输出或处理。
+* Purpose:
+* Static logging helpers write to the console or a file, and
+* allow observers to receive log entries for custom output or processing.
 * 
-* 日志观察者使用方法：
+* Log observer example:
 * Log.RegisterLogObserver((level, tag, message, stackTrace) => {
-*   //捕获Warning和Error等级的日志信息
+*   // Capture Warning and Error entries.
 * }, LogLevel.Warning | LogLevel.Error);
 *
-* 日志使用方法：
-* Log.V(tag, message, ...) 打印一些最为繁琐、意义不大的日志信息 
-* Log.D(tag, message, ...) 打印一些调试信息
-* Log.I(tag, message, ...) 打印一些比较重要的数据，可帮助你分析用户行为数据
-* Log.W(tag, message, ...) 打印一些警告信息
-* Log.E(tag, message, ...) 打印错误信息
+* Logging examples:
+* Log.V(tag, message, ...) writes verbose diagnostic details.
+* Log.D(tag, message, ...) writes debug information.
+* Log.I(tag, message, ...) writes information useful for understanding runtime activity.
+* Log.W(tag, message, ...) writes warnings.
+* Log.E(tag, message, ...) writes errors.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -31,103 +31,103 @@ using Ballance2.Utils;
 namespace Ballance2
 {
   /// <summary>
-  /// 基础日志类
+  /// Base logging class.
   /// </summary>
   public static class Log
   {
     private static string TAG = "Log";
 
     /// <summary>
-    /// 打印一些最为繁琐、意义不大的日志信息 
+    /// Write verbose diagnostic details.
     /// </summary>
-    /// <param name="tag">标签</param>
-    /// <param name="message">要打印的日志信息</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="message">Log message.</param>
     public static void V(string tag, string message)
     {
       LogInternal(LogLevel.Verbose, tag, message);
     }
     /// <summary>
-    /// 打印可格式化字符串的日志信息 
+    /// Write a formatted log message.
     /// </summary>
-    /// <param name="tag">标签</param>
-    /// <param name="format">格式化字符串，此字符串格式与 string.Format 格式相同</param>
-    /// <param name="param">格式化参数</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="format">Format string using string.Format syntax.</param>
+    /// <param name="param">Format arguments.</param>
     public static void V(string tag, string format, params object[] param)
     {
       V(tag, string.Format(format, param));
     }
     /// <summary>
-    /// 打印一些调试信息
+    /// Write debug information.
     /// </summary>
-    /// <param name="tag">标签</param>
-    /// <param name="message">要打印的日志信息</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="message">Log message.</param>
     public static void D(string tag, string message)
     {
       LogInternal(LogLevel.Debug, tag, message);
     }
     /// <summary>
-    /// 打印可格式化字符串的调试信息
+    /// Write formatted debug information.
     /// </summary>
-    /// <param name="tag">标签</param>
-    /// <param name="format">格式化字符串，此字符串格式与 string.Format 格式相同</param>
-    /// <param name="param">格式化参数</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="format">Format string using string.Format syntax.</param>
+    /// <param name="param">Format arguments.</param>
     public static void D(string tag, string format, params object[] param)
     {
       D(tag, string.Format(format, param));
     }
     /// <summary>
-    /// 打印一些信息字符串
+    /// Write an informational message.
     /// </summary>
-    /// <param name="tag">标签</param>
-    /// <param name="message">要打印的日志信息</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="message">Log message.</param>
     public static void I(string tag, string message)
     {
       LogInternal(LogLevel.Info, tag, message);
     }
     /// <summary>
-    /// 打印可格式化字符串的信息
+    /// Write a formatted informational message.
     /// </summary>
-    /// <param name="tag">标签</param>
-    /// <param name="format">格式化字符串，此字符串格式与 string.Format 格式相同</param>
-    /// <param name="param">格式化参数</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="format">Format string using string.Format syntax.</param>
+    /// <param name="param">Format arguments.</param>
     public static void I(string tag, string format, params object[] param)
     {
       I(tag, string.Format(format, param));
     }
     /// <summary>
-    /// 打印一些警告信息
+    /// Write a warning.
     /// </summary>
-    /// <param name="tag">标签</param>
-    /// <param name="message">要打印的日志信息</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="message">Log message.</param>
     public static void W(string tag, string message)
     {
       LogInternal(LogLevel.Warning, tag, message);
     }
     /// <summary>
-    /// 打印可格式化字符串的警告信息
+    /// Write a formatted warning.
     /// </summary>
-    /// <param name="tag">标签</param>
-    /// <param name="format">格式化字符串，此字符串格式与 string.Format 格式相同</param>
-    /// <param name="param">格式化参数</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="format">Format string using string.Format syntax.</param>
+    /// <param name="param">Format arguments.</param>
     public static void W(string tag, string format, params object[] param)
     {
       W(tag, string.Format(format, param));
     }
     /// <summary>
-    /// 打印错误信息
+    /// Write an error.
     /// </summary>
-    /// <param name="tag">标签</param>
-    /// <param name="message">要打印的日志信息</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="message">Log message.</param>
     public static void E(string tag, string message)
     {
       LogInternal(LogLevel.Error, tag, message);
     }
     /// <summary>
-    /// 打印可格式化字符串的错误信息
+    /// Write a formatted error.
     /// </summary>
-    /// <param name="tag">标签</param>
-    /// <param name="format">格式化字符串，此字符串格式与 string.Format 格式相同</param>
-    /// <param name="param">格式化参数</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="format">Format string using string.Format syntax.</param>
+    /// <param name="param">Format arguments.</param>
     public static void E(string tag, string format, params object[] param)
     {
       E(tag, string.Format(format, param));
@@ -139,12 +139,12 @@ namespace Ballance2
     }
 
     /// <summary>
-    /// 手动写入日志
+    /// Write a log entry manually.
     /// </summary>
-    /// <param name="level">日志等级</param>
-    /// <param name="tag">标签</param>
-    /// <param name="message">信息</param>
-    /// <param name="stackTrace">堆栈信息</param>
+    /// <param name="level">Log level.</param>
+    /// <param name="tag">Tag.</param>
+    /// <param name="message">Message.</param>
+    /// <param name="stackTrace">Stack trace.</param>
     public static void LogWrite(LogLevel level, string tag, string message, string stackTrace)
     {
       if (logWriteLock)
@@ -153,7 +153,7 @@ namespace Ballance2
         return;
       }
 
-      //如果在 Editor 中就把日志输出到控制台显示
+      // Also send logs to the Unity console in the editor.
       //#if UNITY_EDITOR
       logWriteLock = true;
 
@@ -191,7 +191,7 @@ namespace Ballance2
     }
 
     /// <summary>
-    /// 重新发送暂存区中的日志条目
+    /// Replay buffered log entries.
     /// </summary>
     public static void SendLogsInTemporary()
     {
@@ -209,14 +209,14 @@ namespace Ballance2
     }
 
     /// <summary>
-    /// 注册日志观察者
+    /// Register a log observer.
     /// </summary>
-    /// <param name="observer">观察者回调</param>
-    /// <param name="acceptLevel">指定观察者要捕获的日志等级</param>
-    /// <returns>返回大于0的数字表示观察者ID，返回-1表示错误</returns>
+    /// <param name="observer">Observer callback.</param>
+    /// <param name="acceptLevel">Log levels accepted by the observer.</param>
+    /// <returns>Positive observer ID on success; -1 on error.</returns>
     /// <example>
     /// Log.RegisterLogObserver((level, tag, message, stackTrace) => {
-    ///   //捕获Warning和Error等级的日志信息
+    ///   // Capture Warning and Error entries.
     /// }, LogLevel.Warning | LogLevel.Error);
     /// </example>
     public static int RegisterLogObserver(LogObserver observer, LogLevel acceptLevel)
@@ -243,9 +243,9 @@ namespace Ballance2
       return logObserverInternal.Id;
     }
     /// <summary>
-    /// 取消注册日志观察者
+    /// Unregister a log observer.
     /// </summary>
-    /// <param name="id">观察者ID（由 RegisterLogObserver 返回）</param>
+    /// <param name="id">Observer ID returned by RegisterLogObserver.</param>
     public static void UnRegisterLogObserver(int id)
     {
       LogObserverInternal logObserverInternal = observers.Find((o) => o.Id == id);
@@ -254,10 +254,10 @@ namespace Ballance2
       observers.Remove(logObserverInternal);
     }
     /// <summary>
-    /// 获取日志观察者
+    /// Get a log observer.
     /// </summary>
-    /// <param name="id">观察者ID（由 RegisterLogObserver 返回）</param>
-    /// <returns>如果找到则返回观察者，如果找不到则返回null</returns>
+    /// <param name="id">Observer ID returned by RegisterLogObserver.</param>
+    /// <returns>The observer, or null if not found.</returns>
     public static LogObserver GetLogObserver(int id)
     {
       LogObserverInternal logObserverInternal = observers.Find((o) => o.Id == id);
@@ -267,9 +267,9 @@ namespace Ballance2
     }
 
     /// <summary>
-    /// 日志等级转为对应字符串
+    /// Convert a log level to its display string.
     /// </summary>
-    /// <param name="logLevel">日志等级</param>
+    /// <param name="logLevel">Log level.</param>
     /// <returns></returns>
     public static string LogLevelToString(LogLevel logLevel)
     {
@@ -295,10 +295,10 @@ namespace Ballance2
     }
 
     /// <summary>
-    /// 获取指定等级的文字颜色
+    /// Get the text color for a log level.
     /// </summary>
-    /// <param name="level">日志等级</param>
-    /// <returns>返回十六进制颜色字符串，例如 ffffff</returns>
+    /// <param name="level">Log level.</param>
+    /// <returns>Hex color string, such as ffffff.</returns>
     public static string GetLogColor(LogLevel level)
     {
       switch (level)
@@ -317,7 +317,7 @@ namespace Ballance2
     private static bool logWriteLock = false;
 
     /// <summary>
-    /// 内部观察者保存类
+    /// Internal observer storage.
     /// </summary>
     private class LogObserverInternal
     {
@@ -332,42 +332,42 @@ namespace Ballance2
   }
 
   /// <summary>
-  /// 日志等级
+  /// Log level.
   /// </summary>
   public enum LogLevel
   {
     /// <summary>
-    /// 无
+    /// None.
     /// </summary>
     None = 0,
     /// <summary>
-    /// 无关紧要的调试信息
+    /// Verbose debug details.
     /// </summary>
     Verbose = 0x1,
     /// <summary>
-    /// 调试信息
+    /// Debug information.
     /// </summary>
     Debug = 0x2,
     /// <summary>
-    /// 信息
+    /// Information.
     /// </summary>
     Info = 0x4,
     /// <summary>
-    /// 警告
+    /// Warning.
     /// </summary>
     Warning = 0x8,
     /// <summary>
-    /// 错误
+    /// Error.
     /// </summary>
     Error = 0x10,
     /// <summary>
-    /// 表示全部日志等级
+    /// All log levels.
     /// </summary>
     All = Verbose | Debug | Info | Warning | Error,
   }
 
   /// <summary>
-  /// 日志观察者接口
+  /// Log observer interface.
   /// </summary>
   public delegate void LogObserver(LogLevel level, string tag, string message, string stackTrace);
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Ballance2.Menu
 {
   /// <summary>
-  /// 手机键盘管理器。管理不同种类的键盘，你可以注册自己的键盘
+  /// Manage mobile keyboard types and custom keyboard registration.
   /// </summary>
   public class KeypadUIManager
   {
@@ -25,12 +25,12 @@ namespace Ballance2.Menu
     private static Dictionary<string, KeypadUIInfo> keypadData = new Dictionary<string, KeypadUIInfo>();
 
     /// <summary>
-    /// 注册键盘
+    /// Register a keyboard.
     /// </summary>
-    /// <param name="name">名称</param>
-    /// <param name="prefab">键盘对象预制体</param>
-    /// <param name="image">这个键盘的菜单图片，用于菜单显示</param>
-    /// <returns>返回true注册成功，返回false失败，可能是已经注册过同名键盘</returns>
+    /// <param name="name">Name.</param>
+    /// <param name="prefab">Keyboard prefab.</param>
+    /// <param name="image">Keyboard preview image shown in the menu.</param>
+    /// <returns>True on success; false on failure, such as a duplicate keyboard name.</returns>
     public static bool AddKeypad(string name, GameObject prefab, Sprite image, string explain)
     {
       if (keypadData.ContainsKey(name)) {
@@ -47,18 +47,18 @@ namespace Ballance2.Menu
       return true;
     }
     /// <summary>
-    /// 获取键盘是否已注册
+    /// Whether a keyboard is registered.
     /// </summary>
-    /// <param name="name">名称</param>
+    /// <param name="name">Name.</param>
     /// <returns></returns>
     public static bool GetKeypadRegistered(string name)
     {
       return keypadData.ContainsKey(name);
     } 
     /// <summary>
-    /// 获取已注册键盘，如果没有找到则返回nil
+    /// Get a registered keyboard, or null if absent.
     /// </summary>
-    /// <param name="name">名称</param>
+    /// <param name="name">Name.</param>
     /// <returns></returns>
     public static KeypadUIInfo GetKeypad(string name)
     {
@@ -67,17 +67,17 @@ namespace Ballance2.Menu
       return default(KeypadUIInfo);
     } 
     /// <summary>
-    /// 获取所有已注册键盘
+    /// Get all registered keyboards.
     /// </summary>
     public static Dictionary<string, KeypadUIInfo> GetAllKeypad()
     {
       return keypadData;
     } 
     /// <summary>
-    /// 取消键盘
+    /// Unregister a keyboard.
     /// </summary>
-    /// <param name="name">名称</param>
-    /// <returns>返回true注册成功，返回false失败</returns>
+    /// <param name="name">Name.</param>
+    /// <returns>True on success; false on failure.</returns>
     public static bool DeletetKeypad(string name)  
     {
       if (!keypadData.ContainsKey(name)) {

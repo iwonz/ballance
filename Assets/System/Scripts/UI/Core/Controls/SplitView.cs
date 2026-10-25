@@ -5,13 +5,13 @@ using UnityEngine.EventSystems;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * Toggle.cs
 * 
-* 用途：
-* 一个分割两个视图的控件，用户可以手动拖动调整两个视图的大小
+* Purpose:
+* Split two views with a user-draggable size divider.
 * 
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -19,7 +19,7 @@ using UnityEngine.EventSystems;
 namespace Ballance2.UI.Core.Controls
 {
   /// <summary>
-  /// 分割两个视图控件，用户可以手动拖动调整两个视图的大小
+  /// Split two views with a user-draggable size divider.
   /// </summary>
   [ExecuteInEditMode]
   [AddComponentMenu("Ballance/UI/Controls/SplitView")]
@@ -94,7 +94,7 @@ namespace Ballance2.UI.Core.Controls
     }
 
     /// <summary>
-    /// 最小的分割比例（相当于左边或是上部最小大小）
+    /// Minimum split ratio, limiting the left or top view.
     /// </summary>
     public float min
     {
@@ -106,7 +106,7 @@ namespace Ballance2.UI.Core.Controls
       }
     }
     /// <summary>
-    /// 最大的分割比例（相当于右边或是下部最小大小）
+    /// Maximum split ratio, limiting the right or bottom view.
     /// </summary>
     public float max
     {
@@ -118,7 +118,7 @@ namespace Ballance2.UI.Core.Controls
       }
     }
     /// <summary>
-    /// 分割方向
+    /// Split direction.
     /// </summary>
     public SplitViewDirection direction
     {
@@ -133,7 +133,7 @@ namespace Ballance2.UI.Core.Controls
       }
     }
     /// <summary>
-    /// 分割比例(0-1,相当于两个视图的大小比例)
+    /// Split ratio from 0 to 1.
     /// </summary>
     public float value
     {
@@ -146,16 +146,16 @@ namespace Ballance2.UI.Core.Controls
     }
   }
   /// <summary>
-  /// 分割视图控件的分割方向
+  /// Split view direction.
   /// </summary>
   public enum SplitViewDirection
   {
     /// <summary>
-    /// 左右
+    /// Left and right.
     /// </summary>
     LeftRight,
     /// <summary>
-    /// 上下
+    /// Top and bottom.
     /// </summary>
     TopBottom
   }

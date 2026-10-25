@@ -7,30 +7,30 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * CloneUtils.cs
 * 
-* 用途：
-* 克隆游戏对象快速工具类。
-* 提供了一些工具方法，可方便的克隆出空物体，或是使用已有Prefab克隆出新物体。
+* Purpose:
+* GameObject cloning helpers.
+* Create empty objects or instantiate existing prefabs.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Utils
 {
   /// <summary>
-  /// 克隆工具类
+  /// Cloning helpers.
   /// </summary>
   public static class CloneUtils
   {
     /// <summary>
-    /// 使用 Prefab 克隆一个新的对象
+    /// Instantiate a prefab.
     /// </summary>
     /// <param name="prefab">Prefab</param>
-    /// <param name="name">新的对象的名字</param>
-    /// <returns>返回生成的新对象</returns>
+    /// <param name="name">New object name.</param>
+    /// <returns>Created object.</returns>
     public static GameObject CloneNewObject(GameObject prefab, string name)
     {
       if (prefab == null)
@@ -43,12 +43,12 @@ namespace Ballance2.Utils
       return go;
     }
     /// <summary>
-    /// 使用 Prefab 克隆一个新的对象，并添加至指定变换的子级
+    /// Instantiate a prefab under a parent transform.
     /// </summary>
     /// <param name="prefab">Prefab</param>
-    /// <param name="parent">父级对象</param>
-    /// <param name="name">新的对象的名字</param>
-    /// <returns>返回生成的新对象</returns>
+    /// <param name="parent">Parent object.</param>
+    /// <param name="name">New object name.</param>
+    /// <returns>Created object.</returns>
     public static GameObject CloneNewObjectWithParent(GameObject prefab, Transform parent, string name)
     {
       if (prefab == null)
@@ -61,11 +61,11 @@ namespace Ballance2.Utils
       return go;
     }
     /// <summary>
-    /// 使用 Prefab 克隆一个新的对象，并添加至指定变换的子级
+    /// Instantiate a prefab under a parent transform.
     /// </summary>
     /// <param name="prefab">Prefab</param>
-    /// <param name="parent">父级对象</param>
-    /// <returns>返回生成的新对象</returns>
+    /// <param name="parent">Parent object.</param>
+    /// <returns>Created object.</returns>
     public static GameObject CloneNewObjectWithParent(GameObject prefab, Transform parent)
     {
       if (prefab == null)
@@ -76,13 +76,13 @@ namespace Ballance2.Utils
       return Object.Instantiate(prefab, parent);
     }
     /// <summary>
-    /// 使用 Prefab 克隆一个新的对象，并添加至指定变换的子级
+    /// Instantiate a prefab under a parent transform.
     /// </summary>
     /// <param name="prefab">Prefab</param>
-    /// <param name="parent">父级对象</param>
-    /// <param name="name">新的对象的名字</param>
-    /// <param name="active">是否激活该对象</param>
-    /// <returns>返回生成的新对象</returns>
+    /// <param name="parent">Parent object.</param>
+    /// <param name="name">New object name.</param>
+    /// <param name="active">Activate the object.</param>
+    /// <returns>Created object.</returns>
     public static GameObject CloneNewObjectWithParent(GameObject prefab, Transform parent, string name, bool active)
     {
       if (prefab == null)
@@ -97,10 +97,10 @@ namespace Ballance2.Utils
     }
 
     /// <summary>
-    /// 克隆一个新的空对象
+    /// Create an empty object.
     /// </summary>
-    /// <param name="name">新的对象的名字</param>
-    /// <returns>返回生成的新对象</returns>
+    /// <param name="name">New object name.</param>
+    /// <returns>Created object.</returns>
     public static GameObject CreateEmptyObject(string name)
     {
       GameObject go = Object.Instantiate(GameStaticResourcesPool.PrefabEmpty, GameManager.Instance != null ? GameManager.Instance.transform : GameEntry.Instance.transform);
@@ -108,11 +108,11 @@ namespace Ballance2.Utils
       return go;
     }
     /// <summary>
-    /// 克隆一个新的空对象，并添加至指定变换的子级
+    /// Create an empty object under a parent transform.
     /// </summary>
-    /// <param name="parent">指定父级对象</param>
-    /// <param name="name">新的对象的名字</param>
-    /// <returns>返回生成的新对象</returns>
+    /// <param name="parent">Parent object.</param>
+    /// <param name="name">New object name.</param>
+    /// <returns>Created object.</returns>
     public static GameObject CreateEmptyObjectWithParent(Transform parent, string name)
     {
       GameObject go = Object.Instantiate(GameStaticResourcesPool.PrefabEmpty, parent);
@@ -120,20 +120,20 @@ namespace Ballance2.Utils
       return go;
     }
     /// <summary>
-    /// 克隆一个新的空对象，并添加至指定变换的子级
+    /// Create an empty object under a parent transform.
     /// </summary>
-    /// <param name="parent">指定父级对象</param>
-    /// <returns>返回生成的新对象</returns>
+    /// <param name="parent">Parent object.</param>
+    /// <returns>Created object.</returns>
     public static GameObject CreateEmptyObjectWithParent(Transform parent)
     {
       return Object.Instantiate(GameStaticResourcesPool.PrefabEmpty, parent);
     }
 
     /// <summary>
-    /// 生成一个空的UI对象
+    /// Create an empty UI object.
     /// </summary>
-    /// <param name="name">指定新对象的名称</param>
-    /// <returns>返回生成的新对象</returns>
+    /// <param name="name">New object name.</param>
+    /// <returns>Created object.</returns>
     public static GameObject CreateEmptyUIObject(string name)
     {
       GameObject go = Object.Instantiate(GameStaticResourcesPool.PrefabUIEmpty, GameManager.Instance.GameCanvas.transform);
@@ -141,11 +141,11 @@ namespace Ballance2.Utils
       return go;
     }
     /// <summary>
-    /// 生成一个空的UI对象并添加至指定变换的子级
+    /// Create an empty UI object under a parent transform.
     /// </summary>
-    /// <param name="parent">指定父级对象</param>
-    /// <param name="name">指定新对象的名称</param>
-    /// <returns>返回生成的新对象</returns>
+    /// <param name="parent">Parent object.</param>
+    /// <param name="name">New object name.</param>
+    /// <returns>Created object.</returns>
     public static GameObject CreateEmptyUIObjectWithParent(Transform parent, string name)
     {
       GameObject go = Object.Instantiate(GameStaticResourcesPool.PrefabUIEmpty, parent);
@@ -153,10 +153,10 @@ namespace Ballance2.Utils
       return go;
     }
     /// <summary>
-    /// 生成一个空的UI对象并添加至指定变换的子级
+    /// Create an empty UI object under a parent transform.
     /// </summary>
-    /// <param name="parent">指定父级对象</param>
-    /// <returns>返回生成的新对象</returns>
+    /// <param name="parent">Parent object.</param>
+    /// <returns>Created object.</returns>
     public static GameObject CreateEmptyUIObjectWithParent(Transform parent)
     {
       return Object.Instantiate(GameStaticResourcesPool.PrefabUIEmpty, parent);

@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Moduls
 {
   /// <summary>
-  /// 起点四火焰组件
+  /// Four-flame starting point component.
   /// </summary>
   public class PS_FourFlames : ModulBase 
   {

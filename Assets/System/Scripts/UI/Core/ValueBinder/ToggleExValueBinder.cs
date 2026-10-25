@@ -4,13 +4,13 @@ using Ballance2.UI.Core.Controls;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * ToggleValueBinder.cs
 * 
-* 用途：
-* Toggle控件数据绑定器
+* Purpose:
+* Toggle data binder.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

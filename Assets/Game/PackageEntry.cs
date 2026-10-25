@@ -9,14 +9,14 @@ using Ballance2.Services.Debug;
 using Ballance2.Game.GamePlay.Debug;
 
 namespace Ballance2.Game {
-  //游戏模块主入口
+  // Core game package entry point.
   public class GameCorePackageEntry {
 
     private static string TAG = "GameCore";
 
     public static GamePackageEntry Main() {
       GamePackageEntry entry = new GamePackageEntry();
-      //初始化
+      // Initialize.
       entry.OnLoad = (package) => {
         IntroManager.Init(package);
         MenuLevelManager.Init(package);
@@ -28,7 +28,7 @@ namespace Ballance2.Game {
         var SystemPackage = GamePackage.GetSystemPackage();;
         var GameMediatorInstance = GameMediator.Instance;
 
-        //调试入口控制
+        // Debug entry control.
         if (GameManager.DebugMode) {
           GameMediatorInstance.RegisterEventHandler(SystemPackage, "CoreDebugLevelBuliderEntry", TAG, (evtName, param) => {
             LevelBuilderInit.CoreDebugLevelBuliderEntry();
@@ -48,7 +48,7 @@ namespace Ballance2.Game {
           });
         }
 
-        //加载关卡控制
+        // Level loading control.
         var nextLoadLevel = "";
         var nextLoadLevelIsPreview = false;
         GameMediatorInstance.RegisterEventHandler(SystemPackage, GameEventNames.EVENT_LOGIC_SECNSE_ENTER, TAG, (evtName, param) => {
@@ -72,7 +72,7 @@ namespace Ballance2.Game {
           return false;
         });
         
-        //加载关卡入口
+        // Level loading entry point.
         GameMediatorInstance.SubscribeSingleEvent(SystemPackage, "CoreStartLoadLevel", TAG, (evtName, param) => {
           if (param.Length < 1 || !(param[0] is string)) {
             var type = param[0] as string;
@@ -88,16 +88,16 @@ namespace Ballance2.Game {
           GameManager.Instance.RequestEnterLogicScense("Level");
           return false;
         });
-        //退出入口
+        // Quit entry point.
         GameMediatorInstance.RegisterEventHandler(SystemPackage, GameEventNames.EVENT_BEFORE_GAME_QUIT, TAG, (evtName, param) => {
-          //保存分数数据
+          // Save score data.
           HighscoreManager.Instance.Save();
           return false;
         });
 
         return true;
       };
-      //卸载
+      // Unload.
       entry.OnBeforeUnLoad = (package) => {
         IntroManager.Destroy(package);
         MenuLevelManager.Destroy(package);

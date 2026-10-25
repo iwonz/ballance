@@ -1,7 +1,7 @@
 namespace Ballance2.Game.GamePlay
 {
   /// <summary>
-  /// 游戏中的URL定义
+  /// Game URL definitions.
   /// </summary>
   public static class ConstLinks 
   {

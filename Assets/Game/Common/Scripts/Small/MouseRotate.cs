@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Ballance2.Game
 {
   /// <summary>
-  /// 鼠标旋转物体小脚本.此脚本功能是让鼠标按住并旋转物体。
+  /// Rotate an object while dragging with the mouse.
   /// </summary>
   public class MouseRotate : MonoBehaviour
   {
@@ -14,19 +14,19 @@ namespace Ballance2.Game
     private float OffsetY = 0;
 
     /// <summary>
-    /// 旋转速度
+    /// Rotation speed.
     /// </summary>
-    [Tooltip("旋转速度")]
-    public float Speed = 6f;//旋转速度
+    [Tooltip("Rotation speed.")]
+    public float Speed = 6f;// Rotation speed.
     /// <summary>
-    /// 指定是否可以旋转X轴
+    /// Allow rotation around X.
     /// </summary>
-    [Tooltip("指定是否可以旋转X轴")]
+    [Tooltip("Allow rotation around the X axis.")]
     public bool CanRotateX = true;
     /// <summary>
-    /// 指定是否可以旋转Y轴
+    /// Allow rotation around Y.
     /// </summary>
-    [Tooltip("指定是否可以旋转Y轴")]
+    [Tooltip("Allow rotation around the Y axis.")]
     public bool CanRotateY = true;
 
     void Update()

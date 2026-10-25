@@ -69,15 +69,15 @@ public class GameEntryEditor : Editor
 
         EditorGUI.BeginChangeCheck();
 
-        bDrawDebugInspector = EditorGUILayout.Foldout(bDrawDebugInspector, "全局调试配置", true);
+        bDrawDebugInspector = EditorGUILayout.Foldout(bDrawDebugInspector, "Global debug configuration.", true);
         if (bDrawDebugInspector)
             DrawDebugInspector();
 
-        bDrawGlobalConfigInspector = EditorGUILayout.Foldout(bDrawGlobalConfigInspector, "全局配置", true);
+        bDrawGlobalConfigInspector = EditorGUILayout.Foldout(bDrawGlobalConfigInspector, "Global configuration.", true);
         if (bDrawGlobalConfigInspector)
             DrawGlobalConfigInspector();
 
-        bDrawGlobalUIInspector = EditorGUILayout.Foldout(bDrawGlobalUIInspector, "全局静态UI配置", true);
+        bDrawGlobalUIInspector = EditorGUILayout.Foldout(bDrawGlobalUIInspector, "Global static UI configuration.", true);
         if (bDrawGlobalUIInspector)
             DrawGlobalUIInspector();
 

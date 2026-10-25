@@ -7,43 +7,43 @@ using UnityEngine;
 /*
 * Copyright (c) 2020  mengyu
 * 
-* 模块名： 
+* Module:
 * DebugSettings.cs
 * 
-* 用途：
-* 获取调试设置。
-* 你可以在Unity编辑器中点击 Ballance/开发设置/Debug Settings 菜单来配置自己的开发设置。
+* Purpose:
+* Access debug settings.
+* Configure development settings through Ballance -> Development Settings -> Debug Settings in Unity.
 * 
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Config.Settings
 {
   /// <summary>
-  /// 调试设置
+  /// Debug settings.
   /// </summary>
   public class DebugSettings : ScriptableObject
   {
-    [Tooltip("设置 Ballance 调试输出 组与模块的文件夹路径")]
+    [Tooltip("Debug output folder for Ballance levels and packages.")]
     public string DebugFolder = "";
-    [Tooltip("设置 Ballance 打包生成的文件夹路径")]
+    [Tooltip("Ballance build output folder.")]
     public string OutputFolder = "";
-    [Tooltip("设置 Ballance 在 Mac 打包生成的文件夹路径")]
+    [Tooltip("Ballance macOS build output folder.")]
     public string OutputAppMac = "";
-    [Tooltip("设置 Ballance 在 Linux 打包生成的文件夹路径")]
+    [Tooltip("Ballance Linux build output folder.")]
     public string OutputAppLinux = "";
-    [Tooltip("设置是否启用System调试测试")]
+    [Tooltip("Enable system debug testing.")]
     public bool EnableSystemDebugTests = true;
-    [Tooltip("设置系统初始化文件加载方式")]
+    [Tooltip("System initialization file loading mode.")]
     public LoadResWay SystemInitLoadWay = LoadResWay.InDebugFolder;
-    [Tooltip("设置模块文件加载方式")]
+    [Tooltip("Package file loading mode.")]
     public LoadResWay PackageLoadWay = LoadResWay.InDebugFolder;
 
     private static DebugSettings _instance = null;
 
     /// <summary>
-    /// 获取调试设置实例
+    /// Get the debug settings instance.
     /// </summary>
     public static DebugSettings Instance
     {
@@ -72,7 +72,7 @@ namespace Ballance2.Config.Settings
     }
 
 #if UNITY_EDITOR
-    [MenuItem("Ballance/设置/开发设置", priority = 298)]
+    [MenuItem("Ballance/Settings/Development Settings", priority = 298)]
     public static void Open()
     {
       Selection.activeObject = Instance;

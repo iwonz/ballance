@@ -28,7 +28,7 @@ namespace Ballance2.Editor.Modding
         DoSolvePackageDef(packDefFile);
 
         if (string.IsNullOrEmpty(packPackageName))
-          return "PackageDef.xml 必须填写包名 packageName";
+          return "PackageDef.xml must specify the package name (packageName).";
 
         allAssetsPath.Clear();
 
@@ -36,7 +36,7 @@ namespace Ballance2.Editor.Modding
         string dirTargetPath = Path.GetDirectoryName(targetPath);
         if (!string.IsNullOrEmpty(projModDirPath))
         {
-          //遍历文件夹的内容
+          // Enumerate directory contents.
           if (Directory.Exists(projModDirPath))
           {
             DirectoryInfo direction = new DirectoryInfo(projModDirPath);
@@ -64,27 +64,27 @@ namespace Ballance2.Editor.Modding
 
           string name = Path.GetFileNameWithoutExtension(targetPath);
 
-          //打包
+          // Package content.
           AssetBundleBuild assetBundleBuild = new AssetBundleBuild();
           assetBundleBuild.assetBundleName = packPackageName;
           assetBundleBuild.assetBundleVariant = "assetbundle";
           assetBundleBuild.assetNames = allAssetsPath.ToArray();
 
-          //打包
+          // Package content.
           var manifest = BuildPipeline.BuildAssetBundles(dirTargetPath, new AssetBundleBuild[]{
                         assetBundleBuild
                     }, BuildAssetBundleOptions.ChunkBasedCompression, packTarget);
           if (manifest == null)
             return "BuildAssetBundles failed for " + packPackageName;
 
-          EditorUtility.DisplayProgressBar("正在打包", "正在打包，请稍后...", 0.6f);
+          EditorUtility.DisplayProgressBar("Packing", "Packing, please wait...", 0.6f);
 
-          //ballance 包处理
+          // Process .ballance packages.
           DoSolveBallancePack(packTarget, dirTargetPath, dirTargetPath + "/" + name, targetPath, compiledCode, includeCode);
 
           EditorUtility.ClearProgressBar();
         }
-        else return "PackageDef.xml 不在本项目中 ";
+        else return "PackageDef.xml is outside this project.";
       }
       return "";
     }
@@ -97,7 +97,7 @@ namespace Ballance2.Editor.Modding
       projModDirPath = projPath + Path.GetDirectoryName(AssetDatabase.GetAssetPath(packDefFile));
       projLogoFile = projModDirPath + Path.DirectorySeparatorChar + "PackageLogo.png";
 
-      //模块信息处理
+      // Process package metadata.
       XmlDocument packDefXmlDoc = new XmlDocument();
       packDefXmlDoc.LoadXml(packDefFile.text);
       XmlNode nodePackage = packDefXmlDoc.SelectSingleNode("Package");
@@ -124,21 +124,21 @@ namespace Ballance2.Editor.Modding
       ZipOutputStream zipStream = ZipUtils.CreateZipFile(targetPath);
       string basePath = projModDirPath.Replace("\\", "/").Replace(projPath, "");
 
-      //添加到包里
+      // Add to the package.
       ZipUtils.AddFileToZip(zipStream, bundlePath + ".assetbundle", "assets/" + Path.GetFileName(bundlePath) + ".assetbundle", ref crc);
       ZipUtils.AddFileToZip(zipStream, bundlePath + ".assetbundle.manifest", "assets/" + Path.GetFileName(bundlePath) + ".assetbundle.manifest", ref crc);
       ZipUtils.AddFileToZip(zipStream, projModDefFile, projModDirPath.Length, ref crc);
 
-      //添加I18脚本
+      // Add language resources.
       var i18nRes = projModDirPath + Path.DirectorySeparatorChar + "PackageLanguageResPre.xml"; 
       if (File.Exists(i18nRes)) ZipUtils.AddFileToZip(zipStream, i18nRes, projModDirPath.Length, ref crc);
 
-      //添加logo图片
+      // Add the logo image.
       if (File.Exists(projLogoFile)) ZipUtils.AddFileToZip(zipStream, projLogoFile, projModDirPath.Length, ref crc);
 
       if (includeCode)
       {
-        //添加DLL
+        // Add the DLL.
         string projDllFileSrc = projModDirPath + Path.DirectorySeparatorChar + ".dll" + Path.DirectorySeparatorChar + packPackageName + ".dll";
         string projDllFile = projModDirPath + Path.DirectorySeparatorChar + "dll" + Path.DirectorySeparatorChar + packPackageName + ".dll";
         if (compiledCode != null)
@@ -150,7 +150,7 @@ namespace Ballance2.Editor.Modding
         else if (File.Exists(projDllFileSrc))
           File.Copy(projDllFileSrc, projDllFile, true);
 
-        //添加DLL
+        // Add the DLL.
         if (File.Exists(projDllFile))
           ZipUtils.AddFileToZip(zipStream, projDllFile, "csharp/" + packPackageName + ".dll", ref crc);
 

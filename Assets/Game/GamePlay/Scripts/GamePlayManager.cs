@@ -19,54 +19,54 @@ namespace Ballance2.Game.GamePlay
     {
         private const string TAG = "GamePlayManager";
 
-        #region 公共属性
+        #region Public properties
 
         /// <summary>
-        /// 当前关卡的初始生命球
+        /// Starting lives for the current level.
         /// </summary>
         public int StartLife = 3;
         /// <summary>
-        /// 当前关卡的初始时间点数
+        /// Starting time points for the current level.
         /// </summary>
         public int StartPoint = 1000;
         /// <summary>
-        /// 当前关卡的基础分数
+        /// Base score for the current level.
         /// </summary>
         public int LevelScore = 100;
         /// <summary>
-        /// 当前关卡的初始球名称
+        /// Starting ball name for the current level.
         /// </summary>
         public string StartBall = "BallWood";
         /// <summary>
-        /// 当前关卡的下一关名称，为空表示没有下一关
+        /// Next level name; empty means no next level.
         /// </summary>
         public string NextLevelName = "";
         /// <summary>
-        /// 物理环境
+        /// Physics environment.
         /// </summary>
         public PhysicsEnvironment GamePhysicsWorld { get; private set; }
         /// <summary>
-        /// 摄像机管理器
+        /// Camera manager.
         /// </summary>
         public CamManager CamManager;
         /// <summary>
-        /// 球管理器
+        /// Ball manager.
         /// </summary>
         public BallManager BallManager;
         /// <summary>
-        /// 节管理器
+        /// Sector manager.
         /// </summary>
         public SectorManager SectorManager;
         /// <summary>
-        /// 背景音乐管理器
+        /// Background music manager.
         /// </summary>
         public MusicManager MusicManager;
         /// <summary>
-        /// 球声音管理器
+        /// Ball sound manager.
         /// </summary>
         public BallSoundManager BallSoundManager;
         /// <summary>
-        /// 球声音管理器
+        /// Ball sound manager.
         /// </summary>
         public LevelBuilder.LevelBuilder LevelBuilderRef
         {
@@ -74,23 +74,23 @@ namespace Ballance2.Game.GamePlay
         }
 
         /// <summary>
-        /// 当前关卡的名称
+        /// Current level name.
         /// </summary>
         public string CurrentLevelName = "";
         /// <summary>
-        /// 当前时间点数
+        /// Current time points.
         /// </summary>
         public int CurrentPoint = 0;
         /// <summary>
-        /// 当前生命数
+        /// Current lives.
         /// </summary>
         public int CurrentLife = 0;
         /// <summary>
-        /// 当前小节
+        /// Current sector.
         /// </summary>
         public int CurrentSector = 0;
         /// <summary>
-        /// 获取是否过关
+        /// Whether the level has been completed.
         /// </summary>
         public bool CurrentLevelPass { get; private set; } = false;
         public bool CurrentDisableStart = false;
@@ -121,14 +121,14 @@ namespace Ballance2.Game.GamePlay
             _InitSettings();
             _InitEvents();
 
-            //注册全局事件
+            // Register global events.
             Mediator.SubscribeSingleEvent(GamePackage.GetSystemPackage(), "CoreGamePlayManagerInitAndStart", "GamePlayManager", (evtName, param) =>
             {
                 this._InitAndStart();
                 return false;
             });
 
-            //注册控制台指令
+            // Register console commands.
             this._AddCommands();
         }
         protected override void OnDestroy()
@@ -136,18 +136,18 @@ namespace Ballance2.Game.GamePlay
             Log.D(TAG, "Destroy");
             if (GameUIManager.Instance != null)
                 GameUIManager.Instance.DeleteKeyListen(_EscKeyIds);
-            GameManager.GameMediator?.UnRegisterSingleEvent("CoreGamePlayManagerInitAndStart"); //取消注册全局事件
+            GameManager.GameMediator?.UnRegisterSingleEvent("CoreGamePlayManagerInitAndStart"); // Unregister global events.
             this._DeleteEvents();
-            this._DeleteCommands(); //删除指令
+            this._DeleteCommands(); // Delete commands.
         }
         private void Update()
         {
             this._UpdateTick = this._UpdateTick + Time.deltaTime;
             if (this._UpdateTick >= 0.5)
             {
-                //计数清零
+                // Reset counters.
                 this._UpdateTick = 0;
-                //分数每半秒减一
+                // Subtract one point every half-second.
                 if (this._IsCountDownPoint && this.CurrentPoint > 0)
                 {
                     this.CurrentPoint = this.CurrentPoint - 1;
@@ -161,13 +161,13 @@ namespace Ballance2.Game.GamePlay
         private void _AddCommands()
         {
             var GameDebugCommandServer = GameManager.Instance.GameDebugCommandServer;
-            //注册控制台指令
+            // Register console commands.
 
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("pass", (keyword, fullCmd, argsCount, args) =>
             {
                 this.Pass();
                 return true;
-            }, 0, "win > 直接过关"));
+            }, 0, "win > Complete the level"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("debug0", (keyword, fullCmd, argsCount, args) =>
             {
                 HighscoreManager.Instance.AddItem(CurrentLevelName, "debug0", 5000);
@@ -177,32 +177,32 @@ namespace Ballance2.Game.GamePlay
             {
                 this.Fall();
                 return true;
-            }, 0, "fall > 触发球掉落死亡"));
+            }, 0, "fall > Trigger a fatal fall"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("restart", (keyword, fullCmd, argsCount, args) =>
             {
                 this.RestartLevel();
                 return true;
-            }, 0, "restart > 重新开始关卡"));
+            }, 0, "restart > Restart the level"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("pause", (keyword, fullCmd, argsCount, args) =>
             {
                 this.PauseLevel(false);
                 return true;
-            }, 0, "pause > 暂停"));
+            }, 0, "pause > Pause"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("resume", (keyword, fullCmd, argsCount, args) =>
             {
                 this.ResumeLevel();
                 return true;
-            }, 0, "resume > 恢复"));
+            }, 0, "resume > Resume"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("unload", (keyword, fullCmd, argsCount, args) =>
             {
                 this.QuitLevel();
                 return true;
-            }, 0, "unload > 卸载关卡"));
+            }, 0, "unload > Unload the level"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("nextlev", (keyword, fullCmd, argsCount, args) =>
             {
                 this.Fall();
                 return true;
-            }, 0, "nextlev > 加载下一关"));
+            }, 0, "nextlev > Load the next level"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("gos", (keyword, fullCmd, argsCount, args) =>
             {
                 var ox = DebugUtils.CheckIntDebugParam(0, args, out var nx, true, 0);
@@ -213,17 +213,17 @@ namespace Ballance2.Game.GamePlay
                 this._SetCamPos();
                 this._Start(true, null);
                 return true;
-            }, 1, "gos <count:number> > 跳转到指定的小节"));
+            }, 1, "gos <count:number> > Go to the specified sector"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("rebirth", (keyword, fullCmd, argsCount, args) =>
             {
                 this._Rebirth();
                 return true;
-            }, 0, "rebirth > 重新出生（不消耗生命球）"));
+            }, 0, "rebirth > Respawn without consuming a life"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("addlife", (keyword, fullCmd, argsCount, args) =>
             {
                 this.AddLife();
                 return true;
-            }, 0, "addlife > 添加一个生命球"));
+            }, 0, "addlife > Add one life"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("addtime", (keyword, fullCmd, argsCount, args) =>
             {
                 var ox = DebugUtils.CheckIntDebugParam(0, args, out var nx, true, 0);
@@ -231,7 +231,7 @@ namespace Ballance2.Game.GamePlay
                     return false;
                 this.AddPoint(nx);
                 return true;
-            }, 1, "addtime <count:number> > 添加时间点 count：要添加数量"));
+            }, 1, "addtime <count:number> > Add the specified number of time points"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("settime", (keyword, fullCmd, argsCount, args) =>
             {
                 var ox = DebugUtils.CheckIntDebugParam(0, args, out var nx, true, 0);
@@ -241,7 +241,7 @@ namespace Ballance2.Game.GamePlay
                 this.CurrentPoint = nx;
                 GamePlayUIControl.Instance.SetPointText(nx);
                 return true;
-            }, 1, "settime <count:number> > 设置当前时间点数量 count：数量"));
+            }, 1, "settime <count:number> > Set the current number of time points"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("set-physics-speed", (keyword, fullCmd, argsCount, args) =>
             {
                 var ox = DebugUtils.CheckFloatDebugParam(0, args, out var nx, true, 0);
@@ -251,7 +251,7 @@ namespace Ballance2.Game.GamePlay
                 if (nx > 5) nx = 5;
                 GamePhysicsWorld.TimeFactor = nx;
                 return true;
-            }, 1, "set-physics-speed <speed:number> > 设置物理引擎模拟速率 speed：速率，默认是 1，可以设置 0.5 - 5.0"));
+            }, 1, "set-physics-speed <speed:number> > Set simulation speed (default 1, range 0.5-5.0)"));
             this._CommandIds.Add(GameDebugCommandServer.RegisterCommand("set-ball-speed", (keyword, fullCmd, argsCount, args) =>
             {
                 var ox = DebugUtils.CheckFloatDebugParam(0, args, out var nx, true, 0);
@@ -262,7 +262,7 @@ namespace Ballance2.Game.GamePlay
                 BallManager.BallSpeedFactor = nx;
                 BallManager.FlushBallPush();
                 return true;
-            }, 1, "set-ball-speed <count:number> > 设置倍速球 speed：速率，默认是 1，可以设置 0.1 - 10.0"));
+            }, 1, "set-ball-speed <count:number> > Set ball speed multiplier (default 1, range 0.1-10.0)"));
         }
         private void _DeleteCommands()
         {
@@ -273,7 +273,7 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 初始化
+        #region Initialization
 
         private AudioSource _SoundBallFall;
         private AudioSource _SoundAddLife;
@@ -299,7 +299,7 @@ namespace Ballance2.Game.GamePlay
         }
         private void _InitKeyEvents()
         {
-            //ESC键
+            // Escape key.
             _EscKeyIds = GameUIManager.Instance.ListenKey(KeyCode.Escape, (key, down) =>
             {
                 if (down
@@ -337,7 +337,7 @@ namespace Ballance2.Game.GamePlay
                 GamePhysicsWorld = gameObject.AddComponent<PhysicsEnvironment>();
                 GamePhysicsWorld.AutoCreate = false;
 
-                //读取物理环境配置
+                // Read physics environment configuration.
                 var dataAsset = Resources.Load<TextAsset>("GamePhysData");
                 if (dataAsset != null)
                 {
@@ -357,70 +357,70 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 事件
+        #region Events
 
         /// <summary>
-        /// 关卡开始之前事件
+        /// Before the level starts.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventBeforeStart;
         /// <summary>
-        /// 关卡开始事件
+        /// Level started.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventStart;
         /// <summary>
-        /// 关卡退出事件
+        /// Level exited.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventQuit;
         /// <summary>
-        /// 玩家球掉落事件
+        /// Player ball fell.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventFall;
         /// <summary>
-        /// 关卡球掉落并且没有生命游戏结束事件（不会发出Fall）
+        /// Ball fell with no lives left; game over is emitted instead of Fall.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventDeath;
         /// <summary>
-        /// 继续事件
+        /// Resumed.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventResume;
         /// <summary>
-        /// 暂停事件
+        /// Paused.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventPause;
         /// <summary>
-        /// 重新开始关卡事件
+        /// Level restarted.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventRestart;
         /// <summary>
-        /// UFO动画完成事件
+        /// UFO animation completed.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventUfoAnimFinish;
         /// <summary>
-        /// 过关事件
+        /// Level completed.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventPass;
         /// <summary>
-        /// 过关后飞船隐藏事件
+        /// Completion balloon hidden.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventHideBalloonEnd;
         /// <summary>
-        /// 生命增加事件
+        /// Life added.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventAddLife;
         /// <summary>
-        /// 分数增加事件
+        /// Points added.
         /// </summary>
         [HideInInspector]
         public GameEventEmitterStorage EventAddPoint;
@@ -449,19 +449,19 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 游戏流程控制
+        #region Gameplay flow
 
-        //停止
+        // Stop.
         internal void _Stop(BallControlStatus controlStatus)
         {
             this._IsGamePlaying = false;
             this._IsCountDownPoint = false;
-            //禁用控制
+            // Disable control.
             BallManager.SetControllingStatus(controlStatus);
-            //禁用音乐
+            // Disable music.
             MusicManager.DisableBackgroundMusic();
         }
-        //开始
+        // Start.
         internal void _Start(bool isStartBySector, GameManager.VoidDelegate customerFn)
         {
             this._IsGamePlaying = true;
@@ -469,7 +469,7 @@ namespace Ballance2.Game.GamePlay
             if (this.CurrentDisableStart)
                 return;
 
-            //开始音乐
+            // Start music.
             MusicManager.EnableBackgroundMusic();
 
             if (!this._BallBirthed)
@@ -480,19 +480,19 @@ namespace Ballance2.Game.GamePlay
                 var startPos = Vector3.zero;
                 if (this.CurrentSector > 0)
                 {
-                    //初始位置
+                    // Initial position.
                     var startRestPoint = SectorManager.CurrentLevelRestPoints[this.CurrentSector].point;
                     startPos = startRestPoint.transform.position;
                 }
                 BallManager.SetCanControlCameraWhenStart();
-                //等待闪电完成
+                // Wait for lightning to finish.
                 BallManager.PlayLighting(startPos, true, true, () =>
                 {
-                    //开始控制
+                    // Start control.
                     BallManager.SetNextRecoverPos(startPos);
-                    //发送事件
+                    // Send the event.
                     this.EventStart.Emit(this._FirstStart);
-                    //设置标志
+                    // Set flags.
                     if (this._FirstStart)
                         this._FirstStart = false;
 
@@ -511,7 +511,7 @@ namespace Ballance2.Game.GamePlay
                 BallManager.SetControllingStatus(BallControlStatus.Control);
             }
         }
-        //设置相机位置
+        // Set camera position.
         internal void _SetCamPos()
         {
             if (this.CurrentSector > 0)
@@ -522,14 +522,14 @@ namespace Ballance2.Game.GamePlay
                 CamManager.SetCamLook(true);
             }
         }
-        //重新出生（不消耗生命球）
+        // Respawn without consuming a life.
         internal void _Rebirth()
         {
             BallManager.SetControllingStatus(BallControlStatus.NoControl);
             this._SetCamPos();
             this._Start(true, null);
         }
-        //LevelBuilder 就绪，现在GamePlayManager进行初始化
+        // LevelBuilder is ready; initialize GamePlayManager.
         internal void _InitAndStart()
         {
             this.CurrentLevelPass = false;
@@ -540,27 +540,27 @@ namespace Ballance2.Game.GamePlay
             //UI
             GameUIManager.Instance.CloseAllPage();
             GamePlayUIControl.Instance.gameObject.SetActive(true);
-            //设置初始分数\生命球
+            // Set initial points and lives.
             this.CurrentLife = this.StartLife;
             this.CurrentPoint = this.StartPoint;
             this._BallBirthed = false;
             GamePlayUIControl.Instance.SetLifeBallCount(this.CurrentLife);
             GamePlayUIControl.Instance.SetPointText(this.CurrentPoint);
-            //进入第一小节
+            // Enter the first sector.
             SectorManager.SetCurrentSector(1);
-            //设置初始球
+            // Set the starting ball.
             BallManager.SetCurrentBall(this.StartBall);
             BallManager.CanControllCamera = true;
             CamManager.gameObject.SetActive(true);
             this._SetCamPos();
             GameUIManager.Instance.MaskBlackFadeOut(1);
-            //播放开始音乐
+            // Play the level-start sound.
             GameSoundManager.Instance.PlayFastVoice("core.sounds:Misc_StartLevel.wav", GameSoundType.Normal);
-            //可控制摄像机了
+            // Enable camera control.
             BallManager.CanControllCamera = true;
-            //发出事件
+            // Emit the event.
             LevelBuilderRef.CallLevelCustomModEvent("beforeStart");
-            //显示云层 (用于过关之后重新开始，因为之前过关的时候隐藏了云层)
+            // Show clouds again when restarting after level completion, which hid them.
             if (GameManager.Instance.GameSettings.GetBool(SettingConstants.SettingsVideoCloud))
             {
                 if (LevelBuilderRef.CurrentLevelSkyLayer && !LevelBuilderRef.CurrentLevelSkyLayer.activeSelf)
@@ -577,9 +577,9 @@ namespace Ballance2.Game.GamePlay
             {
                 GameTimer.Delay(0.7f, () =>
                 {
-                    //模拟
+                    // Simulate.
                     this.GamePhysicsWorld.Simulate = true;
-                    //开始
+                    // Start.
                     this._Start(true, null);
                 });
             }
@@ -590,7 +590,7 @@ namespace Ballance2.Game.GamePlay
         private bool _DethLock = false;
 
         /// <summary>
-        /// 触发球坠落
+        /// Trigger a ball fall.
         /// </summary>
         public bool Fall()
         {
@@ -604,16 +604,16 @@ namespace Ballance2.Game.GamePlay
 
             Log.D(TAG, "Fall . CurrentLife: " + this.CurrentLife);
 
-            //下落音乐
+            // Falling sound.
             this._SoundBallFall.volume = 1;
             this._SoundBallFall.Play();
 
-            //禁用键盘摄像机控制
+            // Disable keyboard camera control.
             BallManager.CanControllCamera = false;
 
             if (this.CurrentLife > 0 || this.CurrentLife <= -1)
             {
-                //禁用控制
+                // Disable control.
                 this._Stop(BallControlStatus.FreeMode);
 
                 if (this.CurrentLife > 0)
@@ -625,22 +625,22 @@ namespace Ballance2.Game.GamePlay
 
                 GameTimer.Delay(1, () =>
                 {
-                    //禁用机关
+                    // Deactivate mechanisms.
                     SectorManager.DeactiveCurrentSector();
-                    //禁用控制
+                    // Disable control.
                     this._Stop(BallControlStatus.NoControl);
 
                     GameTimer.Delay(1, () =>
                     {
                         GameUIManager.Instance.UIFadeManager.AddAudioFadeOut(this._SoundBallFall, 1);
 
-                        ///重置机关和摄像机
+                        /// Reset mechanisms and camera.
                         SectorManager.ActiveCurrentSector(false);
                         this._SetCamPos();
                         this._Start(true, null);
                         GameUIManager.Instance.MaskWhiteFadeOut(1);
 
-                        //延时移除生命球
+                        // Remove the displayed life after a delay.
                         GameTimer.Delay(1, () =>
                         {
                             GamePlayUIControl.Instance.RemoveLifeBall();
@@ -653,7 +653,7 @@ namespace Ballance2.Game.GamePlay
             {
                 Log.D(TAG, "Death");
 
-                //禁用控制
+                // Disable control.
                 this._Stop(BallControlStatus.FreeMode);
 
                 this.EventDeath.Emit();
@@ -663,7 +663,7 @@ namespace Ballance2.Game.GamePlay
                     this._Stop(BallControlStatus.UnleashingMode);
                     MusicManager.DisableBackgroundMusicWithoutAtmo();
 
-                    //延时显示失败菜单
+                    // Show the failure menu after a delay.
                     GameTimer.Delay(1, () =>
                     {
                         GameUIManager.Instance.GoPage("PageGameFail");
@@ -674,7 +674,7 @@ namespace Ballance2.Game.GamePlay
             return true;
         }
         /// <summary>
-        /// 触发过关
+        /// Complete the level.
         /// </summary>
         public void Pass()
         {
@@ -684,31 +684,31 @@ namespace Ballance2.Game.GamePlay
             Log.D(TAG, "Pass");
 
             this.CurrentLevelPass = true;
-            this._SoundLastSector.Stop(); //停止最后一小节的音乐
+            this._SoundLastSector.Stop(); // Stop the final sector's music.
             this._Stop(BallControlStatus.FreeMode);
 
             GameTimer.Delay(0.6f, () => BallManager.SetControllingStatus(BallControlStatus.UnleashingMode));
 
-            //禁用键盘摄像机控制
+            // Disable keyboard camera control.
             BallManager.CanControllCamera = false;
 
-            //过关后马上渐变淡出云层，因为摄像机要放平看到边界的地方了
+            // Fade clouds immediately after completion because the horizontal camera will expose their boundary.
             if (LevelBuilderRef.CurrentLevelSkyLayer && LevelBuilderRef.CurrentLevelSkyLayer.activeSelf)
                 GameUIManager.Instance.UIFadeManager.AddFadeOut(LevelBuilderRef.CurrentLevelSkyLayer, 5, true, null);
 
-            //停止背景音乐
+            // Stop background music.
             MusicManager.DisableBackgroundMusicWithoutAtmo();
 
             if (this.CurrentEndWithUFO)
             {
-                //播放结尾的UFO动画
-                this._SoundLastFinnal.Play(); //播放音乐
+                // Play the ending UFO animation.
+                this._SoundLastFinnal.Play(); // Play music.
                 UFOAnimController.Instance.StartSeq();
             }
             else
             {
-                this._SoundFinnal.Play(); //播放音乐
-                this._HideBalloonEnd(false); //开始隐藏飞船
+                this._SoundFinnal.Play(); // Play music.
+                this._HideBalloonEnd(false); // Start hiding the balloon.
                 GameTimer.Delay(6, () =>
                 {
                     WinScoreUIControl.Instance.StartSeq();
@@ -717,18 +717,18 @@ namespace Ballance2.Game.GamePlay
             this.EventPass.Emit();
         }
         /// <summary>
-        /// 暂停关卡
+        /// Pause the level.
         /// </summary>
-        /// <param name="showPauseUI">是否显示暂停界面</param>
+        /// <param name="showPauseUI">Show the pause interface.</param>
         public void PauseLevel(bool showPauseUI)
         {
             this._Stop(BallControlStatus.FreeMode);
 
             Log.D(TAG, "Pause");
 
-            //停止模拟
+            // Stop simulation.
             this.GamePhysicsWorld.Simulate = false;
-            //停止摄像机跟随(防止暂停而带来的摄像机抖动)
+            // Stop camera following to prevent jitter while paused.
             BallManager.StopCamMove();
 
             //UI
@@ -741,9 +741,9 @@ namespace Ballance2.Game.GamePlay
             this.EventPause.Emit();
         }
         /// <summary>
-        /// 继续关卡
+        /// Resume the level.
         /// </summary>
-        /// <param name="forceRestart">是否强制重置，会造成当前小节重置，默认false</param>
+        /// <param name="forceRestart">Force a restart of the current sector; default false.</param>
         public void ResumeLevel(bool forceRestart = false)
         {
             Log.D(TAG, "Resume");
@@ -752,16 +752,16 @@ namespace Ballance2.Game.GamePlay
             GameSoundManager.Instance.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.UI);
             GameUIManager.Instance.CloseAllPage();
 
-            //重新开始摄像机跟随
+            // Resume camera following.
             BallManager.StartCamMove();
-            //停止继续
+            // Stop or resume.
             this.GamePhysicsWorld.Simulate = true;
             this._Start(forceRestart, null);
 
             this.EventResume.Emit();
         }
 
-        //过关后隐藏飞船
+        // Hide the balloon after completion.
         private void _HideBalloonEnd(bool fromUfo)
         {
             if (this._HideBalloonEndTimerID > 0)
@@ -769,7 +769,7 @@ namespace Ballance2.Game.GamePlay
                 GameTimer.DeleteDelay(this._HideBalloonEndTimerID);
                 this._HideBalloonEndTimerID = 0;
             }
-            //60秒后隐藏飞船
+            // Hide the balloon after 60 seconds.
             this._HideBalloonEndTimerID = GameTimer.Delay(fromUfo ? 40 : 60, () =>
             {
                 this._HideBalloonEndTimerID = 0;
@@ -778,11 +778,11 @@ namespace Ballance2.Game.GamePlay
                 this.EventHideBalloonEnd.Emit();
             });
         }
-        //UFO 动画完成回调
+        // UFO animation completion callback.
         internal void UfoAnimFinish()
         {
             this._SoundFinnal.Play();
-            this._HideBalloonEnd(true); //开始隐藏飞船
+            this._HideBalloonEnd(true); // Start hiding the balloon.
             BallManager.SetControllingStatus(BallControlStatus.NoControl);
             WinScoreUIControl.Instance.StartSeq();
             this.EventUfoAnimFinish.Emit();
@@ -791,10 +791,10 @@ namespace Ballance2.Game.GamePlay
         private bool _IsTranfoIn = false;
 
         /// <summary>
-        /// 激活变球序列
+        /// Start the ball transformation sequence.
         /// </summary>
-        /// <param name="tranfo">变球器</param>
-        /// <param name="targetType">要变成的目标球类型</param>
+        /// <param name="tranfo">Transformer.</param>
+        /// <param name="targetType">Target ball type.</param>
         public void ActiveTranfo(ITranfoBase tranfo, string targetType)
         {
             if (this._IsTranfoIn)
@@ -812,32 +812,32 @@ namespace Ballance2.Game.GamePlay
                 return;
             }
 
-            //快速回收当前类型球碎片
+            // Immediately collect fragments of the current ball type.
             BallManager.ResetPeices(BallManager.CurrentBallName);
             BallManager.SetNextRecoverPos(targetPos);
-            //快速将球锁定并移动至目标位置
+            // Lock the ball and move it quickly to the target.
             BallManager.FastMoveTo(targetPos, 0.1f, (_) =>
             {
-                //播放变球动画
+                // Play the transformation animation.
                 cTranfoAminControl.PlayAnim(tranfo, targetType, () =>
                 {
 
-                    //先停止摄像机跟随
+                    // Stop camera following first.
                     CamManager.SetCamFollow(false);
                     CamManager.SetCamLook(false);
-                    //播放烟雾
+                    // Play smoke.
                     BallManager.PlaySmoke(targetPos);
-                    //先设置无球
+                    // Clear the current ball first.
                     BallManager.SetNoCurrentBall();
-                    //切换球并且抛出碎片
+                    // Switch balls and scatter fragments.
                     BallManager.ThrowPeices(oldBallType, targetPos);
-                    //激活新球
+                    // Activate the new ball.
                     BallManager.SetCurrentBall(targetType, BallControlStatus.Control);
-                    //重新开启摄像机跟随
+                    // Resume camera following.
                     CamManager.SetCamFollow(true);
                     CamManager.SetCamLook(true);
 
-                    //重置状态
+                    // Reset state.
                     tranfo.ResetTranfo();
                     this._IsTranfoIn = false;
                 });
@@ -846,7 +846,7 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 关卡加载卸载下一关等等流程控制
+        #region Level loading, unloading, and progression
 
         private void _QuitOrLoadNextLevel(bool loadNext)
         {
@@ -858,17 +858,17 @@ namespace Ballance2.Game.GamePlay
                 callBack = () => LevelBuilder.LevelBuilder.Instance.LoadLevel(this.NextLevelName);
             }
 
-            //停止隐藏飞船定时
+            // Cancel the balloon hide timer.
             if (this._HideBalloonEndTimerID > 0)
             {
                 GameTimer.DeleteDelay(this._HideBalloonEndTimerID);
                 this._HideBalloonEndTimerID = 0;
             }
 
-            //发送事件
+            // Send the event.
             this.EventQuit.Emit();
 
-            //停止背景音乐
+            // Stop background music.
             MusicManager.DisableBackgroundMusic(true);
 
             GameUIManager.Instance.CloseAllPage();
@@ -877,30 +877,30 @@ namespace Ballance2.Game.GamePlay
 
             GameTimer.Delay(0.5f, () =>
             {
-                //停止模拟
+                // Stop simulation.
                 this.GamePhysicsWorld.Simulate = false;
-                //关闭球
+                // Disable the ball.
                 this._Stop(BallControlStatus.NoControl);
                 this.CurrentSector = 0;
-                //隐藏UI
+                // Hide UI.
                 GamePlayUIControl.Instance.gameObject.SetActive(false);
-                //发出事件
+                // Emit the event.
                 LevelBuilderRef.CallLevelCustomModEvent("beforeQuit");
                 LevelBuilderRef.UnLoadLevel(callBack);
             });
         }
 
-        //-加载下一关
+        // Load the next level.
         public void NextLevel()
         {
             if (this.NextLevelName == "")
                 return;
             this._QuitOrLoadNextLevel(true);
         }
-        //-重新开始关卡
+        // Restart the level.
         public void RestartLevel()
         {
-            //黑色进入
+            // Fade to black.
             GameUIManager.Instance.MaskBlackFadeIn(1);
 
             Log.D(TAG, "Restart Level");
@@ -909,22 +909,22 @@ namespace Ballance2.Game.GamePlay
 
             this.EventRestart.Emit();
 
-            //重置球管理器
+            // Reset the ball manager.
             BallManager.ResetAllPeices();
 
             GameTimer.Delay(0.8f, () =>
             {
-                //重置所有节
+                // Reset all sectors.
                 SectorManager.ResetAllSector(false);
                 this.CurrentSector = 0;
                 GameTimer.Delay(0.5f, () =>
                 {
-                    //开始
+                    // Start.
                     this._InitAndStart();
                 });
             });
         }
-        //-退出关卡
+        // Exit the level.
         public void QuitLevel()
         {
             this._QuitOrLoadNextLevel(false);
@@ -932,10 +932,10 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 分数方法
+        #region Score operations
 
         /// <summary>
-        /// 添加生命
+        /// Add a life.
         /// </summary>
         /// <returns></returns>
         public void AddLife()
@@ -951,9 +951,9 @@ namespace Ballance2.Game.GamePlay
             this.EventAddLife.Emit();
         }
         /// <summary>
-        /// 添加时间点数
+        /// Add time points.
         /// </summary>
-        /// <param name="count">时间点数，默认为10</param>
+        /// <param name="count">Number of time points; default 10.</param>
         public void AddPoint(int count = 10)
         {
             if (count < 0)
@@ -969,21 +969,21 @@ namespace Ballance2.Game.GamePlay
 
         #endregion
 
-        #region 一些工具方法
+        #region Helpers
 
         /// <summary>
-        /// 初始化灯光和天空盒
+        /// Initialize lighting and skybox.
         /// </summary>
-        /// <param name="skyBoxPre">A-K 或者空，为空则使用 customSkyMat 材质</param>
-        /// <param name="customSkyMat">自定义天空盒材质</param>
-        /// <param name="lightColor">灯光颜色</param>
+        /// <param name="skyBoxPre">A-K, or empty to use customSkyMat.</param>
+        /// <param name="customSkyMat">Custom skybox material.</param>
+        /// <param name="lightColor">Light color.</param>
         public void CreateSkyAndLight(string skyBoxPre, Material customSkyMat, Color lightColor)
         {
             CamManager.SetSkyBox(customSkyMat != null ? customSkyMat : SkyBoxUtils.MakeSkyBox(skyBoxPre));
             GameManager.GameLight.color = lightColor;
         }
         /// <summary>
-        /// 隐藏天空盒和关卡灯光
+        /// Hide the skybox and level lighting.
         /// </summary>
         public void HideSkyAndLight()
         {

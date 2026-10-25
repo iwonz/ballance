@@ -5,19 +5,19 @@ using UnityEngine;
 namespace BallancePhysics
 {
   /// <summary>
-  /// 物理引擎配置
+  /// Physics engine configuration.
   /// </summary>
   public class PhysicsOptions : ScriptableObject
   {
-    [Tooltip("是否显示控制台窗口（仅Win版本有效）")]
+    [Tooltip("Show the console window (Windows only).")]
     /// <summary>
-    /// 是否显示控制台窗口（仅Win版本有效）
+    /// Show the console window (Windows only).
     /// </summary>
     public bool ShowConsole = false;
     [Tooltip("")]
     [Range(8, 64)]
     /// <summary>
-    /// 小内存池的大小
+    /// Size of the small memory pool.
     /// </summary>
     public int SmallPoolSize = 16;
 

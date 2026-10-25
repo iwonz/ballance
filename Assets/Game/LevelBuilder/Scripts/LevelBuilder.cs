@@ -19,38 +19,38 @@ using System.Collections.ObjectModel;
 namespace Ballance2.Game.LevelBuilder {
 
   /// <summary>
-  /// 关卡加载器
+  /// Level loader.
   /// </summary>
   public class LevelBuilder : GameSingletonBehavior<LevelBuilder> {
 
     private const string TAG = "LevelBuilder";
 
     /// <summary>
-    /// 当前注册的机关信息
+    /// Registered mechanism information.
     /// </summary>
     public Dictionary<string, LevelBuilderModulRegStorage> RegisteredModuls = new Dictionary<string, LevelBuilderModulRegStorage>();
     /// <summary>
-    /// 当前关卡中的机关
+    /// Mechanisms in the current level.
     /// </summary>
     public Dictionary<string, LevelBuilderModulStorage> CurrentLevelModuls = new  Dictionary<string, LevelBuilderModulStorage>();
     /// <summary>
-    /// 当前关卡中的路面
+    /// Floors in the current level.
     /// </summary>
     public List<GameObject> CurrentLevelFloors = new List<GameObject>();
     /// <summary>
-    /// 当前关卡资源文件
+    /// Current level resource file.
     /// </summary>
     public LevelAssets CurrentLevelAsset = null;
     /// <summary>
-    /// 当前关卡JSON定义文件
+    /// Current level JSON definition.
     /// </summary>
     public LevelJson CurrentLevelJson = null;
     /// <summary>
-    /// 当前关卡 SkyLayer
+    /// Current level sky layer.
     /// </summary>
     public GameObject CurrentLevelSkyLayer = null;
     /// <summary>
-    /// 当前关卡主对象
+    /// Current level root object.
     /// </summary>
     public GameObject CurrentLevelObject = null;
 
@@ -118,7 +118,7 @@ namespace Ballance2.Game.LevelBuilder {
       DestroyCommand();
     }
 
-    #region 指令
+    #region Commands
 
     private int _CommandId = 0;
     private void InitCommands() {
@@ -140,8 +140,8 @@ namespace Ballance2.Game.LevelBuilder {
         }
         return true;
       }, 0, "lb <quit/load>\n" +
-        "  <quit>                    ▶ 终止当前的关卡加载\n" +
-        "  <load> <levelname:string> ▶ 加载指定关卡\n");
+        "  <quit>                    ▶ Cancel the current level load\n" +
+        "  <load> <levelname:string> ▶ Load the specified level\n");
     }
     private void DestroyCommand() {
       if (GameManager.Instance != null)
@@ -150,18 +150,18 @@ namespace Ballance2.Game.LevelBuilder {
 
     #endregion
 
-    #region 主函数
+    #region Main methods
 
     /// <summary>
-    /// 获取当前是否是预览模式
+    /// Whether preview mode is active.
     /// </summary>
     /// <value></value>
     public bool IsPreviewMode { get; private set; }
 
     /// <summary>
-    /// 开始卸载关卡
+    /// Start unloading the level.
     /// </summary>
-    /// <param name="endCallback">完成回调</param>
+    /// <param name="endCallback">Completion callback.</param>
     public void UnLoadLevel(GameManager.VoidDelegate endCallback) {
       if (IsLoading) {
         Log.E(TAG, "Level is loading! ");
@@ -173,15 +173,15 @@ namespace Ballance2.Game.LevelBuilder {
     }
 
     private IEnumerator UnLoadLevelInternal(GameManager.VoidDelegate endCallback) {
-      //发送开始事件
+      // Emit the start event.
       GameMediator.Instance.DispatchGlobalEvent(GameEventNames.EVENT_LEVEL_BUILDER_UNLOAD_START);
 
       Log.D(TAG, "UnLoad moduls");
 
-      //通知所有modul卸载
+      // Notify all mechanisms of unloading.
       GamePlayManager.Instance.SectorManager.DoUnInitAllModuls();
       
-      //通知关卡自定义回调卸载
+      // Invoke the level's custom unload callback.
       if (CurrentLevelJson != null && CurrentLevelJson.level != null) {
         var level = CurrentLevelJson.level;
         yield return StartCoroutine(CallLoadStep("unload"));
@@ -195,10 +195,10 @@ namespace Ballance2.Game.LevelBuilder {
 
       Log.D(TAG, "Clear all");
 
-      //清空数据
+      // Clear data.
       GamePlayManager.Instance.SectorManager.ClearAll();
 
-      //删除音乐数据
+      // Remove music data.
       if (CurrentLevelJson != null) {
         var customMusicTheme = CurrentLevelJson.level.customMusicTheme;
         if (customMusicTheme != null) {
@@ -206,10 +206,10 @@ namespace Ballance2.Game.LevelBuilder {
         }
       }
       GamePlayManager.Instance.MusicManager.SetCurrentTheme(1);
-      //停止所有背景声音
+      // Stop all background sounds.
       GamePlayManager.Instance.BallSoundManager.StopAllSound();
 
-      //删除所有modul
+      // Delete all mechanisms.
       var tickCount = 0;
       foreach (var item in CurrentLevelModuls)
       {
@@ -220,13 +220,13 @@ namespace Ballance2.Game.LevelBuilder {
         UnityEngine.Object.Destroy(item.Value.go);
         tickCount = tickCount + 1;
       }
-      //删除路面
+      // Delete floors.
       foreach (var floor in CurrentLevelFloors) {
         UnityEngine.Object.Destroy(floor);
       }
       CurrentLevelFloors.Clear();
 
-      //清空天空和云层
+      // Clear the sky and clouds.
       if (IsPreviewMode)
         GamePreviewManager.Instance.HideSkyAndLight();
       else
@@ -237,13 +237,13 @@ namespace Ballance2.Game.LevelBuilder {
         CurrentLevelSkyLayer = null;
       }
 
-      //删除资源连接器
+      // Delete resource linkers.
       GameLevelResourcesLinker.allRes.Clear();
 
-      //删除关卡元件
+      // Delete level objects.
       UnityEngine.Object.Destroy(CurrentLevelObject);
 
-      //清空变量
+      // Clear fields.
       CurrentLevelObject = null;
       CurrentLevelJson = null;
       CurrentLevelModuls.Clear();
@@ -251,11 +251,11 @@ namespace Ballance2.Game.LevelBuilder {
 
       Log.D(TAG, "Unload level asset");
 
-      //卸载AssetBundle
+      // Unload the AssetBundle.
       LevelLoader.UnLoadLevel(CurrentLevelAsset);
       CurrentLevelAsset = null;
 
-      //删除关卡中所有的物理碰撞信息
+      // Delete the level's physics collision information.
       if (!IsPreviewMode && GamePlayManager.Instance != null && GamePlayManager.Instance.GamePhysicsWorld != null) {
         GamePlayManager.Instance.GamePhysicsWorld.Destroy();
       }
@@ -267,16 +267,16 @@ namespace Ballance2.Game.LevelBuilder {
       if (endCallback != null)
         endCallback();
       else
-        //通知回到menulevel
+        // Request a return to MenuLevel.
         GameManager.Instance.RequestEnterLogicScense("MenuLevel");
       yield break;
     }
 
     /// <summary>
-    /// 开始加载关卡序列
+    /// Start the level loading sequence.
     /// </summary>
-    /// <param name="name">关卡文件名</param>
-    /// <param name="preview">是否是预览模式</param>
+    /// <param name="name">Level filename.</param>
+    /// <param name="preview">Whether to use preview mode.</param>
     public void LoadLevel(string name, bool preview = false) {
       if (IsLoading) {
         Log.E(TAG, "Level is loading! ");
@@ -290,7 +290,7 @@ namespace Ballance2.Game.LevelBuilder {
       if (preview)
         Log.I(TAG, "Load level in preview mode");
       
-      //设置UI为初始状态
+      // Reset the loading UI.
       if (!GameManager.Instance.GameSettings.GetBool("debugDisableLoadUI", false)) {
         LevelBuilderUI.gameObject.SetActive(true);
         GameUIManager.Instance.MaskBlackSet(true);
@@ -300,18 +300,18 @@ namespace Ballance2.Game.LevelBuilder {
       UpdateLoadProgress(0);
       UpdateErrStatus(false, null, null);
 
-      //加载内置模块
+      // Load built-in modules.
       LevelInternal.InitBulitInModuls();
 
       if (!preview) {
-        //加载物理环境
+        // Load the physics environment.
         GamePlayManager.Instance.GamePhysicsWorld.Create();
       }
 
-      //发送开始事件
+      // Emit the start event.
       GameMediator.Instance.DispatchGlobalEvent(GameEventNames.EVENT_LEVEL_BUILDER_BEFORE_START);
 
-      //加载内置声音
+      // Load built-in sounds.
       LevelInternal.InitBulitInModulCustomSounds();
 
       LevelLoader.LoadLevel(name, (mainObj, jsonString, level) => {
@@ -328,7 +328,7 @@ namespace Ballance2.Game.LevelBuilder {
 
         GameMediator.Instance.DispatchGlobalEvent(GameEventNames.EVENT_LEVEL_BUILDER_JSON_LOADED, CurrentLevelJson);
 
-        //检查基础适配
+        // Check base compatibility.
         var missedPackages = "";
         var requiredPackages = CurrentLevelJson.requiredPackages;
         if (requiredPackages != null && requiredPackages.Count > 0) {
@@ -337,7 +337,7 @@ namespace Ballance2.Game.LevelBuilder {
               missedPackages += $"\nName：{v.name} Version：{v.minVersion}";
           }
         }
-        //模组适配
+        // Check mod compatibility.
         if (missedPackages != "") {
           UpdateErrStatus(true, "DEPENDS_CHECK_FAILED", "The level depends on the following module. The module may not be enabled or failed to load: " + missedPackages);
           return;
@@ -345,13 +345,13 @@ namespace Ballance2.Game.LevelBuilder {
 
         Log.D(TAG, "Load level prefab");
 
-        //载入Prefab
+        // Load the prefab.
         CurrentLevelObject = mainObj; 
         mainObj.transform.SetParent(gameObject.transform);
         mainObj.name = "GameLevelMain";
         GameMediator.Instance.DispatchGlobalEvent(GameEventNames.EVENT_LEVEL_BUILDER_MAIN_PREFAB_STANDBY, CurrentLevelObject);
 
-        //加载
+        // Load.
         StartCoroutine(LoadLevelInternal());
       }, 
       (code, err) => {
@@ -360,9 +360,9 @@ namespace Ballance2.Game.LevelBuilder {
     }
 
     private IEnumerator LoadLevelInternal() {
-      //发送开始事件
+      // Emit the start event.
       GameMediator.Instance.DispatchGlobalEvent(GameEventNames.EVENT_LEVEL_BUILDER_START);
-      //加载基础设置
+      // Load base settings.
       var level = CurrentLevelJson.level;
       var levelName = CurrentLevelJson.name;
 
@@ -378,7 +378,7 @@ namespace Ballance2.Game.LevelBuilder {
 
       Log.D(TAG, "Pre load");
 
-      //调用自定义加载步骤 pre
+      // Run custom pre loading steps.
       yield return StartCoroutine(CallLoadStep("pre"));
       CallLevelCustomModEvent("beforeLoad");
       if (!string.IsNullOrEmpty(level.customModEventName)) {
@@ -392,7 +392,7 @@ namespace Ballance2.Game.LevelBuilder {
         UpdateErrStatus(true, "BAD_CONFIG", "Not support preview");
         yield break;
       }
-      //首先检查配置是否正确
+      // Validate configuration first.
       if (level.sectorCount < 1) {
         UpdateErrStatus(true, "BAD_CONFIG", "There must be at least 1 sector in this level");
         yield break;
@@ -403,7 +403,7 @@ namespace Ballance2.Game.LevelBuilder {
       }  
       if (level.autoGroup == true) {
         Log.D(TAG, "Generate auto group");
-        DoLevelAutoGroup(level, CurrentLevelObject.transform); //配置了 autoGroup 自动归组，则自动生成归组信息
+        DoLevelAutoGroup(level, CurrentLevelObject.transform); // Generate grouping information when autoGroup is enabled.
       } 
       else 
       {
@@ -443,7 +443,7 @@ namespace Ballance2.Game.LevelBuilder {
 
       Log.D(TAG, "Load level data");
 
-      //首先填充基础信息（出生点、节、结尾）
+      // Populate spawn, sector, and end-point information first.
       SectorManager.CurrentLevelSectorCount = level.sectorCount;
       for (int i = 0; i < SectorManager.CurrentLevelSectors.Length; i++)
         SectorManager.CurrentLevelSectors[i] = null;
@@ -474,14 +474,14 @@ namespace Ballance2.Game.LevelBuilder {
 
       UpdateLoadProgress(0.1f);
 
-      //加载
+      // Load.
 
-      //加载内部对象
+      // Load internal objects.
       //===================================
 
       Log.D(TAG, "Load level internal objects");
 
-      //加载出生点和火焰
+      // Load spawn points and flames.
       //---------------------------
       for (int i = 1; i <= level.sectorCount; i++) {
         ModulBase flame = null;
@@ -523,7 +523,7 @@ namespace Ballance2.Game.LevelBuilder {
           flame = flame,
         };
       }
-      //加载结尾
+      // Load the ending object.
       //---------------------------
       SectorManager.CurrentLevelEndBalloon = ReplacePrefab(
         level.internalObjects.PE_LevelEnd, 
@@ -538,13 +538,13 @@ namespace Ballance2.Game.LevelBuilder {
       yield return new WaitForSeconds(0.02f);
       UpdateLoadProgress(0.2f);
 
-      //加载物理对象
+      // Load physics objects.
       //===================================
-      //预览模式无须物理化这些
+      // These objects need no physics in preview mode.
       if (!IsPreviewMode) {
         Log.D(TAG, "Load level floors");
 
-        //加载 物理路面
+        // Load physics floors.
         //----------------------------
         foreach (var floor in level.floors) {
           
@@ -597,7 +597,7 @@ namespace Ballance2.Game.LevelBuilder {
                     body.AddCollDetection(BallSoundManager.GetSoundCollIDByName("WoodenFlap"), 0.02f, 10, 0.2f, 0.1f);
                     body.AddCollDetection(BallSoundManager.GetSoundCollIDByName("Wood"), 0.02f, 12, 0.2f, 0.1f);
                     body.AddCollDetection(BallSoundManager.GetSoundCollIDByName("WoodOnlyHit"), 0.02f, 10, 0.2f, 0.1f);
-                    //撞击处理回调
+                    // Collision callback.
                     body.OnPhysicsCollDetection = (_, col_id, speed_precent) => {
                       hitSound.volume = speed_precent;
                       hitSound.Play();
@@ -614,7 +614,7 @@ namespace Ballance2.Game.LevelBuilder {
             }
 
             if (floorCount == 0)
-              floorStatic.SetActive(false); //没有路面，则隐藏当前静态父级
+              floorStatic.SetActive(false); // Hide the static parent when no floors exist.
             else
               Log.D(TAG, $"Loaded floor {floor.name} count: {floorCount}");
             
@@ -625,32 +625,32 @@ namespace Ballance2.Game.LevelBuilder {
 
         UpdateLoadProgress(0.3f);
 
-        var lowerY = -1000.0f; //最低y坐标
+        var lowerY = -1000.0f; // Minimum Y coordinate.
         var depthTestCubesCount = 0;
 
-        //加载坠落检测区
+        // Load fall detection zones.
         //-----------------------------
         foreach (var name in level.depthTestCubes) {
           var go = GameObject.Find(name);
           if (go != null) {
 
-            //计算最低y坐标，用于坠落回收物体
+            // Calculate the minimum Y coordinate used to collect fallen objects.
             var y = go.transform.position.y;
             if (y < lowerY)
               lowerY = y;
 
-            //禁用Renderer使物体隐藏
+            // Disable the Renderer to hide the object.
             var renderer = go.GetComponent<Renderer>();
             if (renderer != null) 
               renderer.enabled = false;
             
-            //添加坠落检测区Mesh
+            // Add the fall detection zone mesh.
             var collider = go.AddComponent<BoxCollider>();
             var tigger = go.AddComponent<TiggerTester>();
             
             collider.isTrigger = true;
             tigger.onTriggerEnter = (_, other) => {
-              //触发球坠落
+              // Trigger a ball fall.
               if (other.tag == "Ball")
                 GamePlayManagerInstance.Fall();
             };
@@ -663,13 +663,13 @@ namespace Ballance2.Game.LevelBuilder {
 
         Log.D(TAG, $"Loaded depthTestCubes count: {depthTestCubesCount} lowerY: {lowerY}");
 
-        //设置回收y坐标
+        // Set the collection Y coordinate.
         GamePlayManagerInstance.GamePhysicsWorld.DePhysicsFall = lowerY;
           
       } 
       else 
       {
-        //加载坠落检测区信息
+        // Load fall detection zone data.
         //---------------------------
 
         var depthTestCubes = new List<GameObject>();
@@ -677,7 +677,7 @@ namespace Ballance2.Game.LevelBuilder {
           var go = GameObject.Find(name);
           if (go != null) {
 
-            //添加边框材质
+            // Add the border material.
             var renderer = go.GetComponent<MeshRenderer>();
             if (renderer == null)
               renderer = go.AddComponent<MeshRenderer>();
@@ -695,12 +695,12 @@ namespace Ballance2.Game.LevelBuilder {
 
       Log.D(TAG, "Load level moduls");
 
-      //调用自定义加载步骤 modul
+      // Run custom modul loading steps.
       //===================================
       yield return StartCoroutine(CallLoadStep("modul"));
       UpdateLoadProgress(0.5f);
 
-      //加载 modul
+      // Load mechanisms.
       //---------------------------
       var tickCount = 0;
       foreach(var group in level.groups) {
@@ -740,11 +740,11 @@ namespace Ballance2.Game.LevelBuilder {
 
       Log.D(TAG, "Load init moduls");
 
-      //首次加载 modul
+      // Perform initial mechanism loading.
       //-----------------------------
       yield return new WaitForSeconds(0.02f);
 
-      //预览模式无须备份机关信息
+      // Preview mode does not need mechanism state backups.
       if (!IsPreviewMode)
         SectorManager.DoInitAllModuls();
 
@@ -752,7 +752,7 @@ namespace Ballance2.Game.LevelBuilder {
 
       Log.D(TAG, "Load level sector data");
 
-      //填充节数据
+      // Populate sector data.
       //-----------------------------  
       for(int i = 1; i <= level.sectorCount; i++) {
         if (!level.sectors.ContainsKey($"{i}"))
@@ -779,11 +779,11 @@ namespace Ballance2.Game.LevelBuilder {
       yield return new WaitForSeconds(0.02f);
       Log.D(TAG, "Load sky and light");
 
-      //加载天空盒和灯光
+      // Load the skybox and lights.
       //---------------------------
       RenderSettings.fog = false;
       if (level.skyBox == "custom") {
-        //加载自定义天空盒
+        // Load a custom skybox.
         Log.D(TAG, "Load custom SkyBox");
 
         var B = CurrentLevelAsset.GetTextureAsset(level.customSkyBox.B);
@@ -805,7 +805,7 @@ namespace Ballance2.Game.LevelBuilder {
           GamePlayManagerInstance.CreateSkyAndLight("", skyMat, StringUtils.StringToColor(level.lightColor));
       } 
       else if (!string.IsNullOrEmpty(level.skyBox)) {
-        //使用自带天空盒 
+        // Use a built-in skybox.
         if (IsPreviewMode)
           GamePreviewManager.Instance.CreateSkyAndLight(level.skyBox, null, StringUtils.StringToColor(level.lightColor));
         else
@@ -814,7 +814,7 @@ namespace Ballance2.Game.LevelBuilder {
       else
         Log.E(TAG, "Invalid field \"level.skyBox\"");
 
-      //加载SkyLayer
+      // Load the sky layer.
       //---------------------------
       if (level.skyLayer == "SkyLayer") {
         var oldSkyLayer = GameObject.Find("SkyLayer");
@@ -843,14 +843,14 @@ namespace Ballance2.Game.LevelBuilder {
       else
         Log.D(TAG, "No SkyLayer");
 
-      //如果设置禁用了云层，则隐藏
+      // Hide clouds when disabled in settings.
       var GameSettings = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME);
       if (!GameSettings.GetBool(SettingConstants.SettingsVideoCloud))
         CurrentLevelSkyLayer.SetActive(false);
 
       Log.D(TAG, "Load music");
 
-      //加载自定义音乐
+      // Load custom music.
       //---------------------------
       var customMusicTheme = level.customMusicTheme;
       if (customMusicTheme != null) {
@@ -867,7 +867,7 @@ namespace Ballance2.Game.LevelBuilder {
           atmoMaxInterval = customMusicTheme.baseInterval,
         });
       }
-      //设置音乐
+      // Set music.
       if (level.musicTheme > 0) {
         Log.D(TAG, "Set MusicTheme " + level.musicTheme);
         MusicManager.SetCurrentTheme(level.musicTheme);
@@ -882,12 +882,12 @@ namespace Ballance2.Game.LevelBuilder {
 
       Log.D(TAG, "Load others");
 
-      //加载第一关教程
+      // Load the first-level tutorial.
       //-----------------------------
       if (levelName == "level01")
         GameManager.Instance.InstancePrefab(SystemPackage.GetPrefabAsset("TutorialCore.prefab"), "GameTutorialCore");
 
-      //调用自定义加载步骤 last
+      // Run custom last loading steps.
       //-----------------------------
       yield return StartCoroutine(CallLoadStep("last"));
       CallLevelCustomModEvent("finishLoad");
@@ -897,7 +897,7 @@ namespace Ballance2.Game.LevelBuilder {
       UpdateLoadProgress(1);
       yield return new WaitForSeconds(0.5f);
 
-      //最后加载步骤
+      // Final loading stage.
       //-----------------------------
       if (IsPreviewMode)
         GameMediator.Instance.DelayedNotifySingleEvent("CoreGamePreviewManagerInitAndStart", 0.1f,
@@ -910,7 +910,7 @@ namespace Ballance2.Game.LevelBuilder {
 
       yield return new WaitForSeconds(0.2f);
 
-      //隐藏加载UI
+      // Hide the loading UI.
       GameUIManager.Instance.MaskBlackSet(true);
       LevelBuilderUI.gameObject.SetActive(false);
       IsLoading = false;
@@ -919,14 +919,14 @@ namespace Ballance2.Game.LevelBuilder {
     }
 
     /// <summary>
-    /// 替换占位符并生成机关
+    /// Replace a placeholder with a mechanism instance.
     /// </summary>
-    /// <param name="objName">占位符的名称</param>
-    /// <param name="modulPrefab">机关预制体</param>
-    /// <param name="rotationCorrecting">机关预制体旋转修正参数</param>
-    /// <returns>返回机关类，如果出现错误则返回null</returns>
+    /// <param name="objName">Placeholder name.</param>
+    /// <param name="modulPrefab">Mechanism prefab.</param>
+    /// <param name="rotationCorrecting">Rotation correction for the mechanism prefab.</param>
+    /// <returns>The mechanism component, or null on error.</returns>
     public ModulBase ReplacePrefab(string objName, LevelBuilderModulRegStorage modulPrefab, LevelBuilderModulRotationCorrecting rotationCorrecting) {
-      //检查同名机关
+      // Check for an existing mechanism with the same name.
       if (CurrentLevelModuls.ContainsKey(objName)) {
         Log.E(TAG, $"Find modul with the same name \"{objName}\"");
         return null;
@@ -937,16 +937,16 @@ namespace Ballance2.Game.LevelBuilder {
         return null; 
       }
 
-      //隐藏占位符
+      // Hide the placeholder.
       obj.SetActive(false);
-      //克隆机关
+      // Clone mechanisms.
       var modul = GameManager.Instance.InstancePrefab(modulPrefab.basePrefab, gameObject.transform, "ModulInstance_" + objName);
-      //同步机关位置
+      // Synchronize mechanism position.
       modul.transform.position = obj.transform.position;
       modul.transform.rotation = obj.transform.rotation;
 
       if (rotationCorrecting != null) {
-        //机关旋转修正
+        // Correct mechanism rotation.
         var eulerAngles = modul.transform.eulerAngles;
         var pos = modul.transform.position;
         if (Mathf.Abs(rotationCorrecting.y) > 0)
@@ -957,7 +957,7 @@ namespace Ballance2.Game.LevelBuilder {
           modul.transform.RotateAround(pos,  Vector3.right, rotationCorrecting.z);
       }
 
-      //获取类
+      // Get the component.
       var modulClasses = modul.GetComponents<ModulBase>();
       if (modulClasses.Length == 0) {
         Log.E(TAG, $"Not find ModulBase class on modul \"{objName}\"");
@@ -998,26 +998,26 @@ namespace Ballance2.Game.LevelBuilder {
 
     #endregion
 
-    #region 加载状态控制函数
+    #region Loading status controls
 
     /// <summary>
-    /// 获取是否正在加载
+    /// Whether loading is in progress.
     /// </summary>
     /// <value></value>
     public bool IsLoading { get; private set; } = false;
     /// <summary>
-    /// 设置进度条百分比
+    /// Set loading progress percentage.
     /// </summary>
     /// <param name="precent">0%-100%</param>
     public void UpdateLoadProgress(float precent) {
       LevelBuilderUIProgress.value = precent;
     }
     /// <summary>
-    /// 设置加载失败状态
+    /// Set loading error state.
     /// </summary>
-    /// <param name="err">是否失败</param>
-    /// <param name="statuaCode">状态码</param>
-    /// <param name="errMessage">错误信息</param>
+    /// <param name="err">Whether loading failed.</param>
+    /// <param name="statuaCode">Status code.</param>
+    /// <param name="errMessage">Error message.</param>
     public void UpdateErrStatus(bool err, string statuaCode, string errMessage) {
       if (err) {
         IsLoading = false;
@@ -1037,13 +1037,13 @@ namespace Ballance2.Game.LevelBuilder {
 
     #endregion
     
-    #region 机关注册
+    #region Mechanism registration
 
     /// <summary>
-    /// 注册机关
+    /// Register a mechanism.
     /// </summary>
-    /// <param name="name">机关名称</param>
-    /// <param name="basePrefab">机关的基础Prefab</param>
+    /// <param name="name">Mechanism name.</param>
+    /// <param name="basePrefab">Base mechanism prefab.</param>
     public void RegisterModul(string name, GameObject basePrefab) {
       if (RegisteredModuls.ContainsKey(name)) {
         GameErrorChecker.SetLastErrorAndLog(GameError.AlreadyRegistered, TAG, "Modul {0} already registered! ", name);
@@ -1060,16 +1060,16 @@ namespace Ballance2.Game.LevelBuilder {
       };
     }
     /// <summary>
-    /// 取消注册机关
+    /// Unregister a mechanism.
     /// </summary>
-    /// <param name="name">机关名称</param>
+    /// <param name="name">Mechanism name.</param>
     public bool UnRegisterModul(string name) {
       return RegisteredModuls.Remove(name);
     }
     /// <summary>
-    /// 获取注册的机关，如果没有注册，则返回null
+    /// Get a registered mechanism, or null if absent.
     /// </summary>
-    /// <param name="name">机关名称</param>
+    /// <param name="name">Mechanism name.</param>
     /// <returns></returns>
     public LevelBuilderModulRegStorage FindRegisterModul(string name) {
       if (RegisteredModuls.TryGetValue(name, out var v))
@@ -1079,16 +1079,16 @@ namespace Ballance2.Game.LevelBuilder {
 
     #endregion
 
-    #region 自定义步骤注册
+    #region Custom loading step registration
 
     private Dictionary<string, LevelBuilderCustomLoadStep> RegisteredLoadSteps = new Dictionary<string, LevelBuilderCustomLoadStep>();
 
     /// <summary>
-    /// 注册自定义加载步骤
+    /// Register a custom loading step.
     /// </summary>
-    /// <param name="name">名称</param>
-    /// <param name="type">回调类型，可选："pre"|"modul"|"last"|"unload"</param>
-    /// <param name="callback">回调参数为 levelBuilder 实例</param>
+    /// <param name="name">Name.</param>
+    /// <param name="type">Callback stage: pre, modul, last, or unload.</param>
+    /// <param name="callback">Callback receives the levelBuilder instance.</param>
     public void RegisterLoadStep(string name, string type, MonoBehaviour callbackBehaviour, LevelBuilderCustomLoadStepCallback callback) {
       if (RegisteredLoadSteps.ContainsKey(name)) {
         GameErrorChecker.SetLastErrorAndLog(GameError.AlreadyRegistered, TAG, "LoadStep {0} already registered! ", name);
@@ -1101,14 +1101,14 @@ namespace Ballance2.Game.LevelBuilder {
       };
     }
     /// <summary>
-    /// 取消注册自定义加载步骤
+    /// Unregister a custom loading step.
     /// </summary>
-    /// <param name="name">名称</param>
+    /// <param name="name">Name.</param>
     public bool UnRegisterLoadStep(string name) {
       return RegisteredLoadSteps.Remove(name);
     }
     /// <summary>
-    /// 调用自定义步骤
+    /// Run custom loading steps.
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
@@ -1123,16 +1123,16 @@ namespace Ballance2.Game.LevelBuilder {
 
     #endregion
 
-    #region 自动归组
+    #region Automatic grouping
 
     /// <summary>
-    /// 自动根据关卡主元件，生成归组信息。
+    /// Generate grouping information from the level root.
     /// </summary>
     /// <remark>
-    /// 注：此函数将会覆盖原有Level json中的归组信息。
+    /// This overwrites grouping information in the existing level JSON.
     /// </remark>
     /// <param name="level">Level json</param>
-    /// <param name="transform">关卡主元件transform</param>
+    /// <param name="transform">Level root transform.</param>
     private void DoLevelAutoGroup(LevelData level, Transform transform) {
       var childCount = transform.childCount;
 
@@ -1156,20 +1156,20 @@ namespace Ballance2.Game.LevelBuilder {
         var go = transform.GetChild(i).gameObject;
         var name = go.name;
         if (name == "PS_LevelStart") {
-          //开始火焰
+          // Starting flames.
           level.internalObjects.PS_LevelStart = "PS_LevelStart";
         } else if (name =="PE_LevelEnd") {
-          //结束飞船
+          // Ending balloon.
           level.internalObjects.PE_LevelEnd = "PE_LevelEnd";
         } else if (name.StartsWith("PR_ResetPoint:")) {
-          //出生点
+          // Spawn point.
           var sector = name.Substring(14);
           if (!level.internalObjects.PR_ResetPoints.ContainsKey(sector))
             level.internalObjects.PR_ResetPoints.Add(sector, name);
           else
             level.internalObjects.PR_ResetPoints[sector] = name;
         } else if (name.StartsWith("PC_CheckPoint:")) {
-          //检查点
+          // Checkpoint.
           var sector = name.Substring(14);
           if (!level.internalObjects.PC_CheckPoints.ContainsKey(sector))
             level.internalObjects.PC_CheckPoints.Add(sector, name);
@@ -1177,7 +1177,7 @@ namespace Ballance2.Game.LevelBuilder {
             level.internalObjects.PC_CheckPoints[sector] = name;
         } else if (name.StartsWith("S_")) {
           if (go.activeSelf) {
-            //静态路面组
+            // Static floor group.
             var floor_type = name.Substring(2);
             var c_names = new List<string>();
             var c_transform =  transform.GetChild(i);
@@ -1195,7 +1195,7 @@ namespace Ballance2.Game.LevelBuilder {
             });
           }
         } else if (name == "DepthTestCubes") {
-          //坠落检测区
+          // Fall detection zone.
           var c_transform =  transform.GetChild(i);
           for (int j = 0; j < c_transform.childCount; j++) {
             var goObject = c_transform.GetChild(j).gameObject;
@@ -1209,7 +1209,7 @@ namespace Ballance2.Game.LevelBuilder {
               var nname = arr[0];
               var sector = arr[arr.Length - 1];
               if (nname.StartsWith("P_")) {
-                //机关
+                // Mechanism.
                 if (!groupsTemp.ContainsKey(nname))
                   groupsTemp.Add(nname, new List<string>());
                 if (!level.sectors.ContainsKey(sector))
@@ -1249,33 +1249,33 @@ namespace Ballance2.Game.LevelBuilder {
       public LevelBuilderCustomLoadStepCallback callback;
     }
     /// <summary>
-    /// 用于管理机关注册
+    /// Mechanism registration data.
     /// </summary>
     public class LevelBuilderModulRegStorage {
       /// <summary>
-      /// 机关名称
+      /// Mechanism name.
       /// </summary>
       public string name;
       /// <summary>
-      /// 预制体实例
+      /// Prefab instance.
       /// </summary>
       public GameObject basePrefab;
     }
     /// <summary>
-    /// 管理机关实例
+    /// Mechanism instance data.
     /// </summary>
     public class LevelBuilderModulStorage {
       /// <summary>
-      /// 机关游戏对象实例
+      /// Mechanism GameObject instance.
       /// </summary>
       public GameObject go;
       /// <summary>
-      /// 机关类实例
+      /// Mechanism component instance.
       /// </summary>
       public ModulBase modul;
     }
     /// <summary>
-    /// 机关占位符旋转修正（欧拉角）
+    /// Placeholder rotation correction in Euler angles.
     /// </summary>
     [JsonObject]
     public class LevelBuilderModulRotationCorrecting {

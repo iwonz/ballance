@@ -7,69 +7,69 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GamePackageInfo.cs
 * 
-* 用途：
-* 游戏模块所用信息结构体和枚举声明
+* Purpose:
+* Game package metadata structures and enums.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Package
 {
   /// <summary>
-  /// 模块类型
+  /// Package type.
   /// </summary>
   public enum GamePackageType
   {
     /// <summary>
-    /// 代码包
+    /// Code package.
     /// </summary>
     Module,
     /// <summary>
-    /// 资源包
+    /// Resource package.
     /// </summary>
     Asset
   }
   /// <summary>
-  /// 模块加载状态
+  /// Package load state.
   /// </summary>  
   public enum GamePackageStatus
   {
     /// <summary>
-    /// 未加载
+    /// Not loaded.
     /// </summary>
     NotLoad = 0,
     /// <summary>
-    /// 正在注册
+    /// Registering.
     /// </summary>
     Registing = 1,
     /// <summary>
-    /// 正在加载
+    /// Loading.
     /// </summary>
     Loading = 2,
     /// <summary>
-    /// 加载成功
+    /// Loaded successfully.
     /// </summary>
     LoadSuccess = 3,
     /// <summary>
-    /// 加载失败
+    /// Load failed.
     /// </summary>
     LoadFailed = 4,
     /// <summary>
-    /// 正在等待卸载
+    /// Waiting to unload.
     /// </summary>
     UnloadWaiting = 5,
     /// <summary>
-    /// 已经注册但未加载
+    /// Registered but not loaded.
     /// </summary>
     Registered = 6,
   }
 
   /// <summary>
-  /// 模块基础信息
+  /// Package metadata.
   /// </summary>
   public class GamePackageBaseInfo
   {
@@ -125,53 +125,53 @@ namespace Ballance2.Package
     }
 
     /// <summary>
-    /// 模块名称
+    /// Package display name.
     /// </summary>
     public string Name { get; private set; }
     /// <summary>
-    /// 模块作者
+    /// Package author.
     /// </summary>
     public string Author { get; private set; }
     /// <summary>
-    /// 模块介绍
+    /// Package introduction.
     /// </summary>
     public string Introduction { get; private set; }
     /// <summary>
-    /// 说明文字
+    /// Description text.
     /// </summary>
     public string Description { get; private set; }
     /// <summary>
-    /// 模块Logo
+    /// Package logo.
     /// </summary>
     public string Logo { get; private set; }
     /// <summary>
-    /// 模块Logo Sprite
+    /// Package logo Sprite.
     /// </summary>
     public Sprite LogoTexture { get; set; }
     /// <summary>
-    /// 模块链接
+    /// Package URL.
     /// </summary>
     public string Link { get; private set; }
     /// <summary>
-    /// 模块作者主页URL
+    /// Author homepage URL.
     /// </summary>
     public string AuthorLink { get; private set; }
     /// <summary>
-    /// 模块文档URL
+    /// Package documentation URL.
     /// </summary>
     public string DocLink { get; private set; }
     /// <summary>
-    /// 显示给用户看的版本
+    /// User-facing version.
     /// </summary>
     public string VersionName { get; private set; }
     /// <summary>
-    /// 模块依赖
+    /// Package dependencies.
     /// </summary>
     public List<GamePackageDependencies> Dependencies { get; } = new List<GamePackageDependencies>();
   }
   
   /// <summary>
-  /// 模块依赖信息
+  /// Package dependency metadata.
   /// </summary>
   [System.Serializable]
   public class GamePackageDependencies
@@ -201,15 +201,15 @@ namespace Ballance2.Package
     }
 
     /// <summary>
-    /// 依赖模块包名
+    /// Dependency package identifier.
     /// </summary>
     public string Name { get; private set; }
     /// <summary>
-    /// 依赖模块最低版本
+    /// Minimum dependency version.
     /// </summary>
     public int MinVersion { get; private set; }
     /// <summary>
-    /// 依赖模块是否必须加载
+    /// Whether the dependency must load.
     /// </summary>
     public bool MustLoad { get; private set; }
   }

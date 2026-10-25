@@ -5,15 +5,15 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay
 {
   /// <summary>
-  /// 球物理参数定义
+  /// Ball physics parameters.
   /// </summary>
   /// <remarks>
-  /// 如何添加自己的球物理参数：请在注册球之前插入物理参数至 Data 字典中，键是你的球名称，与注册球时的名称一致。
+  /// Add custom physics parameters to Data before registering the ball, using the same ball name as the registration key.
   /// </remarks>
   public static class GamePhysBall 
   {
     /// <summary>
-    /// 获取数据
+    /// Get data.
     /// </summary>
     public static Dictionary<string, GamePhysBallData> Data;
 
@@ -32,27 +32,27 @@ namespace Ballance2.Game.GamePlay
   public struct GamePhysBallPiecesPhysicsData 
   {
     /// <summary>
-    /// 摩擦力系数
+    /// Friction coefficient.
     /// </summary>
     [JsonProperty]
     public float Friction;
     /// <summary>
-    /// 弹力系数
+    /// Elasticity coefficient.
     /// </summary>
     [JsonProperty]
     public float Elasticity;
     /// <summary>
-    /// 质量
+    /// Mass.
     /// </summary>
     [JsonProperty]
     public float Mass;
     /// <summary>
-    /// 线性阻尼
+    /// Linear damping.
     /// </summary>
     [JsonProperty]
     public float LinearDamp;
     /// <summary>
-    /// 旋转阻尼
+    /// Angular damping.
     /// </summary>
     [JsonProperty]
     public float RotDamp;
@@ -61,72 +61,72 @@ namespace Ballance2.Game.GamePlay
   public struct GamePhysBallData 
   {
     /// <summary>
-    /// 球推动力
+    /// Ball movement force.
     /// </summary>
     [JsonProperty]
     public float Force; 
     /// <summary>
-    /// 球的摩擦力系数
+    /// Ball friction coefficient.
     /// </summary>
     [JsonProperty]
     public float Friction; 
     /// <summary>
-    /// 球的弹力系数
+    /// Ball elasticity coefficient.
     /// </summary>
     [JsonProperty]
     public float Elasticity; 
     /// <summary>
-    /// 球的质量
+    /// Ball mass.
     /// </summary>
     [JsonProperty]
     public float Mass; 
     /// <summary>
-    /// 线性阻尼
+    /// Linear damping.
     /// </summary>
     [JsonProperty]
     public float LinearDamp; 
     /// <summary>
-    /// 碰撞层
+    /// Collision layer.
     /// </summary>
     [JsonProperty]
     public int Layer; 
     /// <summary>
-    /// 旋转阻尼
+    /// Angular damping.
     /// </summary>
     [JsonProperty]
     public float RotDamp; 
     /// <summary>
-    /// 碎片爆炸最小的力
+    /// Minimum fragment explosion force.
     /// </summary>
     [JsonProperty]
     public float PiecesMinForce; 
     /// <summary>
-    /// 碎片爆炸最大的力
+    /// Maximum fragment explosion force.
     /// </summary>
     [JsonProperty]
     public float PiecesMaxForce; 
     /// <summary>
-    /// 碎片的物理化参数
+    /// Fragment physics parameters.
     /// </summary>
     [JsonProperty]
     public GamePhysBallPiecesPhysicsData PiecesPhysicsData; 
     /// <summary>
-    /// 球向上的力。仅调试中有效
+    /// Upward ball force, available only in debug mode.
     /// </summary>
     [JsonProperty]
     public float UpForce; 
     /// <summary>
-    /// 球半径。如果为0则使用convex mesh
+    /// Ball radius; zero uses a convex mesh.
     /// </summary>
     [JsonProperty]
     public float BallRadius; 
     /// <summary>
-    /// 用于Tigger检测球半径。默认是2
+    /// Ball radius used for trigger detection; default 2.
     /// </summary>
     [JsonProperty]
     public float TiggerBallRadius; 
     /// <summary>
-    /// 球向下的力。仅调试中有效
+    /// Downward ball force, available only in debug mode.
     /// </summary>
     [JsonProperty]
     public float DownForce; 

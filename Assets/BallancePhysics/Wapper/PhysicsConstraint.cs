@@ -9,9 +9,9 @@ namespace BallancePhysics.Wapper
   public class PhysicsConstraint : PhysicsConstraintBase
   {
     
-    [Tooltip("连接到的另外一个物体，如果为空，则连接到世界")]
+    [Tooltip("The other object to connect; leave empty to connect to the world.")]
     /// <summary>
-    /// 连接到的另外一个物体，如果为空，则连接到世界
+    /// The other connected object; null connects the constraint to the world.
     /// </summary>
     public PhysicsObject Other;
     
@@ -26,40 +26,40 @@ namespace BallancePhysics.Wapper
       Z = 2 
     };
 
-    [Tooltip("“力系数”是指向所需位置的系数。当“力系数”=0.5时，约束尝试仅到达当前位置和所需位置之间的中间位置。动作更流畅。")]
+    [Tooltip("Fraction of the distance to the target applied by the constraint. At 0.5, it aims halfway between the current and target positions for smoother motion.")]
     
     /// <summary>
-    /// “力系数”是指向所需位置的系数。当“力系数”=0.5时，约束尝试仅到达当前位置和所需位置之间的中间位置。动作更流畅。
+    /// The force factor controls progress toward the target: 0.5 moves halfway from the current position, producing smoother motion.
     /// </summary>
     public float force_factor = 1.0f;
-    [Tooltip("较高的“阻尼系数”也意味着运动控制器BB尝试以更慢的速度到达其所需位置。“力系数/阻尼系数”是最重要的值。当该值低于1.0时，运动会更加平滑，不会跳跃或有弹性。")]
+    [Tooltip("Higher damping slows movement toward the target. A force-to-damping ratio below 1.0 produces smoother motion with less bouncing.")]
     
     /// <summary>
-    /// 较高的“阻尼系数”也意味着运动控制器BB尝试以更慢的速度到达其所需位置。“力系数/阻尼系数”是最重要的值。当该值低于1.0时，运动会更加平滑，不会跳跃或有弹性。
+    /// A higher damping factor slows the controller. A force-to-damping ratio below 1.0 smooths motion and reduces bouncing.
     /// </summary>
     public float damp_factor = 1.0f;
 
     [EnumFlagProperty]
-    [Tooltip("设置当前约束启用的移动约束轴")]
+    [Tooltip("Translation axes constrained by this constraint.")]
     
     public CoordinateIndex translation_limit;
     
-    [Tooltip("此参数细分为3对。每对定义一个平移轴的自由度最小值。")]
+    [Tooltip("Minimum translation limit for each axis.")]
     
     public Vector3 translation_freedom_min;
-    [Tooltip("此参数细分为3对。每对定义一个平移轴的自由度最大值。")]
+    [Tooltip("Maximum translation limit for each axis.")]
     
     public Vector3 translation_freedom_max;
     
     [EnumFlagProperty]
-    [Tooltip("设置当前约束启用的旋转约束轴")]
+    [Tooltip("Rotation axes constrained by this constraint.")]
     
     public CoordinateIndex rotation_limit;
 
-    [Tooltip("此参数细分为3对。每对定义一个旋转轴的自由度最小值。")]
+    [Tooltip("Minimum rotation limit for each axis.")]
     
     public Vector3 rotation_freedom_min;
-    [Tooltip("此参数细分为3对。每对定义一个旋转轴的自由度最大值。")]
+    [Tooltip("Maximum rotation limit for each axis.")]
     
     public Vector3 rotation_freedom_max;
 

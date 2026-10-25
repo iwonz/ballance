@@ -18,7 +18,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 /**
-  自定义关卡管理菜单的控制脚本
+  Custom level management menu controller.
 */
 
 
@@ -101,11 +101,11 @@ namespace Ballance2.Menu
         requiredPackages = new List<GameLevelDependencies>(o.requiredPackages);
 
         if(requiredPackages.Count == 0) {
-          //没有依赖
+          // No dependencies.
           dependsSuccess = true;
           dependsStatus = I18N.Tr("core.ui.LevelNoDepends");
         } else {
-          //加载当前关卡的依赖状态
+          // Load dependency states for the current level.
           int successCount = 0;
           for(var i = 0; i < requiredPackages.Count; i++) {
             var p = requiredPackages[i];
@@ -121,7 +121,7 @@ namespace Ballance2.Menu
               }
             }
           }
-          //设置状态文字
+          // Set status text.
           if(successCount == requiredPackages.Count) {
             dependsSuccess = true;
             dependsStatus = I18N.TrF("core.ui.LevelHasDepends", "", successCount);
@@ -198,7 +198,7 @@ namespace Ballance2.Menu
       }
     }
     private void ShowDependsInfo() {
-      //显示关卡依赖信息
+      // Show level dependency information.
       PanelDepends.gameObject.SetActive(true);
       if(dependesChanged) {
         dependesChanged = false;
@@ -226,7 +226,7 @@ namespace Ballance2.Menu
       }
     }   
     private void EnableAllDepends() {
-      //启用所有依赖
+      // Enable all dependencies.
       gameUIManager.GlobalToast(I18N.Tr("core.ui.LevelEnableAllDependsTodo"));
     }
     private void HideDependsInfo() {
@@ -252,7 +252,7 @@ namespace Ballance2.Menu
         selectedItem = info;
         dependesChanged = true;
 
-        //加载信息
+        // Load information.
         if(!selectedItem.infoLoaded) {
           selectedItem.infoLoaded = true;
 
@@ -264,7 +264,7 @@ namespace Ballance2.Menu
           string jsonString = "";
           #if UNITY_EDITOR
           string realPackagePath = GamePathManager.DEBUG_LEVEL_FOLDER + "/" + info.name;
-          //在编辑器中加载
+          // Load inside the editor.
           if (DebugSettings.Instance.PackageLoadWay == LoadResWay.InUnityEditorProject && Directory.Exists(realPackagePath)) {
             jsonString = File.ReadAllText(realPackagePath + "/Level.json");
             info.Set(JsonUtility.FromJson<GameLevelInfoJSON>(jsonString));
@@ -339,7 +339,7 @@ namespace Ballance2.Menu
           }
         }
 
-        //设置到UI上
+        // Apply information to the UI.
         if(string.IsNullOrEmpty(info.error)) {
           PanelError.gameObject.SetActive(false);
           PanelNoContent.gameObject.SetActive(false);
@@ -400,7 +400,7 @@ namespace Ballance2.Menu
           for (int i = 0; i < files.Length; i++) {
             string name = Path.GetFileNameWithoutExtension(files[i].Name);
             if(Regex.IsMatch(name, "^level\\d{2}$")) {
-              //调用HighscoreManager，检查过关状态
+              // Ask HighscoreManager for completion state.
               if(!HighscoreManager.Instance.CheckLevelPassState(name))
                 continue;
             }

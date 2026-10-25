@@ -5,30 +5,30 @@ using Ballance2.Services;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * ClickSound.cs
 * 
-* 用途：
-* UI点击声音发生器。用在需要点击声音的UI控件上。
+* Purpose:
+* Play a click sound on UI controls.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Core
 {
   /// <summary>
-  /// 点击触发声音组件
+  /// Click sound component.
   /// </summary>
-  [Tooltip("点击触发声音组件")]
+  [Tooltip("Play sound on click.")]
   [AddComponentMenu("Ballance/UI/Controls/ClickSound")]
   public class ClickSound : UIBehaviour, ISelectHandler, IPointerClickHandler
   {
-    [Tooltip("声音资源名称。与 GameSoundManager 约定的声音资源路径格式一致。")]
+    [Tooltip("Sound resource name in the format accepted by GameSoundManager.")]
     public string SoundName = "";
-    [Tooltip("是否在选择时播放声音。")]
+    [Tooltip("Play sound when selected.")]
     public bool HasSelectSound = true;
-    [Tooltip("是否在点击时播放声音。")]
+    [Tooltip("Play sound when clicked.")]
     public bool HasClickSound = true;
 
     private GameSoundManager GameSoundManager;

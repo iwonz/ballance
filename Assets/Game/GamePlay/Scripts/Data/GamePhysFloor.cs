@@ -5,16 +5,16 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay
 {
   /// <summary>
-  /// 这是游戏路面的物理参数。
+  /// Floor physics parameters.
   /// </summary>
   /// <remarks>
-  /// 你可以在 Data 里添加参数, 就相当于成功注册自己的物理路面。
-  /// 要修改默认路面的参数，只需要在进入游戏关卡之前修改对应数据参数即可。
+  /// Add parameters to Data to register a custom physics floor.
+  /// Change the relevant data before entering a level to override default floor parameters.
   /// </remarks>
   public static class GamePhysFloor 
   {
     /// <summary>
-    /// 获取数据
+    /// Get data.
     /// </summary>
     public static Dictionary<string, GamePhysFloorData> Data;
 
@@ -31,27 +31,27 @@ namespace Ballance2.Game.GamePlay
   public struct GamePhysFloorData 
   {
     /// <summary>
-    /// 路面的摩擦力系数
+    /// Floor friction coefficient.
     /// </summary>
     [JsonProperty]
     public float Friction; 
     /// <summary>
-    /// 路面的弹力系数
+    /// Floor elasticity coefficient.
     /// </summary>
     [JsonProperty]
     public float Elasticity; 
     /// <summary>
-    /// 路面的碰撞层
+    /// Floor collision layer.
     /// </summary>
     [JsonProperty]
     public int Layer; 
     /// <summary>
-    /// 路面的碰撞层声音名称
+    /// Floor collision sound layer name.
     /// </summary>
     [JsonProperty]
     public string HitSound; 
     /// <summary>
-    /// 路面的碰撞层
+    /// Floor collision layer.
     /// </summary>
     [JsonProperty]
     public string CollisionLayerName;

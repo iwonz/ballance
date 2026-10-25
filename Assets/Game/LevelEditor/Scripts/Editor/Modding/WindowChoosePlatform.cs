@@ -4,13 +4,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * PackagePackerWindow.cs
 * 
-* 用途：
-* 选择平台窗口
+* Purpose:
+* Platform selection window.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -21,7 +21,7 @@ namespace Ballance2.Editor.Modding
   {
     public WindowChoosePlatform()
     {
-      titleContent = new GUIContent("选择平台");
+      titleContent = new GUIContent("Select Platform");
     }
 
     private SerializedObject serializedObject;
@@ -58,11 +58,11 @@ namespace Ballance2.Editor.Modding
       EditorGUI.BeginChangeCheck();
 
       EditorGUILayout.BeginVertical(groupBox);
-      EditorGUILayout.PropertyField(pPackTarget, new GUIContent("目标平台 "));
+      EditorGUILayout.PropertyField(pPackTarget, new GUIContent("Target platform "));
 
       GUILayout.Space(50);
 
-      if (GUILayout.Button("确定")) {
+      if (GUILayout.Button("OK")) {
         close = true;
       }
 

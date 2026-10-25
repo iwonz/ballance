@@ -1,13 +1,13 @@
 ﻿/*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameService.cs
 * 
-* 用途：
-* 系统服务的基类
+* Purpose:
+* System service base class.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -17,7 +17,7 @@ using UnityEngine;
 namespace Ballance2.Services
 {
   /// <summary>
-  /// 系统服务基类
+  /// System service base class.
   /// </summary>
   public class GameService<T> : GameSingletonBehavior<T> where T : class   
   {
@@ -28,20 +28,20 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 服务名称
+    /// Service name.
     /// </summary>
     public string Name { get; private set; }
 
     /// <summary>
-    /// 初始化时被调用。
+    /// Called during initialization.
     /// </summary>
-    /// <returns>返回初始化是否成功</returns>
+    /// <returns>Whether initialization succeeded.</returns>
     public virtual bool Initialize()
     {
       return false;
     }
     /// <summary>
-    /// 释放时被调用。
+    /// Called during release.
     /// </summary>
     public virtual void Destroy()
     {
@@ -49,13 +49,13 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 更新函数
+    /// Update method.
     /// </summary>
     protected virtual void Update() {
 
     }
     /// <summary>
-    /// 更新函数
+    /// Update method.
     /// </summary>
     protected virtual void FixedUpdate() {
 

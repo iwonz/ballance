@@ -22,7 +22,7 @@ namespace Ballance2.Game.GamePlay.Moduls
     {
       base.Start();
  
-      //石球断开木桥
+      // The stone ball breaks the wooden bridge.
       _P_Modul_29_Platte05_Tigger.onTriggerEnter = (_, other) => OnBallEnterRange(other);
     }
 

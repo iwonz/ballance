@@ -4,7 +4,7 @@ using BallancePhysics.Wapper;
 namespace Ballance2.Game.GamePlay.Moduls
 {
   /// <summary>
-  /// 栅栏机关
+  /// Fence mechanism.
   /// </summary>
   public class P_Modul_01 : ModulBase 
   {

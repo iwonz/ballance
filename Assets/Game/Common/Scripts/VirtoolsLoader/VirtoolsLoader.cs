@@ -452,7 +452,7 @@ namespace Ballance2
                   IntPtr objGroupPtr = VirtoolsLoaderApi.Loader_CKGroupGetObject(objPtr, i, groupObjClassIdPtr, groupObjNamePtr);
                   if (objGroupPtr != IntPtr.Zero && Marshal.ReadInt32(groupObjClassIdPtr) == CKCID_3DOBJECT)
                   {
-                    groupName.Add(getObjNameOrPtrName(groupObjNamePtr, objGroupPtr, true));//添加名称到组
+                    groupName.Add(getObjNameOrPtrName(groupObjNamePtr, objGroupPtr, true));// Add the name to the group.
                   }
                 }
                 Marshal.FreeHGlobal(groupObjNamePtr);

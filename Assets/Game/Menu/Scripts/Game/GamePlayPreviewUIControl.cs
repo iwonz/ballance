@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace Ballance2.Menu
 {
   /// <summary>
-  /// 主游戏菜单控制器类
+  /// Main gameplay menu controller.
   /// </summary>
   public class GamePlayPreviewUIControl : GameSingletonBehavior<GamePlayPreviewUIControl> 
   {
@@ -48,7 +48,7 @@ namespace Ballance2.Menu
     }
 
     /// <summary>
-    /// 设置预览关卡信息
+    /// Set level preview information.
     /// </summary>
     /// <param name="name"></param>
     /// <param name="author"></param>
@@ -63,7 +63,7 @@ namespace Ballance2.Menu
          level.lightColor, level.skyBox, level.musicTheme);
     }
     /// <summary>
-    /// 设置FreeCamera引用
+    /// Set the FreeCamera reference.
     /// </summary>
     /// <param name="freeCam"></param>
     public void SetFreeCamera(FreeCamera freeCam) {

@@ -3,39 +3,39 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay
 {
   /// <summary>
-  /// 机关定义
-  /// 您可以通过继承此类来定义您的机关。
+  /// Mechanism definition.
+  /// Subclass this type to define a custom mechanism.
   /// </summary>
   public class ModulBase : MonoBehaviour 
   {
     /// <summary>
-    /// 获取或者设置当前机关基类是否自动控制当前机关的激活与失活
+    /// Whether the base class automatically activates and deactivates the mechanism.
     /// </summary>
     protected bool AutoActiveBaseGameObject = false;
     /// <summary>
-    /// 获取玩家球是否在当前机关球区域检测范围内
+    /// Whether the player's ball is inside this mechanism's detection range.
     /// </summary>
     protected bool BallInRange = false;
     /// <summary>
-    /// 是否开启球区域检测，开启后会定时检测，如果球进入指定范围，则发出 BallEnterRange 事件
+    /// Enable periodic ball range checks; entering the range emits BallEnterRange.
     /// </summary>
     protected bool EnableBallRangeChecker = false;
     /// <summary>
-    /// 球区域检测范围。创建之后也可以手动设置 modul.BallRangeChecker.Diatance 属性来设置
+    /// Ball detection range; it can also be changed through modul.BallRangeChecker.Diatance after creation.
     /// </summary>
     protected float BallCheckeRange = 60;
     /// <summary>
-    /// 获取当前机关是否在预览模式中加载
+    /// Whether the mechanism was loaded in preview mode.
     /// </summary>
     [HideInInspector]
     public bool IsPreviewMode = false;
     /// <summary>
-    /// 获取当前机关是否在测试模式中加载
+    /// Whether the mechanism was loaded in test mode.
     /// </summary>
     [HideInInspector]
     public bool IsDebugMode = false;
     /// <summary>
-    /// 获取当前机关是否激活
+    /// Whether the mechanism is active.
     /// </summary>
     [HideInInspector]
     protected bool IsActive = false;
@@ -43,7 +43,7 @@ namespace Ballance2.Game.GamePlay
     private TiggerTester BallRangeChecker = null;
 
     protected virtual void Start() {
-      //机关内置的球区域检测功能初始化
+      // Initialize built-in ball range detection.
       if (this.EnableBallRangeChecker) {
         var collide = this.gameObject.AddComponent<SphereCollider>();
         collide.radius = this.BallCheckeRange;
@@ -66,8 +66,8 @@ namespace Ballance2.Game.GamePlay
     }
 
     /// <summary>
-    /// 机关激活时发出此事件（进入当前小节）
-    /// 此事件在Backup事后发出
+    /// Raised when the mechanism activates on sector entry.
+    /// Raised after Backup.
     /// </summary>
     public virtual void Active() {
       if (AutoActiveBaseGameObject)
@@ -75,7 +75,7 @@ namespace Ballance2.Game.GamePlay
       IsActive = true;
     }
     /// <summary>
-    /// 机关隐藏时发出此事件（当前小节结束）
+    /// Raised when the mechanism is hidden at sector end.
     /// </summary>
     public virtual void Deactive() {
       IsActive = false;
@@ -83,50 +83,50 @@ namespace Ballance2.Game.GamePlay
         gameObject.SetActive(false);
     }
     /// <summary>
-    /// 关卡卸载时发出此事件
+    /// Raised when the level unloads.
     /// </summary>
     public virtual void UnLoad() {}
     /// <summary>
-    /// 机关重置为初始状态时发出此事件（玩家失败，重新开始一节）。Reset在Deactive之后发出
+    /// Raised after Deactive when resetting to the initial state after a failed sector attempt.
     /// </summary>
     public virtual void Reset(ModulBaseResetType type) {}
     /// <summary>
-    /// 机关就绪，可以保存状态时发出此事件（初次加载完成）
+    /// Raised after initial loading when the mechanism is ready to back up its state.
     /// </summary>
     public virtual void Backup() {}
     /// <summary>
-    /// 球进入当前机关指定范围时发出此事件
+    /// Raised when the ball enters this mechanism's range.
     /// </summary>
     protected virtual void BallEnterRange() {}
     /// <summary>
-    /// 球离开当前机关指定范围时发出此事件
+    /// Raised when the ball leaves this mechanism's range.
     /// </summary>
     protected virtual void BallLeaveRange() {}
     
     /// <summary>
-    /// 在预览模式中激活时发出此事件
+    /// Raised on activation in preview mode.
     /// </summary>
     public virtual void ActiveForPreview() {}
     /// <summary>
-    /// 在预览模式中隐藏时发出此事件
+    /// Raised when hidden in preview mode.
     /// </summary>
     public virtual void DeactiveForPreview() {}
     /// <summary>
-    /// 在测试模式中执行测试指令时发出此事件
+    /// Raised when a test command runs in test mode.
     /// </summary>
     public virtual void DebugTestCommand(int command) {}
   }
 
   /// <summary>
-  /// 标识机关的重置类型
+  /// Mechanism reset type.
   /// </summary>
   public enum ModulBaseResetType {
     /// <summary>
-    /// 玩家失败，重新开始一节
+    /// Restart the sector after player failure.
     /// </summary>
     SectorRestart,
     /// <summary>
-    /// 关卡重新开始
+    /// Restart the level.
     /// </summary>
     LevelRestart,
   }

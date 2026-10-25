@@ -448,7 +448,7 @@ namespace BallancePhysics.Api
       return new Quaternion(bufOut[0], bufOut[1], bufOut[2], bufOut[3]);
     }
 
-    //获取所有函数指针
+    // Resolve all function pointers.
     internal void initAll(IntPtr apiArrayPtr, int len)
     {
       int i = 0;
@@ -574,15 +574,15 @@ namespace BallancePhysics.Api
   }
 
   /// <summary>
-  /// Raycast 结果
+  /// Raycast result.
   /// </summary>
   public struct RayCastResult {
     /// <summary>
-    /// 碰撞的物体指针
+    /// Pointer to the hit object.
     /// </summary>
     public IntPtr[] hit_objects;
     /// <summary>
-    /// 碰撞的物体距离
+    /// Distance to the hit object.
     /// </summary>
     public float[] hit_distances;
   }

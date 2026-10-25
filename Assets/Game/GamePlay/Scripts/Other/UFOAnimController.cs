@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Other
 {
   /// <summary>
-  /// 游戏结束时的UFO动画控制器。
+  /// UFO animation controller for the end of the game.
   /// </summary>
   public class UFOAnimController : GameSingletonBehavior<UFOAnimController> {
 
@@ -61,7 +61,7 @@ namespace Ballance2.Game.GamePlay.Other
           PE_UFO_CatchSound.Play();
         }
         if (value.catchBall) {
-          GamePlayManagerInstance.BallManager.SetControllingStatus(BallControlStatus.LockLookMode); //去除物理化，禁用控制
+          GamePlayManagerInstance.BallManager.SetControllingStatus(BallControlStatus.LockLookMode); // Remove physics and disable control.
           var currentBall = GamePlayManagerInstance.BallManager.CurrentBall;
           if (currentBall != null) {
             var transform = currentBall.gameObject.transform;
@@ -72,25 +72,25 @@ namespace Ballance2.Game.GamePlay.Other
           }
         }
         if (index == UFOPositions.Data.Count - 2) {
-          //最后一个位置就隐藏UFO和球了
+          // Hide the UFO and ball at the final position.
           PE_UFO_Body.SetActive(false);
           if (_LastSetBall != null)  
             _LastSetBall.gameObject.SetActive(false);
         } else if (index == UFOPositions.Data.Count - 1) {
-          PE_UFO_Flash.SetActive(true); //闪光
+          PE_UFO_Flash.SetActive(true); // Flash.
         }
         index++;
       }
 
       PE_UFO_Fly.Fly = false;
 
-      //恢复球的父级
+      // Restore the ball's parent.
       if (_LastBallParent != null) {
         _LastSetBall.transform.SetParent(_LastBallParent);
         _LastBallParent = null;
       }
 
-      //UFO动画完成,现在控制权交回GamePlayManager
+      // UFO animation finished; return control to GamePlayManager.
       GamePlayManagerInstance.UfoAnimFinish();
     }
   }

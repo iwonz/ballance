@@ -24,7 +24,7 @@ namespace Ballance2.Menu
      GameManager.Instance.GameSettings.UnRegisterSettingsUpdateCallback(settingsUpdateCallbackId);
     }
     
-    //键盘大小设置控制
+    // Keyboard size settings.
     private void InitKeySize() {
       var GameSettings = GameManager.Instance.GameSettings;
       settingsUpdateCallbackId = GameSettings.RegisterSettingsUpdateCallback(SettingConstants.SettingsControl, (groupName, action) => {
@@ -39,7 +39,7 @@ namespace Ballance2.Menu
           layout.DoLayout(newKeySize);
     }
    
-    //自动扫描开头为Button的对象作为按钮，最多扫描2级
+    // Discover Button-prefixed objects up to two hierarchy levels deep.
     private void InitKeys() {
       for (int i = 0; i < transform.childCount; i++) {
 
@@ -62,7 +62,7 @@ namespace Ballance2.Menu
       
     }
     
-    //添加按钮
+    // Add buttons.
     private void AddButton(GameObject go) {
       var name = go.name;
       var GamePlayManager = Game.GamePlay.GamePlayManager.Instance;
@@ -103,11 +103,11 @@ namespace Ballance2.Menu
         var listener = EventTriggerListener.Get(go);
         if (name == "ButtonUp") {
 
-          //只有调试模式才显示
+          // Show only in debug mode.
           if (!GameManager.DebugMode)
             go.SetActive(false);
           else {
-            //上升键
+            // Upward movement key.
             listener.onDown = (_) => {
               BallManager.KeyStateUp = true;
               BallManager.FlushBallPush();
@@ -121,11 +121,11 @@ namespace Ballance2.Menu
         }
         else if (name == "ButtonDown") {
 
-          //只有调试模式才显示
+          // Show only in debug mode.
           if (!GameManager.DebugMode)
             go.SetActive(false);
           else {
-            //下降键
+            // Downward movement key.
             listener.onDown = (_) => {
               BallManager.KeyStateDown = true;
               BallManager.FlushBallPush();
@@ -139,7 +139,7 @@ namespace Ballance2.Menu
         }
         else if (name == "ButtonSpaceShift") {
 
-          //shift和space二合一键
+          // Combined Shift and Space key.
           listener.onDown = (_) => {
             shiftPressCount++;
             if (shiftPressCount >= 2 && GamePlayManager.BallManager.CanControllCamera) {
@@ -157,7 +157,7 @@ namespace Ballance2.Menu
         }
         else if (name == "ButtonSpace") {
 
-          //空格键
+          // Space key.
           listener.onDown = (_) => {
             if (GamePlayManager.BallManager.CanControllCamera) 
               CamManager.RotateUp(true);
@@ -167,14 +167,14 @@ namespace Ballance2.Menu
         }
         else if (name == "ButtonShift") {
 
-          //shift键
+          // Shift key.
           //listener.onDown = (_) => shiftPressOne = true;
           //listener.onUp = (_) => shiftPressOne = false;
 
         }
         else if (name == "ButtonCamLeft") {
 
-          //摄像机左转键
+          // Rotate camera left key.
           listener.onClick = (_) => {
             if (GamePlayManager.BallManager.CanControllCamera)
               CamManager.RotateLeft();
@@ -183,7 +183,7 @@ namespace Ballance2.Menu
         }
         else if (name == "ButtonCamRight") {
 
-          //摄像机右转键
+          // Rotate camera right key.
           listener.onClick = (_) => {
             if (GamePlayManager.BallManager.CanControllCamera)
               CamManager.RotateRight();

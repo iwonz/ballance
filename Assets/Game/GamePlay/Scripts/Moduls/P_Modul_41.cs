@@ -4,7 +4,7 @@ using BallancePhysics.Wapper;
 namespace Ballance2.Game.GamePlay.Moduls
 {
   /// <summary>
-  /// 浮块机关
+  /// Floating block mechanism.
   /// </summary>
   public class P_Modul_41 : ModulBase 
   {

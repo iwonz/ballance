@@ -5,13 +5,13 @@ using Ballance2.Game;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameSystemPackage.cs
 * 
-* 用途：
-* 游戏主模块特殊结构的声明
+* Purpose:
+* Specialized game core package definition.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

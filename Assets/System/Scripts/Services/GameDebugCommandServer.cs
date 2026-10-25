@@ -6,38 +6,38 @@ using Ballance2.Utils;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameDebugCommandServer.cs
 * 
-* 用途：
-* 调试命令服务，管理游戏自定义调试命令。
+* Purpose:
+* Manage custom game debug commands.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 /*
 
-在游戏中按 <kbd>F12</kbd> 呼出调试控制台，在调试控制台中可以输入调试命令执行。
+Press <kbd>F12</kbd> in debug mode to open the console and run commands.
 
-你可以使用 RegisterCommand 注册自定义调试命令，例如：
+Register custom commands with RegisterCommand. Example:
 ```csharp
 GameDebugCommandServer.RegisterCommand("mycommand", (keyword, fullCmd, argsCount, args) => {
-  //这里使用了 DebugUtils 中的调试工具函数获取参数
+  // Read arguments with the DebugUtils helpers.
   var ox = DebugUtils.CheckIntDebugParam(0, args, out var nx, true, 0);
   if (ox == null) 
     return false;
 
-  //获取参数成功后就可以执行自定义方法了
+  // Run custom logic after successfully reading arguments.
   return true;
-}, 1, "mycommand <count:number> > 测试调试命令");
+}, 1, "mycommand <count:number> > Test debug command");
 ```
 */
 
 namespace Ballance2.Services
 {
   /// <summary>
-  /// 调试命令服务，使用此服务添加自定义调试命令。
+  /// Debug command service for registering custom commands.
   /// </summary>
   public class GameDebugCommandServer
   {   
@@ -59,7 +59,7 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 获取指定文字的命令筛选帮助
+    /// Get command help matching the given text.
     /// </summary>
     /// <param name="text"></param>
     /// <returns></returns>
@@ -92,10 +92,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 解析并运行指定命令字符串
+    /// Parse and execute a command string.
     /// </summary>
-    /// <param name="cmd">命令字符串</param>
-    /// <returns>返回是否成功</returns>
+    /// <param name="cmd">Command string.</param>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool ExecuteCommand(string cmd)
     {
       if (string.IsNullOrEmpty(cmd))
@@ -111,7 +111,7 @@ namespace Ballance2.Services
             //arg
             if (cmdItem.LimitArgCount > 0 && sp.Count - 1 < cmdItem.LimitArgCount)
             {
-              Log.E(TAG, "命令 {0} 至少需要 {1} 个参数", sp.Result[0], cmdItem.LimitArgCount);
+              Log.E(TAG, "Command {0} requires at least {1} arguments.", sp.Result[0], cmdItem.LimitArgCount);
               return false;
             }
 
@@ -123,24 +123,24 @@ namespace Ballance2.Services
               return cmdItem.Callback(sp.Result[0], cmd, arglist.Count, arglist.ToArray());
             else
             {
-              Log.W(TAG, "命令 {0}({1}) 无接收器", cmdItem.Keyword, cmdItem.Id);
+              Log.W(TAG, "Command {0}({1}) has no receiver.", cmdItem.Keyword, cmdItem.Id);
               return false;
             }
           }
         }
-        Log.W(TAG, "未找到命令 {0}", sp.Result[0]);
+        Log.W(TAG, "Command {0} was not found.", sp.Result[0]);
       }
       return false;
     }
 
     /// <summary>
-    /// 注册调试命令
+    /// Register a debug command.
     /// </summary>
-    /// <param name="keyword">命令单词，不能有空格</param>
-    /// <param name="callback">命令回调</param>
-    /// <param name="limitArgCount">命令最低参数，默认 0 表示无参数或不限制</param>
-    /// <param name="helpText">命令帮助文字</param>
-    /// <returns>成功返回命令ID，不成功返回-1</returns>
+    /// <param name="keyword">Command keyword without spaces.</param>
+    /// <param name="callback">Command callback.</param>
+    /// <param name="limitArgCount">Minimum argument count; default 0 imposes no minimum.</param>
+    /// <param name="helpText">Command help text.</param>
+    /// <returns>Command ID on success; -1 on failure.</returns>
     public int RegisterCommand(string keyword, CommandDelegate callback, int limitArgCount, string helpText)
     {
       if (!IsCommandRegistered(keyword))
@@ -164,9 +164,9 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 取消注册命令
+    /// Unregister a command.
     /// </summary>
-    /// <param name="cmdId">命令ID</param>
+    /// <param name="cmdId">Command ID.</param>
     public void UnRegisterCommand(int cmdId)
     {
       CmdItem removeItem = null;
@@ -183,10 +183,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 获取命令是否注册
+    /// Whether a command is registered.
     /// </summary>
-    /// <param name="keyword">命令单词</param>
-    /// <returns>返回命令是否注册</returns>
+    /// <param name="keyword">Command keyword.</param>
+    /// <returns>Whether the command is registered.</returns>
     public bool IsCommandRegistered(string keyword)
     {
       foreach (CmdItem cmdItem in commands)
@@ -199,7 +199,7 @@ namespace Ballance2.Services
 
     private bool OnCommandHelp(string keyword, string fullCmd, int argsCount, string[] args)
     {
-      string helpText = "命令帮助：\n";
+      string helpText = "Command help:\n";
       foreach (CmdItem cmdItem in commands)
         helpText += cmdItem.Keyword + " <color=#adadad>" + cmdItem.HelpText + "</color>\n";
       Log.V(TAG, helpText);
@@ -208,22 +208,22 @@ namespace Ballance2.Services
 
     private void RegisterSystemCommands()
     {
-      //注册基础内置命令
-      RegisterCommand("help", OnCommandHelp, 0, "help 显示命令帮助");
+      // Register built-in base commands.
+      RegisterCommand("help", OnCommandHelp, 0, "help > Show command help");
       RegisterCommand("e", (keyword, fullCmd, argsCount, args) =>
       {
         Log.V("echo", fullCmd.Substring(2));
         return true;
-      }, 1, "e [any] 测试命令");
+      }, 1, "e [any] > Test command");
     }
   }
 
   /// <summary>
-  /// 调试命令回调
+  /// Debug command callback.
   /// </summary>
-  /// <param name="keyword">命令单词</param>
-  /// <param name="fullCmd">完整命令</param>
-  /// <param name="args">命令参数</param>
-  /// <returns>须返回命令是否执行成功</returns>
+  /// <param name="keyword">Command keyword.</param>
+  /// <param name="fullCmd">Full command.</param>
+  /// <param name="args">Command arguments.</param>
+  /// <returns>Return whether execution succeeded.</returns>
   public delegate bool CommandDelegate(string keyword, string fullCmd, int argsCount, string[] args);
 }

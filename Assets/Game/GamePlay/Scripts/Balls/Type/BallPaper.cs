@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Balls
 {
   /// <summary>
-  /// 纸球定义
+  /// Paper ball definition.
   /// </summary>
   public class BallPaper : Ball
   {
@@ -19,7 +19,7 @@ namespace Ballance2.Game.GamePlay.Balls
       this._SoundConfig.RollSoundSpeedReference = 12f;
       this._SoundConfig.RollSound.TimeDelayStart = 0.8f;
       this._SoundConfig.RollSound.TimeDelayEnd = 0.1f;
-      //自定义物理化碎片
+      // Custom fragment physics initialization.
       this._PiecesPhysCallback = (go, data) => {
         var body = go.AddComponent<PhysicsObject>();
         body.Mass = CommonUtils.RandomFloat(0.02f, 0.09f);
@@ -49,18 +49,18 @@ namespace Ballance2.Game.GamePlay.Balls
       _PaperPiecesSound.Play();
       base.ThrowPieces(pos);
 
-      //纸球碎片将施加一个恒力，以达到被风吹走的效果
+      // Apply a constant force to paper fragments to simulate wind.
       if (_PiecesData != null) {
         foreach(var body in _PiecesData.bodys) {
           body.ClearConstantForce();
-          body.AddConstantForceWithPositionAndRef(1, paperPeicesForceDir, Vector3.zero, null, body.transform); //加力
+          body.AddConstantForceWithPositionAndRef(1, paperPeicesForceDir, Vector3.zero, null, body.transform); // Add force.
         }
       }
     }
 
     public override void ResetPieces()
     {
-      //去掉纸球碎片恒力
+      // Remove the constant force from paper fragments.
       if (_PiecesData != null) {
         foreach(var body in _PiecesData.bodys) {
           body.ClearConstantForce();

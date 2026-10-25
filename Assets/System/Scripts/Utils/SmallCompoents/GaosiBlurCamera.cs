@@ -7,15 +7,15 @@ namespace Ballance2.Utils.SmallCompoents
     public Shader gaosiShader;
 
     private Material gaosiMaterial;
-    // 模糊处理的次数
+    // Blur pass count.
     [Range(0, 4)]
     public int iterations = 3;
 
-    // 越大越模糊
+    // Higher values increase blur.
     [Range(0.2f, 3.0f)]
     public float blurSpread = 0.6f;
 
-    //控制模糊采样的图片分辨率,提高性能降低质量
+    // Reduce blur sampling resolution to improve performance at the cost of quality.
     [Range(1, 8)]
     public int downSample = 2;
 

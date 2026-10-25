@@ -2,13 +2,13 @@
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * ConstStrings.cs
 * 
-* 用途：
-* 静态字符串声明。
+* Purpose:
+* Static string declarations.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

@@ -6,20 +6,20 @@ using UnityEngine.Animations;
 /*
  * Copyright (c) 2023  mengyu
  * 
- * 模块名：     
+ * Module:
  * SettingConstants.cs
  * 
- * 用途：
- * 游戏内设置的名称与默认值定义。
+ * Purpose:
+ * Game setting names and default values.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Game
 {
   /// <summary>
-  /// 游戏内设置的名称与默认值定义。
+  /// Game setting names and default values.
   /// </summary>
   public class SettingConstants : MonoBehaviour
   {
@@ -48,10 +48,10 @@ namespace Ballance2.Game
     public static string SettingsControlKeypad = "control.keypad";
 
     /// <summary>
-    /// 获取设置默认值
+    /// Get a setting's default value.
     /// </summary>
-    /// <typeparam name="int">键</typeparam>
-    /// <typeparam name="object">值</typeparam>
+    /// <typeparam name="int">Key.</typeparam>
+    /// <typeparam name="object">Value.</typeparam>
     /// <returns></returns>
     public static Dictionary<string, object> SettingsDefaultValues = new Dictionary<string, object>() {
       { SettingsVoiceBackground, 20.0f },

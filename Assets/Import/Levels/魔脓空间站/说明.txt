@@ -1,1 +1,4 @@
-魔脓空间站地图是原版nmo中直接导出的，里面Mesh复制了好多份，名字混乱不堪，我无力优化了，凑合用
+This custom space-station map was exported directly from the original NMO. It
+contains many duplicated meshes and inconsistent names; the imported content has
+not been optimized. Preserve its asset names and GUIDs unless a migration audits
+all references.

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Moduls
 {
   /// <summary>
-  /// 结尾气球组件
+  /// End balloon component.
   /// </summary>
   public class PE_Balloon : ModulBase 
   {
@@ -51,7 +51,7 @@ namespace Ballance2.Game.GamePlay.Moduls
 
       if (!IsPreviewMode) {
 
-        //接近PE_Balloon时禁用背景音乐
+        // Disable background music near PE_Balloon.
         var musicDisabledByPE_Balloon = false;
         var distanceChecker = PE_Balloon_Platform.GetComponent<DistanceChecker>();
         distanceChecker.Object2 = GamePlayManagerInstance.BallManager.PosFrame;
@@ -71,7 +71,7 @@ namespace Ballance2.Game.GamePlay.Moduls
         };
         distanceChecker.CheckEnabled = true;
 
-        //PE_Balloon 过关触发器
+        // PE_Balloon level-completion trigger.
         PE_Balloon_BallTigger.onTriggerEnter = (body, other) => {
           if (IsActive && other && other.gameObject.tag == "Ball" && !BallTiggerActived) {
 
@@ -80,7 +80,7 @@ namespace Ballance2.Game.GamePlay.Moduls
             BallTiggerActived = true;
             _MusicActived = false;
 
-            PE_Balloon_Platform_HingeJoint.Destroy(); //断开与桥的连接
+            PE_Balloon_Platform_HingeJoint.Destroy(); // Disconnect from the bridge.
             PE_Balloon_Platform.WakeUp();
             PE_Balloon_PlatformForce.enabled = false;
             PE_Balloon_BoxSlideForce.enabled = false;
@@ -89,16 +89,16 @@ namespace Ballance2.Game.GamePlay.Moduls
               GameTimer.DeleteDelay(_ControlSpeedTimer);
               _ControlSpeedTimer = 0;
             }
-            //速度放慢一些
+            // Slow down.
             _ControlSpeedTimer = GameTimer.Delay(2.001f, () => {
               PE_Balloon_BoxSlideForce.enabled = true;
               PE_Balloon_BoxSlideForce.Force = 0.15f;
 
-              //速度再放慢一些
+              // Slow down further.
               _ControlSpeedTimer = GameTimer.Delay(1.300f, () => {
                 PE_Balloon_BoxSlideForce.Force = 0.1f;
                 
-                //速度再放慢一些
+                // Slow down further.
                 _ControlSpeedTimer = GameTimer.Delay(40.000f, () => {
                   PE_Balloon_BoxSlideForce.Force = 0f;
                   _ControlSpeedTimer = 0;
@@ -107,7 +107,7 @@ namespace Ballance2.Game.GamePlay.Moduls
             });
 
             if (!IsDebugMode)
-              GamePlayManagerInstance.Pass(); //通知管理器关卡已结束
+              GamePlayManagerInstance.Pass(); // Notify the manager that the level has ended.
           }
         };
 
@@ -187,9 +187,9 @@ namespace Ballance2.Game.GamePlay.Moduls
           Log.D("PE_Balloon", "_MusicActived !");
 
         _MusicActived = true;
-        //播放最后一小节的音乐
+        // Play the final sector's music.
         var _SoundLastSector = GamePlayManagerInstance.GetSoundLastSector();
-        //设置为2d
+        // Use 2D sound.
         _SoundLastSector.spatialBlend = 0;
         _SoundLastSector.Play();
 
@@ -198,11 +198,11 @@ namespace Ballance2.Game.GamePlay.Moduls
         if (_PlayMusicDelayTimer > 0)
           GameTimer.DeleteDelay(_PlayMusicDelayTimer);
         _PlayMusicDelayTimer = GameTimer.Delay(5, () => {
-          //该音乐播放5秒后淡出
+          // Fade out this music after five seconds.
           GameUIManager.Instance.UIFadeManager.AddAudioFadeOut(_SoundLastSector, 5);
           _PlayMusicDelayTimer = GameTimer.Delay(5, () => {
             _PlayMusicDelayTimer = 0;
-            //播放一次完成之后设置为3d声音100m范围衰减，位置为当前飞船位置
+            // After the first playback, use 3D sound at the balloon position with 100 m attenuation range.
             _SoundLastSector.gameObject.transform.position = transform.position;
             _SoundLastSector.spatialBlend = 1;
             _SoundLastSector.volume = 1;
@@ -272,12 +272,12 @@ namespace Ballance2.Game.GamePlay.Moduls
     public override void DebugTestCommand(int command)
     {
       if (command == 1) {
-        PE_Balloon_Platform_HingeJoint.Destroy(); //断开与桥的连接
+        PE_Balloon_Platform_HingeJoint.Destroy(); // Disconnect from the bridge.
         PE_Balloon_Platform.WakeUp();
         Log.D("PE_Balloon", "Break bridge!");
       } else if (command == 2) {
         Log.D("PE_Balloon", "Test Pass!");
-        GamePlayManagerInstance.Pass(); //通知管理器关卡已结束
+        GamePlayManagerInstance.Pass(); // Notify the manager that the level has ended.
       }
     }    
     

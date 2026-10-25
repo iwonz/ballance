@@ -11,59 +11,59 @@ using static Ballance2.Services.GameManager;
 /*
  * Copyright (c) 2022 mengyu
  * 
- * 模块名：     
+ * Module:
  * FreeCamera.cs
  * 
- * 用途：
- * 自由摄像机脚本，包含了方向键移动，鼠标左键拖动，右键旋转视图，滚轮缩放功能。
+ * Purpose:
+ * Free camera with keyboard movement, left-button dragging, right-button rotation, and wheel zoom.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Game
 {
   /// <summary>
-  /// 自由摄像机脚本，包含了方向键移动，鼠标左键拖动，右键旋转视图，滚轮缩放功能。
+  /// Free camera with keyboard movement, left-button dragging, right-button rotation, and wheel zoom.
   /// </summary>
   public class FreeCamera : MonoBehaviour
   {
-    [Tooltip("是否启用线框渲染")]
+    [Tooltip("Enable wireframe rendering.")]
     /// <summary>
-    /// 是否启用线框渲染
+    /// Enable wireframe rendering.
     /// </summary>
     public bool Wireframe = false;
-    [Tooltip("是否启用当前摄像机上的 AudioListener")]
+    [Tooltip("Enable this camera's AudioListener.")]
     /// <summary>
-    /// 是否启用当前摄像机上的 AudioListener
+    /// Enable this camera's AudioListener.
     /// </summary>
     public bool Audio = true;
-    [Tooltip("是否启用雾渲染")]
+    [Tooltip("Enable fog rendering.")]
     /// <summary>
-    /// 是否启用雾渲染
+    /// Enable fog rendering.
     /// </summary>
     public bool Fog = true;
-    [Tooltip("是否启用天空盒渲染")]
+    [Tooltip("Enable skybox rendering.")]
     /// <summary>
-    /// 是否启用天空盒渲染
+    /// Enable skybox rendering.
     /// </summary>
     public bool SkyBox = true;
-    [Tooltip("获取当前摄像机的一个实例。")]
+    [Tooltip("Current camera instance.")]
     /// <summary>
-    /// 获取当前摄像机的一个实例。
+    /// Get the current camera instance.
     /// </summary>
     public static FreeCamera Instance;
-    [Tooltip("摄像机速度更改事件")]
+    [Tooltip("Camera speed change event.")]
     /// <summary>
-    /// 摄像机速度更改事件
+    /// Camera speed changed.
     /// </summary>
     public VoidDelegate onCamSpeedChanged;
 
-    [Tooltip("眼睛鼠标")]
+    [Tooltip("Look cursor.")]
     public Texture2D cursorDragEyeTexture;
-    [Tooltip("拖动时的眼睛鼠标")]
+    [Tooltip("Look cursor while dragging.")]
     public Texture2D cursorDragEyeFreeTexture;
-    [Tooltip("拖动时的鼠标")]
+    [Tooltip("Drag cursor.")]
     public Texture2D cursorDragHandTexture;
     private AudioListener AudioListener;
 
@@ -94,57 +94,57 @@ namespace Ballance2.Game
         mainCam.clearFlags = _SkyBox ? CameraClearFlags.Skybox : CameraClearFlags.SolidColor;
     }
 
-    [Tooltip("摄像机键盘移动速度")]
+    [Tooltip("Camera movement speed with the keyboard.")]
     /// <summary>
-    /// 摄像机键盘移动速度
+    /// Keyboard movement speed.
     /// </summary>
     public float cameraSpeed = 4f;
-    [Tooltip("摄像机鼠标水平移动速度")]
+    [Tooltip("Horizontal camera movement speed with the mouse.")]
     /// <summary>
-    /// 摄像机鼠标水平移动速度
+    /// Horizontal mouse movement speed.
     /// </summary>
     public float m_moveSensitivityX = 1f;
-    [Tooltip("摄像机鼠标垂直移动速度")]
+    [Tooltip("Vertical camera movement speed with the mouse.")]
     /// <summary>
-    /// 摄像机鼠标垂直移动速度
+    /// Vertical mouse movement speed.
     /// </summary>
     public float m_moveSensitivityY = 1f;
-    [Tooltip("摄像机缩放速度")]
+    [Tooltip("Camera zoom speed.")]
     /// <summary>
-    /// 摄像机缩放速度
+    /// Camera zoom speed.
     /// </summary>
     public float m_moveSensitivityZoom = 1f;
     //Roate camera
-    [Tooltip("摄像机水平移动速度")]
+    [Tooltip("Horizontal camera movement speed.")]
     /// <summary>
-    /// 摄像机水平移动速度
+    /// Horizontal camera movement speed.
     /// </summary>
     public float m_sensitivityX = 10f;
-    [Tooltip("摄像机垂直移动速度")]
+    [Tooltip("Vertical camera movement speed.")]
     /// <summary>
-    /// 摄像机垂直移动速度
+    /// Vertical camera movement speed.
     /// </summary>
     public float m_sensitivityY = 10f;
-    // 水平方向的 镜头转向
-    [Tooltip("摄像机转向最小角度")]
+    // Horizontal camera rotation.
+    [Tooltip("Minimum camera turn angle.")]
     /// <summary>
-    /// 摄像机转向最小角度
+    /// Minimum camera rotation angle.
     /// </summary>
     public float m_minimumX = -360f;
-    [Tooltip("摄像机转向最大角度")]
+    [Tooltip("Maximum camera turn angle.")]
     /// <summary>
-    /// 摄像机转向最大角度
+    /// Maximum camera rotation angle.
     /// </summary>
     public float m_maximumX = 360f;
-    // 垂直方向的 镜头转向 (这里给个限度 最大仰角为45°)
-    [Tooltip("镜头转向垂直最小仰角")]
+    // Vertical camera rotation, limited here to a maximum elevation of 45 degrees.
+    [Tooltip("Minimum camera elevation angle.")]
     /// <summary>
-    /// 镜头转向垂直最小仰角
+    /// Minimum vertical camera angle.
     /// </summary>
     public float m_minimumY = -45f;
-    [Tooltip("镜头转向垂直最大仰角")]
+    [Tooltip("Maximum camera elevation angle.")]
     /// <summary>
-    /// 镜头转向垂直最大仰角
+    /// Maximum vertical camera angle.
     /// </summary>
     public float m_maximumY = 45f;
 
@@ -176,12 +176,12 @@ namespace Ballance2.Game
       if (SkyBox != _SkyBox) UpdateSkyBox();
 
 
-      //在GUI上拖动除外
+      // Do not drag through GUI controls.
       if (!EventSystem.current.IsPointerOverGameObject() && GUIUtility.hotControl == 0)
       {
         const bool mouseLeftMoveCamera = true;
 
-        //左键(或者中键)平移
+        // Pan with the left or middle mouse button.
         //===============================
 
         if ((mouseLeftMoveCamera && Input.GetMouseButton(0)) || Input.GetMouseButton(2))
@@ -193,11 +193,11 @@ namespace Ballance2.Game
           Cursor.SetCursor(cursorDragHandTexture, Vector2.zero, CursorMode.Auto);
         }
 
-        //右键旋转
+        // Rotate with the right mouse button.
         //===============================
 
 #if (UNITY_IPHONE || UNITY_ANDROID) && !UNITY_EDITOR
-        //移动端是两个手指旋转
+        // Rotate with two fingers on mobile.
         else if (Input.touchCount > 0 && lastDownTouchId >= 0)
         {
             for (int i = 0; i < Input.touches.Length; i++)
@@ -229,10 +229,10 @@ namespace Ballance2.Game
           Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
 #endif  
-        //在右键按下时
+        // While the right mouse button is held.
         if (Input.GetMouseButton(1))
         {
-          //空格键抬升高度
+          // Space raises the camera.
           if (Input.GetKey(KeyCode.Q))
           {
             transform.Translate(Vector3.up * cameraSpeed * Time.deltaTime, Space.Self);
@@ -241,28 +241,28 @@ namespace Ballance2.Game
           {
             transform.Translate(Vector3.down * cameraSpeed * Time.deltaTime, Space.Self);
           }
-          //w键
+          // W key.
           if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
           {
             this.gameObject.transform.Translate(new Vector3(0, 0, cameraSpeed * Time.deltaTime));
           }
-          //s键
+          // S key.
           if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
           {
             this.gameObject.transform.Translate(new Vector3(0, 0, -cameraSpeed * Time.deltaTime));
           }
-          //a键
+          // A key.
           if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
           {
             this.gameObject.transform.Translate(new Vector3(-(cameraSpeed) * Time.deltaTime, 0, 0));
           }
-          //d键
+          // D key.
           if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
           {
             this.gameObject.transform.Translate(new Vector3((cameraSpeed) * Time.deltaTime, 0, 0));
           }
 
-          //增加移动速度
+          // Increase movement speed.
           if (Input.GetAxis("Mouse ScrollWheel") < 0)
           {
             if (cameraSpeed < 1)
@@ -280,7 +280,7 @@ namespace Ballance2.Game
 
             onCamSpeedChanged?.Invoke();
           }
-          //减少移动速度
+          // Decrease movement speed.
           if (Input.GetAxis("Mouse ScrollWheel") > 0)
           {
             if (cameraSpeed < 1)
@@ -300,12 +300,12 @@ namespace Ballance2.Game
         }
         else
         {
-          //（缩小）后退
+          // Move backward to zoom out.
           if (Input.GetAxis("Mouse ScrollWheel") < 0)
           {
             this.gameObject.transform.Translate(new Vector3(0, 0, cameraSpeed * -m_moveSensitivityZoom * Time.deltaTime));
           }
-          //（放大）前进
+          // Move forward to zoom in.
           if (Input.GetAxis("Mouse ScrollWheel") > 0)
           {
             this.gameObject.transform.Translate(new Vector3(0, 0, cameraSpeed * m_moveSensitivityZoom * Time.deltaTime));

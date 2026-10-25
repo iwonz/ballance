@@ -4,13 +4,13 @@ using UnityEngine.EventSystems;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * EventTriggerListener.cs
 * 
-* 用途：
-* UI 事件侦听器。不再使用。推荐使用UGUI的事件进行绑定。
+* Purpose:
+* Legacy UI event listener; prefer binding through UGUI events for new controls.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -19,28 +19,28 @@ namespace Ballance2.Services.InputManager
   public delegate void GameObjectDelegate(GameObject go);
   
   /// <summary>
-  /// UI 事件侦听器
+  /// UI event listener.
   /// </summary>
   public class EventTriggerListener : EventTrigger
   {
     /// <summary>
-    /// 鼠标点击事件
+    /// Pointer click event.
     /// </summary>
     public GameObjectDelegate onClick;
     /// <summary>
-    /// 鼠标按下事件
+    /// Pointer down event.
     /// </summary>
     public GameObjectDelegate onDown;
     /// <summary>
-    /// 鼠标进入事件
+    /// Pointer enter event.
     /// </summary>
     public GameObjectDelegate onEnter;
     /// <summary>
-    /// 鼠标离开事件
+    /// Pointer exit event.
     /// </summary>
     public GameObjectDelegate onExit;
     /// <summary>
-    /// 鼠标放开事件
+    /// Pointer up event.
     /// </summary>
     
     public GameObjectDelegate onUp;
@@ -48,10 +48,10 @@ namespace Ballance2.Services.InputManager
     public GameObjectDelegate onUpdateSelect;
 
     /// <summary>
-    /// 从 指定 GameObject 创建事件侦听器
+    /// Create an event listener on a GameObject.
     /// </summary>
-    /// <param name="go">指定 GameObject</param>
-    /// <returns>返回事件侦听器实例</returns>
+    /// <param name="go">GameObject.</param>
+    /// <returns>Event listener instance.</returns>
     static public EventTriggerListener Get(GameObject go)
     {
       EventTriggerListener listener = go.GetComponent<EventTriggerListener>();

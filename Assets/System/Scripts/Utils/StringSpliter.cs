@@ -4,15 +4,15 @@ using System.Collections.Generic;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * StringSpliter.cs
 * 
-* 用途：
-* 字符串分割器
+* Purpose:
+* String splitter.
 *
-* 可快速按要求分割字符串。
+* Split strings according to the configured delimiters.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -20,15 +20,15 @@ using System.Collections.Generic;
 namespace Ballance2.Utils
 {
   /// <summary>
-  /// 字符串分割器
+  /// String splitter.
   /// </summary>
   public class StringSpliter
   {
     /// <summary>
-    /// 创建字符串分割器
+    /// Create a string splitter.
     /// </summary>
-    /// <param name="s">要分隔的字符串</param>
-    /// <param name="sp">分隔依据</param>
+    /// <param name="s">String to split.</param>
+    /// <param name="sp">Delimiter.</param>
     public StringSpliter(string s, char sp)
     {
       if (s.Contains(sp.ToString()))
@@ -43,11 +43,11 @@ namespace Ballance2.Utils
       }
     }
     /// <summary>
-    /// 创建字符串分割器
+    /// Create a string splitter.
     /// </summary>
-    /// <param name="s">要分隔的字符串</param>
-    /// <param name="sp">分隔依据</param>
-    /// <param name="excludeQuotes">是否忽略英文引号（"）</param>    
+    /// <param name="s">String to split.</param>
+    /// <param name="sp">Delimiter.</param>
+    /// <param name="excludeQuotes">Ignore double quotes.</param>
     public StringSpliter(string s, char sp, bool excludeQuotes)
     {
       if (s.Contains(sp.ToString()))
@@ -105,11 +105,11 @@ namespace Ballance2.Utils
       }
     }
     /// <summary>
-    /// 创建字符串分割器
+    /// Create a string splitter.
     /// </summary>
-    /// <param name="s">要分隔的字符串</param>
-    /// <param name="sp">分隔依据</param>
-    /// <param name="sp2">分隔依据2</param>
+    /// <param name="s">String to split.</param>
+    /// <param name="sp">Delimiter.</param>
+    /// <param name="sp2">Second delimiter.</param>
     public StringSpliter(string s, char sp, char sp2)
     {
       if (s.Contains(sp.ToString()))
@@ -128,11 +128,11 @@ namespace Ballance2.Utils
     private int count = 0;
 
     /// <summary>
-    /// 分割是否成功
+    /// Whether splitting succeeded.
     /// </summary>
     public bool Success { get { return count != 0; } }
     /// <summary>
-    /// 分割结果个数
+    /// Number of split results.
     /// </summary>
     public int Count
     {
@@ -142,7 +142,7 @@ namespace Ballance2.Utils
       }
     }
     /// <summary>
-    /// 分割结果
+    /// Split results.
     /// </summary>
     public string[] Result { get { return buf; } }
 

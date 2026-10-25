@@ -5,13 +5,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameMediatorDelayCaller.cs
 * 
-* 用途：
-* 本类为 GameMediator 提供了延时触发事件的功能。
+* Purpose:
+* Provide delayed event dispatch for GameMediator.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

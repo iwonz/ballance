@@ -13,22 +13,22 @@ using UnityEngine.InputSystem.LowLevel;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameUIPage.cs
 * 
-* 用途：
-* UI页实例
-* 页与窗口不太一样，窗口可以同时打开多个，页只能同时显示一个，相当于独占的全屏窗口。
-* 要创建页，可以调用 GameUIManager.RegisterPage 函数。
+* Purpose:
+* UI page instance.
+* Pages are exclusive views, unlike multiple concurrently open windows.
+* Create pages through GameUIManager.RegisterPage.
 * 
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Core
 {
   /// <summary>
-  /// UI页实例
+  /// UI page instance.
   /// </summary>
   public class GameUIPage : MonoBehaviour
   {
@@ -38,36 +38,36 @@ namespace Ballance2.UI.Core
     public HorizontalLayoutGroup HorizontalLayoutGroup;
 
     /// <summary>
-    /// 页名称
+    /// Page name.
     /// </summary>
-    [Tooltip("页名称")]
+    [Tooltip("Page name.")]
     public string PageName;
     /// <summary>
-    /// 获取或设置是否可以按ESC键返回上一页
+    /// Allow Escape to return to the previous page.
     /// </summary>
-    [Tooltip("设置是否可以按ESC键返回上一页")]
+    [Tooltip("Allow Escape to return to the previous page.")]
     public bool CanEscBack = true;
     /// <summary>
-    /// 显示页事件
+    /// Page shown.
     /// </summary>
     public OptionsDelegate OnShow;
     /// <summary>
-    /// 页由上一页返回时事件
+    /// Page revisited through back navigation.
     /// </summary>
     public OptionsDelegate OnBackFromChild;
     /// <summary>
-    /// 隐藏页事件
+    /// Page hidden.
     /// </summary>
     public VoidDelegate OnHide;
 
     private DefaultSelection defaultSelection = null;
 
     /// <summary>
-    /// 页面上一次打开时所设置的参数
+    /// Options from the last forward navigation.
     /// </summary>
     public Dictionary<string, string> LastOptions;
     /// <summary>
-    /// 页面上由子页所返回设置的参数
+    /// Options returned from a child page.
     /// </summary>
     public Dictionary<string, string> LastBackOptions;
 
@@ -77,7 +77,7 @@ namespace Ballance2.UI.Core
     private int escBackId = 0;
 
     /// <summary>
-    /// 显示页。直接调用此函数会导致脱离 GameUIManager 的栈管理，推荐使用 GameUIManager 来控制页的显示与隐藏。
+    /// Show directly, bypassing GameUIManager's navigation stack; prefer using the manager.
     /// </summary>
     public void Show()
     {
@@ -85,9 +85,9 @@ namespace Ballance2.UI.Core
       gameObject.SetActive(true);
       OnShow?.Invoke(LastOptions);
 
-      //选择默认按扭
+      // Select the default button.
       if(defaultSelection != null) {
-        //默认选择的时候不要播放声音
+        // Do not play a sound for automatic selection.
         var sound = defaultSelection.select.GetComponent<ClickSound>();
         if(sound != null)
           sound.enabled = false;
@@ -106,7 +106,7 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 隐藏页。直接调用此函数会导致脱离 GameUIManager 的栈管理，推荐使用 GameUIManager 来控制页的显示与隐藏。
+    /// Hide directly, bypassing GameUIManager's navigation stack; prefer using the manager.
     /// </summary>
     public void Hide()
     {
@@ -120,10 +120,10 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 创建指定资源的内容
+    /// Create content from a resource.
     /// </summary>
-    /// <param name="package">资源所在模块</param>
-    /// <param name="resourceName">资源模板路径</param>
+    /// <param name="package">Package containing the resource.</param>
+    /// <param name="resourceName">Content template resource path.</param>
     public void CreateContent(GamePackage package, string resourceName)
     {
       var go = CloneUtils.CloneNewObjectWithParent(package.GetPrefabAsset(resourceName), ContentHost, PageName);
@@ -144,17 +144,17 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 使用页名称自动创建指定资源的内容
+    /// Create content automatically from the page name.
     /// </summary>
-    /// <param name="package">资源所在模块</param>
+    /// <param name="package">Package containing the resource.</param>
     public void CreateContent(GamePackage package)
     {
       CreateContent(package, PageName + ".prefab");
     }
     /// <summary>
-    /// 使用页预制体自动创建指定资源的内容
+    /// Create content from the page prefab.
     /// </summary>
-    /// <param name="prefab">预制体</param>
+    /// <param name="prefab">Prefab.</param>
     public void CreateContent(GameObject prefab)
     {
       var go = CloneUtils.CloneNewObjectWithParent(prefab, ContentHost, PageName);
@@ -168,9 +168,9 @@ namespace Ballance2.UI.Core
     }
 
     /// <summary>
-    /// 将内容设置至当前页的内容容器中
+    /// Set the page's content container.
     /// </summary>
-    /// <param name="content">内容RectTransform</param>
+    /// <param name="content">Content RectTransform.</param>
     public void SetContent(RectTransform content)
     {
       content.transform.SetParent(ContentHost);

@@ -6,20 +6,20 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2023 mengyu
 *
-* 模块名：     
+* Module:
 * KeyChooseMutexGroup.cs
 * 
-* 用途：
-* 用于键盘按键选择组件的互斥。
+* Purpose:
+* Enforce mutual exclusion between key selection controls.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Core.Controls
 {
   /// <summary>
-  /// 用于键盘按键选择组件的互斥。
+  /// Enforce mutual exclusion between key selection controls.
   /// </summary>
   public class KeyChooseMutexGroup : MonoBehaviour
   {

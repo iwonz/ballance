@@ -13,13 +13,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameEditorDebugPackage.cs
 * 
-* 用途：
-* 提供游戏模块在Unity编辑器中直接加载的模式
+* Purpose:
+* Load game packages directly from the Unity editor project.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -42,7 +42,7 @@ namespace Ballance2.Package
       if (!File.Exists(defPath))
       {
         GameErrorChecker.SetLastErrorAndLog(GameError.PackageDefNotFound, TAG, "PackageDef.xml not found");
-        LoadError = "模块并不包含 PackageDef.xml";
+        LoadError = "Package does not contain PackageDef.xml.";
         return false;
       }
       else
@@ -91,7 +91,7 @@ namespace Ballance2.Package
       DirectoryInfo theFolder = new DirectoryInfo(PackageFilePath);
       FileInfo[] thefileInfo = theFolder.GetFiles("*.*", SearchOption.AllDirectories);
       foreach (FileInfo NextFile in thefileInfo)
-      { //遍历文件
+      { // Enumerate files.
         string path = NextFile.FullName.Replace("\\", "/");
 
         if (path.EndsWith(".meta")) continue;
@@ -125,7 +125,7 @@ namespace Ballance2.Package
       catch (Exception e)
       {
         BaseInfo.LogoTexture = null;
-        Log.E(TAG, "在加载模块的 Logo {0} 失败\n错误信息：{1}", path, e.ToString());
+        Log.E(TAG, "Failed to load package logo {0}\nError: {1}", path, e.ToString());
       }
     }
 

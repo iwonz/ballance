@@ -3,20 +3,20 @@ using UnityEngine;
 /*
  * Copyright (c) 2020  mengyu
  * 
- * 模块名：     
+ * Module:
  * SmoothFly.cs
  * 
- * 用途：
- * 平滑移动脚本，可将物体平滑移动至指定目标。
+ * Purpose:
+ * Move an object smoothly toward a target.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Game.Utils
 {    
   /// <summary>
-  /// 指定 平滑移动脚本 SmoothFly 平滑移动的类型
+  /// Interpolation mode used by SmoothFly.
   /// </summary>
   public enum SmoothFlyType {
     /// <summary>
@@ -31,16 +31,16 @@ namespace Ballance2.Game.Utils
     Lerp
   }
   /// <summary>
-  /// 平滑移动脚本，可将物体平滑移动至指定目标
+  /// Move an object smoothly toward a target.
   /// </summary>
   /// <remarks>
-  /// 你可以先在需要平滑移动的物体上绑定此脚本，然后设置平滑移动目标，开启，随后在 `ArrivalCallback` 中就可以接收移动完成事件，例如：
+  /// Attach this component, set the target, enable movement, and handle completion in ArrivalCallback. Example:
   /// ```csharp
   /// var smoothFly = gameObject.AddComponent(SmoothFly);
-  /// smoothFly.TargetTransform = 移动目标;
-  /// smoothFly.Fly = true; //开启移动
+  /// smoothFly.TargetTransform = target;
+  /// smoothFly.Fly = true; // Start movement.
   /// smoothFly.ArrivalDiatance = () => {
-  ///   --移动结束时执行某些功能
+  ///   // Perform work when movement finishes.
   /// };
   /// ```
   /// </remarks>
@@ -49,53 +49,53 @@ namespace Ballance2.Game.Utils
     public delegate void CallbackDelegate(SmoothFly fly);
 
     /// <summary>
-    /// 设置平滑移动目标变换
+    /// Set the target transform.
     /// </summary>
-    [Tooltip("设置平滑移动目标变换")]
+    [Tooltip("Target transform for smooth movement.")]
     public Transform TargetTransform;
     /// <summary>
-    /// 设置平滑移动目标位置
+    /// Set the target position.
     /// </summary>
-    [Tooltip("设置平滑移动目标位置")]
+    [Tooltip("Target position for smooth movement.")]
     public Vector3 TargetPos = Vector3.zero;
     /// <summary>
-    /// 设置是否开启平滑移动
+    /// Enable smooth movement.
     /// </summary>
-    [Tooltip("设置是否开启平滑移动")]
+    [Tooltip("Enable smooth movement.")]
     public bool Fly = false;
     /// <summary>
-    /// 设置平滑移动时间（秒）
+    /// Set movement duration in seconds.
     /// </summary>
-    [Tooltip("设置平滑移动时间（秒）")]
+    [Tooltip("Smooth movement time, in seconds.")]
     public float Time = 1.0f;
     /// <summary>
-    /// 设置最大速度
+    /// Set maximum speed.
     /// </summary>
-    [Tooltip("设置最大速度")]
+    [Tooltip("Maximum speed.")]
     public float MaxSpeed = 0;
     /// <summary>
-    /// 获取当前的速度
+    /// Get current speed.
     /// </summary>
-    [Tooltip("获取当前的速度")]
+    [Tooltip("Current velocity.")]
     public Vector3 CurrentVelocity = Vector3.zero;
     /// <summary>
-    /// 设置是否达到目标时停止
+    /// Stop when the target is reached.
     /// </summary>
-    [Tooltip("设置是否达到目标时停止")]
+    [Tooltip("Stop when the target is reached.")]
     public bool StopWhenArrival = false;
     /// <summary>
-    /// 设置达到目标判断阈值
+    /// Set the arrival threshold.
     /// </summary>
-    [Tooltip("设置达到目标判断阈值")]
+    [Tooltip("Threshold for considering the target reached.")]
     public float ArrivalDiatance = 0.1f;
     /// <summary>
-    /// 设置达到目标时的事件回调
+    /// Set the arrival callback.
     /// </summary>
     public CallbackDelegate ArrivalCallback;
     /// <summary>
-    /// 设置平滑移动的类型
+    /// Set the interpolation mode.
     /// </summary>
-    [Tooltip("设置平滑移动的类型")]
+    [Tooltip("Smooth movement mode.")]
     public SmoothFlyType Type = SmoothFlyType.SmoothDamp;
 
     private float LerpTick = 0;

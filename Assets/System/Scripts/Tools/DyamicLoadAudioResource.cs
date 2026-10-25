@@ -4,27 +4,27 @@ using Ballance2.Services;
 /*
 * Copyright(c) 2021 imengyu
 *
-* 模块名：     
+* Module:
 * DyamicLoadAudioResource.cs
 * 
-* 用途：
-* 动态从 GameSoundManager 载入声音资源。
+* Purpose:
+* Load audio resources dynamically through GameSoundManager.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Sys.Tools
 {
   /// <summary>
-  /// 动态从 GameSoundManager 载入声音资源
+  /// Load audio resources dynamically through GameSoundManager.
   /// </summary>
   [RequireComponent(typeof(AudioSource))]
   public class DyamicLoadAudioResource : MonoBehaviour
   {
-    [Tooltip("声音资源路径，与 GameSoundManager 约定的声音资源路径格式一致。")]
+    [Tooltip("Sound resource path in the format accepted by GameSoundManager.")]
     public string AssetString = "";
-    [Tooltip("指定声音所属类型")]
+    [Tooltip("Sound category.")]
     public GameSoundType SoundType = GameSoundType.Normal;
 
     private AudioSource AudioSource;

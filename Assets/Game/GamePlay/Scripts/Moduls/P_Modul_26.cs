@@ -29,7 +29,7 @@ namespace Ballance2.Game.GamePlay.Moduls
       P_Modul_26_Sack.Physicalize();
       P_Modul_26_Sack.EnableConstantForce = true;
       _ForceTimer = GameTimer.Timer(SwitchTime, () => {
-        _ForceState = !_ForceState;//切换方向
+        _ForceState = !_ForceState;// Switch direction.
         if (_ForceState)
           P_Modul_26_Sack_Force.Force = Force;
         else

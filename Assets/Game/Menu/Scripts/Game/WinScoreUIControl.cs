@@ -92,7 +92,7 @@ namespace Ballance2.Menu
     }
 
     /// <summary>
-    /// 开始分数统计序列
+    /// Start the score tally sequence.
     /// </summary>
     public void StartSeq() {
       _IsInSeq = true;
@@ -123,7 +123,7 @@ namespace Ballance2.Menu
       if (_Skip) 
         yield break;
       
-      //关卡分数
+      // Level score.
       _SwitchSound.Play();
       HighlightBar1.SetActive(true);
       ScoreBonus.text = _GamePlayManager.LevelScore.ToString();
@@ -134,7 +134,7 @@ namespace Ballance2.Menu
       if (_Skip) 
         yield break;
 
-      //额外时间点
+      // Extra time points.
       _SwitchSound.Play();
       HighlightBar1.SetActive(false);
       HighlightBar2.SetActive(true);
@@ -148,7 +148,7 @@ namespace Ballance2.Menu
 
       var GamePlayUI = GamePlayUIControl.Instance;
 
-      //额外生命点
+      // Extra life points.
       _SwitchSound.Play();
       HighlightBar2.SetActive(false);
       HighlightBar3.SetActive(true);
@@ -168,7 +168,7 @@ namespace Ballance2.Menu
 
       yield return new WaitForSeconds(1.5f);
 
-      //完整分数
+      // Total score.
       if (_Skip) 
         yield break;
 
@@ -185,7 +185,7 @@ namespace Ballance2.Menu
     }
 
     /// <summary>
-    /// 获取是否在分数统计序列中
+    /// Whether the score tally is running.
     /// </summary>
     public void Skip() {
       if (_Skip)
@@ -217,18 +217,18 @@ namespace Ballance2.Menu
       GameTimer.Delay(3.5f, _ShowHighscore);
     }    
     /// <summary>
-    /// 跳过分数统计序列
+    /// Skip the score tally sequence.
     /// </summary>
     /// <returns></returns>
     public bool IsInSeq() { return _IsInSeq; }
 
-    //保存高分数据
+    // Save high-score data.
     public void SaveHighscore(string entryName) {
       HighscoreManager.Instance.AddItem(_GamePlayManager.CurrentLevelName, entryName, _ScoreNTotal);
       HighscoreManager.Instance.AddLevelPassState(_GamePlayManager.NextLevelName);
     }
 
-    //按ESC键直接进入高分界面
+    // Escape skips directly to the high-score screen.
     private void _ShowHighscore() {
       if (EscKeyID != 0) 
       {
@@ -242,13 +242,13 @@ namespace Ballance2.Menu
 
       GameUIManager.Instance.GoPage("PageHighscoreEntry");
 
-      //重置文字为0
+      // Reset text to zero.
       ScoreTimePoints.text = "0";
       ScoreBonus.text = "0";
       ScoreExtraLives.text = "0";
       ScoreTotal.text = "0";
 
-      //检查是不是新的高分
+      // Check for a new high score.
       var PageHighscoreEntry = GameUIManager.Instance.GetCurrentPage();
       var HighscoreEntryNameTextScore = PageHighscoreEntry.Content.Find("TextScore").GetComponent<Text>();
       

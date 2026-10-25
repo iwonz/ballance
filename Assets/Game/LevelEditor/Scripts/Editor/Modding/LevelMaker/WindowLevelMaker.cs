@@ -10,7 +10,7 @@ namespace Ballance2.Editor.Modding.LevelMaker
     {
         public WindowLevelMaker()
         {
-            titleContent = new GUIContent("创建 Ballance 关卡模板");
+            titleContent = new GUIContent("Create Ballance Level Template");
         }
 
         private string levelName = "";
@@ -34,20 +34,20 @@ namespace Ballance2.Editor.Modding.LevelMaker
             EditorGUILayout.BeginVertical();
             EditorGUILayout.Space(50);
 
-            levelName = EditorGUILayout.TextField("文件夹名称", levelName);
+            levelName = EditorGUILayout.TextField("Folder name", levelName);
 
             var empty = StringUtils.isNullOrEmpty(levelName);
                
 
             EditorGUI.BeginDisabledGroup(empty);
 
-            if(GUILayout.Button("生成"))
+            if(GUILayout.Button("Generate"))
                 Make();
 
             EditorGUI.EndDisabledGroup();
 
             if(empty)
-                EditorGUILayout.HelpBox("文件夹名称为空", MessageType.Error);
+                EditorGUILayout.HelpBox("Folder name is empty.", MessageType.Error);
 
             EditorGUILayout.Space(50);
             EditorGUILayout.EndVertical();
@@ -61,15 +61,15 @@ namespace Ballance2.Editor.Modding.LevelMaker
             string folderPath = GamePathManager.DEBUG_LEVEL_FOLDER + "/" + levelName;
             if (Directory.Exists(folderPath))
             {
-                if (!EditorUtility.DisplayDialog("提示", "指定关卡文件夹 " + levelName + " 已经在： \n" +
-                    folderPath + "\n存在了，是否要替换？", "替换", "取消"))
+                if (!EditorUtility.DisplayDialog("Information", "Level folder " + levelName + " already exists at: \n" +
+                    folderPath + "\nReplace it?", "Replace", "Cancel"))
                     return;
             }
 
             DirectoryInfo directoryInfo = Directory.CreateDirectory(folderPath);
             if(directoryInfo == null)
             {
-                EditorUtility.DisplayDialog("错误", "创建文件夹失败：\n" + folderPath, "确定");
+                EditorUtility.DisplayDialog("Error", "Failed to create folder:\n" + folderPath, "OK");
                 return;
             }
 
@@ -79,7 +79,7 @@ namespace Ballance2.Editor.Modding.LevelMaker
             File.Copy(GamePathManager.DEBUG_LEVEL_FOLDER + "/template_LevelPreview.png", folderPath + "/LevelPreview.png");
 
             AssetDatabase.Refresh();
-            EditorUtility.DisplayDialog("提示", "生成模板成功！", "好的");
+            EditorUtility.DisplayDialog("Information", "Template generated successfully!", "OK");
 
             Close();
         }

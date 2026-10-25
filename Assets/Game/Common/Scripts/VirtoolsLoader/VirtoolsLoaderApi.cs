@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 namespace Ballance2 {
 
   /// <summary>
-  /// 加载器的DLL API
+  /// Loader DLL API.
   /// </summary>
   public class VirtoolsLoaderApi {
     private const string DLL_NNAME = "VirtoolsNMOLoader";

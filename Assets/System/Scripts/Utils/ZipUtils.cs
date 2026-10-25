@@ -8,42 +8,42 @@ using System.Threading.Tasks;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * ZipUtils.cs
 * 
-* 用途：
-* Zip 帮助类。用于读取操作Zip文件
+* Purpose:
+* ZIP archive helpers.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
 namespace Ballance2.Utils
 {
   /// <summary>
-  /// Zip 帮助类。用于读取操作Zip文件
+  /// ZIP archive helpers.
   /// </summary>
   public class ZipUtils
   {
     /// <summary>
-    /// 添加文件至 Zip 文件中
+    /// Add a file to a ZIP archive.
     /// </summary>
-    /// <param name="zipStream">Zip 文件</param>
-    /// <param name="file">要添加的文件路径</param>
-    /// <param name="subIndex">从路径字符串中指定位置截取成为文件名</param>
-    /// <param name="crc">Crc32校验</param>
+    /// <param name="zipStream">ZIP stream.</param>
+    /// <param name="file">File path to add.</param>
+    /// <param name="subIndex">Index at which to slice the path into the archive filename.</param>
+    /// <param name="crc">CRC32 checksum.</param>
     public static void AddFileToZip(ZipOutputStream zipStream, string file, int subIndex, ref Crc32 crc)
     {
       string fileName = file.Substring(subIndex);
       AddFileToZip(zipStream, file, fileName, ref crc);
     }
     /// <summary>
-    /// 添加文件至 Zip 文件中
+    /// Add a file to a ZIP archive.
     /// </summary>
-    /// <param name="zipStream">Zip 文件</param>
-    /// <param name="file">要添加的文件路径</param>
-    /// <param name="inZipFilePath">指定文件在Zip中的路径</param>
-    /// <param name="crc">Crc32校验</param>
+    /// <param name="zipStream">ZIP stream.</param>
+    /// <param name="file">File path to add.</param>
+    /// <param name="inZipFilePath">Path inside the ZIP.</param>
+    /// <param name="crc">CRC32 checksum.</param>
     public static void AddFileToZip(ZipOutputStream zipStream, string file, string inZipFilePath, ref Crc32 crc)
     {
       FileStream fileStream = File.OpenRead(file);
@@ -61,31 +61,31 @@ namespace Ballance2.Utils
       zipStream.Write(buffer, 0, buffer.Length);
     }
     /// <summary>
-    /// 创建 Zip 文件
+    /// Create a ZIP archive.
     /// </summary>
-    /// <param name="file">Zip 文件路径</param>
-    /// <returns>Zip 文件流句柄</returns>
+    /// <param name="file">ZIP file path.</param>
+    /// <returns>ZIP stream handle.</returns>
     public static ZipOutputStream CreateZipFile(string file)
     {
       ZipOutputStream zipStream = new ZipOutputStream(File.Create(file));
-      zipStream.SetLevel(0);  // 压缩级别 0-9
+      zipStream.SetLevel(0);  // Compression level 0-9.
       return zipStream;
     }
     /// <summary>
-    /// 关闭 Zip 文件
+    /// Close a ZIP archive.
     /// </summary>
-    /// <param name="file">Zip 文件路径</param>
-    /// <returns>Zip 文件流句柄</returns>
+    /// <param name="file">ZIP file path.</param>
+    /// <returns>ZIP stream handle.</returns>
     public static void CloseZipFile(ZipOutputStream file)
     {
       file.Close();
       file.Dispose();
     }
     /// <summary>
-    /// 打开已存在的 Zip 文件
+    /// Open an existing ZIP archive.
     /// </summary>
-    /// <param name="file">Zip 文件路径</param>
-    /// <returns>Zip 文件流句柄</returns>
+    /// <param name="file">ZIP file path.</param>
+    /// <returns>ZIP stream handle.</returns>
     public static ZipInputStream OpenZipFile(string file)
     {
       ZipInputStream zipStream = null;
@@ -101,10 +101,10 @@ namespace Ballance2.Utils
       return zipStream;
     }
     /// <summary>
-    /// 打开流为 Zip 文件句柄
+    /// Open a stream as a ZIP archive.
     /// </summary>
-    /// <param name="stream">文件流</param>
-    /// <returns>Zip 文件流句柄</returns>
+    /// <param name="stream">File stream.</param>
+    /// <returns>ZIP stream handle.</returns>
     public static ZipInputStream OpenZipStream(Stream stream)
     {
       ZipInputStream zipStream = null;
@@ -120,9 +120,9 @@ namespace Ballance2.Utils
       return zipStream;
     }
     /// <summary>
-    /// 从 Zip 文件读取至内存
+    /// Read a ZIP entry into memory.
     /// </summary>
-    /// <param name="zip">Zip 文件</param>
+    /// <param name="zip">ZIP stream.</param>
     /// <returns></returns>
     public static MemoryStream ReadZipFileToMemory(ZipInputStream zip)
     {
@@ -139,9 +139,9 @@ namespace Ballance2.Utils
       return ms;
     }
     /// <summary>
-    /// 异步从 Zip 文件读取至内存
+    /// Read a ZIP entry into memory asynchronously.
     /// </summary>
-    /// <param name="zip">Zip 文件</param>
+    /// <param name="zip">ZIP stream.</param>
     /// <returns></returns>
     public static async Task<MemoryStream> ReadZipFileToMemoryAsync(ZipInputStream zip)
     {

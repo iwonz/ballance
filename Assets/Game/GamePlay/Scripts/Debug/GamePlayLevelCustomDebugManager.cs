@@ -7,9 +7,9 @@ namespace Ballance2.Game.GamePlay.Debug
   public static class GamePlayLevelCustomDebugManager
   {
     public static void Init() {
-      //检查参数
+      // Validate parameters.
       if (string.IsNullOrEmpty(GameDebugEntry.Instance.LevelName)) {
-        GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "LevelName 未设置！");
+        GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "LevelName is not set!");
         return;
       }
       GameManager.GameMediator.NotifySingleEvent("CoreStartLoadLevel", GameDebugEntry.Instance.LevelName);

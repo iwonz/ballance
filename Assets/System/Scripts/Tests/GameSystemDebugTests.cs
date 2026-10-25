@@ -7,13 +7,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameSystemDebugTests.cs
 * 
-* 用途：
-* 主系统调试测试类。
+* Purpose:
+* Main system debug tests.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */

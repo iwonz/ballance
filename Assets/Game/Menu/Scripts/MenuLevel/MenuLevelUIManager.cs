@@ -50,7 +50,7 @@ namespace Ballance2.Menu
             name = name + i;
           button.interactable = HighscoreManager.Instance.CheckLevelPassState(name);
         }
-        //非 windows 隐藏此按扭
+        // Hide this button outside Windows.
         #if !UNITY_STANDALONE_WIN
           PageStart.Content.Find("ButtonNMO").gameObject.SetActive(false);
         #else
@@ -80,13 +80,13 @@ namespace Ballance2.Menu
       });
       
 
-      //创建这个特殊logo特效
+      // Create the special 3D logo effect.
       var BallanceLogo3DObjects = GameManager.Instance.InstancePrefab(package.GetPrefabAsset("BallanceLogo3DObjects.prefab"), "BallanceLogo3DObjects");
       BallanceLogo3DObjects.SetActive(false);
       
-      //GRAVITY 彩蛋
+      // GRAVITY easter egg.
 
-      //关于页面
+      // About page.
       PageAbout.OnShow = (p) => {
         BallanceLogo3DObjects.SetActive(true);
         StartGRAVITYKey();
@@ -95,7 +95,7 @@ namespace Ballance2.Menu
         BallanceLogo3DObjects.SetActive(false);
         GameUIManager.DeleteKeyListen(keyListenGRAVITY);
       };
-      //制作者页面启动GRAVITY 彩蛋
+      // Enable the GRAVITY easter egg on the creators page.
       PageAboutCreators.OnShow = (p) => {
         StartGRAVITYKey();
       };
@@ -110,10 +110,10 @@ namespace Ballance2.Menu
       });
       MessageCenter.SubscribeEvent("BtnCustomNMOLevelClick", () => {
         LevelLoaderNative.PickLevelFile(".nmo", (path, _) => {
-          //播放加载声音
+          // Play the loading sound.
           GameSoundManager.Instance.PlayFastVoice("core.sounds:Menu_load.wav", GameSoundType.Normal);
           GameUIManager.MaskBlackFadeIn(1);
-          //加载
+          // Load.
           GameTimer.Delay(1, () => { 
             GameManager.GameMediator.NotifySingleEvent("CoreStartLoadLevel", path);
           });
@@ -171,7 +171,7 @@ namespace Ballance2.Menu
       MessageCenter.SubscribeEvent("ZoneLiLiangClick", () => LoadInternalLevel("14"));
       MessageCenter.SubscribeEvent("ZoneNenLiClick", () => LoadInternalLevel("15"));
 
-      //点击版本按扭8次开启开发者模式
+      // Click the version button eight times to enable developer mode.
       var lastClickTime = 0.0f;
       var lastClickCount = 0;
       MessageCenter.SubscribeEvent("BtnVersionClick", () => {
@@ -180,7 +180,7 @@ namespace Ballance2.Menu
           lastClickCount = 0;
         lastClickTime = Time.time;
 
-        //增加
+        // Increment.
         lastClickCount++;
         if(lastClickCount >= 4) {
           if(lastClickCount >= 8) {
@@ -196,19 +196,19 @@ namespace Ballance2.Menu
         }
       });
 
-      //加载版本完整信息
+      // Load full version information.
       var ButtonVersionText = PageAbout.Content.transform.Find("ButtonVersion/Text").GetComponent<Text>();
       ButtonVersionText.text = I18N.TrF("core.ui.SettingsVersion", "Version: {0}", Ballance2.Config.GameConst.GameVersion.ToString());
     }
 
     private static void LoadInternalLevel(string id) {
-      //播放加载声音
+      // Play the loading sound.
       GameSoundManager.Instance.PlayFastVoice("core.sounds:Menu_load.wav", GameSoundType.Normal);
       GameUIManager.Instance.MaskBlackFadeIn(1);
       GameTimer.Delay(1, () => GameManager.GameMediator.NotifySingleEvent("CoreStartLoadLevel", "level" + id));
     }
 
-    //GRAVITY 菜单控制
+    // GRAVITY menu controls.
     private static int keyListenGRAVITY = 0;
     private static void StartGRAVITYKey() {
       var keysGRAVITYCurrentIndex = 0;

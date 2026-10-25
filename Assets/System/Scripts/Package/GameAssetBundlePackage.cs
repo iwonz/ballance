@@ -8,20 +8,20 @@ using UnityEngine.Networking;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameAssetBundlePackage.cs
 * 
-* 用途：
-* 游戏模块（AssetBundle）声明
+* Purpose:
+* AssetBundle game package definition.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Package
 {
   /// <summary>
-  /// 模块包 AssetBundle
+  /// Package AssetBundle.
   /// </summary>
   public class GameAssetBundlePackage : GamePackage
   {
@@ -45,7 +45,7 @@ namespace Ballance2.Package
 
         if (AssetBundle == null)
         {
-          LoadError = "错误的包，加载 AssetBundle 失败";
+          LoadError = "Invalid package: failed to load AssetBundle.";
           GameErrorChecker.SetLastErrorAndLog(GameError.AssetBundleNotFound, TAG, "Not found AssetBundle in Package");
           return false;
         }
@@ -57,7 +57,7 @@ namespace Ballance2.Package
           if (modDefTextAsset == null || string.IsNullOrEmpty(modDefTextAsset.text))
           {
             GameErrorChecker.SetLastErrorAndLog(GameError.PackageDefNotFound, TAG, "PackageDef.xml not found");
-            LoadError = "模块并不包含 PackageDef.xml";
+            LoadError = "Package does not contain PackageDef.xml.";
             return false;
           }
           else
@@ -90,11 +90,11 @@ namespace Ballance2.Package
       else
       {
         if (request.responseCode == 404)
-          LoadError = "未找到资源包";
+          LoadError = "Resource package not found.";
         else if (request.responseCode == 403)
-          LoadError = "无权限读取资源包";
+          LoadError = "Permission denied while reading the resource package.";
         else
-          LoadError = "HTTP 请求错误 " + request.responseCode;
+          LoadError = "HTTP request error: " + request.responseCode;
 
         GameErrorChecker.SetLastErrorAndLog(GameError.NetworkError, TAG, "Load AssetBundle failed : " + LoadError + "(" + request.responseCode + ")");
         return false;
@@ -112,7 +112,7 @@ namespace Ballance2.Package
       catch (System.Exception e)
       {
         BaseInfo.LogoTexture = null;
-        Log.E(TAG, "在加载模块的 Logo {0} 失败\n错误信息：{1}", BaseInfo.Logo, e.ToString());
+        Log.E(TAG, "Failed to load package logo {0}\nError: {1}", BaseInfo.Logo, e.ToString());
       }
     }
   }

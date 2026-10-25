@@ -19,7 +19,7 @@ namespace Ballance2.UI.Core.Controls
     }
 
     [SerializeField]
-    [Tooltip("分页大小")]
+    [Tooltip("Page size.")]
     private int m_pageSize = 50;
 
     public int pageSize => m_pageSize;
@@ -95,10 +95,10 @@ namespace Ballance2.UI.Core.Controls
       int pin;
       if (((int)layoutType & flagScrollDirection) == 1)
       {
-        // 垂直滚动 只计算y向
+        // Vertical scrolling uses only Y.
         if (velocity.y > 0)
         {
-          // 向上
+          // Upward.
           toShow = criticalItemIndex[CriticalItemType.DownToShow];
           critical = pageSize - 1;
           if (toShow < critical)
@@ -110,7 +110,7 @@ namespace Ballance2.UI.Core.Controls
         }
         else
         {
-          // 向下
+          // Downward.
           toShow = criticalItemIndex[CriticalItemType.UpToShow];
           critical = 0;
           if (toShow > critical)
@@ -123,10 +123,10 @@ namespace Ballance2.UI.Core.Controls
       }
       else // = 0
       {
-        // 水平滚动 只计算x向
+        // Horizontal scrolling uses only X.
         if (velocity.x > 0)
         {
-          // 向右
+          // Rightward.
           toShow = criticalItemIndex[CriticalItemType.UpToShow];
           critical = 0;
           if (toShow > critical)
@@ -138,7 +138,7 @@ namespace Ballance2.UI.Core.Controls
         }
         else
         {
-          // 向左
+          // Leftward.
           toShow = criticalItemIndex[CriticalItemType.DownToShow];
           critical = pageSize - 1;
           if (toShow < critical)
@@ -150,7 +150,7 @@ namespace Ballance2.UI.Core.Controls
         }
       }
 
-      // 该翻页了 翻半页吧
+      // Page by half a viewport.
       int old = startOffset;
       if (downward)
       {
@@ -172,9 +172,9 @@ namespace Ballance2.UI.Core.Controls
       {
         reloadFlag = true;
 
-        // 记录 原先的速度
+        // Save the original velocity.
         Vector2 oldVelocity = velocity;
-        // 计算 pin元素的世界坐标
+        // Calculate the pinned item's world position.
         Rect rect = GetItemLocalRect(pin);
         Vector2 oldWorld = content.TransformPoint(rect.position);
         UpdateData(true);
@@ -191,7 +191,7 @@ namespace Ballance2.UI.Core.Controls
             EnsureItemRect(dataCount - 1);
           }
         }
-        // 根据 pin元素的世界坐标 计算出content的position
+        // Calculate Content position from the pinned item's world position.
         int pin2 = pin + old - startOffset;
         Rect rect2 = GetItemLocalRect(pin2);
         Vector2 newWorld = content.TransformPoint(rect2.position);
@@ -202,7 +202,7 @@ namespace Ballance2.UI.Core.Controls
         UpdateData(true);
         //UpdateData(false);
         // Debug.LogError($"critical={critical} toShow={toShow} pin={pin} pin2={pin2} pinpos={rect.position} pin2pos={GetItemLocalRect(pin2).position} pinworld={oldWorld} pin2world={content.TransformPoint(GetItemLocalRect(pin2).position)} ===");
-        // 取回速度
+        // Restore velocity.
         velocity = oldVelocity;
       }
 

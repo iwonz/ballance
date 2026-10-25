@@ -15,13 +15,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * DebugStat.cs
 * 
-* 用途：
-* 调试信息显示工具类。
+* Purpose:
+* Debug status display helpers.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

@@ -18,32 +18,32 @@ using static Ballance2.Services.GameManager;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameUIManager.cs
 * 
-* 用途：
-* UI 管理器，用于管理UI通用功能
+* Purpose:
+* Manage shared UI functionality.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Services
 {
   /// <summary>
-  /// UI 管理器，用于管理UI通用功能
+  /// Manage shared UI functionality.
   /// </summary>
   /// <Remarks>
-  /// UI 管理器提供了者几种种UI通用功能：
-  /// * Window 为游戏提供了一个可以拖拽，调整大小的窗口，用于游戏内部某些UI的使用。要创建窗口，可以调用 `GameUIManager.CreateWindow` 函数。
-  /// * Page 页与窗口不太一样，窗口可以同时打开多个，页只能同时显示一个，相当于独占的全屏窗口。要创建页，可以调用 `GameUIManager.RegisterPage` 函数。
-  /// * MaskBlack 全局的黑色转场渐变遮罩。
-  /// * MaskWhite 全局的白色转场渐变遮罩。
-  /// * GlobalAlert 全局的弹出独占对话框。
+  /// Shared UI functionality:
+  /// * Legacy window APIs are not part of this manager; use registered pages for current navigation.
+  /// * Page is an exclusive view rather than a concurrently open window; create pages with GameUIManager.RegisterPage.
+  /// * MaskBlack provides a global black transition overlay.
+  /// * MaskWhite provides a global white transition overlay.
+  /// * Global dialogs provide exclusive confirmation/error interactions.
   /// </Remarks>
   public class GameUIManager : GameService<GameUIManager>
   {
-    #region 基础
+    #region Basics
 
     private static readonly string TAG = "GameUIManager";
 
@@ -75,7 +75,7 @@ namespace Ballance2.Services
       UIFadeManager = UIRoot.gameObject.AddComponent<UIFadeManager>();
 
       GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_UI_MANAGER_INIT_FINISHED);
-      //等待基础加载完成
+      // Wait for base initialization.
       GameManager.GameMediator.RegisterEventHandler(GamePackage.GetSystemPackage(),
           GameEventNames.EVENT_BASE_INIT_FINISHED, TAG, (evtName, param) =>
           {
@@ -84,11 +84,11 @@ namespace Ballance2.Services
             GlobalFadeMaskWhite = GameGlobalMask.Find("GlobalFadeMaskWhite").gameObject.GetComponent<Image>();
             GlobalFadeMaskBlack = GameGlobalMask.Find("GlobalFadeMaskBlack").gameObject.GetComponent<Image>();
 
-            //隐藏遮住初始化的遮罩  
+            // Hide the initialization overlay.
             var GlobalBlackMask = GameGlobalMask.Find("GlobalBlackMask");
             if (GlobalBlackMask != null) GlobalBlackMask.gameObject.SetActive(false);
 
-            //黑色遮罩
+            // Black overlay.
             GlobalFadeMaskBlack.gameObject.SetActive(true);
             MaskBlackSet(true);
 
@@ -98,7 +98,7 @@ namespace Ballance2.Services
             InitF9CaptureScreenshot();
             InitF8SwitchViews();
 
-            //更新主管理器中的Canvas变量
+            // Update the main manager's Canvas reference.
             GameManager.Instance.GameCanvas = ViewsRectTransform;
             GameGlobalMask.SetAsLastSibling();
             GameGlobalDialog.SetAsLastSibling();
@@ -111,11 +111,11 @@ namespace Ballance2.Services
             InitF10FpsSwitch();
             InitGlobalPage();
 
-            //发送就绪事件
+            // Emit the ready event.
             GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_UI_MANAGER_INIT_FINISHED);
             return false;
           });
-      //退出时的黑
+      // Black overlay on quit.
       GameManager.GameMediator.RegisterEventHandler(GamePackage.GetSystemPackage(),
           GameEventNames.EVENT_BEFORE_GAME_QUIT, TAG, (evtName, param) =>
       {
@@ -125,9 +125,9 @@ namespace Ballance2.Services
       return true;
     }
 
-    #region 特殊按键的控制
+    #region Special key controls
 
-    //F10切换FPS显示
+    // F10 toggles the FPS display.
     private void InitF10FpsSwitch() {
       var GameFpsStat = UIRoot.transform.Find("GameFpsStat");
       if(GameFpsStat != null) {
@@ -140,11 +140,11 @@ namespace Ballance2.Services
         }
       } 
     }
-    //F9截屏
+    // F9 captures a screenshot.
     private void InitF9CaptureScreenshot() {
       ListenKey(KeyCode.F9, (k, d) => { if(d) GameManager.Instance.CaptureScreenshot(); });
     }
-    //F8切换顶层视图的显示
+    // F8 toggles the top overlay view.
     private void InitF8SwitchViews() {
       ListenKey(KeyCode.F8, (k, d) => {
         if(d) SetUIOverlayVisible(!TopViewsRectTransform.gameObject.activeSelf);
@@ -152,9 +152,9 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 切换遮罩UI是否显示
+    /// Toggle overlay UI visibility.
     /// </summary>
-    /// <param name="visible">是否显示</param>
+    /// <param name="visible">Whether to show it.</param>
     public void SetUIOverlayVisible(bool visible) {
       if(visible) {
         TopViewsRectTransform.gameObject.SetActive(true);
@@ -168,11 +168,11 @@ namespace Ballance2.Services
     #endregion
 
     /// <summary>
-    /// UI 根 Canvas 的 RectTransform
+    /// Root Canvas RectTransform.
     /// </summary>
     public RectTransform UIRoot;
     /// <summary>
-    /// 渐变管理器
+    /// Fade manager.
     /// </summary>
     public UIFadeManager UIFadeManager;
 
@@ -183,7 +183,7 @@ namespace Ballance2.Services
       UpdateToastShow();
     }
 
-    //根管理
+    // Root management.
     private RectTransform TemporarilyRectTransform;
     private RectTransform GlobalWindowRectTransform;
     private RectTransform PagesRectTransform;
@@ -194,7 +194,7 @@ namespace Ballance2.Services
     private RectTransform OthersRectTransform;
 
     /// <summary>
-    /// UI 根 RectTransform
+    /// Root UI RectTransform.
     /// </summary>
     public RectTransform UIRootRectTransform { get; private set; }
 
@@ -240,12 +240,12 @@ namespace Ballance2.Services
     private KeyListener keyListener = null;
 
     /// <summary>
-    /// 侦听某个键盘按键一次
+    /// Listen for a keyboard key once.
     /// </summary>
-    /// <param name="code">按键值</param>
-    /// <param name="pressedOrReleased">如果为true，则侦听按下事件，否则侦听松开事件</param>
-    /// <param name="callback">回调</param>
-    /// <returns>返回一个ID, 可使用 DeleteKeyListen 删除侦听</returns>
+    /// <param name="code">Key code.</param>
+    /// <param name="pressedOrReleased">True listens for press; false listens for release.</param>
+    /// <param name="callback">Callback.</param>
+    /// <returns>Listener ID; remove it with DeleteKeyListen.</returns>
     public int WaitKey(KeyCode code, bool pressedOrReleased, VoidDelegate callback,params GamepadButton[] gamepadButtons)
     {
       int id = 0;
@@ -262,27 +262,27 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 添加键盘按键侦听
+    /// Add a keyboard listener.
     /// </summary>
-    /// <param name="key">键值</param>
-    /// <param name="callBack">回调函数</param>
-    /// <returns>返回一个ID, 可使用 DeleteKeyListen 删除侦听</returns>
+    /// <param name="key">Key code.</param>
+    /// <param name="callBack">Callback.</param>
+    /// <returns>Listener ID; remove it with DeleteKeyListen.</returns>
     public int ListenKey(KeyCode key, KeyListener.KeyDelegate callBack, params GamepadButton[] gamepadButtons)
     {
       return keyListener.AddKeyListen(key, callBack, gamepadButtons);
     }
 
     /// <summary>
-    /// 删除侦听按键
+    /// Remove a key listener.
     /// </summary>
-    /// <param name="id">AddKeyListen 返回的ID</param>
+    /// <param name="id">ID returned by the key listener registration.</param>
     public void DeleteKeyListen(int id)
     {
       keyListener.DeleteKeyListen(id);
     }
 
     /// <summary>
-    /// 获取当前鼠标是否在UI上
+    /// Whether the pointer is over UI.
     /// </summary>
     /// <returns></returns>
     public bool IsUiFocus()
@@ -302,10 +302,10 @@ namespace Ballance2.Services
     private Dictionary<string, UIPrefab> uIPrefabs = new Dictionary<string, UIPrefab>();
 
     /// <summary>
-    /// 获取 UI 控件预制体
+    /// Get a UI control prefab.
     /// </summary>
-    /// <param name="name">名称</param>
-    /// <returns>如果找到指定名称预制体，则返回其实例，如果未找到，则返回 null</returns>
+    /// <param name="name">Name.</param>
+    /// <returns>The named prefab, or null if not found.</returns>
     public GameObject GetUIPrefab(string name, GameUIPrefabType type)
     {
       if (uIPrefabs.ContainsKey(name))
@@ -317,16 +317,16 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 注册 UI 控件预制体
+    /// Register a UI control prefab.
     /// </summary>
-    /// <param name="name">名称</param>
-    /// <param name="perfab">预制体</param>
-    /// <returns>返回注册是否成功</returns>
+    /// <param name="name">Name.</param>
+    /// <param name="perfab">Prefab.</param>
+    /// <returns>Whether registration succeeded.</returns>
     public bool RegisterUIPrefab(string name, GameUIPrefabType type, GameObject perfab)
     {
       if (uIPrefabs.ContainsKey(name))
       {
-        GameErrorChecker.SetLastErrorAndLog(GameError.AlreadyRegistered, TAG, "UI Prefab {0} 已经注册", name);
+        GameErrorChecker.SetLastErrorAndLog(GameError.AlreadyRegistered, TAG, "UI prefab {0} is already registered.", name);
         return false;
       }
       UIPrefab uiprefab = new UIPrefab();
@@ -337,10 +337,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 清除已注册的 UI 控件预制体
+    /// Remove a registered UI control prefab.
     /// </summary>
-    /// <param name="name">名称</param>
-    /// <returns>返回是否成功</returns>
+    /// <param name="name">Name.</param>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool RemoveUIPrefab(string name)
     {
       if (uIPrefabs.ContainsKey(name))
@@ -350,7 +350,7 @@ namespace Ballance2.Services
       }
       else
       {
-        GameErrorChecker.SetLastErrorAndLog(GameError.NotRegister, TAG, "UI控件Prefab {0} 未注册", name);
+        GameErrorChecker.SetLastErrorAndLog(GameError.NotRegister, TAG, "UI control prefab {0} is not registered.", name);
         return false;
       }
     }
@@ -361,17 +361,17 @@ namespace Ballance2.Services
 
     #endregion
 
-    #region 页管理
+    #region Page management
 
     private Dictionary<string, GameUIPage> pages = new Dictionary<string, GameUIPage>();
     private List<GameUIPage> pageStack = new List<GameUIPage>();
     private GameUIPage currentPage = null;
 
     /// <summary>
-    /// 查找页
+    /// Find a page.
     /// </summary>
-    /// <param name="name">页名称</param>
-    /// <returns>返回找到的页实例，如果找不到则返回null</returns>
+    /// <param name="name">Page name.</param>
+    /// <returns>Page instance, or null if not found.</returns>
     public GameUIPage FindPage(string name)
     {
       pages.TryGetValue(name, out GameUIPage w);
@@ -379,29 +379,29 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 注册页
+    /// Register a page.
     /// </summary>
-    /// <param name="name">页名称</param>
-    /// <param name="prefabName">页模板名称</param>
-    /// <returns>返回新创建的页实例，如果失败则返回null，请查看LastError</returns>
+    /// <param name="name">Page name.</param>
+    /// <param name="prefabName">Page template name.</param>
+    /// <returns>New page instance, or null on failure; inspect LastError.</returns>
     public GameUIPage RegisterPage(string name, string prefabName)
     {
       if (pages.TryGetValue(name, out GameUIPage pageOld))
       {
-        GameErrorChecker.SetLastErrorAndLog(GameError.AlreadyRegistered, TAG, "页 {0} 已经注册", name);
+        GameErrorChecker.SetLastErrorAndLog(GameError.AlreadyRegistered, TAG, "Page {0} is already registered.", name);
         return pageOld;
       }
       GameObject prefab = GetUIPrefab(prefabName, GameUIPrefabType.Page);
       if (prefab == null)
       {
-        GameErrorChecker.SetLastErrorAndLog(GameError.PrefabNotFound, TAG, "未找到页模板 {0}", prefabName);
+        GameErrorChecker.SetLastErrorAndLog(GameError.PrefabNotFound, TAG, "Page template {0} was not found.", prefabName);
         return null;
       }
       GameObject go = CloneUtils.CloneNewObjectWithParent(prefab, PagesRectTransform, name);
       GameUIPage page = go.GetComponent<GameUIPage>();
       if (page == null)
       {
-        GameErrorChecker.SetLastErrorAndLog(GameError.ClassNotFound, TAG, "页模板上未找到 GameUIPage 类");
+        GameErrorChecker.SetLastErrorAndLog(GameError.ClassNotFound, TAG, "Page template has no GameUIPage component.");
         return null;
       }
       page.PageName = name;
@@ -417,28 +417,28 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 跳转到页
+    /// Navigate to a page.
     /// </summary>
-    /// <param name="name">页名称</param>
-    /// <returns>返回跳转是否成功</returns>
+    /// <param name="name">Page name.</param>
+    /// <returns>Whether navigation succeeded.</returns>
     public bool GoPage(string name)
     {
       return GoPageWithOptions(name, new Dictionary<string, string>());
     }
 
     /// <summary>
-    /// 跳转到页并携带参数
+    /// Navigate to a page with options.
     /// </summary>
-    /// <param name="name">页名称</param>
-    /// <param name="options">打开页所需要携带的参数，在页中可以使用 `GameUIPage.LastOption` 读取到传递进入页的参数。</param>
-    /// <returns>返回跳转是否成功</returns>
+    /// <param name="name">Page name.</param>
+    /// <param name="options">Options passed to the page, available through GameUIPage.LastOption.</param>
+    /// <returns>Whether navigation succeeded.</returns>
     public bool GoPageWithOptions(string name, Dictionary<string, string> options)
     {
       if (currentPage != null && currentPage.name == name)
         return true;
       if (!pages.TryGetValue(name, out GameUIPage page))
       {
-        GameErrorChecker.SetLastErrorAndLog(GameError.NotRegister, TAG, "页 {0} 未注册", name);
+        GameErrorChecker.SetLastErrorAndLog(GameError.NotRegister, TAG, "Page {0} is not registered.", name);
         return false;
       }
 
@@ -453,13 +453,13 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 获取当前显示的页实例
+    /// Get the currently displayed page.
     /// </summary>
     /// <returns></returns>
     public GameUIPage GetCurrentPage() { return currentPage; }
 
     /// <summary>
-    /// 隐藏当前显示的页
+    /// Hide the current page.
     /// </summary>
     /// <returns></returns>
     public void HideCurrentPage()
@@ -469,7 +469,7 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 关闭所有显示的页
+    /// Close all displayed pages.
     /// </summary>
     public void CloseAllPage()
     {
@@ -480,24 +480,24 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 返回上一页
+    /// Return to the previous page.
     /// </summary>
-    /// <returns>如果可以返回，则返回true，否则返回false</returns>
+    /// <returns>True if back navigation is possible; otherwise false.</returns>
     public bool BackPreviusPage()
     {
       return BackPreviusPageWithOptions(new Dictionary<string, string>());
     }
 
     /// <summary>
-    /// 返回上一页并携带参数
+    /// Return to the previous page with options.
     /// </summary>
-    /// <param name="options">传递返回上一页参数，页中可以使用 `GameUIPage.LastBackOptions` 读取到传递进入上一页的参数。</param>
-    /// <returns>如果可以返回，则返回true，否则返回false</returns>
+    /// <param name="options">Return options, available through GameUIPage.LastBackOptions.</param>
+    /// <returns>True if back navigation is possible; otherwise false.</returns>
     public bool BackPreviusPageWithOptions(Dictionary<string, string> options)
     {
       if (pageStack.Count > 0)
       {
-        //隐藏当前
+        // Hide the current page.
         var page = pageStack[pageStack.Count - 1];
         pageStack.RemoveAt(pageStack.Count - 1);
 
@@ -505,7 +505,7 @@ namespace Ballance2.Services
           page.Hide();
           if (pageStack.Count > 0)
           {
-            //显示前一个
+            // Show the previous page.
             page = pageStack[pageStack.Count - 1];
             page.LastBackOptions = options;
             page.OnBackFromChild?.Invoke(options);
@@ -519,10 +519,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 取消注册页
+    /// Unregister a page.
     /// </summary>
-    /// <param name="name">页名称</param>
-    /// <returns>返回是否成功</returns>
+    /// <param name="name">Page name.</param>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool UnRegisterPage(string name)
     {
       if (pages.TryGetValue(name, out GameUIPage page))
@@ -540,7 +540,7 @@ namespace Ballance2.Services
 
     #endregion
 
-    #region 全局对话框
+    #region Global dialogs
 
     private RectTransform UIToast;
     private Image UIToastImage;
@@ -551,19 +551,19 @@ namespace Ballance2.Services
     private float toastTimeTick = 0;
 
     /// <summary>
-    /// 显示全局土司提示
+    /// Show a global toast.
     /// </summary>
-    /// <param name="text">提示文字</param>
+    /// <param name="text">Notification text.</param>
     public void GlobalToast(string text)
     {
       GlobalToast(text, text.Length / 30.0f);
     }
 
     /// <summary>
-    /// 显示全局土司提示
+    /// Show a global toast.
     /// </summary>
-    /// <param name="text">提示文字</param>
-    /// <param name="showSec">显示时长（秒）</param>
+    /// <param name="text">Notification text.</param>
+    /// <param name="showSec">Display duration in seconds.</param>
     public void GlobalToast(string text, float showSec)
     {
       if (showSec <= 0.5f) showSec = 0.5f;
@@ -641,11 +641,11 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 显示全局 Confirm 独占对话框
+    /// Show an exclusive global confirmation dialog.
     /// </summary>
-    /// <param name="text">内容</param>
-    /// <param name="okText">OK 按钮文字</param>
-    /// <param name="cancelText">Cancel 按钮文字</param>
+    /// <param name="text">Content.</param>
+    /// <param name="okText">OK button text.</param>
+    /// <param name="cancelText">Cancel button text.</param>
     /// <returns></returns>
     public void GlobalConfirmWindow(string text, VoidDelegate onConfirm, VoidDelegate onCancel, string okText = null, string cancelText = null)
     {
@@ -662,15 +662,15 @@ namespace Ballance2.Services
 
     #endregion
 
-    #region 全局渐变遮罩
+    #region Global transition overlays
 
     private Image GlobalFadeMaskWhite;
     private Image GlobalFadeMaskBlack;
 
     /// <summary>
-    /// 全局黑色遮罩控制（无渐变动画）
+    /// Set the global black overlay without animation.
     /// </summary>
-    /// <param name="show">为true则显示遮罩，否则隐藏</param>
+    /// <param name="show">True shows the overlay; false hides it.</param>
     public void MaskBlackSet(bool show)
     {
       GlobalFadeMaskBlack.color = new Color(GlobalFadeMaskBlack.color.r, GlobalFadeMaskBlack.color.g, GlobalFadeMaskBlack.color.b, show ? 1.0f : 0f);
@@ -679,9 +679,9 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 全局白色遮罩控制（无渐变动画）
+    /// Set the global white overlay without animation.
     /// </summary>
-    /// <param name="show">为true则显示遮罩，否则隐藏</param>
+    /// <param name="show">True shows the overlay; false hides it.</param>
     public void MaskWhiteSet(bool show)
     {
       GlobalFadeMaskWhite.color = new Color(GlobalFadeMaskWhite.color.r, GlobalFadeMaskWhite.color.g, GlobalFadeMaskWhite.color.b, show ? 1.0f : 0f);
@@ -690,9 +690,9 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 全局黑色遮罩渐变淡入
+    /// Fade in the global black overlay.
     /// </summary>
-    /// <param name="second">耗时（秒）</param>
+    /// <param name="second">Duration in seconds.</param>
     public void MaskBlackFadeIn(float second)
     {
       UIFadeManager.AddFadeIn(GlobalFadeMaskBlack, second);
@@ -700,9 +700,9 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 全局白色遮罩渐变淡入
+    /// Fade in the global white overlay.
     /// </summary>
-    /// <param name="second">耗时（秒）</param>
+    /// <param name="second">Duration in seconds.</param>
     public void MaskWhiteFadeIn(float second)
     {
       UIFadeManager.AddFadeIn(GlobalFadeMaskWhite, second);
@@ -710,9 +710,9 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 全局黑色遮罩渐变淡出
+    /// Fade out the global black overlay.
     /// </summary>
-    /// <param name="second">耗时（秒）</param>
+    /// <param name="second">Duration in seconds.</param>
     public void MaskBlackFadeOut(float second)
     {
       UIFadeManager.AddFadeOut(GlobalFadeMaskBlack, second, true);
@@ -720,9 +720,9 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 全局白色遮罩渐变淡出
+    /// Fade out the global white overlay.
     /// </summary>
-    /// <param name="second">耗时（秒）</param>
+    /// <param name="second">Duration in seconds.</param>
     public void MaskWhiteFadeOut(float second)
     {
       UIFadeManager.AddFadeOut(GlobalFadeMaskWhite, second, true);
@@ -731,30 +731,30 @@ namespace Ballance2.Services
 
     #endregion
 
-    #region 通用管理
+    #region Shared management
 
     /// <summary>
-    /// 设置一个UI至临时区域
+    /// Move UI to the temporary area.
     /// </summary>
-    /// <param name="view">指定UI</param>
+    /// <param name="view">UI transform.</param>
     public void SetViewToTemporarily(RectTransform view)
     {
       view.SetParent(TemporarilyRectTransform.gameObject.transform);
     }
     /// <summary>
-    /// 将一个UI附加到主Canvas
+    /// Attach UI to the main Canvas.
     /// </summary>
-    /// <param name="view">指定UI</param>
+    /// <param name="view">UI transform.</param>
     public void AttatchViewToCanvas(RectTransform view)
     {
       view.SetParent(UIRoot.gameObject.transform);
     }
     /// <summary>
-    /// 使用Prefab初始化一个对象并附加到主Canvas
+    /// Instantiate a prefab and attach it to the main Canvas.
     /// </summary>
     /// <param name="prefab">Prefab</param>
-    /// <param name="name">新对象名称</param>
-    /// <returns>返回新对象的RectTransform</returns>
+    /// <param name="name">New object name.</param>
+    /// <returns>RectTransform of the new object.</returns>
     public RectTransform InitViewToCanvas(GameObject prefab, string name, bool topMost)
     {
       GameObject go = CloneUtils.CloneNewObjectWithParent(prefab, (topMost ? TopViewsRectTransform : ViewsRectTransform).transform, name);
@@ -764,10 +764,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 创建一个UI消息中心
+    /// Create a UI message center.
     /// </summary>
-    /// <param name="name">名称</param>
-    /// <returns>返回UI消息中心实例</returns>
+    /// <param name="name">Name.</param>
+    /// <returns>UI message center instance.</returns>
     public GameUIMessageCenter CreateUIMessageCenter(string name)
     {
       var old = GameUIMessageCenter.FindGameUIMessageCenter(name);
@@ -780,10 +780,10 @@ namespace Ballance2.Services
       return old;
     }
     /// <summary>
-    /// 销毁一个UI消息中心
+    /// Destroy a UI message center.
     /// </summary>
-    /// <param name="name">名称</param>
-    /// <returns>返回是否成功</returns>
+    /// <param name="name">Name.</param>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool DestroyUIMessageCenter(string name)
     {
       var old = GameUIMessageCenter.FindGameUIMessageCenter(name);
@@ -796,7 +796,7 @@ namespace Ballance2.Services
     }
     #endregion
 
-    #region 调试命令
+    #region Debug commands
 
     private void InitCommands()
     {
@@ -852,13 +852,13 @@ namespace Ballance2.Services
         return false;
       }, 2, "um <page/toast>\n" +
               "  page\n" +
-              "    current 显示当前显示的页\n" +
-              "    stack 显示当前显示页的栈\n" +
-              "    go <name:string> 跳转到指定页\n" +
-              "    hide-cur 隐藏当前页\n" +
-              "    close-all 关闭所有显示的页\n" +
-              "    back 返回上一页\n" +
-              "  toast <text:string> [showSecond:number] 测试全局弹出土司提示\n"
+              "    current Show the current page\n" +
+              "    stack Show the page stack\n" +
+              "    go <name:string> Go to the specified page\n" +
+              "    hide-cur Hide the current page\n" +
+              "    close-all Close all visible pages\n" +
+              "    back Return to the previous page\n" +
+              "  toast <text:string> [showSecond:number] Test a global toast notification\n"
       );
     }
 
@@ -866,16 +866,16 @@ namespace Ballance2.Services
   }
 
   /// <summary>
-  /// UIPrefab的类型
+  /// UI prefab type.
   /// </summary>
   public enum GameUIPrefabType
   {
     /// <summary>
-    /// 控件
+    /// Control.
     /// </summary>
     Control,
     /// <summary>
-    /// 页
+    /// Page.
     /// </summary>
     Page
   }

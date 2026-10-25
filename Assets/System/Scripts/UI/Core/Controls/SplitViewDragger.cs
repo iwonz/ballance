@@ -5,16 +5,16 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * SplitViewDragger.cs
 * 
-* 用途：
-* 拖动托块组件
+* Purpose:
+* Divider drag handle.
 * 
-* 通过设置referenceTransform参考视图，拖动方向，
-* 设置onValueChanged返回用户拖动value，表示拖动的百分比
+* Configure referenceTransform and drag direction;
+* onValueChanged receives the drag fraction.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -22,7 +22,7 @@ using UnityEngine.UI;
 namespace Ballance2.UI.Core.Controls
 {
   /// <summary>
-  /// 拖动托块组件
+  /// Divider drag handle.
   /// </summary>
   [AddComponentMenu("Ballance/UI/Controls/SplitViewDragger")]
   public class SplitViewDragger : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
@@ -46,12 +46,12 @@ namespace Ballance2.UI.Core.Controls
     private SplitViewDirection _direction = SplitViewDirection.LeftRight;
 
     /// <summary>
-    /// 拖动事件（value表示拖动的百分比）
+    /// Drag event; value is the drag fraction.
     /// </summary>
     public Slider.SliderEvent onValueChanged;
 
     /// <summary>
-    /// 拖动参考RectTransform
+    /// Reference RectTransform.
     /// </summary>
     public RectTransform referenceTransform
     {
@@ -60,7 +60,7 @@ namespace Ballance2.UI.Core.Controls
     }
 
     /// <summary>
-    /// 是否正在拖动
+    /// Whether dragging is in progress.
     /// </summary>
     public bool isDrag
     {
@@ -68,7 +68,7 @@ namespace Ballance2.UI.Core.Controls
     }
     
     /// <summary>
-    /// 拖动方向
+    /// Drag direction.
     /// </summary>
     public SplitViewDirection direction
     {

@@ -8,19 +8,19 @@ namespace BallancePhysics.Wapper
   
   public class PhysicsConstraintForce : MonoBehaviour
   {
-    [Tooltip("设置恒力数值")]
+    [Tooltip("Constant force magnitude.")]
     [SerializeField]
     private Vector3 m_ForcePosition;
-    [Tooltip("设置恒力方向")]
+    [Tooltip("Constant force direction.")]
     [SerializeField]
     private Vector3 m_ForceDirection;
-    [Tooltip("施加在这个物体上的恒力位置参考")]
+    [Tooltip("Reference frame for the constant force application point.")]
     [SerializeField]
     private Transform m_ForcePositionRef;
-    [Tooltip("施加在这个物体上的恒力方向参考")]
+    [Tooltip("Reference frame for the constant force direction.")]
     [SerializeField]
     private Transform m_ForceDirectionRef;
-    [Tooltip("力的大小")]
+    [Tooltip("Force magnitude.")]
     [SerializeField]
     private float m_Force = 1.0f;
 
@@ -37,7 +37,7 @@ namespace BallancePhysics.Wapper
     }
 
     /// <summary>
-    /// 设置恒力数值
+    /// Set the constant force magnitude.
     /// </summary>
     /// <value></value>
     
@@ -52,7 +52,7 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 设置恒力数值
+    /// Set the constant force magnitude.
     /// </summary>
     /// <value></value>
     
@@ -67,7 +67,7 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 设置恒力方向
+    /// Set the constant force direction.
     /// </summary>
     /// <value></value>
     
@@ -82,7 +82,7 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 施加在这个物体上的恒力位置参考
+    /// Position reference for the constant force applied to this object.
     /// </summary>
     /// <value></value>
     
@@ -97,7 +97,7 @@ namespace BallancePhysics.Wapper
       }
     }
     /// <summary>
-    /// 施加在这个物体上的恒力方向参考
+    /// Direction reference for the constant force applied to this object.
     /// </summary>
     /// <value></value>
     

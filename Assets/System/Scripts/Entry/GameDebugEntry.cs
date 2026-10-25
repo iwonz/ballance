@@ -3,13 +3,13 @@
 /*
 * Copyright(c) 2022 mengyu
 *
-* 模块名：     
+* Module:
 * GameDebugModulEntry.cs
 * 
-* 用途：
-* 自定义调试场景(机关/关卡)的配置。
+* Purpose:
+* Custom mechanism/level debug scene configuration.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -23,16 +23,16 @@ namespace Ballance2.Entry
       Instance = this;
     }
     
-    [Tooltip("机关名称, 将查找此名称的占位物体并把机关替换上去")]
+    [Tooltip("Mechanism name. The matching placeholder object will be replaced by the mechanism.")]
     public string ModulName = "";
-    [Tooltip("机关实例")]
+    [Tooltip("Mechanism instance.")]
     public GameObject ModulInstance = null;
-    [Tooltip("机关测试路面的实例")]
+    [Tooltip("Test floor instance for the mechanism.")]
     public GameObject ModulTestFloor = null; 
-    [Tooltip("机关测试UI的实例")]
+    [Tooltip("Test UI instance for the mechanism.")]
     public GameObject ModulTestUI = null; 
     
-    [Tooltip("LevelCustomDebug 加载的关卡名称")]
+    [Tooltip("Level name used by LevelCustomDebug.")]
     public string LevelName = "level01";
   }
 }

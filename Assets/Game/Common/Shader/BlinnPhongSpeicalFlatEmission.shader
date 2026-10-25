@@ -32,7 +32,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalFlatEmission"
       #pragma fragment frag
       #define FLAT_EMISSION
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"
@@ -64,7 +64,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalFlatEmission"
       #define USING_LIGHT_MULTI_COMPILE
       #define FLAT_EMISSION
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"

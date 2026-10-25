@@ -7,13 +7,13 @@ using UnityEngine.UI;
 /*
  * Copyright (c) 2020  mengyu
  * 
- * 模块名：     
+ * Module:
  * ScrollCaption.cs
  * 
- * 用途：
- * 字幕脚本。该字幕与Ballance原版的关于字幕相似。
+ * Purpose:
+ * Scrolling credits similar to the original Ballance credits.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 

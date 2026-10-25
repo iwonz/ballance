@@ -21,56 +21,56 @@ using UnityEngine.Profiling;
 /*
 * Copyright(c) 2021 imengyu
 *
-* 模块名：     
+* Module:
 * GameManager.cs
 * 
-* 用途：
-* 游戏底层主管理器，提供多个关键全局组件使用，负责管理游戏底层管理与控制.
-* 它主要提供了全局事件、主lua虚拟机、初始化与退出功能，虚拟场景功能，并且提供了
-* 一些全局方便使用的工具函数。
+* Purpose:
+* Main game manager providing shared components and runtime coordination.
+* Provides global events, startup/shutdown, logical scenes, and
+* convenience helpers. The former Lua runtime is not part of the current implementation.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Services
 {
     /// <summary>
-    /// 游戏管理器
+    /// Game manager.
     /// </summary>
     public class GameManager : GameService<GameManager>
     {
         public GameManager() : base("GameManager") { }
 
-        #region 全局关键组件变量
+        #region Shared components
 
         /// <summary>
-        /// 获取中介者 GameMediator 实例
+        /// Get the GameMediator instance.
         /// </summary>
         public static GameMediator GameMediator { get; internal set; }
         /// <summary>
-        /// 获取系统设置实例
+        /// Get system settings.
         /// </summary>
         public GameSettingsActuator GameSettings { get; private set; }
         /// <summary>
-        /// 获取基础摄像机
+        /// Get the base camera.
         /// </summary>
         public Camera GameBaseCamera { get; private set; }
         /// <summary>
-        /// 获取根Canvas
+        /// Get the root Canvas.
         /// </summary>
         public RectTransform GameCanvas { get; internal set; }
         /// <summary>
-        /// 获取调试命令控制器
+        /// Get the debug command controller.
         /// </summary>
         /// <value></value>
         public GameDebugCommandServer GameDebugCommandServer { get; private set; }
         /// <summary>
-        /// 获取全局灯光实例
+        /// Get the global light.
         /// </summary>
         public static Light GameLight { get; private set; }
         /// <summary>
-        /// GameTimeMachine 的一个实例. 
+        /// GameTimeMachine instance.
         /// </summary>
         /// <value></value>
         public static GameTimeMachine GameTimeMachine
@@ -87,10 +87,10 @@ namespace Ballance2.Services
         private static bool _DebugMode = false;
 
         /// <summary>
-        /// 获取或者设置当前是否处于开发者模式
+        /// Get or set developer mode.
         /// </summary>
         /// <remark>
-        /// 设置调试模式后需要重启才能生效。
+        /// Restart is required after changing debug mode.
         /// </remark>
         /// <value></value>
         public static bool DebugMode
@@ -114,7 +114,7 @@ namespace Ballance2.Services
 
         #endregion
 
-        #region 初始化
+        #region Initialization
 
         public override bool Initialize()
         {
@@ -134,17 +134,17 @@ namespace Ballance2.Services
             }
             catch (Exception e)
             {
-                GameErrorChecker.ThrowGameError(GameError.ExecutionFailed, "系统初始化时发生异常，请反馈此BUG.\n" + e.ToString());
+                GameErrorChecker.ThrowGameError(GameError.ExecutionFailed, "An exception occurred during system initialization. Please report this bug.\n" + e.ToString());
             }
 
             return true;
         }
 
         /// <summary>
-        /// 初始化基础设置、主lua虚拟机、其他事件
+        /// Initialize base settings and event integration.
         /// </summary>
-        /// <param name="gameEntryInstance">入口配置实例</param>
-        /// <param name="finish">完成回调</param>
+        /// <param name="gameEntryInstance">Entry configuration instance.</param>
+        /// <param name="finish">Completion callback.</param>
         private void InitBase(GameEntry gameEntryInstance, System.Action finish)
         {
             Instance = this;
@@ -178,13 +178,13 @@ namespace Ballance2.Services
         private XmlDocument systemInit = new XmlDocument();
 
         /// <summary>
-        /// 加载调试配置
+        /// Load debug configuration.
         /// </summary>
-        /// <param name="gameEntryInstance">入口配置实例</param>
+        /// <param name="gameEntryInstance">Entry configuration instance.</param>
         private void InitDebugConfig(GameEntry gameEntryInstance)
         {
 #if UNITY_EDITOR
-            //根据GameEntry中调试信息赋值到当前类变量，供加载使用
+            // Copy GameEntry debug configuration into fields used during loading.
             sLoadUserPackages = !DebugMode || gameEntryInstance.DebugLoadCustomPackages;
             sCustomDebugName = DebugMode && gameEntryInstance.DebugType == GameDebugType.CustomDebug ? gameEntryInstance.DebugCustomEntryEvent : "";
             sEnablePackageLoadFilter = DebugMode && gameEntryInstance.DebugType != GameDebugType.FullDebug && gameEntryInstance.DebugType != GameDebugType.NoDebug;
@@ -199,76 +199,76 @@ namespace Ballance2.Services
         }
 
         /// <summary>
-        /// 异步初始化主流程。
+        /// Asynchronous main initialization flow.
         /// </summary>
         /// <returns></returns>
         private IEnumerator InitAsysc()
         {
             GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED);
 
-            //加载系统 packages
+            // Load system packages.
             yield return StartCoroutine(LoadSystemCore());
 
             yield return StartCoroutine(LoadSystemPackages());
 
-            //加载用户选择的模块
+            // Load user-selected packages.
             if (sLoadUserPackages)
                 yield return StartCoroutine(LoadUserPackages());
 
-            //全部加载完毕之后通知所有模块初始化
+            // Initialize all packages after loading finishes.
             GetSystemService<GamePackageManager>().NotifyAllPackageRun("*");
 
-            //通知初始化完成
+            // Notify initialization completion.
             GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_GAME_MANAGER_INIT_FINISHED);
             GameMediator.NotifySingleEvent("DoSendAllPackageUILoad");
 
-            //如果调试配置中设置了CustomDebugName，则进入自定义调试场景，否则进入默认场景
+            // Enter the custom debug scene when CustomDebugName is set; otherwise enter the default scene.
             if (string.IsNullOrEmpty(sCustomDebugName))
             {
 #if UNITY_EDITOR
                 yield return new WaitForSeconds(0.5f);
 
-                //进入场景
+                // Enter the logical scene.
                 if (DebugMode && GameEntry.Instance.DebugSkipIntro)
                 {
-                    //进入场景
+                    // Enter the logical scene.
                     if (!RequestEnterLogicScense("MenuLevel"))
                         GameErrorChecker.ShowSystemErrorMessage("Enter firstScense failed");
-                    //隐藏初始加载中动画
+                    // Hide the initial loading animation.
                     HideGlobalStartLoading();
                 }
                 else
 #endif
                 if (GameSettings.GetBool("debugDisableIntro", false))
                 {
-                    //进入场景
+                    // Enter the logical scene.
                     if (!RequestEnterLogicScense("MenuLevel"))
                         GameErrorChecker.ShowSystemErrorMessage("Enter firstScense failed");
-                    //隐藏初始加载中动画
+                    // Hide the initial loading animation.
                     HideGlobalStartLoading();
                 }
                 else if (firstScense != "")
                 {
-                    //进入场景
+                    // Enter the logical scene.
                     if (!RequestEnterLogicScense(firstScense))
                         GameErrorChecker.ShowSystemErrorMessage("Enter firstScense failed");
-                    //隐藏初始加载中动画
+                    // Hide the initial loading animation.
                     HideGlobalStartLoading();
                 }
             }
             else
             {
-                //进入场景
+                // Enter the logical scene.
                 Log.D(TAG, "Enter GameDebug.");
                 if (!RequestEnterLogicScense("GameDebug"))
                     GameErrorChecker.ShowSystemErrorMessage("Enter GameDebug failed");
                 GameMediator.DispatchGlobalEvent(sCustomDebugName, GameEntry.Instance.DebugCustomEntryEventParamas);
-                //隐藏初始加载中动画
+                // Hide the initial loading animation.
                 HideGlobalStartLoading();
             }
         }
         /// <summary>
-        /// 加载用户定义的模组
+        /// Load user-defined mods.
         /// </summary>
         /// <returns></returns>
         private IEnumerator LoadUserPackages()
@@ -292,7 +292,7 @@ namespace Ballance2.Services
             }
         }
         /// <summary>
-        /// 加载系统定义的模块包
+        /// Load configured system packages.
         /// </summary>
         /// <returns></returns>
         private IEnumerator LoadSystemCore()
@@ -304,7 +304,7 @@ namespace Ballance2.Services
 
             yield return 1;
 
-            #region 读取读取SystemInit文件
+            #region Read SystemInit
 
             systemInit = new XmlDocument();
             TextAsset systemInitAsset = Resources.Load<TextAsset>("SystemInit");
@@ -321,7 +321,7 @@ namespace Ballance2.Services
 
             yield return new WaitForSeconds(0.1f);
 
-            #region 系统配置
+            #region System configuration
 
             XmlNode LogToFileEnabled = systemInit.SelectSingleNode("System/SystemOptions/LogToFileEnabled");
             if (LogToFileEnabled != null && LogToFileEnabled.InnerText.ToLower() == "true")
@@ -364,7 +364,7 @@ namespace Ballance2.Services
 
             #endregion
 
-            #region 系统逻辑场景配置
+            #region Logical scene configuration
 
             XmlNode SystemScenses = systemInit.SelectSingleNode("System/SystemScenses");
             if (SystemScenses != null)
@@ -388,7 +388,7 @@ namespace Ballance2.Services
             #endregion
         }
         /// <summary>
-        /// 加载系统内核包
+        /// Load the system core package.
         /// </summary>
         /// <returns></returns>
         private IEnumerator LoadSystemPackages()
@@ -430,7 +430,7 @@ namespace Ballance2.Services
                         if (packageName == "core.debug" && !DebugMode) continue;
                         if (sEnablePackageLoadFilter && !sLoadCustomPackages.Contains(packageName)) continue;
 
-                        //加载包
+                        // Load the package.
                         Task<bool> task = pm.LoadPackage(packageName);
                         yield return task.AsIEnumerator();
 
@@ -440,14 +440,14 @@ namespace Ballance2.Services
                             if (package == null)
                             {
                                 StopAllCoroutines();
-                                GameErrorChecker.ThrowGameError(GameError.UnKnow, packageName + " not found!\n请尝试重启游戏");
+                                GameErrorChecker.ThrowGameError(GameError.UnKnow, packageName + " not found!\nTry restarting the game.");
                                 yield break;
                             }
                             if (package.PackageVersion < minVer)
                             {
                                 StopAllCoroutines();
                                 GameErrorChecker.ThrowGameError(GameError.SystemPackageNotLoad,
-                                    string.Format("模块 {0} 版本过低：{1} 小于所需版本 {2}, 您可尝试重新安装游戏",
+                                    string.Format("Package {0} version {1} is below the required version {2}. Try reinstalling the game.",
                                     packageName, package.PackageVersion, minVer));
                                 yield break;
                             }
@@ -461,8 +461,8 @@ namespace Ballance2.Services
                             {
                                 StopAllCoroutines();
                                 GameErrorChecker.ThrowGameError(GameError.SystemPackageNotLoad,
-                                    "系统定义的模块：" + packageName + " 未能加载成功\n错误：" +
-                                    GameErrorChecker.GetLastErrorMessage() + " (" + GameErrorChecker.LastError + ")\n请尝试重启游戏");
+                                    "System-defined package: " + packageName + " failed to load.\nError: " +
+                                    GameErrorChecker.GetLastErrorMessage() + " (" + GameErrorChecker.LastError + ")\nTry restarting the game.");
                                 yield break;
                             }
                         }
@@ -470,7 +470,7 @@ namespace Ballance2.Services
                 }
                 Log.D(TAG, "Load " + loadedPackageCount + " packages, " + failedPackageCount + " failed.");
 
-                //第一次加载基础包，等待其运行
+                // Load base packages on the first pass and wait for them to run.
                 if (loadStepNow == 0)
                 {
                     pm.NotifyAllPackageRun("*");
@@ -478,12 +478,12 @@ namespace Ballance2.Services
                     if (
 #if UNITY_EDITOR
                     string.IsNullOrEmpty(sCustomDebugName) && (!DebugMode || !GameEntry.Instance.DebugSkipIntro))
-                    //EDITOR 下才判断是否跳过intro DebugSkipIntro
+                    // Check DebugSkipIntro only in the editor.
 #else
           !GameSettings.GetBool("debugDisableIntro", false))
 #endif
                     {
-                        //在基础包加载完成时就进入Intro
+                        // Enter Intro after the base packages load.
                         RequestEnterLogicScense(firstScense);
                         firstScense = "";
                         HideGlobalStartLoading();
@@ -493,11 +493,11 @@ namespace Ballance2.Services
 
             yield return new WaitForSeconds(0.1f);
 
-            //全部加载完毕之后通知所有模块初始化
+            // Initialize all packages after loading finishes.
             pm.NotifyAllPackageRun("*");
         }
 
-        #region 系统调试命令
+        #region System debug commands
 
         private void InitCommands()
         {
@@ -506,12 +506,12 @@ namespace Ballance2.Services
             {
                 QuitGame();
                 return false;
-            }, 0, "quit > 退出游戏");
+            }, 0, "quit > Quit the game");
             srv.RegisterCommand("restart-game", (keyword, fullCmd, argsCount, args) =>
             {
                 RestartGame();
                 return false;
-            }, 0, "restart-game > 重启游戏");
+            }, 0, "restart-game > Restart the game");
             srv.RegisterCommand("s", (keyword, fullCmd, argsCount, args) =>
             {
                 var type = (string)args[0];
@@ -543,7 +543,7 @@ namespace Ballance2.Services
                                         GameSettings.SetInt(setName, int.Parse(setVal));
                                         return true;
                                     default:
-                                        Log.E(TAG, "未知设置类型 {0}", setType);
+                                        Log.E(TAG, "Unknown setting type: {0}", setType);
                                         break;
                                 }
                             }
@@ -561,7 +561,7 @@ namespace Ballance2.Services
                                 var settings = GameSettingsManager.GetSettings(setPackage);
                                 if (settings == null)
                                 {
-                                    Log.E(TAG, "未找到指定设置包 {0}", setPackage);
+                                    Log.E(TAG, "Settings package {0} was not found.", setPackage);
                                     break;
                                 }
 
@@ -580,7 +580,7 @@ namespace Ballance2.Services
                                         settings.GetInt(setName, int.Parse(setVal));
                                         return true;
                                     default:
-                                        Log.E(TAG, "未知设置类型 {0}", setType);
+                                        Log.E(TAG, "Unknown setting type: {0}", setType);
                                         break;
                                 }
                             }
@@ -610,7 +610,7 @@ namespace Ballance2.Services
                                         Log.V(TAG, GameSettings.GetInt(setName, 0).ToString());
                                         return true;
                                     default:
-                                        Log.E(TAG, "未知设置类型 {0}", setType);
+                                        Log.E(TAG, "Unknown setting type: {0}", setType);
                                         break;
                                 }
                             }
@@ -626,7 +626,7 @@ namespace Ballance2.Services
                                 var settings = GameSettingsManager.GetSettings(setPackage);
                                 if (settings == null)
                                 {
-                                    Log.E(TAG, "未找到指定设置包 {0}", setPackage);
+                                    Log.E(TAG, "Settings package {0} was not found.", setPackage);
                                     break;
                                 }
 
@@ -645,7 +645,7 @@ namespace Ballance2.Services
                                         Log.V(TAG, settings.GetInt(setName, 0).ToString());
                                         return true;
                                     default:
-                                        Log.E(TAG, "未知设置类型 {0}", setType);
+                                        Log.E(TAG, "Unknown setting type: {0}", setType);
                                         break;
                                 }
                             }
@@ -671,7 +671,7 @@ namespace Ballance2.Services
                             var settings = GameSettingsManager.GetSettings(setPackage);
                             if (settings == null)
                             {
-                                Log.E(TAG, "未找到指定设置包 {0}", setPackage);
+                                Log.E(TAG, "Settings package {0} was not found.", setPackage);
                                 break;
                             }
 
@@ -680,14 +680,14 @@ namespace Ballance2.Services
                         }
                 }
                 return false;
-            }, 0, "s <set/get/reset/list/notify> 系统设置命令\n" +
-                    "  set <packageName:string> <setKey:string> <bool/string/float/int> <newValue> ▶ 设置指定执行器的某个设置\n" +
-                    "  set <setKey:string> <bool/string/float/int> <newValue>                      ▶ 设置系统执行器的某个设置\n" +
-                    "  get <packageName:string> <setKey:string> <bool/string/float/int>            ▶ 获取指定执行器的某个设置值\n" +
-                    "  get <setKey:string> <bool/string/float/int>                                 ▶ 获取系统执行器的某个设置值\n" +
-                    "  reset <packageName:string>                                                  ▶ 重置所有设置为默认值\n" +
-                    "  notify <packageName:string> <group:string>                                  ▶ 通知指定组设置已更新\n" +
-                    "  list                                                                        ▶ 列举出所有子模块的设置执行器"
+            }, 0, "s <set/get/reset/list/notify> Settings commands\n" +
+                    "  set <packageName:string> <setKey:string> <bool/string/float/int> <newValue> ▶ Set a package actuator setting\n" +
+                    "  set <setKey:string> <bool/string/float/int> <newValue>                      ▶ Set a system actuator setting\n" +
+                    "  get <packageName:string> <setKey:string> <bool/string/float/int>            ▶ Read a package actuator setting\n" +
+                    "  get <setKey:string> <bool/string/float/int>                                 ▶ Read a system actuator setting\n" +
+                    "  reset <packageName:string>                                                  ▶ Reset settings to defaults\n" +
+                    "  notify <packageName:string> <group:string>                                  ▶ Notify a settings group of an update\n" +
+                    "  list                                                                        ▶ List package settings actuators"
             );
             srv.RegisterCommand("r", (keyword, fullCmd, argsCount, args) =>
             {
@@ -699,7 +699,7 @@ namespace Ballance2.Services
                             int fpsVal;
                             if (DebugUtils.CheckIntDebugParam(1, args, out fpsVal, false, 0))
                             {
-                                if (fpsVal <= 0 && fpsVal > 120) { Log.E(TAG, "错误的参数：{0}", args[0]); break; }
+                                if (fpsVal <= 0 && fpsVal > 120) { Log.E(TAG, "Invalid argument: {0}", args[0]); break; }
                                 Application.targetFrameRate = fpsVal;
                             }
                             Log.V(TAG, "TargetFrameRate is {0}", Application.targetFrameRate);
@@ -730,7 +730,7 @@ namespace Ballance2.Services
                         {
                             int mode;
                             if (!DebugUtils.CheckIntDebugParam(1, args, out mode)) break;
-                            if (mode < 0 && mode > 2) { Log.E(TAG, "错误的参数：{0}", args[0]); break; }
+                            if (mode < 0 && mode > 2) { Log.E(TAG, "Invalid argument: {0}", args[0]); break; }
                             QualitySettings.vSyncCount = mode;
                             return true;
                         }
@@ -745,11 +745,11 @@ namespace Ballance2.Services
                 }
                 return false;
             }, 0, "r <fps/resolution/full/device>\n" +
-                    "  fps [packageName:nmber:number(1-120)]                                ▶ 获取或者设置游戏的目标帧率\n" +
-                    "  resolution <width:nmber> <height:nmber> [fullScreenMode:number(0-3)] ▶ 设置游戏的分辨率或全屏\n" +
-                    "  vsync <fullScreenMode:number(0-2)>                                   ▶ 设置垂直同步,0: 关闭，1：同步1次，2：同步2次\n" +
-                    "  full <fullScreenMode::number(0-3)>                                   ▶ 设置游戏的全屏，0：ExclusiveFullScreen，1：FullScreenWindow，2：MaximizedWindow，3：Windowed\n" +
-                    "  device > 获取当前设备信息");
+                    "  fps [fps:number(1-120)]                                             ▶ Get or set the target frame rate\n" +
+                    "  resolution <width:number> <height:number> [fullScreenMode:number(0-3)] ▶ Set resolution or fullscreen mode\n" +
+                    "  vsync <count:number(0-2)>                                           ▶ Set vertical sync: 0 off, 1 every refresh, 2 every second refresh\n" +
+                    "  full <fullScreenMode:number(0-3)>                                   ▶ Set fullscreen mode: 0 ExclusiveFullScreen, 1 FullScreenWindow, 2 MaximizedWindow, 3 Windowed\n" +
+                    "  device > Show current device information");
             srv.RegisterCommand("lc", (keyword, fullCmd, argsCount, args) =>
             {
                 var type = (string)args[0];
@@ -783,25 +783,25 @@ namespace Ballance2.Services
                 }
                 return false;
             }, 0, "lc <show/go>\n" +
-                    "  show             ▶ 获取当前所在虚拟场景\n" +
-                    "  go <name:string> ▶ 进入指定虚拟场景");
+                    "  show             ▶ Show the current logical scene\n" +
+                    "  go <name:string> ▶ Enter the specified logical scene");
             srv.RegisterCommand("le", (keyword, fullCmd, argsCount, args) =>
             {
                 Log.V(TAG, "LastError is {0}", GameErrorChecker.LastError.ToString());
                 return true;
-            }, 1, "le > 获取LastError");
+            }, 1, "le > Show LastError");
         }
 
         #endregion
 
-        #region 视频设置
+        #region Video settings
 
         private Resolution[] resolutions = null;
         private int defaultResolution = 0;
 
         private void InitVideoSettings()
         {
-            //发出屏幕大小更改事件
+            // Emit the screen size changed event.
             GameManager.GameMediator.RegisterGlobalEvent(GameEventNames.EVENT_SCREEN_SIZE_CHANGED);
 
             resolutions = Screen.resolutions;
@@ -813,12 +813,12 @@ namespace Ballance2.Services
                     break;
                 }
 
-            //设置更新事件
+            // Settings update event.
             GameSettings.RegisterSettingsUpdateCallback(SettingConstants.SettingsVideo, OnVideoSettingsUpdated);
             GameSettings.RequireSettingsLoad(SettingConstants.SettingsVideo);
         }
 
-        //视频设置更新器，更新视频设置至引擎
+        // Apply video settings to the engine.
         private bool OnVideoSettingsUpdated(string groupName, int action)
         {
             int resolutionsSet = GameSettings.GetInt(SettingConstants.SettingsVideoResolution, -1);
@@ -839,7 +839,7 @@ namespace Ballance2.Services
                     var currentResolution = Screen.currentResolution;
 
 
-                    //宽高比
+                    // Aspect ratio.
                     var currentResolutionAspectRatio = currentResolution.width * 1F / currentResolution.height;
                     var resolutionAspectRatio = resolution.width * 1F / resolution.height;
 
@@ -853,7 +853,7 @@ namespace Ballance2.Services
                         resolutionHeight = tmpInt;
                     }
                     Screen.SetResolution(resolutionWidth, resolutionHeight, fullScreen, resolution.refreshRate);
-                    //发出屏幕大小更改事件
+                    // Emit the screen size changed event.
                     GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_SCREEN_SIZE_CHANGED, resolutionWidth, resolutionHeight);
                 }
             }
@@ -870,10 +870,10 @@ namespace Ballance2.Services
 
         #endregion
 
-        #region 退出和销毁
+        #region Shutdown and destruction
 
         /// <summary>
-        /// 清空整个场景
+        /// Clear the entire scene.
         /// </summary>
         internal void ClearScense()
         {
@@ -904,7 +904,7 @@ namespace Ballance2.Services
             GameBaseCamera.gameObject.SetActive(true);
         }
         /// <summary>
-        /// 释放
+        /// Release resources.
         /// </summary>
         public override void Destroy()
         {
@@ -913,7 +913,7 @@ namespace Ballance2.Services
         }
 
         /// <summary>
-        /// 请求开始退出游戏流程
+        /// Request the game shutdown flow.
         /// </summary>
         public void QuitGame()
         {
@@ -926,7 +926,7 @@ namespace Ballance2.Services
             GameSystem.IsRestart = false;
         }
         /// <summary>
-        /// 重启游戏
+        /// Restart the game.
         /// </summary>
         public void RestartGame()
         {
@@ -947,7 +947,7 @@ namespace Ballance2.Services
         }
         private void DoQuit()
         {
-            //退出时将清理一些关键数据，发送退出事件
+            // Clean up critical state and emit the quit event.
 
             GameBaseCamera.clearFlags = CameraClearFlags.Color;
             GameBaseCamera.backgroundColor = Color.black;
@@ -977,7 +977,7 @@ namespace Ballance2.Services
         private int nextGameQuitTick = -1;
 
         /// <summary>
-        /// 请求游戏退出。
+        /// Request game exit.
         /// </summary>
         private void ReqGameQuit()
         {
@@ -985,7 +985,7 @@ namespace Ballance2.Services
         }
         protected override void Update()
         {
-            //延时函数管理运行
+            // Run delayed callbacks.
             if (delayItems.Count > 0)
             {
                 LinkedListNode<DelayItem> item = delayItems.First;
@@ -1002,7 +1002,7 @@ namespace Ballance2.Services
                     item = item.Next;
                 }
             }
-            //定时器函数运行
+            // Run timer callbacks.
             if (timerItems.Count > 0)
             {
                 LinkedListNode<TimerItem> item = timerItems.First;
@@ -1018,7 +1018,7 @@ namespace Ballance2.Services
                     item = item.Next;
                 }
             }
-            //退出延时
+            // Exit delay.
             if (nextGameQuitTick >= 0)
             {
                 nextGameQuitTick--;
@@ -1035,13 +1035,13 @@ namespace Ballance2.Services
 
         #endregion
 
-        #region 获取系统服务的包装
+        #region System service access wrappers
 
         /// <summary>
-        /// 获取系统服务
+        /// Get a system service.
         /// </summary>
-        /// <typeparam name="T">继承于GameService的服务类型</typeparam>
-        /// <returns>返回服务实例，如果没有找到，则返回null</returns>
+        /// <typeparam name="T">Service type derived from GameService.</typeparam>
+        /// <returns>Service instance, or null if not found.</returns>
         public static T GetSystemService<T>() where T : GameService<T>
         {
             return GameSystem.GetSystemService<T>();
@@ -1049,32 +1049,32 @@ namespace Ballance2.Services
 
         #endregion
 
-        #region 其他方法
+        #region Other methods
 
         private Camera lastActiveCam = null;
 
         /// <summary>
-        /// 进行截图
+        /// Capture a screenshot.
         /// </summary>
         public string CaptureScreenshot()
         {
-            //创建目录
+            // Create the directory.
             string saveDir = Application.persistentDataPath + "/Screenshot/";
             if (!Directory.Exists(saveDir))
                 Directory.CreateDirectory(saveDir);
 
-            //保存图片
+            // Save the image.
             string savePath = saveDir + "Screenshot" + System.DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
             ScreenCapture.CaptureScreenshot(savePath);
             Log.D(TAG, "CaptureScreenshot to " + savePath);
-            //提示
+            // Show a notification.
             Delay(1.0f, () => GetSystemService<GameUIManager>().GlobalToast(I18N.I18N.TrF("global.CaptureScreenshotSuccess", "", savePath)));
             return savePath;
         }
         /// <summary>
-        /// 设置基础摄像机状态
+        /// Set base camera visibility.
         /// </summary>
-        /// <param name="visible">是否显示</param>
+        /// <param name="visible">Whether to show it.</param>
         public void SetGameBaseCameraVisible(bool visible)
         {
             if (visible)
@@ -1095,48 +1095,48 @@ namespace Ballance2.Services
             }
         }
         /// <summary>
-        /// 隐藏全局初始Loading动画
+        /// Hide the initial global loading animation.
         /// </summary>
         public void HideGlobalStartLoading() { GameEntry.Instance.GameGlobalIngameLoading.SetActive(false); }
         /// <summary>
-        /// 显示全局初始Loading动画
+        /// Show the initial global loading animation.
         /// </summary>
         public void ShowGlobalStartLoading() { GameEntry.Instance.GameGlobalIngameLoading.SetActive(true); }
 
         #region Prefab methods
 
-        // Prefab 预制体实例化相关方法。
-        // 这里提供一些快速方法方便直接使用。这些方法与 CloneUtils 提供的方法功能一致。
+        // Prefab instantiation helpers.
+        // Convenience methods equivalent to CloneUtils.
 
         /// <summary>
-        /// 实例化预制体，并设置名称
+        /// Instantiate a prefab and set its name.
         /// </summary>
-        /// <param name="prefab">预制体</param>
-        /// <param name="name">新对象名称</param>
-        /// <returns>返回新对象</returns>
+        /// <param name="prefab">Prefab.</param>
+        /// <param name="name">New object name.</param>
+        /// <returns>New object.</returns>
         public GameObject InstancePrefab(GameObject prefab, string name)
         {
             return InstancePrefab(prefab, transform, name);
         }
 
         /// <summary>
-        /// 实例化预制体 ，并设置父级与名称
+        /// Instantiate a prefab and set its parent and name.
         /// </summary>
-        /// <param name="prefab">预制体</param>
-        /// <param name="parent">父级</param>
-        /// <param name="name">父级</param>
-        /// <returns>返回新对象</returns>
+        /// <param name="prefab">Prefab.</param>
+        /// <param name="parent">Parent.</param>
+        /// <param name="name">New object name.</param>
+        /// <returns>New object.</returns>
         public GameObject InstancePrefab(GameObject prefab, Transform parent, string name)
         {
             return CloneUtils.CloneNewObjectWithParent(prefab, parent, name);
         }
 
         /// <summary>
-        /// 新建一个新的 GameObject ，并设置父级与名称
+        /// Create a GameObject with a parent and name.
         /// </summary>
-        /// <param name="parent">父级</param>
-        /// <param name="name">新对象名称</param>
-        /// <returns>返回新对象</returns>
+        /// <param name="parent">Parent.</param>
+        /// <param name="name">New object name.</param>
+        /// <returns>New object.</returns>
         public GameObject InstanceNewGameObject(Transform parent, string name)
         {
             GameObject go = new GameObject(name);
@@ -1145,10 +1145,10 @@ namespace Ballance2.Services
         }
 
         /// <summary>
-        /// 新建一个新的 GameObject 
+        /// Create a GameObject.
         /// </summary>
-        /// <param name="name">新对象名称</param>
-        /// <returns>返回新对象</returns>
+        /// <param name="name">New object name.</param>
+        /// <returns>New object.</returns>
         public GameObject InstanceNewGameObject(string name)
         {
             GameObject go = new GameObject(name);
@@ -1160,52 +1160,52 @@ namespace Ballance2.Services
 
         #region FileUtils
 
-        // 这里提供一些快速方法方便直接使用。等同于FileUtils中的相关函数。 
+        // Convenience methods equivalent to FileUtils.
 
         /// <summary>
-        /// 写入字符串至指定文件
+        /// Write a string to a file.
         /// </summary>
-        /// <param name="path">文件路径</param>
-        /// <param name="append">是否追加写入文件，否则为覆盖写入</param>
-        /// <param name="path">要写入的文件</param>
+        /// <param name="path">File path.</param>
+        /// <param name="append">Append if true; otherwise overwrite.</param>
+        /// <param name="path">File to write.</param>
         public void WriteFile(string path, bool append, string data) { FileUtils.WriteFile(path, append, data); }
         /// <summary>
-        /// 检查文件是否存在
+        /// Check whether a file exists.
         /// </summary>
-        /// <param name="path">文件路径</param>
-        /// <returns>返回文件是否存在</returns>
+        /// <param name="path">File path.</param>
+        /// <returns>Whether the file exists.</returns>
         public bool FileExists(string path) { return FileUtils.FileExists(path); }
         /// <summary>
-        /// 检查目录是否存在
+        /// Check whether a directory exists.
         /// </summary>
-        /// <param name="path">目录路径</param>
-        /// <returns>返回是否存在</returns>
+        /// <param name="path">Directory path.</param>
+        /// <returns>Whether it exists.</returns>
         public bool DirectoryExists(string path) { return FileUtils.DirectoryExists(path); }
         /// <summary>
-        /// 创建目录
+        /// Create a directory.
         /// </summary>
-        /// <param name="path">目录路径</param>
+        /// <param name="path">Directory path.</param>
         public void CreateDirectory(string path) { FileUtils.CreateDirectory(path); }
         /// <summary>
-        /// 读取文件至字符串
+        /// Read a file as a string.
         /// </summary>
-        /// <param name="path">文件</param>
-        /// <returns>返回文件男人</returns>
+        /// <param name="path">File.</param>
+        /// <returns>File contents.</returns>
         public string ReadFile(string path) { return FileUtils.ReadFile(path); }
         /// <summary>
-        /// 删除指定的文件或目录
+        /// Delete a file or directory.
         /// </summary>
-        /// <param name="path">文件</param>
+        /// <param name="path">File.</param>
         public void RemoveFile(string path) { FileUtils.RemoveFile(path); }
         /// <summary>
-        /// 删除指定的目录
+        /// Delete a directory.
         /// </summary>
-        /// <param name="path">文件</param>
+        /// <param name="path">File.</param>
         public void RemoveDirectory(string path) { FileUtils.RemoveDirectory(path); }
 
         #endregion
 
-        #region 定时器与延时
+        #region Timers and delays
 
         private int timerId = -1;
         private class DelayItem
@@ -1234,10 +1234,10 @@ namespace Ballance2.Services
         }
 
         /// <summary>
-        /// 设置一个延时执行回调
+        /// Schedule a delayed callback.
         /// </summary>
-        /// <param name="sec">延时时长，秒</param>
-        /// <param name="callback">回调</param>
+        /// <param name="sec">Delay in seconds.</param>
+        /// <param name="callback">Callback.</param>
         public int Delay(float sec, VoidDelegate callback)
         {
             var d = new DelayItem();
@@ -1249,10 +1249,10 @@ namespace Ballance2.Services
         }
 
         /// <summary>
-        /// 通过ID删除指定的延时执行回调
+        /// Cancel a delayed callback by ID.
         /// </summary>
-        /// <param name="timerId">Delay 函数返回的 ID </param>
-        /// <returns>返回是否删除成功</returns>
+        /// <param name="timerId">ID returned by Delay.</param>
+        /// <returns>Whether removal succeeded.</returns>
         public bool DeleteDelay(int timerId)
         {
             LinkedListNode<DelayItem> item = delayItems.First;
@@ -1269,11 +1269,11 @@ namespace Ballance2.Services
         }
 
         /// <summary>
-        /// 设置一个定时器
+        /// Create a repeating timer.
         /// </summary>
-        /// <param name="loopSec">定时器循环时间</param>
-        /// <param name="callback">回调</param>
-        /// <returns>返回ID, 可以使用 DeleteTimer 来删除定时器</returns>
+        /// <param name="loopSec">Timer interval.</param>
+        /// <param name="callback">Callback.</param>
+        /// <returns>Timer ID; pass it to DeleteTimer to remove the timer.</returns>
         public int Timer(float loopSec, VoidDelegate callback)
         {
             var d = new TimerItem();
@@ -1286,12 +1286,12 @@ namespace Ballance2.Services
         }
 
         /// <summary>
-        /// 设置一个定时器
+        /// Create a repeating timer.
         /// </summary>
-        /// <param name="delaySec">定时器第一次启动延迟时间</param>
-        /// <param name="loopSec">定时器循环时间</param>
-        /// <param name="callback">回调</param>
-        /// <returns>返回ID, 可以使用 DeleteTimer 来删除定时器</returns>
+        /// <param name="delaySec">Delay before the first timer invocation.</param>
+        /// <param name="loopSec">Timer interval.</param>
+        /// <param name="callback">Callback.</param>
+        /// <returns>Timer ID; pass it to DeleteTimer to remove the timer.</returns>
         public int Timer(float loopSec, float delaySec, VoidDelegate callback)
         {
             var d = new TimerItem();
@@ -1304,10 +1304,10 @@ namespace Ballance2.Services
         }
 
         /// <summary>
-        /// 通过ID删除指定的定时器
+        /// Delete a timer by ID.
         /// </summary>
-        /// <param name="timerId">Timer 函数返回的 ID </param>
-        /// <returns>返回是否删除成功</returns>
+        /// <param name="timerId">ID returned by Timer.</param>
+        /// <returns>Whether removal succeeded.</returns>
         public bool DeleteTimer(int timerId)
         {
             LinkedListNode<TimerItem> item = timerItems.First;
@@ -1329,25 +1329,25 @@ namespace Ballance2.Services
 
         #region Logic Scense
 
-        // 逻辑场景是类似于 Unity 场景的功能，但是它无需频繁加载卸载。
-        // 切换逻辑场景实际上是在同一个 Unity 场景中操作，因此速度快。
-        // 切换逻辑场景将发出 EVENT_LOGIC_SECNSE_QUIT 与 EVENT_LOGIC_SECNSE_ENTER 全局事件，
-        // 子模块根据这两个事件来隐藏或显示自己的东西，从而达到切换场景的效果。
+        // Logical scenes resemble Unity scenes without repeated scene loading and unloading.
+        // Transitions operate within one Unity scene, making them inexpensive.
+        // Transitions emit EVENT_LOGIC_SECNSE_QUIT and EVENT_LOGIC_SECNSE_ENTER;
+        // packages show or hide their objects in response.
 
         /*
-        下面的示例演示了如何监听进入离开逻辑场景，并显示或隐藏自己的内容：
+        Example: subscribe to logical scene entry/exit and show or hide owned content.
         ```csharp
         GameManager.GameMediator.RegisterEventHandler(thisGamePackage, GameEventNames.EVENT_LOGIC_SECNSE_ENTER, "Intro", (evtName, params) => {
           var scense = params[1];
           if (scense == "Intro") { 
-            //进入场景时显示自己的东西
+            // Show owned content when entering the scene.
           }
           return false;
         });
         GameManager.GameMediator.RegisterEventHandler(thisGamePackage, GameEventNames.EVENT_LOGIC_SECNSE_QUIT, "Intro", (evtName, params) => {
           var scense = params[1];
           if (scense == "Intro") { 
-            //离开场景时隐藏自己的东西
+            // Hide owned content when leaving the scene.
           }
           return false;
         });
@@ -1359,10 +1359,10 @@ namespace Ballance2.Services
         private string firstScense = "";
 
         /// <summary>
-        /// 进入指定逻辑场景
+        /// Enter a logical scene.
         /// </summary>
-        /// <param name="name">场景名字</param>
-        /// <returns>返回是否成功</returns>
+        /// <param name="name">Scene name.</param>
+        /// <returns>Whether the operation succeeded.</returns>
         public bool RequestEnterLogicScense(string name)
         {
             int curIndex = logicScenses.IndexOf(name);
@@ -1383,7 +1383,7 @@ namespace Ballance2.Services
             return true;
         }
         /// <summary>
-        /// 获取所有逻辑场景
+        /// Get all logical scenes.
         /// </summary>
         public string[] GetLogicScenses() { return logicScenses.ToArray(); }
 

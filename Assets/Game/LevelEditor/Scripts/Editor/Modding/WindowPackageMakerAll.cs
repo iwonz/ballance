@@ -8,13 +8,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * PackagePackerWindow.cs
 * 
-* 用途：
-* 打包模块代码
+* Purpose:
+* Package module code.
 *
-* 作者：
+* Author:
 * mengyu
 *
 * 
@@ -28,7 +28,7 @@ namespace Ballance2.Editor.Modding
     {
         public WindowPackageMakerAll()
         {
-            titleContent = new GUIContent("打包Packages下所有模块包至Debug目录");
+            titleContent = new GUIContent("Pack All Packages to Debug Folder");
         }
 
         private SerializedObject serializedObject;
@@ -68,11 +68,11 @@ namespace Ballance2.Editor.Modding
             EditorGUI.BeginChangeCheck();
 
             EditorGUILayout.BeginVertical(groupBox);
-            EditorGUILayout.PropertyField(pPackTarget, new GUIContent("目标平台 "));
+            EditorGUILayout.PropertyField(pPackTarget, new GUIContent("Target platform "));
 
             GUILayout.Space(50);
 
-            if (GUILayout.Button("开始打包"))
+            if (GUILayout.Button("Start Packing"))
                 DoPack();
 
             GUILayout.Space(5);
@@ -114,19 +114,19 @@ namespace Ballance2.Editor.Modding
             if (packTarget == BuildTarget.NoTarget)
             {
                 isError = true;
-                errStr = "请选择目标平台";
+                errStr = "Select the target platform.";
                 return;
             }
             if(!BuildPipeline.IsBuildTargetSupported(BuildPipeline.GetBuildTargetGroup(packTarget), packTarget))
             {
                 isError = true;
-                errStr = "你的 Unity 似乎不支持目标平台 "  + packTarget + " 的编译，可能你没有安装对应模块";
+                errStr = "This Unity installation cannot build for target "  + packTarget + ". The corresponding module may be missing.";
                 return;
             }
 
             string dir = "";
 
-            EditorUtility.DisplayProgressBar("正在打包", "正在打包，请稍后...", 0);
+            EditorUtility.DisplayProgressBar("Packing", "Packing, please wait...", 0);
 
             foreach(string path in packsPath) {
                 TextAsset packageDef = null;
@@ -141,18 +141,18 @@ namespace Ballance2.Editor.Modding
                 if(packageDef  == null)
                 {
                     isError = true;
-                    Debug.LogWarning("没有在 " + path + " 模块下找到 PackageDef.xml，跳过打包此模块");
+                    Debug.LogWarning("Could not find PackageDef.xml in " + path + "; skipping this package.");
                     continue;
                 } 
                 if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
                 string err = PackagePacker.DoPackPackage(packTarget, packageDef, path, dir);
                 if(!string.IsNullOrEmpty(err))
-                    Debug.LogError("打包模块 " + path + " 发生错误：" + err);
+                    Debug.LogError("Packing package " + path + " failed: " + err);
             }
 
             EditorUtility.ClearProgressBar();
-            EditorUtility.DisplayDialog("提示", "打包成功！", "好的");
+            EditorUtility.DisplayDialog("Information", "Package built successfully!", "OK");
 
             isError = false;
         }

@@ -7,17 +7,17 @@ namespace BallancePhysics.Wapper
   
   public class PhysicsHinge : PhysicsConstraintBase
   {
-    [Tooltip("位置和轴参照")]
+    [Tooltip("Reference frame for position and axis.")]
     
     /// <summary>
-    /// 位置和轴参照
+    /// Position and axis reference.
     /// </summary>
     public Transform HingeRef = null;
     /// <summary>
-    /// 连接到的另外一个物体，如果为空，则连接到世界
+    /// The other connected object; null connects the constraint to the world.
     /// </summary>
     
-    [Tooltip("连接到的另外一个物体，如果为空，则连接到世界")]
+    [Tooltip("The other object to connect; leave empty to connect to the world.")]
     public PhysicsObject Other = null;
 
     protected override void DoCreateConstraint()

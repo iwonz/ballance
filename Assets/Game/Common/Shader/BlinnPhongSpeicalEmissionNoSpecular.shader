@@ -28,7 +28,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalEmissionNoSpecular"
       #pragma multi_compile LIGHTPROBE_SH
       #define NO_SPECULAR
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"
@@ -56,7 +56,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalEmissionNoSpecular"
       #pragma multi_compile_fwdadd 
       #define NO_SPECULAR
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"

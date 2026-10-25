@@ -4,13 +4,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameAssetsInfo.cs
 * 
-* 用途：
-* 游戏静态Prefab引入结构类。
+* Purpose:
+* Static prefab reference structure.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

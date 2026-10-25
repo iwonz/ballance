@@ -7,20 +7,20 @@ using UnityEngine;
 /*
 * Copyright (c) 2020  mengyu
 * 
-* 模块名： 
+* Module:
 * ProductionSettings.cs
 * 
-* 用途：
-* 发布所用静态设置
+* Purpose:
+* Static release settings.
 * 
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Config.Settings
 {
 	/// <summary>
-	/// 发布所用静态设置
+	/// Static release settings.
 	/// </summary>
 	public class ProductionSettings : ScriptableObject
 	{
@@ -32,7 +32,7 @@ namespace Ballance2.Config.Settings
 		private static ProductionSettings _instance = null;
 
 		/// <summary>
-		/// 获取发布设置实例
+		/// Get the release settings instance.
 		/// </summary>
 		public static ProductionSettings Instance
 		{
@@ -61,7 +61,7 @@ namespace Ballance2.Config.Settings
 		}
 
 #if UNITY_EDITOR 
-		[MenuItem("Ballance/设置/Production Settings", priority = 298)]
+		[MenuItem("Ballance/Settings/Production Settings", priority = 298)]
 		public static void Open()
 		{
 			Selection.activeObject = Instance;

@@ -5,27 +5,27 @@ using UnityEngine.Animations;
 /*
  * Copyright (c) 2020  mengyu
  * 
- * 模块名：     
+ * Module:
  * CamFollow.cs
  * 
- * 用途：
- * 摄像机跟随脚本，用于Ballance球摄像机跟随的核心内容。
+ * Purpose:
+ * Camera-follow behavior used by the Ballance ball camera.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Game
 {
   /// <summary>
-  /// 摄像机跟随脚本，用于Ballance球摄像机跟随的核心内容。
+  /// Camera-follow behavior used by the Ballance ball camera.
   /// </summary>
   public class CamFollow : MonoBehaviour
   {
-    #region 属性
+    #region Properties
 
     /// <summary>
-    /// 指定摄像机跟随球是否开启
+    /// Enable camera following.
     /// </summary>
     /// <value></value>
     public bool Follow { 
@@ -35,12 +35,12 @@ namespace Ballance2.Game
       } 
     }
     /// <summary>
-    /// 指定摄像机看着球是否开启
+    /// Enable looking at the ball.
     /// </summary>
     /// <value></value>
     public bool Look { get { return _Look; } set { _Look = value; } }
     /// <summary>
-    /// 指定当前跟踪的目标
+    /// Current follow target.
     /// </summary>
     /// <value></value>
     public Transform Target {
@@ -55,20 +55,20 @@ namespace Ballance2.Game
     }
 
     /// <summary>
-    /// 设置跟踪的目标，不更新位置
+    /// Set the follow target without updating the position.
     /// </summary>
     /// <param name="t"></param>
     public void SetTargetWithoutUpdatePos(Transform t) {
       _Target = t;
     }
 
-    [Tooltip("指定当前跟踪的目标")]
+    [Tooltip("Target to follow.")]
     [SerializeField]
     private Transform _Target;
-    [Tooltip("指定摄像机看着球是否开启")]
+    [Tooltip("Enable looking at the ball.")]
     [SerializeField]
     private bool _Look = false;
-    [Tooltip("指定摄像机跟随球是否开启")]
+    [Tooltip("Enable following the ball.")]
     [SerializeField]
     private bool _Follow = false;
 

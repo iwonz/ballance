@@ -5,20 +5,20 @@ using UnityEngine.Animations;
 /*
  * Copyright (c) 2023  mengyu
  * 
- * 模块名：     
+ * Module:
  * CamFollow.cs
  * 
- * 用途：
- * 物体绕指定对象轴旋转脚本
+ * Purpose:
+ * Rotate an object around a specified target axis.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Game
 {
   /// <summary>
-  /// 物体绕指定对象轴旋转脚本
+  /// Rotate an object around a specified target axis.
   /// </summary>
   public class RotateAround : MonoBehaviour
   {

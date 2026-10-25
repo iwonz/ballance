@@ -6,60 +6,60 @@ using UnityEngine;
 /*
  * Copyright (c) 2020  mengyu
  * 
- * 模块名：     
+ * Module:
  * DistanceChecker.cs
  * 
- * 用途：
- * 距离检查器，用于测量两个物体的距离，以在指定范围内触发自定义事件。
+ * Purpose:
+ * Measure the distance between two objects and trigger events within a configured range.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Game
 {
   /// <summary>
-  /// 距离检查器，用于测量两个物体的距离，以在指定范围内触发自定义事件。
+  /// Measure the distance between two objects and trigger events within a configured range.
   /// </summary>
   public class DistanceChecker : MonoBehaviour
   {
-    [Tooltip("物体1")]
+    [Tooltip("Object 1.")]
     /// <summary>
-    /// 物体1
+    /// Object 1.
     /// </summary>
     public Transform Object1;
 
-    [Tooltip("物体2")]
+    [Tooltip("Object 2.")]
     /// <summary>
-    /// 物体2
+    /// Object 2.
     /// </summary>
     public Transform Object2;
 
-    [Tooltip("检查距离")]
+    [Tooltip("Distance threshold.")]
     /// <summary>
-    /// 检查距离
+    /// Distance threshold.
     /// </summary>
     public float Diatance;
 
     /// <summary>
-    /// 是否开启检查
+    /// Enable distance checks.
     /// </summary>
     public bool CheckEnabled = false;
     /// <summary>
-    /// 每隔多少Tick进行一次检查
+    /// Number of ticks between checks.
     /// </summary>
     public int CheckTickMin = 60;
     /// <summary>
-    /// 最大检查Tick
+    /// Maximum check tick.
     /// </summary>
     public int CheckTickMax = 300;
 
     /// <summary>
-    /// 进入范围事件
+    /// Entered the range.
     /// </summary>
     public GameObjectDelegate OnEnterRange;
     /// <summary>
-    /// 离开范围事件
+    /// Left the range.
     /// </summary>
     public GameObjectDelegate OnLeaveRange;
 

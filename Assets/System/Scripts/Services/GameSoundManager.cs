@@ -12,24 +12,24 @@ using UnityEngine.Audio;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameSoundManager.cs
 * 
-* 用途：
-* 声音管理器，用于管理声音部分通用功能
+* Purpose:
+* Manage shared audio functionality.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Services
 {
   /// <summary>
-  /// 声音管理器
+  /// Sound manager.
   /// </summary>
   public class GameSoundManager : GameService<GameSoundManager>
   {
-    #region 初始化和定义
+    #region Initialization and definitions
 
     public const string TAG = "GameSoundManager";
 
@@ -56,7 +56,7 @@ namespace Ballance2.Services
           }
       );
 
-      //设置更新事件
+      // Settings update event.
       GameSettings = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME);
       GameSettings.RegisterSettingsUpdateCallback(SettingConstants.SettingsVoice, OnVoiceSettingsUpdated);
       GameSettings.RequireSettingsLoad(SettingConstants.SettingsVoice);
@@ -94,11 +94,11 @@ namespace Ballance2.Services
     #region AudioMixer
 
     /// <summary>
-    /// 游戏主AudioMixer
+    /// Main game AudioMixer.
     /// </summary>
     public AudioMixer GameMainAudioMixer;
     /// <summary>
-    /// 游戏UI AudioMix
+    /// UI AudioMixer.
     /// </summary>
     public AudioMixer GameUIAudioMixer;
 
@@ -126,10 +126,10 @@ namespace Ballance2.Services
     #region Sound Player
 
     /// <summary>
-    /// 加载模块中的音乐资源
+    /// Load an audio resource from a package.
     /// </summary>
-    /// <param name="assets">资源路径（模块:音乐路径）</param>
-    /// <returns>如果加载失败则返回null，否则返回AudioClip实例</returns>
+    /// <param name="assets">Resource path in package:audio-path form.</param>
+    /// <returns>AudioClip on success; null on failure.</returns>
     public AudioClip LoadAudioResource(string assets)
     {
       string[] names = assets.Split(':');
@@ -137,13 +137,13 @@ namespace Ballance2.Services
       GamePackage package = GamePackageManager.FindPackage(names[0]);
       if (package == null)
       {
-        Log.W(TAG, "无法加载声音文件 {0} ，因为未找到模块 {1}", assets, names[0]);
+        Log.W(TAG, "Cannot load sound {0}: package {1} was not found.", assets, names[0]);
         GameErrorChecker.LastError = GameError.NotRegister;
         return null;
       }
       if (package.Status != GamePackageStatus.LoadSuccess)
       {
-        Log.W(TAG, "无法加载声音文件 {0} ，因为模块 {1} 未初始化", assets, package.PackageName);
+        Log.W(TAG, "Cannot load sound {0}: package {1} is not initialized.", assets, package.PackageName);
         GameErrorChecker.LastError = GameError.NotLoad;
         return null;
       }
@@ -152,23 +152,23 @@ namespace Ballance2.Services
       if (clip != null) clip.name = PathUtils.GetFileNameWithoutExt(names[1]);
       else
       {
-        Log.W(TAG, "未找到声音文件 {0} ，在模块 {1}", assets, names[0]);
+        Log.W(TAG, "Sound {0} was not found in package {1}.", assets, names[0]);
         GameErrorChecker.LastError = GameError.AssetNotFound;
       }
 
       return clip;
     }
     /// <summary>
-    /// 加载模块中的音乐资源
+    /// Load an audio resource from a package.
     /// </summary>
-    /// <param name="package">所属模块</param>
-    /// <param name="assets">音乐路径</param>
-    /// <returns>如果加载失败则返回null，否则返回AudioClip实例</returns>
+    /// <param name="package">Owning package.</param>
+    /// <param name="assets">Audio path.</param>
+    /// <returns>AudioClip on success; null on failure.</returns>
     public AudioClip LoadAudioResource(GamePackage package, string assets)
     {
       if (package == null)
       {
-        Log.W(TAG, "无法加载声音文件 {0} ，因为未找到模块未提供");
+        Log.W(TAG, "Cannot load sound {0}: no package was specified.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return null;
       }
@@ -176,20 +176,20 @@ namespace Ballance2.Services
       if (clip != null) clip.name = PathUtils.GetFileNameWithoutExt(assets);
       else
       {
-        Log.W(TAG, "在模块 {1} 未找到声音文件 {0}", assets, package.PackageName);
+        Log.W(TAG, "Sound {0} was not found in package {1}.", assets, package.PackageName);
         GameErrorChecker.LastError = GameError.AssetNotFound;
       }
 
       return clip;
     }
     /// <summary>
-    /// 注册一个声音，并设置声音资源文件
+    /// Register a sound player and its audio resource.
     /// </summary>
-    /// <param name="assets">音频资源字符串</param>
-    /// <param name="playOnAwake">是否在开始时播放</param>
-    /// <param name="activeStart">播放对象是否开始时激活</param>
-    /// <param name="name">播放对象的名称</param>
-    /// <returns>返回 AudioSource 实例</returns>
+    /// <param name="assets">Audio resource identifier.</param>
+    /// <param name="playOnAwake">Play on startup.</param>
+    /// <param name="activeStart">Activate the player object on startup.</param>
+    /// <param name="name">Player object name.</param>
+    /// <returns>AudioSource instance.</returns>
     public AudioSource RegisterSoundPlayer(GameSoundType type, string assets, bool playOnAwake = false, bool activeStart = true, string name = "")
     {
       AudioClip audioClip = null;
@@ -215,13 +215,13 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 注册一个声音，并设置声音资源文件
+    /// Register a sound player and its audio resource.
     /// </summary>
-    /// <param name="audioClip">音频源文件</param>
-    /// <param name="playOnAwake">是否在开始时播放</param>
-    /// <param name="activeStart">播放对象是否开始时激活</param>
-    /// <param name="name">播放对象的名称</param>
-    /// <returns>返回 AudioSource 实例</returns>
+    /// <param name="audioClip">Audio clip.</param>
+    /// <param name="playOnAwake">Play on startup.</param>
+    /// <param name="activeStart">Activate the player object on startup.</param>
+    /// <param name="name">Player object name.</param>
+    /// <returns>AudioSource instance.</returns>
     public AudioSource RegisterSoundPlayer(GameSoundType type, AudioClip audioClip, bool playOnAwake = false, bool activeStart = true, string name = "")
     {
       AudioSource audioSource = Object.Instantiate(audioSourcePrefab, GameSoundManagerObject.transform).GetComponent<AudioSource>();
@@ -239,11 +239,11 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 注册已有 AudioSource 至声音管理器
+    /// Register an existing AudioSource with the sound manager.
     /// </summary>
-    /// <param name="type">声音所属类型</param>
+    /// <param name="type">Sound category.</param>
     /// <param name="audioSource">AudioSource</param>
-    /// <returns>返回原 AudioSource 实例</returns>
+    /// <returns>The original AudioSource instance.</returns>
     public AudioSource RegisterSoundPlayer(GameSoundType type, AudioSource audioSource)
     {
       if (!IsSoundPlayerRegistered(audioSource))
@@ -253,10 +253,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 检查指定 AudioSource 是否已经注册至声音管理器
+    /// Whether an AudioSource is registered with the sound manager.
     /// </summary>
     /// <param name="audioSource">AudioSource</param>
-    /// <returns>如果已经注册至声音管理器返回 true，否则返回 false</returns>
+    /// <returns>True if registered; otherwise false.</returns>
     public bool IsSoundPlayerRegistered(AudioSource audioSource)
     {
       foreach (AudioGlobalControl a in audios)
@@ -268,10 +268,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 销毁 AudioSource
+    /// Destroy an AudioSource.
     /// </summary>
-    /// <param name="assets">要销毁的 AudioSource 实例</param>
-    /// <returns>返回销毁是否成功</returns>
+    /// <param name="assets">AudioSource instance to destroy.</param>
+    /// <returns>Whether destruction succeeded.</returns>
     public bool DestroySoundPlayer(AudioSource audioSource)
     {
       AudioGlobalControl audioGlobalControl = null;
@@ -334,9 +334,9 @@ namespace Ballance2.Services
 
     #endregion
 
-    #region 声音设置
+    #region Audio settings
 
-    //加载声音设置
+    // Load audio settings.
     private bool OnVoiceSettingsUpdated(string groupName, int action)
     {
       float volBackground = GameSettings.GetFloat(SettingConstants.SettingsVoiceBackground);
@@ -354,25 +354,25 @@ namespace Ballance2.Services
 
     #endregion
 
-    #region 声音快速方法
+    #region Quick sound helpers
 
     /// <summary>
-    /// 快速播放一个短声音
+    /// Play a short sound through the cached player.
     /// </summary>
-    /// <param name="soundName">声音资源字符串</param>
-    /// <param name="type">声音类型</param>
-    /// <returns>返回播放是否成功</returns>
+    /// <param name="soundName">Sound resource identifier.</param>
+    /// <param name="type">Sound category.</param>
+    /// <returns>Whether playback succeeded.</returns>
     public bool PlayFastVoice(string soundName, GameSoundType type)
     {
       return PlayFastVoice(null, soundName, type);
     }
     /// <summary>
-    /// 快速播放一个指定模块包中的短声音资源
+    /// Play a short sound from a specific package.
     /// </summary>
-    /// <param name="package">所属模块</param>
-    /// <param name="soundName">声音资源路径</param>
-    /// <param name="type">声音类型</param>
-    /// <returns>返回播放是否成功</returns>
+    /// <param name="package">Owning package.</param>
+    /// <param name="soundName">Sound resource path.</param>
+    /// <param name="type">Sound category.</param>
+    /// <returns>Whether playback succeeded.</returns>
     public bool PlayFastVoice(GamePackage package, string soundName, GameSoundType type)
     {
       string key = soundName + "@" + type;
@@ -421,37 +421,37 @@ namespace Ballance2.Services
             break;
         }
         return false;
-      }, 1, "sm <play/list> 声音管理器命令\n" +
-              "  play <asset:string> [soundType:GameSoundType] ▶ 播放一个音乐，asset路径格式为 “模块包名:音乐文件路径”；soundType指示音乐类型，默认为GameSoundType.Normal\n" +
-              "  list                                          ▶ 列举出声音管理器管理的所有声音实例");
+      }, 1, "sm <play/list> Sound manager commands\n" +
+              "  play <asset:string> [soundType:GameSoundType] ▶ Play audio; asset format is 'packageName:audioPath', and soundType defaults to GameSoundType.Normal.\n" +
+              "  list                                          ▶ List all managed sound instances");
     }
 
     #endregion
   }
 
   /// <summary>
-  /// 指定声音类型
+  /// Sound category.
   /// </summary>
   public enum GameSoundType
   {
     /// <summary>
-    /// 普通声音
+    /// General sound.
     /// </summary>
     Normal,
     /// <summary>
-    /// 游戏音效 关于球的
+    /// Ball sound effect.
     /// </summary>
     BallEffect,
     /// <summary>
-    /// 游戏音效 关于机关的
+    /// Mechanism sound effect.
     /// </summary>
     ModulEffect,
     /// <summary>
-    /// UI 发出的声音
+    /// UI sound.
     /// </summary>
     UI,
     /// <summary>
-    /// 背景音乐
+    /// Background music.
     /// </summary>
     Background,
   }

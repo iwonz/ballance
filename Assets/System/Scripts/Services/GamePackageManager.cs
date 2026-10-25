@@ -18,34 +18,34 @@ using UnityEngine.Profiling;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GamePackageManager.cs
 * 
-* 用途：
-* 框架包管理器，用于管理模块包的注册、加载、卸载等流程。
-* 一并提供了从模块包中读取资源的相关API。
+* Purpose:
+* Manage package registration, loading, and unloading.
+* Also provide package resource access APIs.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Services
 {
   /// <summary>
-  /// 框架模块管理器
+  /// Framework package manager.
   /// </summary>
   public class GamePackageManager : GameService<GamePackageManager>
   {
     private static readonly string TAG = "GamePackageManager";
 
     /// <summary>
-    /// 系统模块的包名，
+    /// System package identifier.
     /// </summary>
     public const string SYSTEM_PACKAGE_NAME = "core";
     public GamePackageManager() : base(TAG) { }
 
     /// <summary>
-    /// 是否是无模块模式。无模块模式开启时不会加载第三方模组。
+    /// No-package mode disables loading third-party mods.
     /// </summary>
     /// <value></value>
     public bool NoPackageMode { get; set; }
@@ -99,7 +99,7 @@ namespace Ballance2.Services
       return true;
     }
 
-    #region 模块包自动加载管理
+    #region Automatic package loading
 
     internal class GamePackageRegisterInfo
     {
@@ -130,14 +130,14 @@ namespace Ballance2.Services
     private XmlDocument packageEnableStatusListXml = new XmlDocument();
 
     /// <summary>
-    /// 扫描模块
+    /// Scan packages.
     /// </summary>
     internal void ScanUserPackages(Dictionary<string, GamePackageRegisterInfo> list) {
 #if UNITY_EDITOR
       DirectoryInfo direction = new DirectoryInfo(GamePathManager.DEBUG_PACKAGE_FOLDER);
       DirectoryInfo[] dirs = direction.GetDirectories("*", SearchOption.TopDirectoryOnly);
       for (int i = 0; i < dirs.Length; i++) {
-        //扫描文件夹中没有的包，添加到列表中
+        // Add newly discovered packages to the list.
         var rel = Path.GetFileName(dirs[i].FullName.Replace('\\', '/'));
         if(StringUtils.IsPackageName(rel) && !list.ContainsKey(rel) && !IsPackageRegistered(rel)) {
           list.Add(rel, new GamePackageRegisterInfo(rel, false, true));
@@ -152,7 +152,7 @@ namespace Ballance2.Services
       }
       var dirPath = GamePathManager.GetResRealPath("package", "", false, false);
       if(Directory.Exists(dirPath)) {
-        //扫描文件夹中没有的包，添加到列表中
+        // Add newly discovered packages to the list.
         DirectoryInfo direction = new DirectoryInfo(dirPath);
         FileInfo[] files = direction.GetFiles("*.ballance", SearchOption.TopDirectoryOnly);
         for (int i = 0; i < files.Length; i++)
@@ -167,7 +167,7 @@ namespace Ballance2.Services
 #endif
     }
     /// <summary>
-    /// 读取模块包状态
+    /// Read package state.
     /// </summary>
     /// <returns></returns>
     internal Dictionary<string, GamePackageRegisterInfo> LoadPackageRegisterInfo()
@@ -187,7 +187,7 @@ namespace Ballance2.Services
         sr.Close();
         sr.Dispose();
       }
-      else//加载默认xml文档
+      else// Load the default XML document.
         packageEnableStatusListXml.LoadXml(ConstStrings.DEFAULT_PACKAGE_STATUS_XML);
 
       Dictionary<string, GamePackageRegisterInfo> lastRegisteredPackages = new Dictionary<string, GamePackageRegisterInfo>();
@@ -210,7 +210,7 @@ namespace Ballance2.Services
       return lastRegisteredPackages;
     }
     /// <summary>
-    /// 保存模块包状态
+    /// Save package state.
     /// </summary>
     internal void SavePackageRegisterInfo()
     {
@@ -250,19 +250,19 @@ namespace Ballance2.Services
 
     }
     /// <summary>
-    /// 设置模块包已信任状态
+    /// Mark a package as trusted.
     /// </summary>
-    /// <param name="packageName">包名</param>
+    /// <param name="packageName">Package identifier.</param>
     internal void SetPackageTrusted(string packageName)
     {
       if (registeredPackages.TryGetValue(packageName, out var outPackage))
         outPackage.trustPackage = true;
     }
     /// <summary>
-    /// 设置模块包启用状态
+    /// Set whether a package is enabled.
     /// </summary>
-    /// <param name="packageName">包名</param>
-    /// <param name="val">启用状态</param>
+    /// <param name="packageName">Package identifier.</param>
+    /// <param name="val">Enabled state.</param>
     internal void SetPackageEnableLoad(string packageName, bool val)
     {
       if (registeredPackages.TryGetValue(packageName, out var outPackage))
@@ -271,9 +271,9 @@ namespace Ballance2.Services
     
     #endregion
 
-    #region 模块包管理API
+    #region Package management API
 
-    //模块包信任对话框
+    // Package trust dialog.
 
     private bool _isTrustPackageDialogFinished = false;
     private bool _trustPackageDialogResult = false;
@@ -286,12 +286,12 @@ namespace Ballance2.Services
       _isTrustPackageDialogFinished = true;
       if(!result && delete) {
         UnLoadPackage(_trustPackageCurrent.PackageName, true);
-        //删除
+        // Delete.
         if(File.Exists(_trustPackageCurrent.PackageFilePath))
           File.Delete(_trustPackageCurrent.PackageFilePath);
       }
     }
-    //检测模块是否信任加载
+    // Check whether a package is trusted for loading.
     internal bool IsTrustPackage(string packageName) {
       if (registeredPackages.TryGetValue(packageName, out var outPackage))
         return outPackage.trustPackage;
@@ -310,11 +310,11 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 注册模块
+    /// Register a package.
     /// </summary>
-    /// <param name="packageName">包名</param>
-    /// <param name="load">是否在注册后立即加载此模块</param>
-    /// <returns>返回是否加载成功。要获得错误代码，请获取 <see cref="GameErrorChecker.LastError"/></returns>
+    /// <param name="packageName">Package identifier.</param>
+    /// <param name="load">Load the package immediately after registration.</param>
+    /// <returns>Whether loading succeeded; inspect <see cref="GameErrorChecker.LastError"/> for the error code.</returns>
     public async Task<bool> RegisterPackage(string packageName)
     {
       bool forceEnablePackage = false;
@@ -341,7 +341,7 @@ namespace Ballance2.Services
 
       realPackagePath = GamePathManager.DEBUG_PACKAGE_FOLDER + "/" + packageName;
 #if UNITY_EDITOR
-      //在编辑器中加载
+      // Load inside the editor.
       if (DebugSettings.Instance.PackageLoadWay == LoadResWay.InUnityEditorProject && Directory.Exists(realPackagePath))
       {
         gamePackage = new GameEditorDebugPackage();
@@ -356,31 +356,31 @@ namespace Ballance2.Services
         Log.D(TAG, "Check package path : {0}", realPackagePath);
         #endif
 
-        //路径转换
+        // Resolve the path.
         realPackagePath = GamePathManager.GetResRealPath("package", packageName + ".ballance");
         string realPackagePathInCore = GamePathManager.GetResRealPath("core", packageName + ".ballance");
 
-        //如果路径在Core中存在，则使用Core加载
+        // Use the Core path when present.
         if (FileUtils.FileExists(realPackagePathInCore)) realPackagePath = realPackagePathInCore;
         else if (PathUtils.IsRemotePath(realPackagePath) || FileUtils.FileExists(realPackagePath))
           realPackagePathInCore = "";
-        else if (PathUtils.IsRemotePath(realPackagePathInCore) || FileUtils.FileExists(realPackagePathInCore)) //如果路径在Packages中存在，则使用Packages加载
+        else if (PathUtils.IsRemotePath(realPackagePathInCore) || FileUtils.FileExists(realPackagePathInCore)) // Use the Packages path when present.
           realPackagePath = realPackagePathInCore;
         else {
-          //不存在则抛出异常
+          // Report an error if neither exists.
           Log.E(TAG, "Package {0} register failed because file {1} not found", packageName, realPackagePath);
           return false;
         }
       }
 
-      //设置正在加载
+      // Mark as loading.
       packagesLoadStatus.Add(packageName, 1);
 
       Log.D(TAG, "Registing package {0}", packageName);
 
       if (gamePackage == null)
       {
-        //判断文件类型
+        // Detect the file type.
         if (PathUtils.IsRemotePath(realPackagePath) || FileUtils.TestFileIsZip(realPackagePath))
           gamePackage = new GameZipPackage();
         else if (FileUtils.TestFileIsAssetBundle(realPackagePath))
@@ -388,7 +388,7 @@ namespace Ballance2.Services
         else
         {
           packagesLoadStatus.Remove(packageName);
-          //文件格式不支持
+          // Unsupported file format.
           GameErrorChecker.LastError = GameError.NotSupportFileType;
           Log.E(TAG, "Package file type not support {0}", realPackagePath);
           return false;
@@ -397,7 +397,7 @@ namespace Ballance2.Services
 
       gamePackage._Status = GamePackageStatus.Registing;
 
-      //加载信息
+      // Load information.
       if (await gamePackage.LoadInfo(realPackagePath))
       {
 
@@ -418,7 +418,7 @@ namespace Ballance2.Services
         gamePackage._Status = GamePackageStatus.Registered;
 
         Log.D(TAG, "Package {0} registered", packageName);
-        //通知事件
+        // Send the notification event.
         GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_PACKAGE_REGISTERED, packageName);
 
         return true;
@@ -432,19 +432,19 @@ namespace Ballance2.Services
       return false;
     }
     /// <summary>
-    /// 查找已注册的模块
+    /// Find a registered package.
     /// </summary>
-    /// <param name="packageName">包名</param>
-    /// <returns>返回模块实例，如果未找到，则返回null</returns>
+    /// <param name="packageName">Package identifier.</param>
+    /// <returns>Package instance, or null if not found.</returns>
     public GamePackage FindRegisteredPackage(string packageName)
     {
       registeredPackages.TryGetValue(packageName, out var outPackage);
       return outPackage != null ? outPackage.package : null;
     }
     /// <summary>
-    /// 检测模块是否用户选择了启用
+    /// Whether the user enabled the package.
     /// </summary>
-    /// <param name="packageName">包名</param>
+    /// <param name="packageName">Package identifier.</param>
     /// <returns></returns>
     public bool IsPackageEnableLoad(string packageName)
     {
@@ -452,11 +452,11 @@ namespace Ballance2.Services
       return outPackage != null && outPackage.enableLoad;
     }
     /// <summary>
-    /// 取消注册模块
+    /// Unregister a package.
     /// </summary>
-    /// <param name="packageName">包名</param>
-    /// <param name="unLoadImmediately">是否立即卸载</param>
-    /// <returns>返回是否成功</returns>
+    /// <param name="packageName">Package identifier.</param>
+    /// <param name="unLoadImmediately">Unload immediately.</param>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool UnRegisterPackage(string packageName, bool unLoadImmediately)
     {
       bool success = false;
@@ -486,51 +486,51 @@ namespace Ballance2.Services
         UnLoadPackage(packageName, unLoadImmediately);
 
       Log.D(TAG, "Package {0} unregistered", packageName);
-      //通知事件
+      // Send the notification event.
       GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_PACKAGE_UNREGISTERED, packageName);
       return success;
     }
 
     /// <summary>
-    /// 获取模块是否正在加载
+    /// Whether a package is loading.
     /// </summary>
-    /// <param name="packageName">包名</param>
+    /// <param name="packageName">Package identifier.</param>
     /// <returns></returns>
     public bool IsPackageLoading(string packageName)
     {
       return packagesLoadStatus.ContainsKey(packageName) && packagesLoadStatus[packageName] == 2;
     }
     /// <summary>
-    /// 获取模块是否正在注册
+    /// Whether a package is registering.
     /// </summary>
-    /// <param name="packageName">包名</param>
+    /// <param name="packageName">Package identifier.</param>
     /// <returns></returns>
     public bool IsPackageRegistering(string packageName)
     {
       return packagesLoadStatus.ContainsKey(packageName) && packagesLoadStatus[packageName] == 1;
     }
     /// <summary>
-    /// 获取模块是否注册
+    /// Whether a package is registered.
     /// </summary>
-    /// <param name="packageName">包名</param>
+    /// <param name="packageName">Package identifier.</param>
     /// <returns></returns>
     public bool IsPackageRegistered(string packageName)
     {
       return registeredPackages.ContainsKey(packageName);
     }
     /// <summary>
-    /// 获取模块是否已加载
+    /// Whether a package is loaded.
     /// </summary>
-    /// <param name="packageName">包名</param>
+    /// <param name="packageName">Package identifier.</param>
     /// <returns></returns>
     public bool IsPackageLoaded(string packageName)
     {
       return loadedPackages.ContainsKey(packageName);
     }
     /// <summary>
-    /// 通知模块运行
+    /// Run package entry points.
     /// </summary>
-    /// <param name="packageNameFilter">包名筛选，为“*”时表示所有包，为正则表达式时使用正则匹配包。</param>
+    /// <param name="packageNameFilter">Package filter: * selects all packages; otherwise use a regular expression.</param>
     public void NotifyAllPackageRun(string packageNameFilter)
     {
       Profiler.BeginSample("NotifyAllPackageRun");
@@ -546,10 +546,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 加载模块
+    /// Load a package.
     /// </summary>
-    /// <param name="packageName">模块包名</param>
-    /// <returns>返回加载是否成功</returns>
+    /// <param name="packageName">Package identifier.</param>
+    /// <returns>Whether loading succeeded.</returns>
     public async Task<bool> LoadPackage(string packageName)
     {
       if (IsPackageLoaded(packageName))
@@ -561,7 +561,7 @@ namespace Ballance2.Services
         return false;
       }
 
-      //注册包
+      // Register the package.
       GamePackage package = FindRegisteredPackage(packageName);
       if (package == null)
       {
@@ -570,7 +570,7 @@ namespace Ballance2.Services
           packagesLoadStatus.Remove(packageName);
 
           var msg = string.Format("Package {0} could not load, because RegisterPackage failed", packageName);
-          //通知事件
+          // Send the notification event.
           GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_PACKAGE_LOAD_FAILED, packageName, msg);
           Log.E(TAG, msg);
           return false;
@@ -584,14 +584,14 @@ namespace Ballance2.Services
 
       Log.D(TAG, "Loading package {0}", packageName);
 
-      //加载依赖
+      // Load dependencies.
       List<GamePackageDependencies> dependencies = package.BaseInfo.Dependencies;
       if (dependencies.Count > 0)
       {
         GamePackageDependencies dependency;
         GamePackage dependencyPackage;
 
-        //加载依赖
+        // Load dependencies.
         for (int i = 0; i < dependencies.Count; i++)
         {
           dependency = dependencies[i];
@@ -606,7 +606,7 @@ namespace Ballance2.Services
                  packageName, dependency.Name, dependency.MinVersion);
 
               Log.E(TAG, err);
-              //通知事件
+              // Send the notification event.
               GameManager.GameMediator.DispatchGlobalEvent(
                   GameEventNames.EVENT_PACKAGE_LOAD_FAILED, packageName, err);
 
@@ -615,7 +615,7 @@ namespace Ballance2.Services
             }
           }
         }
-        //检查依赖版本
+        // Check dependency versions.
         for (int i = 0; i < dependencies.Count; i++)
         {
           dependency = dependencies[i];
@@ -634,19 +634,19 @@ namespace Ballance2.Services
               package._Status = GamePackageStatus.LoadFailed;
 
               Log.E(TAG, err);
-              //通知事件
+              // Send the notification event.
               GameManager.GameMediator.DispatchGlobalEvent(
                   GameEventNames.EVENT_PACKAGE_LOAD_FAILED, packageName, err);
 
               return false;
             }
-            //添加依赖计数
+            // Increment dependency reference counts.
             dependencyPackage.DependencyRefCount++;
           }
         }
       }
 
-      //加载
+      // Load.
       if (!await package.LoadPackage())
       {
         package._Status = GamePackageStatus.LoadFailed;
@@ -655,7 +655,7 @@ namespace Ballance2.Services
         string err = string.Format("Package {0} load failed {1}", packageName, GameErrorChecker.GetLastErrorMessage());
         Log.E(TAG, err);
 
-        //通知事件
+        // Send the notification event.
         GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_PACKAGE_LOAD_FAILED, packageName, err);
         return false;
       }
@@ -666,20 +666,20 @@ namespace Ballance2.Services
 
       Log.D(TAG, "Package {0} loaded", packageName);
 
-      //通知事件
+      // Send the notification event.
       GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_PACKAGE_LOAD_SUCCESS, packageName, package);
 
       return true;
     }
     /// <summary>
-    /// 卸载模块
+    /// Unload a package.
     /// </summary>
-    /// <param name="packageName">模块包名</param>
+    /// <param name="packageName">Package identifier.</param>
     /// <param name="unLoadImmediately">
-    /// 是否立即卸载，如果为false，此模块
-    /// 将等待至依赖它的模块全部卸载之后才会卸载
+    /// Whether to unload immediately. If false, this package
+    /// waits until all packages depending on it have unloaded.
     /// </param>
-    /// <returns>返回是否成功</returns>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool UnLoadPackage(string packageName, bool unLoadImmediately)
     {
       GamePackage package = FindPackage(packageName);
@@ -710,7 +710,7 @@ namespace Ballance2.Services
       if (package.UnLoadWhenDependencyRefNone)
         return true;
 
-      //如果不是立即卸载并且依赖引用计数大于0
+      // Defer ordinary unloading while dependency references remain.
       if (!unLoadImmediately && package.DependencyRefCount > 0)
       {
         package.UnLoadWhenDependencyRefNone = true;
@@ -719,7 +719,7 @@ namespace Ballance2.Services
         return true;
       }
 
-      //依赖计数处理，在这里当前模块卸载了，所以要将他们的依赖计数减一
+      // Decrement dependency reference counts because this package is unloading.
       List<GamePackageDependencies> dependencies = package.BaseInfo.Dependencies;
       GamePackage dependencyPackage;
       for (int i = 0; i < dependencies.Count; i++)
@@ -736,9 +736,9 @@ namespace Ballance2.Services
 
       Profiler.EndSample();
 
-      //卸载
+      // Unload.
 
-      //通知事件
+      // Send the notification event.
       if(GameManager.GameMediator)
         GameManager.GameMediator.DispatchGlobalEvent(GameEventNames.EVENT_PACKAGE_UNLOAD, packageName, package);
 
@@ -752,10 +752,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 查找已加载的模块
+    /// Find a loaded package.
     /// </summary>
-    /// <param name="packageName">模块包名</param>
-    /// <returns>返回模块实例，如果未找到，则返回null</returns>
+    /// <param name="packageName">Package identifier.</param>
+    /// <returns>Package instance, or null if not found.</returns>
     public GamePackage FindPackage(string packageName)
     {
       loadedPackages.TryGetValue(packageName, out var outPackage);
@@ -763,11 +763,11 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 检查指定版本的模块是否加载
+    /// Check whether a package is loaded at the required version.
     /// </summary>
-    /// <param name="packageName">模块包名</param>
-    /// <param name="ver">模块所须最小版本</param>
-    /// <returns>如果已加载并且版本符合，则返回 true，否则返回false</returns>
+    /// <param name="packageName">Package identifier.</param>
+    /// <param name="ver">Minimum package version.</param>
+    /// <returns>True if loaded at a sufficient version; otherwise false.</returns>
     public bool CheckRequiredPackage(string packageName, int ver)
     {
       if (loadedPackages.TryGetValue(packageName, out var outPackage))
@@ -776,7 +776,7 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 卸载所有包
+    /// Unload all packages.
     /// </summary>
     private void UnLoadAllPackages()
     {
@@ -793,7 +793,7 @@ namespace Ballance2.Services
 
     #endregion
 
-    #region 模块管理窗口
+    #region Package management window
 
     private void InitPackageCommands()
     {
@@ -832,7 +832,7 @@ namespace Ballance2.Services
 
               GamePackage p = FindPackage(packageName);
               if(p == null) {
-                Log.E(TAG, "找不到模块：" + packageName);
+                Log.E(TAG, "Package not found: " + packageName);
                 break;
               }
 
@@ -846,7 +846,7 @@ namespace Ballance2.Services
 
               GamePackage p = FindPackage(packageName);
               if(p == null) {
-                Log.E(TAG, "找不到模块：" + packageName);
+                Log.E(TAG, "Package not found: " + packageName);
                 break;
               }
 
@@ -899,23 +899,23 @@ namespace Ballance2.Services
             }
         }
         return false;
-      }, 1, "pm <reg/load/info/unload/list-loaded/list-reged/notify-run/wnd> [packageName] 模块管理器命令\n" +
-              "  reg <packageName:string>                                ▶ 注册一个模块包\n" +
-              "  load <packageName:string>                               ▶ 加载一个模块包\n" +
-              "  info <packageName:string>                               ▶ 显示一个模块包的信息\n" +
-              "  list-res <packageName:string>                           ▶ 显示一个模块包的所有资源列表\n" +
-              "  unload <packageName:string> [unLoadImmediately:boolean] ▶ 卸载一个模块包, unLoadImmediately指定是否立即卸载，默认false\n" +
-              "  enable <packageName:string>                             ▶ 启用模块包启动加载\n" +
-              "  disable <packageName:string>                            ▶ 禁用模块包启动加载\n" +
-              "  list-loaded                                             ▶ 列举出已加载的模块包\n" +
-              "  list-regedad                                            ▶ 列举出已注册的模块包\n" +
-              "  notify-run <packageNameFilter>                          ▶ 通知模块包运行，packageNameFilter为包名筛选，为“*”时表示所有包，为正则表达式时使用正则匹配包。\n" +
-              "  wnd                                                     ▶ 显示模块管理器窗口");
+      }, 1, "pm <reg/load/info/unload/list-loaded/list-reged/notify-run/wnd> [packageName] Package manager commands\n" +
+              "  reg <packageName:string>                                ▶ Register a package\n" +
+              "  load <packageName:string>                               ▶ Load a package\n" +
+              "  info <packageName:string>                               ▶ Show package information\n" +
+              "  list-res <packageName:string>                           ▶ List package resources\n" +
+              "  unload <packageName:string> [unLoadImmediately:boolean] ▶ Unload a package; unLoadImmediately defaults to false\n" +
+              "  enable <packageName:string>                             ▶ Enable package loading at startup\n" +
+              "  disable <packageName:string>                            ▶ Disable package loading at startup\n" +
+              "  list-loaded                                             ▶ List loaded packages\n" +
+              "  list-reged                                              ▶ List registered packages\n" +
+              "  notify-run <packageNameFilter>                          ▶ Notify packages to run; use '*' for all or a regular expression to filter package names.\n" +
+              "  wnd                                                     ▶ Show the package manager window");
     }
 
     #endregion
 
-    #region 公用加载资源方法
+    #region Shared resource loading methods
 
     private GamePackage TryGetPackageByPath(string pathOrName, out string resName)
     {
@@ -947,12 +947,12 @@ namespace Ballance2.Services
     }
     
     /// <summary>
-    /// 全局读取资源包中的文字资源
+    /// Read a text asset through the global package lookup.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回TextAsset实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The TextAsset, or null if not found.</returns>
     /// <exception cref="RequireFailedException">
-    /// 未找到指定的模块包。
+    /// The requested package was not found.
     /// </exception>
     public TextAsset GetTextAsset(string pathorname)
     {
@@ -960,12 +960,12 @@ namespace Ballance2.Services
       return pack.GetTextAsset(path);
     }
     /// <summary>
-    /// 全局读取模块资源包中的 Prefab 资源
+    /// Read a prefab through the global package lookup.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 GameObject 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The GameObject, or null if not found.</returns>
     /// <exception cref="RequireFailedException">
-    /// 未找到指定的模块包。
+    /// The requested package was not found.
     /// </exception>
     public GameObject GetPrefabAsset(string pathorname)
     {
@@ -973,12 +973,12 @@ namespace Ballance2.Services
       return pack.GetPrefabAsset(path);
     }
     /// <summary>
-    /// 全局读取模块资源包中的 Texture 资源
+    /// Read a Texture through the global package lookup.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 Texture 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The Texture, or null if not found.</returns>
     /// <exception cref="RequireFailedException">
-    /// 未找到指定的模块包。
+    /// The requested package was not found.
     /// </exception>
     public Texture GetTextureAsset(string pathorname)
     {
@@ -986,12 +986,12 @@ namespace Ballance2.Services
       return pack.GetTextureAsset(path);
     }
     /// <summary>
-    /// 全局读取模块资源包中的 Texture2D 资源
+    /// Read a Texture2D through the global package lookup.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 Texture2D 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The Texture2D, or null if not found.</returns>
     /// <exception cref="RequireFailedException">
-    /// 未找到指定的模块包。
+    /// The requested package was not found.
     /// </exception>
     public Texture2D GetTexture2DAsset(string pathorname)
     {
@@ -999,12 +999,12 @@ namespace Ballance2.Services
       return pack.GetTexture2DAsset(path);
     }
     /// <summary>
-    /// 全局读取模块资源包中的 Sprite 资源
+    /// Read a Sprite through the global package lookup.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 Sprite 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The Sprite, or null if not found.</returns>
     /// <exception cref="RequireFailedException">
-    /// 未找到指定的模块包。
+    /// The requested package was not found.
     /// </exception>
     public Sprite GetSpriteAsset(string pathorname)
     {
@@ -1012,12 +1012,12 @@ namespace Ballance2.Services
       return pack.GetSpriteAsset(path);
     }
     /// <summary>
-    /// 全局读取模块资源包中的 Material 资源
+    /// Read a Material through the global package lookup.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 Material 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The Material, or null if not found.</returns>
     /// <exception cref="RequireFailedException">
-    /// 未找到指定的模块包。
+    /// The requested package was not found.
     /// </exception>
     public Material GetMaterialAsset(string pathorname)
     {
@@ -1025,12 +1025,12 @@ namespace Ballance2.Services
       return pack.GetMaterialAsset(path);
     }
     /// <summary>
-    /// 全局读取模块资源包中的 AudioClip 资源
+    /// Read an AudioClip through the global package lookup.
     /// </summary>
-    /// <param name="pathorname">资源路径</param>
-    /// <returns>返回 AudioClip 实例，如果未找到，则返回null</returns>
+    /// <param name="pathorname">Resource path.</param>
+    /// <returns>The AudioClip, or null if not found.</returns>
     /// <exception cref="RequireFailedException">
-    /// 未找到指定的模块包。
+    /// The requested package was not found.
     /// </exception>
     public AudioClip GetAudioClipAsset(string pathorname)
     {

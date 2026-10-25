@@ -15,7 +15,7 @@ namespace mod.invlife {
       GamePackageEntry entry = new GamePackageEntry();
       entry.OnLoad = (package) => {
         /*
-        此处功能是监听GamePlayManager上的EventBeforeStart事件，在关卡开始之前设置生命为-1（无限）
+        Listen to GamePlayManager.EventBeforeStart and set lives to -1 (unlimited) before the level starts.
         */ 
         GameEventEmitterHandler eventHandler = null; 
         GameManager.GameMediator.RegisterEventHandler(package, GameEventNames.EVENT_LEVEL_BUILDER_START, TAG, (evtName, param) => {
@@ -37,18 +37,18 @@ namespace mod.invlife {
       };
       entry.OnLoadUI = (package) => {
         /*
-        此处功能是创建一个设置UI界面，包含一个开关“Enable infinite life ball”，
-        允许用户控制是否开启无限生命功能
+        Create a settings UI with an Enable infinite life ball toggle,
+        allowing the player to enable or disable unlimited lives.
         */
         var setting = GameSettingsManager.GetSettings(package.PackageName);
         var settingsUI = PackageManagerUIControl.Instance.RegisterPackageSettingsUI(package);
-        //添加一个开关
+        // Add a toggle.
         var contol = settingsUI.AddToggle("Enable", I18N.Tr("mod.invlife.ui.EnableTitle"), (val) => {
-          //开关参数更改时保存设置
+          // Save settings when the toggle changes.
           enable = (bool)val;
           setting.SetBool("enable", enable);
         });
-        //页面进入时加载设置
+        // Load settings when the page opens.
         settingsUI.Page.OnShow += (o) => {
           enable = setting.GetBool("enable");
           contol.ValueBinderSupplierCallback(enable);

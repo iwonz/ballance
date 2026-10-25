@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Ballance2.Game {
 
   /// <summary>
-  /// MenuLevel 管理
+  /// MenuLevel management.
   /// </summary>
   public class MenuLevelManager : MonoBehaviour {
 
@@ -15,7 +15,7 @@ namespace Ballance2.Game {
 
     private static GameObject GameMenuLevel = null;
 
-    //进入场景
+    // Enter the logical scene.
     private static void OnEnterMenuLevel(GamePackage thisGamePackage) {
 
       Log.D(TAG, "Into MenuLevel");
@@ -48,7 +48,7 @@ namespace Ballance2.Game {
     private static GameEventHandler quitEvent = null;
 
     public static void Init(GamePackage package) {
-      //注册场景切换
+      // Register logical scene transitions.
       enterEvent = GameManager.GameMediator.RegisterEventHandler(package, GameEventNames.EVENT_LOGIC_SECNSE_ENTER, TAG, (evtName, param) => {
         var scense = param[0];
         if(scense.ToString() == "MenuLevel") 

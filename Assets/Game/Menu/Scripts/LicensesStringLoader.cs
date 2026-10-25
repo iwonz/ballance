@@ -6,13 +6,13 @@ using UnityEngine.UI;
 /*
  * Copyright (c) 2020  mengyu
  * 
- * 模块名：     
+ * Module:
  * LicensesStringLoader.cs
  * 
- * 用途：
- * 用于加载Lincnse文字资源。
+ * Purpose:
+ * Load license text resources.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 

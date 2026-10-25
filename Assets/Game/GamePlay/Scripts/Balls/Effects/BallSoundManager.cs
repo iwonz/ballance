@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Balls
 {
   /// <summary>
-  /// 球声音管理器，也可用于其他物体的碰撞声音
+  /// Manage ball sounds; also supports collision sounds for other objects.
   /// </summary>
   public class BallSoundManager : MonoBehaviour 
   {
@@ -20,47 +20,47 @@ namespace Ballance2.Game.GamePlay.Balls
     [JsonObject]
     public class BallSoundCollData {
       /// <summary>
-      /// 碰撞检测最低速度
+      /// Minimum collision detection speed.
       /// </summary>
       [JsonProperty]
       public float MinSpeed; 
       /// <summary>
-      /// 碰撞检测最高速度
+      /// Maximum collision detection speed.
       /// </summary>
       [JsonProperty]
       public float MaxSpeed; 
       /// <summary>
-      /// 碰撞检测延时
+      /// Collision detection delay.
       /// </summary>
       [JsonProperty]
       public float SleepAfterwards; 
       /// <summary>
-      /// 碰撞检测最低速度阈值
+      /// Minimum speed threshold for collision detection.
       /// </summary>
       [JsonProperty]
       public float SpeedThreadhold; 
       /// <summary>
-      /// 滚动检测起始延时
+      /// Delay before rolling detection starts.
       /// </summary>
       [JsonProperty]
       public float TimeDelayStart;
       /// <summary>
-      /// 滚动检测末尾延时
+      /// Delay before rolling detection ends.
       /// </summary>
       [JsonProperty]
       public float TimeDelayEnd;
       /// <summary>
-      /// 是否有滚动声音
+      /// Whether rolling sound is available.
       /// </summary>
       [JsonProperty]
       public bool HasRollSound; 
       /// <summary>
-      /// 滚动声音名称，放在球的RollSound信息中
+      /// Rolling sound names from the ball's RollSound data.
       /// </summary>
       [JsonProperty]
       public string RollSoundName; 
       /// <summary>
-      /// 撞击声音名称，放在球的HitSound信息中
+      /// Collision sound names from the ball's HitSound data.
       /// </summary>
       [JsonProperty]
       public string HitSoundName; 
@@ -71,7 +71,7 @@ namespace Ballance2.Game.GamePlay.Balls
     private Dictionary<string, int> _CollIDNames = new Dictionary<string, int>();
     private int _CurrentCollId = 1;
 
-    //加载与卸载
+    // Load and unload.
     private void Start() {
       var sysPackage = GamePackage.GetSystemPackage();
       this._MyEventHandlers.Add(GameMediator.Instance.RegisterEventHandler(sysPackage, GameEventNames.EVENT_LEVEL_BUILDER_BEFORE_START, TAG, (evtName, param) => {
@@ -84,9 +84,9 @@ namespace Ballance2.Game.GamePlay.Balls
       GameMediator.Instance.UnRegisterEventHandler(GameEventNames.EVENT_LEVEL_BUILDER_BEFORE_START, _MyEventHandlers[0]);
     }
 
-    #region 碰撞数据控制
+    #region Collision data
 
-    //内部函数
+    // Internal methods.
     private void _AddInternalSoundCollData() 
     {
       _CollIDNames.Add("Nome", 0);
@@ -135,10 +135,10 @@ namespace Ballance2.Game.GamePlay.Balls
     }
 
     /// <summary>
-    /// 添加球碰撞声音组
+    /// Add a ball collision sound group.
     /// </summary>
-    /// <param name="colId">自定义碰撞层ID，为防止重复，请使用 GetSoundCollIDByName 使用名称获取ID</param>
-    /// <param name="data">碰撞数据</param>
+    /// <param name="colId">Custom collision layer ID; use GetSoundCollIDByName to avoid duplicate IDs.</param>
+    /// <param name="data">Collision data.</param>
     public void AddSoundCollData(int colId, BallSoundCollData data) 
     {
       if (_SoundCollData.ContainsKey(colId)) 
@@ -149,17 +149,17 @@ namespace Ballance2.Game.GamePlay.Balls
       _SoundCollData[colId] = data;
     }
     /// <summary>
-    /// 移除球碰撞声音组
+    /// Remove a ball collision sound group.
     /// </summary>
-    /// <param name="colId">（注意，不会移除激活中球的声音组，需要等到球下一次激活时生效，因此不建议在游戏中使用此函数）</param>
+    /// <param name="colId">Changes apply on the next ball activation, not to the active ball; avoid calling this during gameplay.</param>
     public void RemoveSoundCollData(int colId) 
     {
       _SoundCollData.Remove(colId);
     }
     /// <summary>
-    /// 通过名称分配一个可用的声音组ID, 如果名称存在，则返回同样的ID
+    /// Allocate a sound group ID by name, returning the existing ID when already registered.
     /// </summary>
-    /// <param name="name">自定义声音组名称</param>
+    /// <param name="name">Custom sound group name.</param>
     /// <returns></returns>
     public int GetSoundCollIDByName(string name) 
     {
@@ -174,7 +174,7 @@ namespace Ballance2.Game.GamePlay.Balls
       }
     }
     /// <summary>
-    /// 强制停止所有声音
+    /// Force-stop all sounds.
     /// </summary>
     public void StopAllSound() {
       Log.D(TAG, "StopAllSound");
@@ -188,7 +188,7 @@ namespace Ballance2.Game.GamePlay.Balls
 
     #endregion
 
-    #region 声音数据控制
+    #region Sound data
 
     private class BallHitSoundItem {
       public BallHitSoundItem(AudioSource sound1, AudioSource sound2) {
@@ -210,13 +210,13 @@ namespace Ballance2.Game.GamePlay.Balls
 
     private Dictionary<EntityId, SoundableBallWorkData> soundableBallWorkDatas = new Dictionary<EntityId, SoundableBallWorkData>();
 
-    //加载球的撞击和滚动声音
+    // Load ball collision and rolling sounds.
     private SoundableBallWorkData InitSoundableBallWorkData(EntityId instanceId, Ball.BallSoundConfig _SoundConfig) {
       SoundableBallWorkData data = null;
       if (soundableBallWorkDatas.TryGetValue(instanceId, out data))
         return data;
       data = new SoundableBallWorkData();
-      //加载球的撞击和滚动声音
+      // Load ball collision and rolling sounds.
       var SoundManager = GameSoundManager.Instance;
       foreach (var item in _SoundConfig.HitSound.Names) {
         if (!string.IsNullOrEmpty(item.Value)) {
@@ -242,41 +242,41 @@ namespace Ballance2.Game.GamePlay.Balls
 
     #endregion
 
-    #region 球碰撞声音滚动声音控制函数
+    #region Ball collision and rolling sound controls
 
     /// <summary>
-    /// 为指定物理刚体添加声音处理函数
+    /// Add sound handlers to a physics body.
     /// </summary>
     public void AddSoundableBall(PhysicsObject rigidbody, Ball.BallSoundConfig _SoundConfig) 
     {
-      //添加或者获取已有碰撞数据
+      // Add or retrieve collision data.
       SoundableBallWorkData soundableBallWorkData = InitSoundableBallWorkData(rigidbody.gameObject.GetEntityId(), _SoundConfig);
 
-      //添加声音层工具侦听
+      // Register sound-layer tool listeners.
       foreach(var value in _SoundCollData) {
         rigidbody.AddCollDetection(value.Key, value.Value.MinSpeed, value.Value.MaxSpeed, value.Value.SleepAfterwards, value.Value.SpeedThreadhold);
         if (value.Value.HasRollSound)
           rigidbody.AddContractDetection(value.Key, _SoundConfig.RollSound.TimeDelayStart, _SoundConfig.RollSound.TimeDelayEnd);
       }
-      //添加回调
+      // Add callbacks.
       rigidbody.EnableCollisionEvent = true;
       rigidbody.EnableCollisionDetection();
       rigidbody.EnableContractEventCallback();
-      //撞击处理回调
+      // Collision callback.
       rigidbody.OnPhysicsCollDetection = (_, col_id, speed_precent) => {
         var currentSoundCollData = _SoundCollData[col_id];
         if (currentSoundCollData != null && !string.IsNullOrEmpty(currentSoundCollData.HitSoundName)) 
         {
-          //获取当前层与目标层的碰撞声音
+          // Get the sound for this layer and the target layer.
           soundableBallWorkData._HitSoundSounds.TryGetValue(currentSoundCollData.HitSoundName, out var sound);
-          //如果没有碰撞声音，则尝试使用 All 声音
+          // Fall back to the All sound when no specific collision sound exists.
           if (sound == null) 
             soundableBallWorkData._HitSoundSounds.TryGetValue("All", out sound); 
 
           if (sound != null) 
           {
-            //这里是切换了两个sound的播放，因为碰撞声音很可能
-            //一个没有播放完成另一个就来了
+            // Alternate between two sound players because another collision
+            // may occur before the previous sound finishes.
             if (sound.isSound1) 
             {
               sound.isSound1 = false;
@@ -295,37 +295,37 @@ namespace Ballance2.Game.GamePlay.Balls
         }
       };
       
-      //滚动声音相关
+      // Rolling sounds.
       if (_SoundConfig.HasRollSound)
       {
-        //接触开始处理回调
+        // Touch-start callback.
         rigidbody.OnPhysicsContactOn = (_, col_id) => {
           var currentSoundCollData = _SoundCollData[col_id];
           if (currentSoundCollData != null && currentSoundCollData.HasRollSound)
           {
-            //获取当前层与目标层的碰撞声音
+            // Get the sound for this layer and the target layer.
             soundableBallWorkData._RollSoundSounds.TryGetValue(currentSoundCollData.RollSoundName, out var sound);
-            //如果没有碰撞声音，则尝试使用 All 声音
+            // Fall back to the All sound when no specific collision sound exists.
             if (sound == null) 
               soundableBallWorkData._RollSoundSounds.TryGetValue("All", out sound); 
-            //加入正在播放声音中
+            // Add to the playing sounds.
             if (sound != null && !soundableBallWorkData._CurrentPlayingRollSoundsHashSet.Contains(sound)) {
               soundableBallWorkData._CurrentPlayingRollSoundsHashSet.Add(sound);
               soundableBallWorkData._CurrentPlayingRollSounds.AddLast(sound);
             }
           }
         };
-        //接触结束处理回调
+        // Touch-end callback.
         rigidbody.OnPhysicsContactOff = (_, col_id) => {
           var currentSoundCollData = _SoundCollData[col_id];
           if (currentSoundCollData != null && currentSoundCollData.HasRollSound)
           {
-            //获取当前层与目标层的碰撞声音
+            // Get the sound for this layer and the target layer.
             soundableBallWorkData._RollSoundSounds.TryGetValue(currentSoundCollData.RollSoundName, out var sound);
-            //如果没有碰撞声音，则尝试使用 All 声音
+            // Fall back to the All sound when no specific collision sound exists.
             if (sound == null) 
               soundableBallWorkData._RollSoundSounds.TryGetValue("All", out sound); 
-            //从正在播放声音中移除
+            // Remove from the playing sounds.
             if (sound != null && soundableBallWorkData._CurrentPlayingRollSoundsHashSet.Contains(sound)) {
               soundableBallWorkData._CurrentPlayingRollSoundsHashSet.Remove(sound);
               soundableBallWorkData._CurrentPlayingRollSounds.Remove(sound);
@@ -335,7 +335,7 @@ namespace Ballance2.Game.GamePlay.Balls
           }
         };
       
-        //添加速度计组件，以计算滚动声音相关效果
+        // Add a speed meter to drive rolling sound effects.
         soundableBallWorkData._SpeedMeter = rigidbody.gameObject.GetComponent<SpeedMeter>();
         if (soundableBallWorkData._SpeedMeter == null)
           soundableBallWorkData._SpeedMeter = rigidbody.gameObject.AddComponent<SpeedMeter>();
@@ -346,13 +346,13 @@ namespace Ballance2.Game.GamePlay.Balls
       }
     }
     /// <summary>
-    /// 移除指定物理刚体添加声音处理函数
+    /// Remove sound handlers from a physics body.
     /// </summary>
     public void RemoveSoundableBall(PhysicsObject rigidbody, Ball.BallSoundConfig _SoundConfig) 
     {
       SoundableBallWorkData soundableBallWorkData = InitSoundableBallWorkData(rigidbody.gameObject.GetEntityId(), _SoundConfig);
 
-      //移除回调
+      // Remove callbacks.
       rigidbody.OnPhysicsCollDetection = null;
       rigidbody.OnPhysicsContactOn = null;
       rigidbody.OnPhysicsContactOff = null;
@@ -362,12 +362,12 @@ namespace Ballance2.Game.GamePlay.Balls
         rigidbody.DisableCollisionDetection();
       }
       rigidbody.EnableCollisionEvent = false;
-      //删除速度计组件
+      // Delete the speed meter.
       if (soundableBallWorkData._SpeedMeter != null) {
         Object.Destroy(soundableBallWorkData._SpeedMeter);
         soundableBallWorkData._SpeedMeter = null;
       }
-      //移除声音层工具侦听
+      // Remove sound-layer tool listeners.
       var node = soundableBallWorkData._CurrentPlayingRollSounds.First;
       while(node != null) {
         var value = node.Value;
@@ -380,7 +380,7 @@ namespace Ballance2.Game.GamePlay.Balls
       soundableBallWorkDatas.Remove(rigidbody.gameObject.GetEntityId());
     }
     /// <summary>
-    /// 强制停止球的所有声音
+    /// Force-stop all ball sounds.
     /// </summary>
     public void StopSoundableBallAllSound(PhysicsObject rigidbody, Ball.BallSoundConfig _SoundConfig)
     {
@@ -395,7 +395,7 @@ namespace Ballance2.Game.GamePlay.Balls
     }
 
     /// <summary>
-    /// 滚动声音音量与速度处理
+    /// Update rolling sound volume and pitch.
     /// </summary>
     private void HandlerBallRollSpeedChange(float speed, Ball.BallSoundConfig _SoundConfig, SoundableBallWorkData soundableBallWorkData)
     {
@@ -405,7 +405,7 @@ namespace Ballance2.Game.GamePlay.Balls
       if (GameManager.DebugMode)
         _SoundConfig._SoundManagerDebugString.Clear();
 
-      //将音量设置到正在播放的声音中
+      // Apply volume to playing sounds.
       var node = soundableBallWorkData._CurrentPlayingRollSounds.First;
       while(node != null) {
         var value = node.Value;

@@ -3,42 +3,42 @@ using UnityEngine;
 /*
  * Copyright (c) 2021  mengyu
  * 
- * 模块名：     
+ * Module:
  * LookAt.cs
  * 
- * 用途：
- * 物体看物体工具脚本。
+ * Purpose:
+ * Make an object look at another object.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
 namespace Ballance2.Game
 {
   /// <summary>
-  /// 物体看物体工具脚本。 此脚本可以让物体看者另一个物体，可以控制某个旋转轴。
+  /// Make an object look at another object with selectable rotation axes.
   /// </summary>
   public class LookAt : MonoBehaviour {
     
     /// <summary>
-    /// 指定看着的目标物体
+    /// Target object to look at.
     /// </summary>
-    [Tooltip("指定看着的目标物体")]
+    [Tooltip("Object to look at.")]
     public Transform Target;
     /// <summary>
-    /// 是否更新旋转轴X
+    /// Update rotation around X.
     /// </summary>
-    [Tooltip("是否更新旋转轴X")]
+    [Tooltip("Update rotation around the X axis.")]
     public bool EnableX = true;
     /// <summary>
-    /// 是否更新旋转轴Y
+    /// Update rotation around Y.
     /// </summary>
-    [Tooltip("是否更新旋转轴Y")]
+    [Tooltip("Update rotation around the Y axis.")]
     public bool EnableY = true;
     /// <summary>
-    /// 是否更新旋转轴Z
+    /// Update rotation around Z.
     /// </summary>
-    [Tooltip("是否更新旋转轴Z")]
+    [Tooltip("Update rotation around the Z axis.")]
     public bool EnableZ = true;
 
     private void Update() {

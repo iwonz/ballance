@@ -4,13 +4,13 @@ using Ballance2.UI.Core.Controls;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * SliderValueBinder.cs
 * 
-* 用途：
-* Slider控件数据绑定器
+* Purpose:
+* Slider data binder.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

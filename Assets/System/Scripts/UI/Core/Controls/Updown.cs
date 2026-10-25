@@ -7,20 +7,20 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * Window.cs
 * 
-* 用途：
-* 一个上下数值组件
+* Purpose:
+* Increment/decrement value control.
 * 
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Core.Controls
 {
   /// <summary>
-  /// 一个上下数值组件
+  /// Increment/decrement value control.
   /// </summary>
   [ExecuteInEditMode]
   [AddComponentMenu("Ballance/UI/Controls/Updown")]
@@ -36,7 +36,7 @@ namespace Ballance2.UI.Core.Controls
     public string PrependText = "";
     public string AppendText = "";
     public string ToStringFormat = "00";
-    public string UnknowOptionString = "未知";
+    public string UnknowOptionString = "Unknown";
     public bool UseOptions = false;
 
     [SerializeField, HideInInspector]

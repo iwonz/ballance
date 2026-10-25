@@ -1,40 +1,40 @@
 ﻿/*
 * Copyright (c) 2020  mengyu
 * 
-* 模块名：     
+* Module:
 * GameConst.cs
 * 
-* 用途：
-* 配置游戏的静态常量
+* Purpose:
+* Static game constants.
 * 
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Config
 {
   /// <summary>
-  /// 游戏的一些静态常量
+  /// Static game constants.
   /// </summary>
   public static class GameConst
   {
     /// <summary>
-    /// 游戏版本
+    /// Game version.
     /// </summary>
     public const string GameVersion = "1.0.9";
     /// <summary>
-    /// 游戏编译版本
+    /// Game build version.
     /// </summary>
     public const int GameBulidVersion = 168;
     /// <summary>
-    /// 游戏编译版本
+    /// Game build version.
     /// </summary>
     public const string GameBulidDate = "2026.10.25";
 
-    #region Unity 环境静态常量
+    #region Unity environment constants
 
     /// <summary>
-    /// 游戏编译平台
+    /// Game build platform.
     /// </summary>
 #if UNITY_EDITOR && UNITY_EDITOR_WIN
     public const string GamePlatform = "Windows Editor Mode";
@@ -64,7 +64,7 @@ namespace Ballance2.Config
     public const string GamePlatform = "Other Platform";
 #endif
     /// <summary>
-    /// 游戏编译平台标识符
+    /// Game build platform identifier.
     /// </summary>
 #if (UNITY_EDITOR && UNITY_EDITOR_WIN) || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX
     public const string GamePlatformIdentifier = "win";
@@ -88,7 +88,7 @@ namespace Ballance2.Config
 
 
     /// <summary>
-    /// 游戏编译脚本后端
+    /// Game scripting backend.
     /// </summary>
 #if ENABLE_MONO
     public const string GameScriptBackend = "Mono";
@@ -102,22 +102,22 @@ namespace Ballance2.Config
 
     #endregion
 
-    #region 静态配置
+    #region Static configuration
 
     /// <summary>
-    /// 配置游戏日志记录器是否启动
+    /// Enable the game logger.
     /// </summary>
     public const bool GameLoggerOn = true;
     /// <summary>
-    /// 配置游戏日志记录器是否记录至文件
+    /// Enable file logging.
     /// </summary>
     public const bool GameLoggerLogToFile = false;
     /// <summary>
-    /// 配置游戏日志记录器记录至文件的路径
+    /// Log file path.
     /// </summary>
     public const string GameLoggerLogFile = "./BallanceOutput.log";
     /// <summary>
-    /// 配置游戏日志记录器缓冲区最大条数
+    /// Maximum buffered log entries.
     /// </summary>
     public const int GameLoggerBufferMax = 1000;
 

@@ -1,71 +1,71 @@
 namespace Ballance2.Game.GamePlay
 {
   /// <summary>
-  /// 游戏物理碰撞层定义
+  /// Game physics collision layer definitions.
   /// </summary>
   /// <remarks>
-  /// 物理碰撞层最大是32个，14之后的都可以用，但是还是推荐使用已经定义的碰撞层, 不要自定义添加，碰撞层的相互碰撞设置可以在 Unity 菜单 Ballance Physics Settings 中查看。
+  /// There are at most 32 collision layers. Layers after 14 are available, but prefer existing layers. Inspect their interactions in Ballance Physics Settings.
   /// </remarks>
   public static class GameLayers 
   {
     /// <summary>
-    /// 默认碰撞层 与所有物体碰撞
+    /// Default collision layer, colliding with all objects.
     /// </summary>
     public const int LAYER_PHY_GLOBAL = 0;
     /// <summary>
-    /// 球的碰撞层
+    /// Ball collision layer.
     /// </summary>
     public const int LAYER_PHY_BALL = 1;
     /// <summary>
-    /// 球碎片的碰撞层
+    /// Ball fragment collision layer.
     /// </summary>
     public const int LAYER_PHY_BALL_PEICES = 2;
     /// <summary>
-    /// 此碰撞层机关专用，与球、路面碰撞
+    /// Mechanism layer colliding with balls and floors.
     /// </summary>
     public const int LAYER_PHY_MODUL_COL_BALL = 3;
     /// <summary>
-    /// 此碰撞层机关专用，不与球碰撞
+    /// Mechanism layer excluding balls.
     /// </summary>
     public const int LAYER_PHY_MODUL_NOCOL_BALL = 4;
     /// <summary>
-    /// 此碰撞层机关专用，不与路面碰撞
+    /// Mechanism layer excluding floors.
     /// </summary>
     public const int LAYER_PHY_MODUL_NOCOL_FLOOR = 5;
     /// <summary>
-    /// 此碰撞层机关专用，仅与其他机关碰撞层碰撞，不与路面、球碰撞
+    /// Mechanism layer colliding only with other mechanism layers, excluding floors and balls.
     /// </summary>
     public const int LAYER_PHY_MODUL_NOCOL = 6;
     /// <summary>
-    /// 此碰撞层机关专用，不与其他机关碰撞层、路面碰撞，仅与球碰撞
+    /// Mechanism layer colliding only with balls, excluding other mechanisms and floors.
     /// </summary>
     public const int LAYER_PHY_MODUL_ONLY_COL_BALL = 7;
     /// <summary>
-    /// 仅与球碰撞的触发器
+    /// Trigger colliding only with balls.
     /// </summary>
     public const int LAYER_PHY_TRANFO_TIGGER = 8;
     /// <summary>
-    /// 未使用层（预留）
+    /// Unused reserved layer.
     /// </summary>
     public const int LAYER_UNUSED_9 = 9;
     /// <summary>
-    /// 未使用层（预留）
+    /// Unused reserved layer.
     /// </summary>
     public const int LAYER_UNUSED_10 = 10;
     /// <summary>
-    /// 路面层
+    /// Floor layer.
     /// </summary>
     public const int LAYER_PHY_FLOOR = 11;
     /// <summary>
-    /// 钢轨层
+    /// Rail layer.
     /// </summary>
     public const int LAYER_PHY_FLOOR_RAIL = 12;
     /// <summary>
-    /// 木制路面层
+    /// Wooden floor layer.
     /// </summary>
     public const int LAYER_PHY_FLOOR_WOODS = 13;
     /// <summary>
-    /// 挡板层
+    /// Barrier layer.
     /// </summary>
     public const int LAYER_PHY_FLOOR_STOPPER = 14;
   }

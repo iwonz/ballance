@@ -4,13 +4,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * InputFieldValueBinder.cs
 * 
-* 用途：
-* InputField 控件数据绑定器
+* Purpose:
+* InputField data binder.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

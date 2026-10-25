@@ -3,13 +3,13 @@
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameAssetsInfo.cs
 * 
-* 用途：
-* 游戏静态资源引入结构类。
+* Purpose:
+* Static game resource reference structure.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

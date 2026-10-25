@@ -15,7 +15,7 @@ namespace Ballance2.Services.Pool
   }
 
   /// <summary>
-  /// 游戏对象池
+  /// GameObject pool.
   /// </summary>
   
   
@@ -35,7 +35,7 @@ namespace Ballance2.Services.Pool
     private Stack<GameObject> availableObjStack = new Stack<GameObject>();
 
     /// <summary>
-    /// 释放
+    /// Release resources.
     /// </summary>
     
     public void Destroy() {
@@ -44,13 +44,13 @@ namespace Ballance2.Services.Pool
     }
 
     /// <summary>
-    /// 创建游戏对象池
+    /// Create a GameObject pool.
     /// </summary>
-    /// <param name="poolName">池名称</param>
-    /// <param name="poolObjectPrefab">池的预制体</param>
-    /// <param name="initCount">初始大小</param>
-    /// <param name="maxSize">最大大小</param>
-    /// <param name="pool">池物体挂载的根</param>
+    /// <param name="poolName">Pool name.</param>
+    /// <param name="poolObjectPrefab">Pooled prefab.</param>
+    /// <param name="initCount">Initial size.</param>
+    /// <param name="maxSize">Maximum size.</param>
+    /// <param name="pool">Root transform for pooled objects.</param>
     
     public GameObjectPool(string poolName, GameObject poolObjectPrefab, int initCount, int maxSize, Transform pool)
     {
@@ -81,9 +81,9 @@ namespace Ballance2.Services.Pool
     }
     
     /// <summary>
-    /// 获取一个可用的物体
+    /// Get an available object.
     /// </summary>
-    /// <returns>游戏物体实例，如果没有可用物体，则返回空</returns>
+    /// <returns>GameObject instance, or null when none is available.</returns>
     
     public GameObject NextAvailableObject()
     {
@@ -102,9 +102,9 @@ namespace Ballance2.Services.Pool
     }
 
     /// <summary>
-    /// 回退当前池所控根的指定名称子物体至池中
+    /// Return a named child of the pool root to the pool.
     /// </summary>
-    /// <param name="objName">对象名称</param>
+    /// <param name="objName">Object name.</param>
     
     
     public void ReturnObjectFromParent(string objName)
@@ -116,9 +116,9 @@ namespace Ballance2.Services.Pool
         Log.E(TAG, string.Format("Not found the pool child object {0}.", objName));
     }
     /// <summary>
-    /// 获取当前池所控根的是否存在指定名称子物体
+    /// Whether the pool root has a child with the given name.
     /// </summary>
-    /// <param name="objName">对象名称</param>
+    /// <param name="objName">Object name.</param>
     
     
     public bool ContainsObjectInParent(string objName)
@@ -126,7 +126,7 @@ namespace Ballance2.Services.Pool
       return this.poolRoot.Find(objName) != null;
     }
     /// <summary>
-    /// 清除当前池所控根的子物体
+    /// Clear children of the pool root.
     /// </summary>
     
     public void Clear()
@@ -136,9 +136,9 @@ namespace Ballance2.Services.Pool
     }
 
     /// <summary>
-    /// 回退物体至池中，注意，只能回退当前池所控根的子物体
+    /// Return an object to the pool; only children of this pool's root are accepted.
     /// </summary>
-    /// <param name="po">物体</param>
+    /// <param name="po">Object.</param>
     
     
     public void ReturnObjectToPool(GameObject po)
@@ -151,10 +151,10 @@ namespace Ballance2.Services.Pool
     
     //o(1)
     /// <summary>
-    /// 回退物体至池中
+    /// Return an object to a pool.
     /// </summary>
-    /// <param name="pool">池的名称</param>
-    /// <param name="po">物体</param>
+    /// <param name="pool">Pool name.</param>
+    /// <param name="po">Object.</param>
     
     
     

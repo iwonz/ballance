@@ -13,28 +13,28 @@ using UnityEngine.Profiling;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameMediator.cs
 * 
-* 用途：
-* 游戏中介者管理器，用于游戏中央事件的转发与处理。
-* 中介者提供了事件交互方法：
+* Purpose:
+* Central mediator for game event routing and handling.
+* Event interaction types:
 *
-*   全局事件：发送整体全局事件，让多个接受方接受事件。
-*   单一事件：发送单向全局事件，让一个接受方接受事件。
-*   事件发射器：某个类发送一组事件，让许多接受方订阅事件。 
+*   Global events: broadcast to multiple subscribers.
+*   Single events: send a notification to one subscriber.
+*   Event emitters: a class exposes events to multiple subscribers.
 *
-* **提示：** 单一事件与全局数据无须手动使用 `RegisterGlobalEvent`/`RegisterSingleEvent` 注册，你可以直接执行相关方法，例如 `DispatchGlobalEvent` 等等，
-* 如果事件没有注册，它会自动调用注册。
+* Events do not require an explicit RegisterGlobalEvent/RegisterSingleEvent call before supported operations such as DispatchGlobalEvent;
+* those operations register missing events automatically.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Services
 {
   /// <summary>
-  /// 游戏中介者
+  /// Game mediator.
   /// </summary>
   [Serializable]
   public class GameMediator : GameService<GameMediator>
@@ -70,7 +70,7 @@ namespace Ballance2.Services
       return true;
     }
 
-    #region 全局事件控制器
+    #region Global event controller
 
     [SerializeField, SetProperty("Events")]
     private Dictionary<string, GameEvent> events = new Dictionary<string, GameEvent>();
@@ -79,12 +79,12 @@ namespace Ballance2.Services
 
     public Dictionary<string, GameEvent> Events { get { return events; } }
 
-    #region 事件发射器
+    #region Event emitters
 
     /// <summary>
-    /// 注册事件发射器
+    /// Register an event emitter.
     /// </summary>
-    /// <param name="name">事件发射器名称</param>
+    /// <param name="name">Event emitter name.</param>
     /// <returns></returns>
     public GameEventEmitter RegisterEventEmitter(string name) {
       GameEventEmitter result = null;
@@ -94,26 +94,26 @@ namespace Ballance2.Services
       return result; 
     }
     /// <summary>
-    /// 取消注册事件发射器
+    /// Unregister an event emitter.
     /// </summary>
-    /// <param name="name">事件发射器名称</param>
+    /// <param name="name">Event emitter name.</param>
     public void UnRegisterEventEmitter(string name) {
       eventEmitts.Remove(name);
     }
 
     #endregion
 
-    #region 单一事件
+    #region Single-handler events
 
     /// <summary>
-    /// 注册单一事件
+    /// Register a single-handler event.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
+    /// <param name="evtName">Event name.</param>
     public bool RegisterSingleEvent(string evtName)
     {
       if (string.IsNullOrEmpty(evtName))
       {
-        Log.W(TAG, "RegisterSingleEvent evtName 参数未提供");
+        Log.W(TAG, "RegisterSingleEvent: evtName was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return false;
       }
@@ -122,16 +122,16 @@ namespace Ballance2.Services
       return true;
     }
     /// <summary>
-    /// 取消注册单一事件
+    /// Unregister a single-handler event.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
+    /// <param name="evtName">Event name.</param>
     
     
     public bool UnRegisterSingleEvent(string evtName)
     {
       if (string.IsNullOrEmpty(evtName))
       {
-        Log.W(TAG, "UnRegisterSingleEvent evtName 参数未提供");
+        Log.W(TAG, "UnRegisterSingleEvent: evtName was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return false;
       }
@@ -147,10 +147,10 @@ namespace Ballance2.Services
       }
     }
     /// <summary>
-    /// 获取单一事件是否注册
+    /// Whether a single-handler event is registered.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <returns>是否注册</returns>
+    /// <param name="evtName">Event name.</param>
+    /// <returns>Whether it is registered.</returns>
     
     
     public bool IsSingleEventRegistered(string evtName)
@@ -158,17 +158,17 @@ namespace Ballance2.Services
       return singleEvents.ContainsKey(evtName);
     }
     /// <summary>
-    /// 检测单一事件是否被接收者附加
+    /// Whether a single-handler event has a subscriber.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <returns>返回是否附加</returns>
+    /// <param name="evtName">Event name.</param>
+    /// <returns>Whether a subscriber is attached.</returns>
     
     
     public bool CheckSingleEventAttatched(string evtName)
     {
       if (string.IsNullOrEmpty(evtName))
       {
-        Log.W(TAG, "NotifySingleEvent evtName 参数未提供");
+        Log.W(TAG, "NotifySingleEvent: evtName was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return false;
       }
@@ -178,24 +178,24 @@ namespace Ballance2.Services
       }
       else
       {
-        Log.W(TAG, "事件 {0} 未注册", evtName);
+        Log.W(TAG, "Event {0} is not registered.", evtName);
         GameErrorChecker.LastError = GameError.NotRegister;
         return false;
       }
     }
 
     /// <summary>
-    /// 延时通知单一事件
+    /// Notify a single-handler event after a delay.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <param name="delayeSecond">延时时长，单位秒</param>
-    /// <param name="pararms">事件参数</param>
-    /// <returns>返回是否成功</returns>
+    /// <param name="evtName">Event name.</param>
+    /// <param name="delayeSecond">Delay in seconds.</param>
+    /// <param name="pararms">Event arguments.</param>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool DelayedNotifySingleEvent(string evtName, float delayeSecond, params object[] pararms)
     {
       if (string.IsNullOrEmpty(evtName))
       {
-        Log.W(TAG, "NotifySingleEvent evtName 参数未提供");
+        Log.W(TAG, "NotifySingleEvent: evtName was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return false;
       }
@@ -203,16 +203,16 @@ namespace Ballance2.Services
       return true;
     }
     /// <summary>
-    /// 通知单一事件
+    /// Notify a single-handler event.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <param name="pararms">事件参数</param>
-    /// <returns>返回是否成功</returns>
+    /// <param name="evtName">Event name.</param>
+    /// <param name="pararms">Event arguments.</param>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool NotifySingleEvent(string evtName, params object[] pararms)
     {
       if (string.IsNullOrEmpty(evtName))
       {
-        Log.W(TAG, "NotifySingleEvent evtName 参数未提供");
+        Log.W(TAG, "NotifySingleEvent: evtName was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return false;
       }
@@ -228,25 +228,25 @@ namespace Ballance2.Services
       }
       else
       {
-        Log.W(TAG, "事件 {0} 未注册", evtName);
+        Log.W(TAG, "Event {0} is not registered.", evtName);
         GameErrorChecker.LastError = GameError.NotRegister;
         return false;
       }
     }
 
     /// <summary>
-    /// 订阅全局单一事件
+    /// Subscribe to a global single-handler event.
     /// </summary>
-    /// <param name="package">所属包</param>
-    /// <param name="evtName">事件名称</param>
-    /// <param name="name">接收器名字</param>
-    /// <param name="gameHandlerDelegate">回调</param>
-    /// <returns>返回接收器实例，如果失败，则返回null，具体请查看LastError</returns>
+    /// <param name="package">Owning package.</param>
+    /// <param name="evtName">Event name.</param>
+    /// <param name="name">Handler name.</param>
+    /// <param name="gameHandlerDelegate">Callback.</param>
+    /// <returns>Handler instance, or null on failure; inspect LastError for details.</returns>
     public GameEventHandler SubscribeSingleEvent(GamePackage package, string evtName, string name, GameEventHandlerDelegate gameHandlerDelegate)
     {
       if (string.IsNullOrEmpty(evtName) || string.IsNullOrEmpty(name) || gameHandlerDelegate == null)
       {
-        Log.W(TAG, "参数缺失", evtName);
+        Log.W(TAG, "Missing argument.", evtName);
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return null;
       }
@@ -255,7 +255,7 @@ namespace Ballance2.Services
       var oldHandler = singleEvents[evtName];
       if (oldHandler != null)
       {
-        Log.W(TAG, "单一事件 {0} 已由 {1} 订阅", evtName, oldHandler.Name);
+        Log.W(TAG, "Single event {0} is already subscribed by {1}.", evtName, oldHandler.Name);
         GameErrorChecker.LastError = GameError.NotRegister;
         return null;
       }
@@ -267,18 +267,18 @@ namespace Ballance2.Services
       return gameHandler;
     }
     /// <summary>
-    /// 取消订阅全局单一事件
+    /// Unsubscribe from a global single-handler event.
     /// </summary>
-    /// <param name="package">所属包</param>
-    /// <param name="evtName">事件名称</param>
-    /// <param name="name">接收器名字</param>
-    /// <param name="gameHandler">注册的处理器实例</param>
-    /// <returns>返回是否成功</returns>
+    /// <param name="package">Owning package.</param>
+    /// <param name="evtName">Event name.</param>
+    /// <param name="name">Handler name.</param>
+    /// <param name="gameHandler">Registered handler instance.</param>
+    /// <returns>Whether the operation succeeded.</returns>
     public bool UnsubscribeSingleEvent(GamePackage package, string evtName, GameEventHandler gameHandler)
     {
       if (string.IsNullOrEmpty(evtName) || gameHandler == null)
       {
-        Log.W(TAG, "参数缺失", evtName);
+        Log.W(TAG, "Missing argument.", evtName);
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return false;
       }
@@ -291,7 +291,7 @@ namespace Ballance2.Services
       var oldHandler = singleEvents[evtName];
       if (oldHandler != gameHandler)
       {
-        Log.W(TAG, "单一事件 {0} 已由 {1} 订阅，必须为当前订阅者才能取消", evtName, oldHandler.Name);
+        Log.W(TAG, "Single event {0} is subscribed by {1}; only that subscriber may unsubscribe it.", evtName, oldHandler.Name);
         GameErrorChecker.LastError = GameError.AccessDenined;
         return false;
       }
@@ -303,19 +303,19 @@ namespace Ballance2.Services
 
     #endregion
 
-    #region 全局事件
+    #region Global events
 
     /// <summary>
-    /// 注册事件
+    /// Register an event.
     /// </summary>
-    /// <param name="evtName">事件名称</param>  
+    /// <param name="evtName">Event name.</param>
     public GameEvent RegisterGlobalEvent(string evtName)
     {
       GameEvent gameEvent;
 
       if (string.IsNullOrEmpty(evtName))
       {
-        Log.W(TAG, "RegisterGlobalEvent evtName 参数未提供");
+        Log.W(TAG, "RegisterGlobalEvent: evtName was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return null;
       }
@@ -327,14 +327,14 @@ namespace Ballance2.Services
       return gameEvent;
     }
     /// <summary>
-    /// 取消注册事件
+    /// Unregister an event.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
+    /// <param name="evtName">Event name.</param>
     public bool UnRegisterGlobalEvent(string evtName)
     {
       if (string.IsNullOrEmpty(evtName))
       {
-        Log.W(TAG, "UnRegisterGlobalEvent evtName 参数未提供");
+        Log.W(TAG, "UnRegisterGlobalEvent: evtName was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return false;
       }
@@ -351,20 +351,20 @@ namespace Ballance2.Services
       }
     }
     /// <summary>
-    /// 获取事件是否注册
+    /// Whether an event is registered.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <returns>是否注册</returns>
+    /// <param name="evtName">Event name.</param>
+    /// <returns>Whether it is registered.</returns>
     public bool IsGlobalEventRegistered(string evtName)
     {
       return events.ContainsKey(evtName);
     }
     /// <summary>
-    /// 获取事件是否注册，如果已注册，则返回实例
+    /// Check registration and return the event instance if present.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <param name="e">返回的事件实例</param>
-    /// <returns>是否注册</returns>
+    /// <param name="evtName">Event name.</param>
+    /// <param name="e">Returned event instance.</param>
+    /// <returns>Whether it is registered.</returns>
     public bool IsGlobalEventRegistered(string evtName, out GameEvent e)
     {
       if (events.TryGetValue(evtName, out e))
@@ -373,17 +373,17 @@ namespace Ballance2.Services
       return false;
     }
     /// <summary>
-    /// 获取事件实例
+    /// Get an event instance.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <returns>返回的事件实例</returns>
+    /// <param name="evtName">Event name.</param>
+    /// <returns>Event instance.</returns>
     public GameEvent GetRegisteredGlobalEvent(string evtName)
     {
       GameEvent gameEvent = null;
 
       if (string.IsNullOrEmpty(evtName))
       {
-        Log.W(TAG, "GetRegisteredGlobalEvent evtName 参数未提供");
+        Log.W(TAG, "GetRegisteredGlobalEvent: evtName was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return gameEvent;
       }
@@ -393,23 +393,23 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 延时执行事件分发
+    /// Dispatch an event after a delay.
     /// </summary>
-    /// <param name="gameEvent">事件实例</param>
-    /// <param name="delayeSecond">延时时长，单位秒</param>
-    /// <param name="pararms">事件参数</param>
-    /// <returns>返回已经发送的接收器个数</returns>
+    /// <param name="gameEvent">Event instance.</param>
+    /// <param name="delayeSecond">Delay in seconds.</param>
+    /// <param name="pararms">Event arguments.</param>
+    /// <returns>Number of handlers notified.</returns>
     public bool DelayedDispatchGlobalEvent(string evtName, float delayeSecond, params object[] pararms)
     {
       if (string.IsNullOrEmpty(evtName))
       {
-        Log.W(TAG, "NotifySingleEvent evtName 参数未提供");
+        Log.W(TAG, "NotifySingleEvent: evtName was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return false;
       }
       if (!IsGlobalEventRegistered(evtName, out GameEvent gameEvent))
       {
-        Log.W(TAG, "事件 {0} 未注册", evtName);
+        Log.W(TAG, "Event {0} is not registered.", evtName);
         GameErrorChecker.LastError = GameError.NotRegister;
       }
       DelayCaller.AddDelayCallNormal(evtName, delayeSecond, pararms);
@@ -417,11 +417,11 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 执行事件分发
+    /// Dispatch an event.
     /// </summary>
-    /// <param name="gameEvent">事件实例</param>
-    /// <param name="pararms">事件参数</param>
-    /// <returns>返回已经发送的接收器个数</returns>
+    /// <param name="gameEvent">Event instance.</param>
+    /// <param name="pararms">Event arguments.</param>
+    /// <returns>Number of handlers notified.</returns>
     public int DispatchGlobalEvent(GameEvent gameEvent, params object[] pararms)
     {
       Profiler.BeginSample("DispatchGlobalEvent_" + gameEvent.EventName);
@@ -429,12 +429,12 @@ namespace Ballance2.Services
       int handledCount = 0;
       if (gameEvent == null)
       {
-        Log.W(TAG, "DispatchGlobalEvent gameEvent 参数未提供");
+        Log.W(TAG, "DispatchGlobalEvent: gameEvent was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return handledCount;
       }
 
-      //事件分发
+      // Dispatch the event.
       GameEventHandler gameHandler;
       for (int i = gameEvent.EventHandlers.Count - 1; i >= 0; i--)
       {
@@ -453,18 +453,18 @@ namespace Ballance2.Services
       return handledCount;
     }
     /// <summary>
-    /// 执行事件分发
+    /// Dispatch an event.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <param name="pararms">事件参数</param>
-    /// <returns>返回已经发送的接收器个数</returns>
+    /// <param name="evtName">Event name.</param>
+    /// <param name="pararms">Event arguments.</param>
+    /// <returns>Number of handlers notified.</returns>
     public int DispatchGlobalEvent(string evtName, params object[] pararms)
     {
       int handledCount = 0;
 
       if (string.IsNullOrEmpty(evtName))
       {
-        Log.W(TAG, "DispatchGlobalEvent evtName 参数未提供");
+        Log.W(TAG, "DispatchGlobalEvent: evtName was not provided.");
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return 0;
       }
@@ -476,19 +476,19 @@ namespace Ballance2.Services
     }
     
     /// <summary>
-    /// 注册全局事件接收器（Delegate）
+    /// Register a global event handler delegate.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <param name="name">接收器名字</param>
-    /// <param name="gameHandlerDelegate">回调</param>
-    /// <returns>返回注册的处理器，可使用这个处理器取消注册对应事件</returns>
+    /// <param name="evtName">Event name.</param>
+    /// <param name="name">Handler name.</param>
+    /// <param name="gameHandlerDelegate">Callback.</param>
+    /// <returns>Registered handler, which can be used to unsubscribe.</returns>
     public GameEventHandler RegisterEventHandler(GamePackage package, string evtName, string name, GameEventHandlerDelegate gameHandlerDelegate)
     {
       if (string.IsNullOrEmpty(evtName)
          || string.IsNullOrEmpty(name)
          || gameHandlerDelegate == null)
       {
-        Log.W(TAG, "参数缺失", evtName);
+        Log.W(TAG, "Missing argument.", evtName);
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return null;
       }
@@ -503,15 +503,15 @@ namespace Ballance2.Services
       return gameHandler;
     }
     /// <summary>
-    /// 取消注册全局事件接收器
+    /// Unregister a global event handler.
     /// </summary>
-    /// <param name="evtName">事件名称</param>
-    /// <param name="handler">接收器类</param>
+    /// <param name="evtName">Event name.</param>
+    /// <param name="handler">Handler instance.</param>
     public void UnRegisterEventHandler(string evtName, GameEventHandler handler)
     {
       if (string.IsNullOrEmpty(evtName) || handler == null)
       {
-        Log.W(TAG, "参数缺失", evtName);
+        Log.W(TAG, "Missing argument.", evtName);
         GameErrorChecker.LastError = GameError.ParamNotProvide;
         return;
       }
@@ -524,7 +524,7 @@ namespace Ballance2.Services
 
     #endregion
 
-    //卸载所有事件
+    // Unload all events.
     private void UnLoadAllEvents()
     {
       foreach (var gameEvent in events)
@@ -535,7 +535,7 @@ namespace Ballance2.Services
     }
     private void InitAllEvents()
     {
-      //注册内置事件
+      // Register built-in events.
       RegisterGlobalEvent(GameEventNames.EVENT_BASE_INIT_FINISHED);
       RegisterGlobalEvent(GameEventNames.EVENT_BEFORE_GAME_QUIT);
       RegisterGlobalEvent(GameEventNames.EVENT_LOGIC_SECNSE_ENTER);
@@ -544,7 +544,7 @@ namespace Ballance2.Services
 
     #endregion
 
-    #region 调试命令
+    #region Debug commands
 
     private void InitCommands()
     {
@@ -560,11 +560,11 @@ namespace Ballance2.Services
         return false;
       }, 1, "gm <single_event/event/action/store>\n" +
               "  single_event\n" +
-              "    all 显示所有单一事件\n" +
-              "    notify <eventName:string> [params:any[]] 通知一个单一事件\n" +
+              "    all Show all single events\n" +
+              "    notify <eventName:string> [params:any[]] Notify a single event\n" +
               "  event\n" +
-              "    all 显示所有全局事件\n" +
-              "    dispatch <eventName:string> <handleFilter:string> [params:any[]] 进行全局事件分发。handleFilter为“*”时表示所有，为正则使用正则匹配。\n");
+              "    all Show all global events\n" +
+              "    dispatch <eventName:string> <handleFilter:string> [params:any[]] Dispatch a global event; use '*' for all handlers or a regular expression to filter them.\n");
     }
     private bool HandleSingleEventCommand(string[] args)
     {

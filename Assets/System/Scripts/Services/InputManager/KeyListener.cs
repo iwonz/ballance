@@ -13,27 +13,27 @@ using UnityEngine.InputSystem.LowLevel;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * KeyListener.cs
 * 
-* 用途：
-* 键盘按键事件事件侦听器
+* Purpose:
+* Keyboard event listener.
 * 
-* 此类可以方便的侦听键盘按键事件。
+* Convenient keyboard event subscriptions.
 * 
-* 使用示例：
+* Example:
 * ```csharp
 * var lisnster = KeyListener.Get(this.gameObject);
 * lisnster.AddKeyListen(KeyCode.A, (key, downed) => { 
 *   if (downed) {
-*     //当 A 键按下时将会发出此事件
+*     // Raised when A is pressed.
 *   }
 * });
 * ```
 *
-* 如果你只需要单次监听某个按键，无须单独使用此类，可以直接使用 GameUIManager 上的 WaitKey，具体参见 Ballance2.Services.GameUIManager 。
+* For one-shot key input, use GameUIManager.WaitKey instead of creating a separate listener.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -41,7 +41,7 @@ using UnityEngine.InputSystem.LowLevel;
 namespace Ballance2.Services.InputManager
 {
     /// <summary>
-    /// 键盘按键事件事件侦听器
+    /// Keyboard event listener.
     /// </summary>
     public class KeyListener : MonoBehaviour
     {
@@ -53,17 +53,17 @@ namespace Ballance2.Services.InputManager
         private AxisControl currentJoystickRightStickAxisY;
 
         /// <summary>
-        /// 键盘按键事件回调
+        /// Keyboard event callback.
         /// </summary>
-        /// <param name="downed">是否按下</param>
+        /// <param name="downed">Whether the key is pressed.</param>
         public delegate void KeyDelegate(KeyCode key, bool downed);
 
 
         /// <summary>
-        /// 从 指定 GameObject 创建键事件侦听器
+        /// Create a key event listener on a GameObject.
         /// </summary>
-        /// <param name="go">指定 GameObject</param>
-        /// <returns>返回事件侦听器实例</returns>
+        /// <param name="go">GameObject.</param>
+        /// <returns>Event listener instance.</returns>
         public static KeyListener Get(GameObject go)
         {
             KeyListener listener = go.GetComponent<KeyListener>();
@@ -91,17 +91,17 @@ namespace Ballance2.Services.InputManager
         private int listenKeyId = 0;
 
         /// <summary>
-        /// 是否开启监听
+        /// Enable listening.
         /// </summary>
         public bool IsListenKey { get { return isListenKey; } set { isListenKey = value; } }
 
         /// <summary>
-        /// 如果UI激活时是否禁用键盘事件
+        /// Suppress keyboard events while UI is active.
         /// </summary>
         public bool DisableWhenUIFocused = true;
 
         /// <summary>
-        /// 指定是否允许同时发出1个以上的键盘事件，否则同时只能发送一个键盘事件。以后注册的先发送
+        /// Allow multiple keyboard events at once; otherwise only one is sent, with later registrations taking priority.
         /// </summary>
         public bool AllowMultipleKey = false;
 
@@ -124,7 +124,7 @@ namespace Ballance2.Services.InputManager
         }
 
         /// <summary>
-        /// 重新发送当前已按下的按键事件
+        /// Resend currently held-key events.
         /// </summary>
         public void ReSendPressingKey()
         {
@@ -152,11 +152,11 @@ namespace Ballance2.Services.InputManager
         }
 
         /// <summary>
-        /// 添加侦听器侦听键
+        /// Add a key listener.
         /// </summary>
-        /// <param name="key">键值。</param>
-        /// <param name="callBack">回调函数。</param>
-        /// <returns>返回一个ID, 可使用 DeleteKeyListen 删除侦听器</returns>
+        /// <param name="key">Key code.</param>
+        /// <param name="callBack">Callback.</param>
+        /// <returns>Listener ID; remove it with DeleteKeyListen.</returns>
         public int AddKeyListen(KeyCode key, KeyDelegate callBack, params GamepadButton[] gamepadButtons)
         {
             listenKeyId++;
@@ -167,7 +167,7 @@ namespace Ballance2.Services.InputManager
             item.gamepadButtons = gamepadButtons;
             item.id = listenKeyId;
 
-            //逆序遍历链表。添加按键至相同按键位置
+            // Traverse backward and insert beside matching keys.
             LinkedListNode<KeyListenerItem> cur = items.Last;
             while (cur != null)
             {
@@ -178,18 +178,18 @@ namespace Ballance2.Services.InputManager
                 }
                 cur = cur.Previous;
             }
-            //没有找到相同按键，则添加到末尾
+            // Append when no matching key exists.
             items.AddLast(item);
             return listenKeyId;
         }
 
         /// <summary>
-        /// 删除指定侦听器。
+        /// Remove a listener.
         /// </summary>
-        /// <param name="id">AddKeyListen 返回的ID</param>
+        /// <param name="id">ID returned by the key listener registration.</param>
         public void DeleteKeyListen(int id)
         {
-            //链表移除
+            // Remove from the linked list.
             int count = 0;
             LinkedListNode<KeyListenerItem> cur = items.First;
             while (cur != null)
@@ -207,7 +207,7 @@ namespace Ballance2.Services.InputManager
             }
         }
         /// <summary>
-        /// 清空事件侦听器所有侦听键。
+        /// Clear all key listeners.
         /// </summary>
         public void ClearKeyListen()
         {
@@ -336,11 +336,11 @@ namespace Ballance2.Services.InputManager
         private bool IsKeyOrGamepadButtonsDown(KeyListenerItem item)
         {
             var isKeydown = false;
-            //先判断键盘
+            // Check the keyboard first.
             isKeydown = Input.GetKey(item.key);
             if (isKeydown)
                 return isKeydown;
-            //再判断手柄按键
+            // Then check gamepad buttons.
             if (item.gamepadButtons != null && item.gamepadButtons.Length > 0)
             {
                 foreach (var button in item.gamepadButtons)
@@ -352,7 +352,7 @@ namespace Ballance2.Services.InputManager
             }
             if (isKeydown)
                 return isKeydown;
-            //最后再判断摇杆操作
+            // Finally check joystick input.
             if (item.ContainsGamepadButton(GamepadButton.DpadLeft))
                 isKeydown = GetLeftStickXValue() < -0.4;
             else if (item.ContainsGamepadButton(GamepadButton.DpadRight))
@@ -382,11 +382,11 @@ namespace Ballance2.Services.InputManager
         {
             if (isListenKey)
             {
-                //排除GUI激活
+                // Exclude active GUI interaction.
                 if (DisableWhenUIFocused && (EventSystem.current.IsPointerOverGameObject() || GUIUtility.hotControl != 0))
                     return;
                 
-                //逆序遍历链表。后添加的按键事件最先处理
+                // Traverse backward so later registrations are processed first.
                 LinkedListNode<KeyListenerItem> cur = items.Last;
                 KeyCode lastPressedKey = KeyCode.None;
                 while (cur != null)
@@ -398,7 +398,7 @@ namespace Ballance2.Services.InputManager
                     {
                         if (!AllowMultipleKey && lastPressedKey == item.key)
                         {
-                            //相同的按键，并且不允许发送相同按键，则不发送按键
+                            // Suppress a duplicate key event when multiple dispatch is disabled.
                             if (item.downed)
                             {
                                 item.downed = false;

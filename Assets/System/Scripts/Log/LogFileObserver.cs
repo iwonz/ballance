@@ -7,13 +7,13 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * LogFileObserver.cs
 * 
-* 用途：
-* 日志捕捉器，用于捕捉日志并将其写入文件。
+* Purpose:
+* Capture log entries and write them to a file.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -60,7 +60,7 @@ namespace Ballance2.Utils
 
     public void Dispose()
     {
-      // 不要更改此代码。请将清理代码放入“Dispose(bool disposing)”方法中
+      // Do not change this method; put cleanup in Dispose(bool disposing).
       Dispose(disposing: true);
       System.GC.SuppressFinalize(this);
     }

@@ -1,13 +1,13 @@
 ﻿/*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameSystemPackage.cs
 * 
-* 用途：
-* 游戏核心代码模块特殊结构的声明
+* Purpose:
+* Specialized core code package definition.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

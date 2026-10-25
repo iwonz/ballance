@@ -4,25 +4,25 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * UIAnchorPosUtils.cs
 * 
-* 用途：
-* UI 组件锚点位置工具
+* Purpose:
+* UI anchor and position helpers.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 /*
 
-UI 组件锚点位置工具可以方便的为您设置 
-RectTransform 的 anchorMin、anchorMax、offsetMax、offsetMin
-这几个令人头疼的变量了，在代码里也可以像编辑器里一样的参数来设置RectTransform了。
+Convenience setters for
+RectTransform anchorMin, anchorMax, offsetMax, and offsetMin,
+using parameters similar to the Unity inspector.
 
-具体分为：Pivot（枢轴）、Anchor（锚点）、Left/Right/Top/Bottom. 与编辑器里显示的一致。
+The helpers cover Pivot, Anchor, and Left/Right/Top/Bottom values.
 
-具体可参考每个函数的注释。
+See the individual method comments for details.
 
 */
 
@@ -30,16 +30,16 @@ namespace Ballance2.UI.Utils
 {
 
   /// <summary>
-  /// UI 组件锚点位置工具
+  /// UI anchor and position helpers.
   /// </summary>
   public static class UIAnchorPosUtils
   {
     /// <summary>
-    /// 设置 UI 组件锚点
+    /// Set UI anchors.
     /// </summary>
-    /// <param name="rectTransform">UI 组件</param>
-    /// <param name="x">X 轴锚点</param>
-    /// <param name="y">Y 轴锚点</param>
+    /// <param name="rectTransform">UI transform.</param>
+    /// <param name="x">X-axis anchor.</param>
+    /// <param name="y">Y-axis anchor.</param>
     public static void SetUIAnchor(RectTransform rectTransform, UIAnchor x, UIAnchor y)
     {
       float x1 = 0.5f, x2 = 0.5f, y1 = 0.5f, y2 = 0.5f;
@@ -87,9 +87,9 @@ namespace Ballance2.UI.Utils
       rectTransform.anchorMax = new Vector2(x2, y2);
     }
     /// <summary>
-    /// 获取 UI 组件锚点
+    /// Get a UI anchor.
     /// </summary>
-    /// <param name="rectTransform">UI 组件</param>
+    /// <param name="rectTransform">UI transform.</param>
     public static UIAnchor[] GetUIAnchor(RectTransform rectTransform)
     {
       UIAnchor x = UIAnchor.None, y = UIAnchor.None;
@@ -109,10 +109,10 @@ namespace Ballance2.UI.Utils
       return new UIAnchor[2] { x, y };
     }
     /// <summary>
-    /// 获取 UI 组件锚点
+    /// Get a UI anchor.
     /// </summary>
-    /// <param name="rectTransform">UI 组件</param>
-    /// <param name="axis">要获取的轴</param>
+    /// <param name="rectTransform">UI transform.</param>
+    /// <param name="axis">Axis to retrieve.</param>
     public static UIAnchor GetUIAnchor(RectTransform rectTransform, RectTransform.Axis axis)
     {
       UIAnchor anchor = UIAnchor.None;
@@ -136,7 +136,7 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 设置 UI 组件 上 右 坐标
+    /// Set UI top and right offsets.
     /// </summary>
     /// <param name="rectTransform"></param>
     /// <param name="right"></param>
@@ -146,7 +146,7 @@ namespace Ballance2.UI.Utils
       rectTransform.offsetMax = new Vector2(-right, -top);
     }
     /// <summary>
-    /// 设置 UI 组件 左 下坐标
+    /// Set UI left and bottom offsets.
     /// </summary>
     /// <param name="rectTransform"></param>
     /// <param name="left"></param>
@@ -156,7 +156,7 @@ namespace Ballance2.UI.Utils
       rectTransform.offsetMin = new Vector2(left, bottom);
     }
     /// <summary>
-    /// 设置 UI 组件 左 上 右 下坐标
+    /// Set UI left, top, right, and bottom offsets.
     /// </summary>
     /// <param name="rectTransform"></param>
     /// <param name="left"></param>
@@ -170,7 +170,7 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 设置 UI 组件 右 坐标
+    /// Set UI right offset.
     /// </summary>
     /// <param name="rectTransform"></param>
     /// <param name="top"></param>
@@ -179,7 +179,7 @@ namespace Ballance2.UI.Utils
       rectTransform.offsetMax = new Vector2(-right, rectTransform.offsetMax.y);
     }
     /// <summary>
-    /// 设置 UI 组件 上 坐标
+    /// Set UI top offset.
     /// </summary>
     /// </summary>
     /// <param name="rectTransform"></param>
@@ -189,7 +189,7 @@ namespace Ballance2.UI.Utils
       rectTransform.offsetMax = new Vector2(rectTransform.offsetMax.x, -top);
     }
     /// <summary>
-    /// 设置 UI 组件左坐标
+    /// Set UI left offset.
     /// </summary>
     /// <param name="rectTransform"></param>
     /// <param name="left"></param>
@@ -198,7 +198,7 @@ namespace Ballance2.UI.Utils
       rectTransform.offsetMin = new Vector2(left, rectTransform.offsetMin.y);
     }
     /// <summary>
-    /// 设置 UI 组件下坐标
+    /// Set UI bottom offset.
     /// </summary>
     /// <param name="rectTransform"></param>
     /// <param name="bottom"></param>
@@ -208,36 +208,36 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 获取组件的Right
+    /// Get the right offset.
     /// </summary>
-    /// <param name="rectTransform">UI 组件</param>
+    /// <param name="rectTransform">UI transform.</param>
     /// <returns></returns>
     public static float GetUIRight(RectTransform rectTransform)
     {
       return -rectTransform.offsetMax.x;
     }
     /// <summary>
-    /// 获取组件的Top
+    /// Get the top offset.
     /// </summary>
-    /// <param name="rectTransform">UI 组件</param>
+    /// <param name="rectTransform">UI transform.</param>
     /// <returns></returns>
     public static float GetUITop(RectTransform rectTransform)
     {
       return -rectTransform.offsetMax.y;
     }
     /// <summary>
-    /// 获取组件的Left
+    /// Get the left offset.
     /// </summary>
-    /// <param name="rectTransform">UI 组件</param>
+    /// <param name="rectTransform">UI transform.</param>
     /// <returns></returns>
     public static float GetUILeft(RectTransform rectTransform)
     {
       return rectTransform.offsetMin.x;
     }
     /// <summary>
-    /// 获取组件的Bottom
+    /// Get the bottom offset.
     /// </summary>
-    /// <param name="rectTransform">UI 组件</param>
+    /// <param name="rectTransform">UI transform.</param>
     /// <returns></returns>
     public static float GetUIBottom(RectTransform rectTransform)
     {
@@ -245,10 +245,10 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 设置 UI 组件枢轴
+    /// Set the UI pivot.
     /// </summary>
-    /// <param name="rectTransform">UI 组件</param>
-    /// <param name="pivot">轴锚点</param>
+    /// <param name="rectTransform">UI transform.</param>
+    /// <param name="pivot">Pivot position.</param>
     public static void SetUIPivot(RectTransform rectTransform, UIPivot pivot)
     {
       float x = 0.5f, y = 0.5f;
@@ -296,9 +296,9 @@ namespace Ballance2.UI.Utils
       rectTransform.pivot = new Vector2(x, y);
     }
     /// <summary>
-    /// 设置 UI 组件枢轴
+    /// Set the UI pivot.
     /// </summary>
-    /// <param name="rectTransform">UI 组件</param>
+    /// <param name="rectTransform">UI transform.</param>
     public static void SetUIPivot(RectTransform rectTransform, UIPivot pivot, RectTransform.Axis axis)
     {
       float x = rectTransform.pivot.x, y = rectTransform.pivot.y;
@@ -325,9 +325,9 @@ namespace Ballance2.UI.Utils
       rectTransform.pivot = new Vector2(x, y);
     }
     /// <summary>
-    /// 获取 UI 组件枢轴
+    /// Get the UI pivot.
     /// </summary>
-    /// <param name="rectTransform">UI 组件</param>
+    /// <param name="rectTransform">UI transform.</param>
     public static UIPivot GetUIPivot(RectTransform rectTransform)
     {
       UIPivot uIPivot = UIPivot.None;
@@ -346,7 +346,7 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 计算 UI 坐标值枢轴的偏移
+    /// Calculate UI coordinate offset from the pivot.
     /// </summary>
     /// <param name="rectTransform"></param>
     /// <param name="value"></param>
@@ -363,7 +363,7 @@ namespace Ballance2.UI.Utils
     }
 
     /// <summary>
-    /// 获取UI的UI坐标
+    /// Get UI coordinates.
     /// </summary>
     /// <param name="targetWordPos"></param>
     /// <returns></returns>
@@ -377,7 +377,7 @@ namespace Ballance2.UI.Utils
   }
 
   /// <summary>
-  /// UI 组件枢轴
+  /// UI pivot.
   /// </summary>
   public enum UIPivot
   {
@@ -398,7 +398,7 @@ namespace Ballance2.UI.Utils
     BottomRight = Bottom | Right,
   }
   /// <summary>
-  /// UI 组件锚点
+  /// UI anchor.
   /// </summary>
   public enum UIAnchor
   {

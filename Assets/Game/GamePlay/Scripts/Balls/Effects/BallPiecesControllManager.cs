@@ -6,41 +6,41 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Balls
 {
   /// <summary>
-  /// 球碎片抛出和回收器接口
+  /// Interface for scattering and collecting ball fragments.
   /// </summary>
   public interface IBallPiecesControllManager
   {
     /// <summary>
-    /// 开始抛出碎片
+    /// Start scattering fragments.
     /// </summary>
-    /// <param name="data">碎片数据集</param>
-    /// <param name="pos">抛出的位置</param>
-    /// <param name="minForce">推动最小力</param>
-    /// <param name="maxForce">推动最大力</param>
-    /// <param name="timeLive">碎片存活时间（秒）</param>
+    /// <param name="data">Fragment data.</param>
+    /// <param name="pos">Scatter position.</param>
+    /// <param name="minForce">Minimum force.</param>
+    /// <param name="maxForce">Maximum force.</param>
+    /// <param name="timeLive">Fragment lifetime in seconds.</param>
     void ThrowPieces(BallPiecesData data, Vector3 pos,float minForce, float maxForce, float timeLive);
     /// <summary>
-    /// 回收碎片
+    /// Collect fragments.
     /// </summary>
-    /// <param name="data">碎片数据集</param>
+    /// <param name="data">Fragment data.</param>
     void ResetPieces(BallPiecesData data);
   }
 
   /// <summary>
-  /// 默认的球碎片抛出和回收器。提供默认的球碎片抛出和回收效果控制。
+  /// Default controller for ball fragment scattering and collection effects.
   /// </summary>
   public class BallPiecesControllManager : MonoBehaviour, IBallPiecesControllManager
   {
     private const string TAG = "BallPiecesControllManager";
 
     /// <summary>
-    /// 开始抛出碎片
+    /// Start scattering fragments.
     /// </summary>
-    /// <param name="data">碎片数据集</param>
-    /// <param name="pos">抛出的位置</param>
-    /// <param name="minForce">推动最小力</param>
-    /// <param name="maxForce">推动最大力</param>
-    /// <param name="timeLive">碎片存活时间（秒）</param>
+    /// <param name="data">Fragment data.</param>
+    /// <param name="pos">Scatter position.</param>
+    /// <param name="minForce">Minimum force.</param>
+    /// <param name="maxForce">Maximum force.</param>
+    /// <param name="timeLive">Fragment lifetime in seconds.</param>
     public void ThrowPieces(
       BallPiecesData data, 
       Vector3 pos,
@@ -51,7 +51,7 @@ namespace Ballance2.Game.GamePlay.Balls
       var FadeManager = GameUIManager.Instance.UIFadeManager;
       var parent = data.parent;
 
-      //去除物理
+      // Remove physics.
       foreach (var body in data.bodys) {
         if (body.IsPhysicalized)
           body.UnPhysicalize(true);
@@ -59,19 +59,19 @@ namespace Ballance2.Game.GamePlay.Balls
 
       parent.SetActive(true);
 
-      //还原初始状态
+      // Restore the initial state.
       ObjectStateBackupUtils.RestoreObjectAndChilds(parent);
-      //设置位置
+      // Set position.
       data.parent.transform.position = pos;
       data.throwed = true;
 
-      //清除上一次的延时
+      // Clear the previous delay.
       if (data.delayHideTimerID > 0)
         GameManager.Instance.DeleteTimer(data.delayHideTimerID);
       if (data.fadeOutTimerID > 0)
         GameManager.Instance.DeleteTimer(data.fadeOutTimerID);
 
-      //渐变未完成，需要强制清除正在运行的渐变
+      // Force-stop the unfinished fade.
       if (data.fadeObjects.Count > 0) 
       {
         foreach(var value in data.fadeObjects) {
@@ -82,37 +82,37 @@ namespace Ballance2.Game.GamePlay.Balls
       }
       else
       {
-        //快速显示
+        // Show immediately.
         for (int i = 0; i < parent.transform.childCount; i++)
           FadeManager.AddFadeIn(parent.transform.GetChild(i).gameObject, 0.1f, null);
       }
 
-      //延时消失
+      // Disappear after a delay.
       data.delayHideTimerID = GameTimer.Delay(timeLive * 1000, () => {
         data.delayHideTimerID = 0;
         ResetPieces(data);
       });
 
-      //物理化并且抛出碎片
+      // Create physics bodies and scatter fragments.
       StartCoroutine(PhysicsAndThrowPeices(data, minForce, maxForce));
     }
 
     /// <summary>
-    /// 回收碎片
+    /// Collect fragments.
     /// </summary>
-    /// <param name="data">碎片数据集</param>
+    /// <param name="data">Fragment data.</param>
     public void ResetPieces(BallPiecesData data)
     {
       var FadeManager = GameUIManager.Instance.UIFadeManager;
       var parent = data.parent;  
-      //清除上一次的延时
+      // Clear the previous delay.
       if (data.delayHideTimerID > 0)
         GameTimer.DeleteDelay(data.delayHideTimerID);
 
       if (data.fadeObjects.Count > 0)
         data.fadeObjects.Clear();
 
-      //渐变淡出隐藏其材质
+      // Fade out the materials.
       for (int i = 0; i < parent.transform.childCount; i++)
         data.fadeObjects.Add(FadeManager.AddFadeOut(parent.transform.GetChild(i).gameObject, 3, true, null));
 
@@ -121,33 +121,33 @@ namespace Ballance2.Game.GamePlay.Balls
       if (data.fadeOutTimerID > 0)
         GameTimer.DeleteDelay(data.fadeOutTimerID);
 
-      //延时
+      // Delay.
       data.fadeOutTimerID = GameTimer.Delay(2990, () => {
         
         if (data.fadeObjects.Count > 0)
           data.fadeObjects.Clear();
   
-        //去除物理
+        // Remove physics.
         foreach (var body in data.bodys) 
           body.UnPhysicalize(true);
 
-        parent.SetActive(false); //隐藏
+        parent.SetActive(false); // Hide.
       });
     }
 
-    //物理化并且抛出碎片
+    // Create physics bodies and scatter fragments.
     private IEnumerator PhysicsAndThrowPeices(BallPiecesData data, float minForce, float maxForce) {
       var count = 0;
       foreach (var body in data.bodys)
       {
-        //防止一下抛出太多碎片
+        // Avoid scattering too many fragments at once.
         count++;
         if (count > 3) 
         {
           yield return new WaitForSeconds(0.01f);
           count = 0;
         }
-        body.Physicalize(); //物理
+        body.Physicalize(); // Physics.
       }
       foreach (var body in data.bodys)
       {
@@ -162,7 +162,7 @@ namespace Ballance2.Game.GamePlay.Balls
         body.gameObject.SetActive(true);
         forceDir.y += 2;
         forceDir.Normalize();
-        body.Impluse(forceDir * CommonUtils.RandomFloat(minForce, maxForce)); //施加力
+        body.Impluse(forceDir * CommonUtils.RandomFloat(minForce, maxForce)); // Apply force.
       }
     }
   }

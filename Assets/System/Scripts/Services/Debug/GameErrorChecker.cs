@@ -8,22 +8,22 @@ using UnityEngine;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameErrorChecker.cs
 * 
-* 用途：
-* 错误检查器。
-* 使用错误检查器获取游戏API的调用错误。
-* 错误检查器还可负责弹出全局错误窗口以检查BUG.
+* Purpose:
+* Error checker.
+* Retrieve errors from game API calls.
+* Also displays global error dialogs for debugging.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Services.Debug
 {
   /// <summary>
-  /// 错误检查器
+  /// Error checker.
   /// </summary>
   public class GameErrorChecker
   {
@@ -36,13 +36,13 @@ namespace Ballance2.Services.Debug
     }
 
     /// <summary>
-    /// 抛出游戏异常，此操作会直接停止游戏。类似于 Windows 蓝屏功能。
+    /// Raise a fatal game error and stop the game, similar to a system crash screen.
     /// </summary>
-    /// <param name="code">错误代码</param>
-    /// <param name="message">关于错误的异常信息</param>
+    /// <param name="code">Error code.</param>
+    /// <param name="message">Exception details.</param>
     public static void ThrowGameError(GameError code, string message)
     {
-      StringBuilder stringBuilder = new StringBuilder("错误代码：");
+      StringBuilder stringBuilder = new StringBuilder("Error code: ");
       stringBuilder.Append(code.ToString());
       stringBuilder.Append("\n");
       stringBuilder.Append(string.IsNullOrEmpty(message) ? GameErrorInfo.GetErrorMessage(code) : message);
@@ -66,11 +66,11 @@ namespace Ballance2.Services.Debug
     }
 
     /// <summary>
-    /// 获取或设置上一个操作的错误
+    /// Get or set the previous operation's error.
     /// </summary>
     public static GameError LastError { get; set; }
     /// <summary>
-    /// 获取上一个操作的错误说明文字
+    /// Get the previous operation's error description.
     /// </summary>
     /// <returns></returns>
     public static string GetLastErrorMessage()
@@ -79,23 +79,23 @@ namespace Ballance2.Services.Debug
     }
 
     /// <summary>
-    /// 设置错误码并打印日志
+    /// Set an error code and log a message.
     /// </summary>
-    /// <param name="code">错误码</param>
-    /// <param name="tag">日志标签</param>
-    /// <param name="message">日志信息格式化字符串</param>
-    /// <param name="param">日志信息格式化参数</param>    
+    /// <param name="code">Error code.</param>
+    /// <param name="tag">Log tag.</param>
+    /// <param name="message">Log message format string.</param>
+    /// <param name="param">Log format arguments.</param>
     public static void SetLastErrorAndLog(GameError code, string tag, string message, params object[] param)
     {
       LastError = code;
       Log.E(tag, message, param);
     }
     /// <summary>
-    /// 设置错误码并打印日志
+    /// Set an error code and log a message.
     /// </summary>
-    /// <param name="code">错误码</param>
+    /// <param name="code">Error code.</param>
     /// <param name="tag">TAG</param>
-    /// <param name="message">错误信息</param>
+    /// <param name="message">Error message.</param>
     public static void SetLastErrorAndLog(GameError code, string tag, string message)
     {
       LastError = code;
@@ -112,18 +112,18 @@ namespace Ballance2.Services.Debug
     }
 
     /// <summary>
-    /// 显示系统错误信息提示提示对话框
+    /// Show a system error dialog.
     /// </summary>
-    /// <param name="message">错误信息</param>
+    /// <param name="message">Error message.</param>
     public static void ShowSystemErrorMessage(string message)
     {
       gameGlobalErrorUI.ShowErrorUI(message);
       HideInternalObjects();
     }
     /// <summary>
-    /// 显示脚本错误信息提示提示对话框
+    /// Show a script error dialog.
     /// </summary>
-    /// <param name="message">错误信息</param>
+    /// <param name="message">Error message.</param>
     public static void ShowScriptErrorMessage(string fileName, string packName, string message)
     {
       GameEntry entry = GameEntry.Instance;
@@ -131,7 +131,7 @@ namespace Ballance2.Services.Debug
         GameSystem.ForceInterruptGame();
         HideInternalObjects();
 
-        string err = string.Format("代码异常：\n发生错误的文件：{0} 模块：{1}\n",fileName, packName) + message;
+        string err = string.Format("Code exception:\nFile: {0}, package: {1}\n",fileName, packName) + message;
         entry.GlobalGameScriptErrDialog.Show(err);
         UnityEngine.Debug.LogError(err);
       }

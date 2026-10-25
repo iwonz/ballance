@@ -7,7 +7,7 @@ using static Ballance2.Game.LevelBuilder.LevelBuilder;
 namespace Ballance2.Game.LevelBuilder
 {
   /// <summary>
-  /// 关卡JSON定义
+  /// Level JSON definition.
   /// </summary>
   [JsonObject]
   public class LevelJson {

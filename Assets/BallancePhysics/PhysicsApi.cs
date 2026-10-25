@@ -8,7 +8,7 @@ namespace BallancePhysics
 {
   public static class PhysicsApi
   {
-    #region 基础定义
+    #region Basic definitions
 
 #if UNITY_EDITOR && UNITY_EDITOR_WIN
     private const string DLL_NNAME = "bphysics_unity";
@@ -44,12 +44,12 @@ namespace BallancePhysics
     #endregion
 
     /// <summary>
-    /// 所有的API
+    /// Native API entry points.
     /// </summary>
     /// <returns></returns>
     public static ApiStruct API { get; } = new ApiStruct();
     /// <summary>
-    /// 密钥
+    /// Initialization key.
     /// </summary>
     /// <value></value>
     public static string SecretKey { get; set; }
@@ -60,18 +60,18 @@ namespace BallancePhysics
 
       IntPtr apiStructPtr = IntPtr.Zero;
 
-      //检查是否已经初始化
+      // Check whether initialization has already completed.
       if(ballance_physics_entry(4, IntPtr.Zero).ToInt64() == 1) {
         
-        //如果已经调用初始化，则需要重新生成函数指针，否则unity editor中运行会被释放
+        // Recreate function pointers after initialization because Unity Editor releases them between runs.
         apiStructPtr = ballance_physics_entry(5, IntPtr.Zero);
 
-        //获取所有函数指针
+        // Resolve all function pointers.
         API.initAll(apiStructPtr, 256);
 
       } else {
 
-        //拷贝初始配置结构
+        // Copy the initial configuration structure.
         sInitStruct initStruct = new sInitStruct();
         initStruct.smallPoolSize = PhysicsOptions.Instance.SmallPoolSize;
 #if UNITY_EDITOR
@@ -84,13 +84,13 @@ namespace BallancePhysics
         IntPtr initStructPtr = Marshal.AllocHGlobal(Marshal.SizeOf<sInitStruct>());
         Marshal.StructureToPtr(initStruct, initStructPtr, false);
 
-        //调用初始化
+        // Initialize the native engine.
         apiStructPtr = ballance_physics_entry(sTrue, initStructPtr);
 
-        //获取所有函数指针
+        // Resolve all function pointers.
         API.initAll(apiStructPtr, 256);
         
-        //释放
+        // Release resources.
         Marshal.FreeHGlobal(initStructPtr);
       }
     }

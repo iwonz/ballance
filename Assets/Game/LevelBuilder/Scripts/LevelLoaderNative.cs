@@ -11,14 +11,14 @@ using SimpleFileBrowser;
 /*
  * Copyright (c) 2020  mengyu
  * 
- * 模块名：     
+ * Module:
  * GameLevelLoaderNative.cs
  * 
- * 用途：
- * 关卡 AssetBundle 加载。
- * 因为 lua 中无法直接调用 AssetBundle 加载文件，因此将加载 AssetBundle 的代码抽离至 C# 中。
+ * Purpose:
+ * Load level AssetBundles.
+ * The AssetBundle loading code was separated into C# for the historical Lua integration.
  * 
- * 作者：
+ * Author:
  * mengyu
  */
 
@@ -80,7 +80,7 @@ namespace Ballance2.Game.LevelBuilder
       FileInfo[] thefileInfo = theFolder.GetFiles("*.*", SearchOption.AllDirectories);
       foreach (FileInfo NextFile in thefileInfo)
       { 
-        //遍历文件
+        // Enumerate files.
         string path = NextFile.FullName.Replace("\\", "/");
         if(path.EndsWith(".meta")) continue;
         int index = path.IndexOf("Assets/");
@@ -129,16 +129,16 @@ namespace Ballance2.Game.LevelBuilder
     private readonly string TAG = "LevelLoaderNative";
 
     /// <summary>
-    /// 加载关卡
+    /// Load a level.
     /// </summary>
-    /// <param name="name">名称或者路径</param>
-    /// <param name="callback">成功回调</param>
-    /// <param name="errCallback">失败回调</param>
+    /// <param name="name">Name or path.</param>
+    /// <param name="callback">Success callback.</param>
+    /// <param name="errCallback">Failure callback.</param>
     public void LoadLevel(string name, GameLevelLoaderNativeCallback callback, GameLevelLoaderNativeErrCallback errCallback)
     {
 #if UNITY_EDITOR
       string realPackagePath = GamePathManager.DEBUG_LEVEL_FOLDER + "/" + name;
-      //在编辑器中加载
+      // Load inside the editor.
       if (DebugSettings.Instance.PackageLoadWay == LoadResWay.InUnityEditorProject && Directory.Exists(realPackagePath))
       {
         Log.D(TAG, "Load package in editor : {0}", realPackagePath);
@@ -149,14 +149,14 @@ namespace Ballance2.Game.LevelBuilder
       if(true) 
 #endif
       {
-        //路径
+        // Path.
         string path = name;
         if (!PathUtils.IsAbsolutePath(path))
           path = GamePathManager.GetLevelRealPath(name.ToLower(), false);
 
-        //去除file://前缀
+        // Remove the file:// prefix.
         path = PathUtils.FixFilePathScheme(path);
-        //jar特殊处理
+        // Handle jar paths separately.
         if(!PathUtils.IsRemotePath(path) && !File.Exists(path))
         {
           Log.E(TAG, "File not exist : {0}", path);
@@ -165,7 +165,7 @@ namespace Ballance2.Game.LevelBuilder
         }
         path = PathUtils.ToRequestUrl(path);
 
-        //加载NMO
+        // Load NMO.
 #if !UNITY_EDITOR && UNITY_STANDALONE_WIN
         var ext = Path.GetExtension(path).ToLower();
         Log.D(TAG, "Load nmo file : {0} ext: {1}", path, ext);
@@ -175,14 +175,14 @@ namespace Ballance2.Game.LevelBuilder
         }
 #endif
         Log.D(TAG, "Load package : {0}", path);
-        //加载资源包
+        // Load the resource bundle.
         StartCoroutine(Loader(new LevelAssets(path), callback, errCallback));
       }
     }
     /// <summary>
-    /// 卸载关卡
+    /// Unload a level.
     /// </summary>
-    /// <param name="level">LoadLevel 返回的关卡实例</param>
+    /// <param name="level">Level instance returned by LoadLevel.</param>
     public void UnLoadLevel(LevelAssets level)
     {
       if (level != null && level.AssetBundle != null) {
@@ -191,10 +191,10 @@ namespace Ballance2.Game.LevelBuilder
       }
     }
     /// <summary>
-    /// 打开文件选择器选择一个关卡文件
+    /// Open a file picker for a level file.
     /// </summary>
-    /// <param name="ext">文件后缀名，包括点</param>
-    /// <param name="callback">成功回调</param>
+    /// <param name="ext">File extension, including the dot.</param>
+    /// <param name="callback">Success callback.</param>
     public static void PickLevelFile(string ext, GameLevelLoaderNativeErrCallback callback) {
       FileBrowser.SetFilters(false, ext);
       FileBrowser.ShowLoadDialog((paths) => {

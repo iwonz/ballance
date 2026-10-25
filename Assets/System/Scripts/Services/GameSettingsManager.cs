@@ -7,41 +7,41 @@ using UnityEngine;
 /*
 * Copyright (c) 2020  mengyu
 * 
-* 模块名：     
+* Module:
 * GameSettingsManager.cs
 * 
-* 用途：
-* 游戏设置管理器，管理整个游戏的设置
+* Purpose:
+* Manage settings across the game.
 * 
-* 通过 GameSettingsManager.GetSettings("com.your.packagename") 获取设置执行器
-* 设置执行器可调用 RegisterSettingsUpdateCallback 注册设置更改信息
-* UI通过 NotifySettingsUpdate 通知设置更改信息
+* Get an actuator through GameSettingsManager.GetSettings("com.your.packagename").
+* Use RegisterSettingsUpdateCallback to subscribe to setting changes.
+* UI notifies changes through NotifySettingsUpdate.
 * 
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Services
 {
   /// <summary>
-  /// 系统设置操作回调
+  /// System settings operation callback.
   /// </summary>
   
   
   public delegate bool GameSettingsCallback(string groupName, int action);
 
   /// <summary>
-  /// 系统设置管理器
+  /// System settings manager.
   /// </summary>
   public static class GameSettingsManager
   {
     private static Dictionary<string, GameSettingsActuator> settingsActuators = null;
 
     /// <summary>
-    /// 获取设置执行器
+    /// Get a settings actuator.
     /// </summary>
-    /// <param name="packageName">设置执行器所使用包名</param>
-    /// <returns>返回设置执行器实例</returns>
+    /// <param name="packageName">Package identifier used by the actuator.</param>
+    /// <returns>Settings actuator instance.</returns>
     public static GameSettingsActuator GetSettings(string packageName, GameSettingsActuator customActuator = null)
     {
       GameSettingsActuator gameSettingsActuator = null;
@@ -52,14 +52,14 @@ namespace Ballance2.Services
           return customActuator;
         }
         if (customActuator == null && packageName == GamePackageManager.SYSTEM_PACKAGE_NAME)
-          throw new System.Exception("操！谁提前拿这个了？");
+          throw new System.Exception("Settings accessed before initialization.");
         gameSettingsActuator = new GameSettingsActuator(packageName);
         settingsActuators.Add(packageName, gameSettingsActuator);
       }
       return gameSettingsActuator;
     }
     /// <summary>
-    /// 还原默认设置
+    /// Restore default settings.
     /// </summary>
     public static void ResetDefaultSettings()
     {
@@ -93,110 +93,110 @@ namespace Ballance2.Services
   }
 
   /// <summary>
-  /// 设置执行器，用于管理具体的设置条目
+  /// Actuator managing individual setting entries.
   /// </summary>
   public class GameSettingsActuator
   {
     /// <summary>
-    /// 指示当前设置执行器执行更新操作
+    /// Update operation.
     /// </summary>
     public const int ACTION_UPDATE = 1;
     /// <summary>
-    /// 指示当前设置执行器执行加载操作
+    /// Load operation.
     /// </summary>
     public const int ACTION_LOAD = 2;
 
     private string basePackName = "unknow";
 
     /// <summary>
-    /// 创建设置执行器
+    /// Create a settings actuator.
     /// </summary>
-    /// <param name="packageName">设置所在包名</param>
+    /// <param name="packageName">Package identifier owning these settings.</param>
     public GameSettingsActuator(string packageName)
     {
       basePackName = packageName;
     }
     /// <summary>
-    /// 设置整型设置条目
+    /// Set an integer setting.
     /// </summary>
-    /// <param name="key">设置键</param>
-    /// <param name="value">设置值</param>
+    /// <param name="key">Setting key.</param>
+    /// <param name="value">Setting value.</param>
     public virtual void SetInt(string key, int value)
     {
       PlayerPrefs.SetInt(basePackName + "." + key, value);
     }
     /// <summary>
-    /// 获取整型设置条目
+    /// Get an integer setting.
     /// </summary>
-    /// <param name="key">设置键</param>
-    /// <param name="defaultValue">未找到设置时返回的默认值</param>
+    /// <param name="key">Setting key.</param>
+    /// <param name="defaultValue">Default returned when no setting exists.</param>
     /// <returns></returns>
     public virtual int GetInt(string key, int defaultValue)
     {
       return PlayerPrefs.GetInt(basePackName + "." + key, defaultValue);
     }
     /// <summary>
-    /// 获取KeyCode型设置条目
+    /// Get a KeyCode setting.
     /// </summary>
-    /// <param name="key">设置键</param>
-    /// <param name="defaultValue">未找到设置时返回的默认值</param>
+    /// <param name="key">Setting key.</param>
+    /// <param name="defaultValue">Default returned when no setting exists.</param>
     /// <returns></returns>
     public virtual KeyCode GetKeyCode(string key, KeyCode defaultValue)
     {
       return (KeyCode)PlayerPrefs.GetInt(basePackName + "." + key, (int)defaultValue);
     }
     /// <summary>
-    /// 设置字符串型设置条目
+    /// Set a string setting.
     /// </summary>
-    /// <param name="key">设置键</param>
-    /// <param name="value">设置值</param>
+    /// <param name="key">Setting key.</param>
+    /// <param name="value">Setting value.</param>
     public virtual void SetString(string key, string value)
     {
       PlayerPrefs.SetString(basePackName + "." + key, value);
     }
     /// <summary>
-    /// 获取字符串型设置条目
+    /// Get a string setting.
     /// </summary>
-    /// <param name="key">设置键</param>
-    /// <param name="defaultValue">未找到设置时返回的默认值</param>
+    /// <param name="key">Setting key.</param>
+    /// <param name="defaultValue">Default returned when no setting exists.</param>
     /// <returns></returns>
     public virtual string GetString(string key, string defaultValue)
     {
       return PlayerPrefs.GetString(basePackName + "." + key, defaultValue);
     }
     /// <summary>
-    /// 设置浮点型设置条目
+    /// Set a floating-point setting.
     /// </summary>
-    /// <param name="key">设置键</param>
-    /// <param name="value">设置值</param>
+    /// <param name="key">Setting key.</param>
+    /// <param name="value">Setting value.</param>
     public virtual void SetFloat(string key, float value)
     {
       PlayerPrefs.SetFloat(basePackName + "." + key, value);
     }
     /// <summary>
-    /// 获取浮点型设置条目
+    /// Get a floating-point setting.
     /// </summary>
-    /// <param name="key">设置键</param>
-    /// <param name="defaultValue">未找到设置时返回的默认值</param>
+    /// <param name="key">Setting key.</param>
+    /// <param name="defaultValue">Default returned when no setting exists.</param>
     /// <returns></returns>
     public virtual float GetFloat(string key, float defaultValue)
     {
       return PlayerPrefs.GetFloat(basePackName + "." + key, defaultValue);
     }
     /// <summary>
-    /// 设置布尔型设置条目
+    /// Set a boolean setting.
     /// </summary>
-    /// <param name="key">设置键</param>
-    /// <param name="value">设置值</param>
+    /// <param name="key">Setting key.</param>
+    /// <param name="value">Setting value.</param>
     public virtual void SetBool(string key, bool value)
     {
       PlayerPrefs.SetString(basePackName + "." + key, value.ToString());
     }
     /// <summary>
-    /// 获取布尔型设置条目
+    /// Get a boolean setting.
     /// </summary>
-    /// <param name="key">设置键</param>
-    /// <param name="defaultValue">未找到设置时返回的默认值</param>
+    /// <param name="key">Setting key.</param>
+    /// <param name="defaultValue">Default returned when no setting exists.</param>
     /// <returns></returns>
     public virtual bool GetBool(string key, bool defaultValue = false)
     {
@@ -263,9 +263,9 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 通知设置组加载更新
+    /// Notify a settings group to load its values.
     /// </summary>
-    /// <param name="groupName">组名称，为*表示所有</param>
+    /// <param name="groupName">Group name; * selects all groups.</param>
     public void RequireSettingsLoad(string groupName)
     {
       if (groupName == "*")
@@ -278,9 +278,9 @@ namespace Ballance2.Services
             if (d.callback(groupName, ACTION_LOAD)) break;
     }
     /// <summary>
-    /// 通知设置组更新
+    /// Notify a settings group of an update.
     /// </summary>
-    /// <param name="groupName">组名称，为*表示所有</param>
+    /// <param name="groupName">Group name; * selects all groups.</param>
     public void NotifySettingsUpdate(string groupName)
     {
       if (groupName == "*")
@@ -293,10 +293,10 @@ namespace Ballance2.Services
             d.callback(groupName, ACTION_UPDATE);
     }
     /// <summary>
-    /// 注册设置组更新回调
+    /// Register a settings group update callback.
     /// </summary>
-    /// <param name="groupName">组名称</param>
-    /// <param name="handler">回调</param>
+    /// <param name="groupName">Group name.</param>
+    /// <param name="handler">Callback.</param>
     public int RegisterSettingsUpdateCallback(string groupName, GameSettingsCallback callback)
     {
       var v = new SettingUpdateCallbackData(groupName, callback);
@@ -304,9 +304,9 @@ namespace Ballance2.Services
       return v.id;
     }
     /// <summary>
-    /// 取消注册设置组更新回调
+    /// Unregister a settings group update callback.
     /// </summary>
-    /// <param name="id">回调ID</param>
+    /// <param name="id">Callback ID.</param>
     public void UnRegisterSettingsUpdateCallback(int id)
     {
       for (var i = 0; i < settingUpdateCallbacks.Count; i++)

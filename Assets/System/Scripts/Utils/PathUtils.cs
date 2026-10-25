@@ -5,13 +5,13 @@ using System.Text;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * PathUtils.cs
 * 
-* 用途：
-* 路径字符串工具类
+* Purpose:
+* Path string helpers.
 *
-* 作者：
+* Author:
 * mengyu
 *
 */
@@ -19,15 +19,15 @@ using System.Text;
 namespace Ballance2.Utils
 {
   /// <summary>
-  /// 路径字符串工具类, 提供了一些路径的处理工具方法。
+  /// Path processing helpers.
   /// </summary>
   public static class PathUtils
   {
     /// <summary>
-    /// 检测一个路径是否是绝对路径
+    /// Check whether a path is absolute.
     /// </summary>
-    /// <param name="path">路径</param>
-    /// <returns>是否是绝对路径</returns>
+    /// <param name="path">Path.</param>
+    /// <returns>Whether the path is absolute.</returns>
     public static bool IsAbsolutePath(string path)
     {
       return Path.IsPathRooted(path) || IsRemotePath(path) || path.StartsWith("file:");
@@ -45,9 +45,9 @@ namespace Ballance2.Utils
       return IsRemotePath(path) || path.StartsWith("file:") ? path : new System.Uri(Path.GetFullPath(path)).AbsoluteUri;
     }
     /// <summary>
-    /// 替换绝对路径至当前项目相对路径
+    /// Convert an absolute path to a project-relative path.
     /// </summary>
-    /// <param name="path">绝对路径</param>
+    /// <param name="path">Absolute path.</param>
     /// <returns></returns>
     public static string ReplaceAbsolutePathToRelativePath(string path)
     {
@@ -65,7 +65,7 @@ namespace Ballance2.Utils
     }
 #if UNITY_EDITOR
     /**
-      * 物理路径转为项目路径
+      * Convert a filesystem path to a project path.
       */
     public static string AbsPathToRelPath(string path) {
       path = path.Replace('\\', '/');
@@ -83,11 +83,11 @@ namespace Ballance2.Utils
     }
 #endif
     /// <summary>
-    /// 合并两个相对路径为完整路径，它会处理当前目录（./）和上级目录（../）
+    /// Combine paths, resolving current-directory and parent-directory segments.
     /// </summary>
-    /// <param name="path1">主路径</param>
-    /// <param name="path2">副路径</param>
-    /// <returns>处理完成的完整路径</returns>
+    /// <param name="path1">Base path.</param>
+    /// <param name="path2">Relative path.</param>
+    /// <returns>Resolved full path.</returns>
     public static string JoinTwoPath(string path1, string path2)
     {
       StringBuilder sb = new StringBuilder();
@@ -100,9 +100,9 @@ namespace Ballance2.Utils
         if (n == ".")
           continue;
         else if (n == "..")
-          dirs1.RemoveAt(dirs1.Count - 1); //移除一个，目录
+          dirs1.RemoveAt(dirs1.Count - 1); // Remove a directory segment.
         else
-          dirs1.Add(n); //添加
+          dirs1.Add(n); // Add.
       }
       for (int i = 0; i < dirs1.Count; i++)
       {
@@ -113,9 +113,9 @@ namespace Ballance2.Utils
       return sb.ToString();
     }
     /// <summary>
-    /// 获取路径中的文件名（不包括后缀）
+    /// Get the filename without its extension.
     /// </summary>
-    /// <param name="path">路径</param>
+    /// <param name="path">Path.</param>
     /// <returns></returns>
     public static string GetFileNameWithoutExt(string path)
     {
@@ -138,9 +138,9 @@ namespace Ballance2.Utils
       return path;
     }
     /// <summary>
-    /// 获取路径中的文件名（包括后缀）
+    /// Get the filename including its extension.
     /// </summary>
-    /// <param name="path">路径</param>
+    /// <param name="path">Path.</param>
     /// <returns></returns>
     public static string GetFileName(string path)
     {
@@ -158,10 +158,10 @@ namespace Ballance2.Utils
       return path;
     }
     /// <summary>
-    /// 修复文件路径的 file:/// 前缀
+    /// Normalize a file:/// path prefix.
     /// </summary>
-    /// <param name="path">路径</param>
-    /// <returns>返回不带 file:/// 前缀的路径</returns>
+    /// <param name="path">Path.</param>
+    /// <returns>Path without the file:/// prefix.</returns>
     public static string FixFilePathScheme(string path)
     {
       if (path.StartsWith("file:"))

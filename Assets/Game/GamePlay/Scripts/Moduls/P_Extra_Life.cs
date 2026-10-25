@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Moduls
 {
   /// <summary>
-  /// 生命球组件
+  /// Extra life component.
   /// </summary>
   public class P_Extra_Life : ModulBase 
   {
@@ -34,7 +34,7 @@ namespace Ballance2.Game.GamePlay.Moduls
           }
         };
       }
-      //触发射线，检查当前下方是不是路面，如果是，则显示 Shadow
+      // Raycast downward and show the shadow when a floor is beneath the object.
       RaycastHit hitinfo;
       if (Physics.Raycast(transform.position, new Vector3(0, -1, 0), out hitinfo, 5) && hitinfo.collider != null) {
         var parentName = hitinfo.collider.gameObject.tag;
@@ -49,7 +49,7 @@ namespace Ballance2.Game.GamePlay.Moduls
 
     public override void Active()
     {
-      //如果在路面上，还要播放上下的动画
+      // Also play the bobbing animation while over a floor.
       if (_OnFloor)
         P_Extra_Life_Animator.Play("P_ExtraLife_Updown_Animation", 1);
 

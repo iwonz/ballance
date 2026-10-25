@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Ballance2.Game.GamePlay.Moduls
 {
   /// <summary>
-  /// 额外分数组件
+  /// Extra points component.
   /// </summary>
   public class P_Extra_Point : ModulBase 
   {
@@ -52,7 +52,7 @@ namespace Ballance2.Game.GamePlay.Moduls
     protected override void Start()
     {
       if (!IsPreviewMode) {
-        //初始化小球
+        // Initialize small spheres.
         for (int i = 1; i <= 6; i++)
           _P_Extra_Point_Ball_Fly[i] = P_Extra_Point_Ball[i].GetComponent<SmoothFly>();
 
@@ -78,12 +78,12 @@ namespace Ballance2.Game.GamePlay.Moduls
           fly.ArrivalDiatance = 2;
           fly.ArrivalCallback = (fly) => {
             if (!_FlyUp) {
-              target.Fly = false; //停止追逐
+              target.Fly = false; // Stop chasing.
               ballParticle.SetActive(false);
               flowParticle.SetActive(false);
               hitFizz.SetActive(true);
               hitAudio.Play();
-              GamePlayManager.Instance.AddPoint(20); //小球是20分
+              GamePlayManager.Instance.AddPoint(20); // Small spheres award 20 points.
             }
           };
         }
@@ -92,11 +92,11 @@ namespace Ballance2.Game.GamePlay.Moduls
           if (IsActive && ! _Actived && otherBody.tag == "Ball") {
             _Actived = true;
             StartFly();
-            GamePlayManager.Instance.AddPoint(100); //大球是100分
+            GamePlayManager.Instance.AddPoint(100); // The large sphere awards 100 points.
           }
         };
       }
-      //触发射线，检查当前下方是不是路面，如果是，则显示 Shadow
+      // Raycast downward and show the shadow when a floor is beneath the object.
       RaycastHit hitinfo;
       if (Physics.Raycast(transform.position, new Vector3(0, -1, 0), out hitinfo, 5) && hitinfo.collider != null) {
         var parentName = hitinfo.collider.gameObject.tag;
@@ -131,7 +131,7 @@ namespace Ballance2.Game.GamePlay.Moduls
       P_Extra_Point_Fizz.SetActive(true);
       P_Extra_Point_Sound.Play();
 
-      //目标平移到指定位置
+      // Move the target to the specified position.
 
       var upY = 30.0f;
 
@@ -184,7 +184,7 @@ namespace Ballance2.Game.GamePlay.Moduls
     }
 
     private void FixedUpdate() {
-      //旋转小球
+      // Rotate small spheres.
       if (_Rotate) {
         P_Extra_Point_Ball[1].transform.RotateAround(_RotCenter, _RotAxis1, _RotDegree);
         P_Extra_Point_Ball[2].transform.RotateAround(_RotCenter, _RotAxis2, _RotDegree);;
@@ -243,11 +243,11 @@ namespace Ballance2.Game.GamePlay.Moduls
       this.Deactive();
     }
     protected override void BallEnterRange() {
-      if (IsActive && ! _Actived && !_Rotate) //进入范围后才旋转
+      if (IsActive && ! _Actived && !_Rotate) // Start rotating only after the ball enters the range.
         _Rotate = true;
     }   
     protected override void BallLeaveRange() {
-      if (IsActive && !_Actived && _Rotate) //离开范围后停止旋转
+      if (IsActive && !_Actived && _Rotate) // Stop rotating when the ball leaves the range.
         _Rotate = false;
     }
   }

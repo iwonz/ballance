@@ -12,13 +12,13 @@ using UnityEngine.Networking;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameZipPackage.cs
 * 
-* 用途：
-* 游戏模块(Zip)声明
+* Purpose:
+* ZIP game package definition.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -34,7 +34,7 @@ namespace Ballance2.Package
       MemoryStream ms = null;
 
       try {
-        //如果路径以jar:开头，则使用www方式读取
+        // Read jar paths through the web request path.
         if(PathUtils.IsRemotePath(PackageFilePath)) {
 
           using var request = UnityWebRequest.Get(PackageFilePath);
@@ -51,7 +51,7 @@ namespace Ballance2.Package
           }
         }
         else {
-          //在zip中加载Def
+          // Load the definition from the ZIP.
           zip = ZipUtils.OpenZipFile(PackageFilePath);
         }
         if (zip == null)
@@ -62,16 +62,16 @@ namespace Ballance2.Package
         XmlDocument packageDef = null;
         Sprite logo = null;
 
-        //搜索zip内容
+        // Search ZIP contents.
         ZipEntry theEntry;
         while ((theEntry = zip.GetNextEntry()) != null)
         {
           if (theEntry.Name == "/PackageDef.xml" || theEntry.Name == "PackageDef.xml")
-            packageDef = await LoadPackageDefInZip(zip, theEntry); //加载定义文件
+            packageDef = await LoadPackageDefInZip(zip, theEntry); // Load the definition file.
           else if (theEntry.Name == "/PackageLanguageResPre.xml" || theEntry.Name == "PackageLanguageResPre.xml")
-            await LoadPackageLanguageResPreInZip(zip, theEntry); //加载语言文件
+            await LoadPackageLanguageResPreInZip(zip, theEntry); // Load the language file.
           else if (theEntry.Name == "/PackageLogo.png" || theEntry.Name == "PackageLogo.png")
-            logo = await LoadLogoInZip(zip, theEntry); //加载图标
+            logo = await LoadLogoInZip(zip, theEntry); // Load the logo.
         }
 
         zip.Close();
@@ -80,7 +80,7 @@ namespace Ballance2.Package
         if (packageDef == null)
         {
           GameErrorChecker.SetLastErrorAndLog(GameError.PackageDefNotFound, TAG, "PackageDef.xml not found");
-          LoadError = "模块并不包含 PackageDef.xml";
+          LoadError = "Package does not contain PackageDef.xml.";
           return false;
         } 
         else 
@@ -91,7 +91,7 @@ namespace Ballance2.Package
         }
       }
       catch(Exception e) {
-        GameErrorChecker.SetLastErrorAndLog(GameError.ExecutionFailed, TAG, "加载异常 " + e.ToString());
+        GameErrorChecker.SetLastErrorAndLog(GameError.ExecutionFailed, TAG, "Loading exception: " + e.ToString());
       }
       finally { 
         if(ms != null)
@@ -107,7 +107,7 @@ namespace Ballance2.Package
       MemoryStream ms = null;
 
       try{
-        //如果路径以jar:开头，则使用www方式读取
+        // Read jar paths through the web request path.
         if(PathUtils.IsRemotePath(PackageFilePath)) {
 
           using var request = UnityWebRequest.Get(PackageFilePath);
@@ -124,7 +124,7 @@ namespace Ballance2.Package
           }
         }
         else {
-          //在zip中加载Def
+          // Load the definition from the ZIP.
           zip = ZipUtils.OpenZipFile(PathUtils.FixFilePathScheme(PackageFilePath));
         }
 
@@ -147,11 +147,11 @@ namespace Ballance2.Package
         if(assetbundleFound) 
           result = await base.LoadPackage();
         else
-          GameErrorChecker.SetLastErrorAndLog(GameError.FileNotFound, TAG, "未找到 " + PackageName + ".assetbundle");
+          GameErrorChecker.SetLastErrorAndLog(GameError.FileNotFound, TAG, "Not found: " + PackageName + ".assetbundle");
         return result;
       }
       catch(Exception e) {
-        GameErrorChecker.SetLastErrorAndLog(GameError.ExecutionFailed, TAG, "加载异常 " + e.ToString());
+        GameErrorChecker.SetLastErrorAndLog(GameError.ExecutionFailed, TAG, "Loading exception: " + e.ToString());
       }
       finally { 
         if(ms != null)
@@ -222,7 +222,7 @@ namespace Ballance2.Package
       }
       catch (Exception e)
       {
-        Log.E(TAG, "在加载模块的 Logo {0} 失败\n错误信息：{1}", BaseInfo.Logo, e.ToString());
+        Log.E(TAG, "Failed to load package logo {0}\nError: {1}", BaseInfo.Logo, e.ToString());
         return null;
       }
     }
@@ -233,12 +233,12 @@ namespace Ballance2.Package
 
       if (ms == null)
       {
-        LoadError = "错误的包，并不包含 AssetBundle";
+        LoadError = "Invalid package: AssetBundle is missing.";
         GameErrorChecker.SetLastErrorAndLog(GameError.AssetBundleNotFound, TAG, "Not found AssetBundle in Package");
         return false;
       }
 
-      //加载 AssetBundle
+      // Load the AssetBundle.
       AssetBundleCreateRequest createRequest = AssetBundle.LoadFromMemoryAsync(ms.ToArray());
       await createRequest;
 
@@ -249,7 +249,7 @@ namespace Ballance2.Package
 
       if (AssetBundle == null)
       {
-        LoadError = "错误的包，加载 AssetBundle 失败";
+        LoadError = "Invalid package: failed to load AssetBundle.";
         GameErrorChecker.SetLastErrorAndLog(GameError.AssetBundleNotFound, TAG, "AssetBundle load failed in Package");
         return false;
       }
@@ -277,7 +277,7 @@ namespace Ballance2.Package
           }
           catch (Exception e)
           {
-            Log.E(TAG, "模组包 {0} 加载代码 {1} 错误, 错误：\n{2}", PackageName, pathorname, e.ToString());
+            Log.E(TAG, "Package {0} failed to load code {1}. Error:\n{2}", PackageName, pathorname, e.ToString());
             return null;
           } 
           finally 
@@ -288,9 +288,9 @@ namespace Ballance2.Package
         }
       }
 
-      Log.E(TAG, "模组包 {0} 加载代码错误, 代码 {1} 未找到", PackageName, pathorname);
+      Log.E(TAG, "Package {0} failed to load code: {1} was not found.", PackageName, pathorname);
 #else
-      Log.E(TAG, "模组包 {0} 加载代码错误：当前使用 IL2CPP 模式，因此 C# DLL 不能加载", PackageName);
+      Log.E(TAG, "Package {0} cannot load C# DLLs under IL2CPP.", PackageName);
 #endif
       return null;
     }

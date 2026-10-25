@@ -11,13 +11,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2022  mengyu
 *
-* 模块名：     
+* Module:
 * DebugConsole.cs
 * 
-* 用途：
-* 调试控制台逻辑管理。
+* Purpose:
+* Debug console logic.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -63,7 +63,7 @@ namespace Ballance2.DebugTools
     {
       this.GameUIManager = GameManager.GetSystemService<GameUIManager>();
 
-      // 注册日志观察者
+      // Register a log observer.
       this.logObserver = Log.RegisterLogObserver((level, tag, message, stackTrace) =>
       {
         if (this.logForceDisable)
@@ -101,27 +101,27 @@ namespace Ballance2.DebugTools
         item.stackTrace = stackTrace;
         this.logItems.Add(item);
 
-        //重新布局
+        // Rebuild layout.
         this.RelayoutLogContent();
 
         text.gameObject.SetActive(true);
-        //滚动到末尾
+        // Scroll to the end.
         if (this.logAutoScroll)
           this.ConsoleScrollView.normalizedPosition = Vector2.zero;
       }, LogLevel.All);
 
       this.logForceDisable = false;
 
-      //命令服务的准备
+      // Prepare the command service.
       this.commandServer = GameManager.Instance.GameDebugCommandServer;
       commandServer.RegisterCommand("clear", (keyword, fullCmd, argsCount, args) => {
         ClearCommand();
         commandHistory.Clear();
         commandHistoryIndex = 0;
         return true;
-      }, 0, "clear 清空控制台");
+      }, 0, "clear > Clear the console");
 
-      //发送没有抓取到的日志
+      // Replay logs not yet captured.
       Log.SendLogsInTemporary();
 
       commandHistory.Add("");
@@ -142,7 +142,7 @@ namespace Ballance2.DebugTools
       }
     }
 
-    //布局日志界面
+    // Lay out the log view.
     private void RelayoutLogContent()
     {
       var transform = ConsoleContainerContent;
@@ -171,7 +171,7 @@ namespace Ballance2.DebugTools
       }
       transform.sizeDelta = new Vector2(w, h < 200 ? 200 : h);
     }
-    //清空日志条目
+    // Clear log entries.
     private void ClearLogContent()
     {
       var transform = ConsoleContainerContent;
@@ -181,26 +181,26 @@ namespace Ballance2.DebugTools
       transform.sizeDelta = new Vector2(transform.sizeDelta.x, 300);
     }
     
-    //AutoScroll更改
+    // AutoScroll changed.
     public void OnAutoScrollChanged()
     {
       logAutoScroll = CheckBoxAutoScroll.isOn;
     }
-    //显示错误Checkbox更改事件
+    // Error visibility checkbox changed.
     public void OnShowErrCheckChange()
     {
       logShowErrAndWarn = CheckBoxWarningAndErr.isOn;
       RelayoutLogContent();
       SwitchCommandHelp(false);
     }
-    //显示信息Checkbox更改事件
+    // Information visibility checkbox changed.
     public void OnShowMessagesCheckChange()
     {
       logShowMessage = CheckBoxMessages.isOn;
       RelayoutLogContent();
       SwitchCommandHelp(false);
     }
-    //筛选Input输入完成事件
+    // Filter input completed.
     public void OnFilterInputEndInput()
     {
       logFilter = FilterLogInputField.text;
@@ -242,17 +242,17 @@ namespace Ballance2.DebugTools
       }
     }
     private void GenCommandHelp(string text) {
-      //生成指令帮助
+      // Generate command help.
       CommandHelpText.text = commandServer.GenCommandHelp(text);
     }
 
-    //聚焦输入框
+    // Focus the input field.
     public void OnConsoleShow() {
       RelayoutLogContent();
       EventSystem.current.SetSelectedGameObject(null);
       EventSystem.current.SetSelectedGameObject(CommandInputField.gameObject);
     }
-    //Input输入事件
+    // Input event.
     public void OnCommandInputFieldChange() {
       string text = CommandInputField.text;
       if (text.StartsWith('/')) {
@@ -262,12 +262,12 @@ namespace Ballance2.DebugTools
         SwitchCommandHelp(false);
       }
     }
-    //强制GC
+    // Force garbage collection.
     public void ForceGC() {
       System.GC.Collect();
       Log.D("Debug", "GC Finish");
     }
-    //执行命令
+    // Execute the command.
     public void ExecCommand()
     {
       string enter = CommandInputField.text;
@@ -290,16 +290,16 @@ namespace Ballance2.DebugTools
         SwitchCommandHelp(false);
       }
     }
-    //清空命令窗口
+    // Clear the command window.
     public void ClearCommand()
     {
-      //清空日志条目
+      // Clear log entries.
       ClearLogContent();
       GameManager.GameMediator.NotifySingleEvent("DebugToolsClear");
-      //重新布局
+      // Rebuild layout.
       RelayoutLogContent();
     }
-    //关闭命令窗口
+    // Close the command window.
     public void CloseWindow()
     {
       DebugManager.SwitchConsoleVisible();

@@ -5,20 +5,20 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * Toggle.cs
 * 
-* 用途：
-* 一个开关组件，与原版的Chexkbox区分开来
+* Purpose:
+* Toggle component distinct from the standard checkbox.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Core.Controls
 {
   /// <summary>
-  /// 一个开关组件
+  /// Toggle component.
   /// </summary>
   [ExecuteInEditMode]
   [AddComponentMenu("Ballance/UI/Controls/ToggleEx")]

@@ -11,7 +11,7 @@ using UnityEngine.UI;
 namespace Ballance2.Game.GamePlay.Debug
 {
   /// <summary>
-  /// 迷你机关调试环境
+  /// Minimal mechanism debugging environment.
   /// </summary>
   public static class GamePlayModulDebugManager
   {
@@ -20,21 +20,21 @@ namespace Ballance2.Game.GamePlay.Debug
 
     public static void Init() {
       var GameDebugEntry = Ballance2.Entry.GameDebugEntry.Instance;
-      //检查参数
+      // Validate parameters.
       if (GameDebugEntry.ModulTestFloor == null) {
-        GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "ModulTestFloor 未设置！");
+        GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "ModulTestFloor is not set!");
         return;
       }
       if (GameDebugEntry.ModulTestUI == null) {
-        GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "ModulTestUI 未设置！");
+        GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "ModulTestUI is not set!");
         return;
       }
       if (GameDebugEntry.ModulInstance) {
-        GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "ModulInstance 未设置！");
+        GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "ModulInstance is not set!");
         return;
       }
       if (GameDebugEntry.ModulName == "") {
-        GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "ModulName 未设置！");
+        GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "ModulName is not set!");
         return;
       }
 
@@ -43,10 +43,10 @@ namespace Ballance2.Game.GamePlay.Debug
         GameObject Modul_Placeholder = null;
         GamePlayManager GamePlayManager = GamePlay.GamePlayManager.Instance;
         
-        //加载物理环境
+        // Load the physics environment.
         GamePlayManager.GamePhysicsWorld.Create();
 
-        //克隆路面
+        // Clone floors.
         var physicsData = GamePhysFloor.Data["Phys_Floors"];
         var physicsDataStopper = GamePhysFloor.Data["Phys_FloorStopper"];
         var group = GameManager.Instance.InstancePrefab(GameDebugEntry.ModulTestFloor, "ModulTestFloor");
@@ -96,15 +96,15 @@ namespace Ballance2.Game.GamePlay.Debug
         }
 
         if (PR_Resetpoint == null) {
-          GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "没有找到PR_Resetpoint, 请在测试路面预制体中添加一个");
+          GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, "PR_Resetpoint was not found. Add one to the test floor prefab.");
           return;
         }
         if (Modul_Placeholder == null) {
-          GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, $"没有找到{GameDebugEntry.ModulName}, 请在测试路面预制体中添加一个");
+          GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, $"{GameDebugEntry.ModulName} was not found. Add it to the test floor prefab.");
           return;
         }
 
-        //克隆机关
+        // Clone mechanisms.
         Modul_Instace = GameManager.Instance.InstancePrefab(GameDebugEntry.ModulInstance, "ModulInstance");
         Modul_Instace.transform.position = Modul_Placeholder.transform.position;
         Modul_Instace.transform.rotation = Modul_Placeholder.transform.rotation;
@@ -112,12 +112,12 @@ namespace Ballance2.Game.GamePlay.Debug
 
         var Modul_Classes = Modul_Instace.GetComponents<ModulBase>();
         if (Modul_Classes.Length == 0) {
-          GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, $"没有在{Modul_Instace.name}上找到 ModulBase ！请确定已绑定脚本");
+          GameErrorChecker.ThrowGameError(GameError.ParamNotProvide, $"ModulBase was not found on {Modul_Instace.name}. Check the attached scripts.");
           return;
         }
         var Modul_Class = Modul_Classes[0];
         
-        //克隆UI
+        // Clone UI.
         var ui = GameManager.Instance.InstancePrefab(GameDebugEntry.ModulTestUI, GameManager.Instance.GameCanvas, "ModulTestUI");
         stateText = ui.transform.Find("Text").GetComponent<Text>();
         var button = ui.transform.Find("Text").GetComponent<Button>();
@@ -169,11 +169,11 @@ namespace Ballance2.Game.GamePlay.Debug
 
         Modul_Class.gameObject.SetActive(true);
         GameTimer.Delay(0.3f, () => {
-          //初始备份数据
+          // Back up initial state.
           Modul_Class.Backup();
           Modul_Class.Deactive();
 
-          //构建数据
+          // Build data.
           GamePlayManager.SectorManager.CurrentLevelSectorCount = 1;
           GamePlayManager.SectorManager.CurrentLevelSectors[1] = new SectorManager.SectorDataStorage{ moduls = { Modul_Class } };
           GamePlayManager.SectorManager.CurrentLevelRestPoints[1] = new SectorManager.RestPointsDataStorage {
@@ -184,7 +184,7 @@ namespace Ballance2.Game.GamePlay.Debug
           GamePlayManager.CreateSkyAndLight("L", null, StringUtils.StringToColor("#B09D89"));
 
           UpdateText("Active");
-          //开始关卡
+          // Start the level.
           GameMediator.Instance.NotifySingleEvent("CoreGamePlayManagerInitAndStart", null);
         });
       });

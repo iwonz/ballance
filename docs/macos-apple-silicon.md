@@ -33,7 +33,7 @@ It selects ARM64 and Mono, explicitly builds `Assets/Scenes/Main.unity`, builds
 the core package, every module in `Assets/Packages`, and levels 01–13 for
 `StandaloneOSX`. Packages go under `Ballance.app/Contents/{Core,Packages,Levels}`
 to match the game's resource loader and Unity's
-[macOS data path](https://docs.unity3d.com/2021.3/Documentation/ScriptReference/Application-dataPath.html).
+[macOS data path](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Application-dataPath.html).
 Mono preserves support for dynamically
 loaded C# mods. The ARM64/Mono settings remain selected after the build.
 
@@ -45,13 +45,12 @@ The native physics binary is already checked in at
 `Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib`. Its importer enables
 ARM64 in the macOS editor and player. The `macOS/x64` copy is for Intel only.
 No M3-specific compiler target or rebuild of the external IVP source is needed.
-The build places this dylib directly in `Contents/PlugIns`: leaving it in Unity
-2021's generated `ARM64` subfolder causes `DllNotFoundException` in the Mono
+The build places this dylib directly in `Contents/PlugIns`: leaving it in the generated `ARM64` subfolder causes `DllNotFoundException` in the Mono
 player even though a direct native-library smoke test succeeds.
 
 ## Russian interface
 
-In version 1.0.9, choose **Settings → Language → Русский** and confirm the game
+Choose **Settings → Language → Russian** and confirm the game
 restart. The preference is saved immediately and used on subsequent launches.
 A fresh installation also follows a Russian system language automatically.
 Built-in menus, settings, tutorials, level labels, mod descriptions and dialogs
@@ -98,7 +97,7 @@ permissions. Ad-hoc signing does not provide Apple notarization. A downloaded
 build may need approval in **System Settings → Privacy & Security → Open
 Anyway**. Distribution without this prompt requires the maintainer's Developer
 ID and notarization credentials; see
-[Unity's signing guide](https://docs.unity3d.com/2021.3/Documentation/Manual/macos-building-notarization.html).
+[Unity's signing guide](https://docs.unity3d.com/6000.6/Documentation/Manual/macos-building-notarization.html).
 
 Before publishing a release, download the workflow artifact onto an M-series
 Mac and check the menu, sound, loading level 01, ball movement/collisions, and

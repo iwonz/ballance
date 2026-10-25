@@ -1,13 +1,13 @@
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GamePoolManager.cs
 * 
-* 用途：
-* 对象池管理器。
+* Purpose:
+* Object pool manager.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -22,7 +22,7 @@ using UnityEngine.Events;
 namespace Ballance2.Services
 {
   /// <summary>
-  /// 对象池管理器，分普通类对象池+资源游戏对象池
+  /// Manage both ordinary object pools and GameObject resource pools.
   /// </summary>
   public class GamePoolManager : GameService<GamePoolManager>
   {
@@ -66,14 +66,14 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 创建游戏对象池
+    /// Create a GameObject pool.
     /// </summary>
-    /// <param name="poolName">池名称</param>
-    /// <param name="poolObjectPrefab">池对象的预制体</param>
-    /// <param name="initCount">初始大小</param>
-    /// <param name="maxSize">最大大小</param>
-    /// <param name="pool">池物体挂载的根</param>
-    /// <returns>返回游戏资源池</returns>
+    /// <param name="poolName">Pool name.</param>
+    /// <param name="poolObjectPrefab">Pooled object prefab.</param>
+    /// <param name="initCount">Initial size.</param>
+    /// <param name="maxSize">Maximum size.</param>
+    /// <param name="pool">Root transform for pooled objects.</param>
+    /// <returns>GameObject pool.</returns>
     public GameObjectPool CreatePool(string poolName, int initSize, int maxSize, GameObject prefab)
     {
       var pool = new GameObjectPool(poolName, prefab, initSize, maxSize, PoolRootObject);
@@ -82,10 +82,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 获取指定名称游戏对象池
+    /// Get a named GameObject pool.
     /// </summary>
-    /// <param name="poolName">池名称</param>
-    /// <returns>返回游戏资源池，如果未找到，则返回null</returns>
+    /// <param name="poolName">Pool name.</param>
+    /// <returns>The GameObject pool, or null if not found.</returns>
     public GameObjectPool GetPool(string poolName)
     {
       if (m_GameObjectPools.ContainsKey(poolName))
@@ -97,10 +97,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 在指定名称游戏对象池中获取可用对象
+    /// Get an available object from a named pool.
     /// </summary>
-    /// <param name="poolName">池名称</param>
-    /// <returns>返回游戏资源，如果未找到，或者无可用实例，则返回null</returns>
+    /// <param name="poolName">Pool name.</param>
+    /// <returns>The object, or null if the pool is missing or has no available instance.</returns>
     public GameObject Get(string poolName)
     {
       GameObject result = null;
@@ -123,10 +123,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 在指定名称游戏对象池中回退对象
+    /// Return an object to a named pool.
     /// </summary>
-    /// <param name="poolName">池名称</param>
-    /// <param name="go">对象</param>
+    /// <param name="poolName">Pool name.</param>
+    /// <param name="go">Object.</param>
     public void Release(string poolName, GameObject go)
     {
       if (m_GameObjectPools.ContainsKey(poolName))
@@ -141,15 +141,15 @@ namespace Ballance2.Services
       }
     }
 
-    //自定义池相关方法
+    // Custom pool helpers.
     ///-----------------------------------------------------------------------------------------------
 
     /// <summary>
-    /// 创建指定类型的资源池。
+    /// Create a pool for a type.
     /// </summary>
-    /// <typeparam name="T">指定类型</typeparam>
-    /// <param name="actionOnGet">获取回调</param>
-    /// <param name="actionOnRelease">释放回调</param>
+    /// <typeparam name="T">Element type.</typeparam>
+    /// <param name="actionOnGet">Callback when acquiring an object.</param>
+    /// <param name="actionOnRelease">Callback when releasing an object.</param>
     public ObjectPool<T> CreatePool<T>(UnityAction<T> actionOnGet, UnityAction<T> actionOnRelease) where T : class
     {
       var type = typeof(T);
@@ -159,9 +159,9 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 获取指定类型的资源池。
+    /// Get the pool for a type.
     /// </summary>
-    /// <typeparam name="T">指定类型</typeparam>
+    /// <typeparam name="T">Element type.</typeparam>
     public ObjectPool<T> GetPool<T>() where T : class
     {
       var type = typeof(T);
@@ -174,9 +174,9 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 在指定类型的资源池中获取可用资源。
+    /// Acquire an available object from the pool for a type.
     /// </summary>
-    /// <typeparam name="T">指定类型</typeparam>
+    /// <typeparam name="T">Element type.</typeparam>
     public T Get<T>() where T : class
     {
       var pool = GetPool<T>();
@@ -188,10 +188,10 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 释放指定类型的资源池中的指定对象。
+    /// Release an object to the pool for a type.
     /// </summary>
-    /// <param name="obj">指定对象</param>
-    /// <typeparam name="T">指定类型</typeparam>
+    /// <param name="obj">Object to release.</param>
+    /// <typeparam name="T">Element type.</typeparam>
     public void Release<T>(T obj) where T : class
     {
       var pool = GetPool<T>();

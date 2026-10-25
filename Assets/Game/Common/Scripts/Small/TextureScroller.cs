@@ -3,31 +3,31 @@ using UnityEngine;
 /*
 * Copyright(c) 2021 imengyu
 *
-* 模块名：     
+* Module:
 * TextureScroller.cs
 * 
-* 用途：
-* 材质贴图滚动组件。在游戏中用于云层的滚动。
+* Purpose:
+* Scroll material textures; used for moving clouds.
 * 
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Game
 {
   /// <summary>
-  /// 材质贴图滚动组件。在游戏中用于云层的滚动。
+  /// Scroll material textures; used for moving clouds.
   /// </summary>
   public class TextureScroller : MonoBehaviour
   {
-    [Tooltip("设置需要滚动的材质")]
+    [Tooltip("Material to scroll.")]
     /// <summary>
-    /// 设置需要滚动的材质
+    /// Material to scroll.
     /// </summary>
     public Material Material;
-    [Tooltip("设置材质滚动的速度")]
+    [Tooltip("Material scrolling speed.")]
     /// <summary>
-    /// 设置材质滚动的速度
+    /// Texture scrolling speed.
     /// </summary>
     public Vector2 ScrollSpeed;
 

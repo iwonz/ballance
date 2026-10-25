@@ -1,46 +1,46 @@
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GamePackage.cs
 * 
-* 用途：
-* 游戏模块的入口声明。
+* Purpose:
+* Game package entry definition.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.Package
 {
   /// <summary>
-  /// 模块代码入口反馈体。
-  /// 所有模块代码层的处理事件、回调都将在这里触发。
+  /// Package entry callbacks and metadata.
+  /// All package code lifecycle callbacks are exposed here.
   /// </summary>
   public class GamePackageEntry {
 
-    //事件回调
+    // Event callbacks.
 
     /// <summary>
-    /// 包加载回调
+    /// Package load callback.
     /// </summary>
     public GamePackageEntryDelogate OnLoad;
     /// <summary>
-    /// 包卸载回调
+    /// Package unload callback.
     /// </summary>
     public GamePackageEntryDelogate OnBeforeUnLoad;
     /// <summary>
-    /// UI加载回调。此回调在UI控制器初始化完成后回调，你可以在这里注册自定义UI界面
+    /// Called after UI initialization; register custom UI here.
     /// </summary>
     public GamePackageEntryDelogate OnLoadUI;
     /// <summary>
-    /// 模块版本参数
+    /// Package version.
     /// </summary>
     public int Version = 0;
   }
   
   /// <summary>
-  /// 模块入口回调
+  /// Package entry callback.
   /// </summary>
   /// <returns></returns>
   

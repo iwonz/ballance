@@ -4,7 +4,7 @@ using Ballance2.UI.Core;
 
 namespace Ballance2.Menu
 {
-  //初始化基础菜单
+  // Initialize the base menu.
   public class MenuManager
   {
     public static GameUIMessageCenter MessageCenter;

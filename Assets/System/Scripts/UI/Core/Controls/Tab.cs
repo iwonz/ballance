@@ -9,20 +9,20 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * Tab.cs
 * 
-* 用途：
-* 一个Tab组件
+* Purpose:
+* Tab control.
 * 
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Core.Controls
 {
   /// <summary>
-  /// 一个Tab组件
+  /// Tab control.
   /// </summary>
   [ExecuteInEditMode]
   [AddComponentMenu("Ballance/UI/Controls/Tab")]
@@ -62,26 +62,26 @@ namespace Ballance2.UI.Core.Controls
     }
 
     /// <summary>
-    /// 获取指定名称的Tab内容
+    /// Get tab content by name.
     /// </summary>
-    /// <param name="name">名称</param>
-    /// <returns>如果找到，则返回Tab内容，否则返回null</returns>
+    /// <param name="name">Name.</param>
+    /// <returns>Tab content, or null if not found.</returns>
     public RectTransform GetTabContent(string name) {
       if(tabs.TryGetValue(name, out var tab)) 
         return tab.TabContentRect;
       return null;
     }
     /// <summary>
-    /// 获取当前Tab数量
+    /// Get the number of tabs.
     /// </summary>
     /// <returns></returns>
     public int GetTabCount() { return tabs.Count; }  
     /// <summary>
-    /// 添加Tab
+    /// Add a tab.
     /// </summary>
-    /// <param name="name">名称</param>
-    /// <param name="title">标题</param>
-    /// <param name="content">内容</param>
+    /// <param name="name">Name.</param>
+    /// <param name="title">Title.</param>
+    /// <param name="content">Content.</param>
     public bool AddTab(string tabName, string title, RectTransform content) {
       if(tabs.ContainsKey(tabName))
         return false;
@@ -107,9 +107,9 @@ namespace Ballance2.UI.Core.Controls
       return true;
     }    
     /// <summary>
-    /// 删除Tab
+    /// Remove a tab.
     /// </summary>
-    /// <param name="name">名称</param>
+    /// <param name="name">Name.</param>
     public bool DeleteTab(string tabName) {
       if(tabs.ContainsKey(tabName)) {
         var tab = tabs[tabName];
@@ -127,9 +127,9 @@ namespace Ballance2.UI.Core.Controls
       return false;
     } 
     /// <summary>
-    /// 激活指定名称Tab
+    /// Activate a named tab.
     /// </summary>
-    /// <param name="name">名称</param>
+    /// <param name="name">Name.</param>
     public bool ActiveTab(string tabName) {
       if(tabs.TryGetValue(tabName, out var tab)) {
         if(tabActive != tab) {

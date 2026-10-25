@@ -8,20 +8,20 @@ using UnityEditor;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * Progress.cs
 * 
-* 用途：
-* 一个自动加载I18N字符串的文字组件。
+* Purpose:
+* Text component that automatically loads a localized string.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
 namespace Ballance2.UI.Core.Controls
 {
   /// <summary>
-  /// 一个自动加载I18N字符串的文字组件。
+  /// Text component that automatically loads a localized string.
   /// </summary>
   [ExecuteInEditMode]
   [AddComponentMenu("Ballance/UI/Controls/I18NText")]

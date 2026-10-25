@@ -6,7 +6,7 @@ using static Ballance2.Services.GameManager;
 namespace Ballance2.Game.GamePlay.Balls 
 {
   /// <summary>
-  /// 闪电球动画控制脚本
+  /// Lightning sphere animation controller.
   /// </summary>
   public class BallLightningSphere : MonoBehaviour 
   {
@@ -50,7 +50,7 @@ namespace Ballance2.Game.GamePlay.Balls
       this.ballLightningSphereMaterialB = meshRenderer.material;
     }
     private void Update() {
-      //闪电球
+      // Lightning sphere.
       if (lighing)
       {
         if (Ball_LightningSphereInnernA.transform.localEulerAngles.z > 360) Ball_LightningSphereInnernA.transform.localEulerAngles = new Vector3(0, 0, 0);
@@ -58,7 +58,7 @@ namespace Ballance2.Game.GamePlay.Balls
         Ball_LightningSphereInnernA.transform.localEulerAngles = new Vector3(0, Ball_LightningSphereInnernA.transform.localEulerAngles.y + ballLightingRoateSpeed1 * Time.deltaTime, 0);
         Ball_LightningSphereInnernB.transform.localEulerAngles = new Vector3(0, Ball_LightningSphereInnernB.transform.localEulerAngles.y - ballLightingRoateSpeed2 * Time.deltaTime, 0);
 
-        //更换闪电球贴图
+        // Change the lightning sphere texture.
         if (lighingControlTick < 0.1f) 
           lighingControlTick += Time.deltaTime;
         else
@@ -66,7 +66,7 @@ namespace Ballance2.Game.GamePlay.Balls
           if (ballLightningSphereTextureCurrent >= 3) ballLightningSphereTextureCurrent = 1;
           else ballLightningSphereTextureCurrent++;
           
-          //按数字更换贴图
+          // Select the texture by frame number.
           if (ballLightningSphereTextureCurrent == 1) 
           {
             ballLightningSphereMaterialA.mainTexture = BallLightningSphereTexture1;
@@ -85,7 +85,7 @@ namespace Ballance2.Game.GamePlay.Balls
           lighingControlTick = 0;
         }
       }
-      //闪电球 放大
+      // Enlarge the lightning sphere.
       if (lighingBig) 
       {
         if(lighingLightBigTick < BallLightBallBigSec) 
@@ -102,7 +102,7 @@ namespace Ballance2.Game.GamePlay.Balls
           lighingBig = false;
         }
       }
-      //闪电light
+      // Lightning light.
       if (lighingLight) 
       {
         lighingLightTick += Time.deltaTime;
@@ -115,7 +115,7 @@ namespace Ballance2.Game.GamePlay.Balls
           lighingLight = false;
         }
       }
-      //闪电light结尾的一闪
+      // Final lightning flash.
       if (lighingLightEnd) 
       {        
         lighingLightEndTick += Time.deltaTime;
@@ -131,17 +131,17 @@ namespace Ballance2.Game.GamePlay.Balls
     }
 
     /// <summary>
-    /// 开始播放闪电球动画
+    /// Start the lightning sphere animation.
     /// </summary>
-    /// <param name="position">位置</param>
-    /// <param name="smallToBig">是否由小变大</param>
-    /// <param name="callback">完成回调</param>
-    /// <param name="lightAnim">是否播放相对应的 Light 灯光</param>
+    /// <param name="position">Position.</param>
+    /// <param name="smallToBig">Grow from small to large.</param>
+    /// <param name="callback">Completion callback.</param>
+    /// <param name="lightAnim">Play the corresponding Light effect.</param>
     public void PlayLighting(Vector3 position, bool smallToBig, VoidDelegate callback, bool lightAnim)
     {
       if (lighing) return;
 
-      //播放闪电声音
+      // Play lightning sound.
       lighing = true;
       lighingLight = false;
       lighingLightEnd = false;
@@ -149,7 +149,7 @@ namespace Ballance2.Game.GamePlay.Balls
           ballLightningMusic.Play();
       
       Ball_Light.transform.position = position;
-      //显示球
+      // Show the sphere.
       Ball_LightningSphereInnernA.gameObject.SetActive(true);
       Ball_LightningSphereInnernA.transform.position = position;
       Ball_LightningSphereInnernB.gameObject.SetActive(true);
@@ -174,11 +174,11 @@ namespace Ballance2.Game.GamePlay.Balls
         Ball_Light.gameObject.SetActive(false);
       }
 
-      //延时关闭
+      // Turn off after a delay.
       StartCoroutine(LightingDelayHide(position, callback, lightAnim));
     }
     /// <summary>
-    /// 获取当前是否正在进行闪电动画
+    /// Whether the lightning animation is running.
     /// </summary>
     /// <returns></returns>
     public bool IsLighting() {

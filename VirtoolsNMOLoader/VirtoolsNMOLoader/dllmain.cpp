@@ -1,4 +1,4 @@
-﻿// dllmain.cpp : 定义 DLL 应用程序的入口点。
+﻿// dllmain.cpp: DLL application entry point.
 #include "pch.h"
 #include "msvcrt80fix.h"
 

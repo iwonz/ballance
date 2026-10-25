@@ -31,7 +31,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalEmissionShpere"
       #define USE_SPHERE
       #define USE_SPHERE_MAP
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"
@@ -60,7 +60,7 @@ Shader "LikeVirtools/BlinnPhongSpeicalEmissionShpere"
       #define USE_SPHERE
       #define USE_SPHERE_MAP
 
-      //引入头文件
+      // Include headers.
       #include "UnityCG.cginc"
       #include "Lighting.cginc"
       #include "AutoLight.cginc"

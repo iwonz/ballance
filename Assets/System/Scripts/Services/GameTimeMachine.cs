@@ -1,14 +1,14 @@
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * GameTimeMachine.cs
 * 
-* 用途：
-* 更新状态管理器。
-* TimeMachine提供了另一种方式，实现类似MonoBehaviour中的Update之类的方法的功能。以便于我们在某些场合更方便的编写时间驱动的代码。
+* Purpose:
+* Update scheduling manager.
+* TimeMachine provides callbacks similar to MonoBehaviour.Update for convenient time-driven code.
 *
-* 作者：
+* Author:
 * mengyu
 */
 
@@ -18,7 +18,7 @@ using System.Collections.Generic;
 namespace Ballance2.Services
 {
   /// <summary>
-  /// 时间更新状态管理器
+  /// Update scheduling manager.
   /// </summary>
   public class GameTimeMachine : GameService<GameTimeMachine>
   {
@@ -41,7 +41,7 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 注册时的更新实例，使用此实例可以取消注册更新函数。
+    /// Registration handle used to unregister an update callback.
     /// </summary>
     public class GameTimeMachineTimeTicket {
 
@@ -59,37 +59,37 @@ namespace Ballance2.Services
       }
       
       /// <summary>
-      /// 获取当前实例的更新函数。
+      /// Get the registered update callback.
       /// </summary>
       public Action updateAction { get; }
       /// <summary>
-      /// 获取当前更新函数的更新顺序。顺序越小，越先被调用。
+      /// Update order; lower values run first.
       /// </summary>
       public int order { get; }
       /// <summary>
-      /// 获取或者设置当前更新函数的更新帧数。默认为1，表示1帧更新一次。设置为2就是2帧更新一次，以此类推。可以动态改变此值。
+      /// Frame interval, default 1; 2 runs every other frame. Can be changed at runtime.
       /// </summary>     
       public int interval;
       /// <summary>
-      /// 获取指定当前更新实例是否启用。可以动态改变此值。
+      /// Whether this update registration is enabled; can be changed at runtime.
       /// </summary>     
       public bool enable { get; private set; } = true;
 
       /// <summary>
-      /// 停用当前更新函数。
+      /// Disable this update callback.
       /// </summary>      
       public void Disable() {
         enable = false;
       }
       /// <summary>
-      /// 重新启用当前更新函数。
+      /// Re-enable this update callback.
       /// </summary>      
       public void Enable() {
         errTickCount = 0;
         enable = true;
       }   
       /// <summary>
-      /// 取消注册当前更新函数。
+      /// Unregister this update callback.
       /// </summary>      
       public void Unregister() {
         switch(type) {
@@ -111,7 +111,7 @@ namespace Ballance2.Services
     private LinkedList<GameTimeMachineTimeTicket> fixUpdates = new LinkedList<GameTimeMachineTimeTicket>();
 
     private void InsertTimeMachineTimeTicketToList(GameTimeMachineTimeTicket ticket, LinkedList<GameTimeMachineTimeTicket> list) {
-      //根据order直接插入到指定位置
+      // Insert directly according to order.
       LinkedListNode<GameTimeMachineTimeTicket> item = list.First;
       while(item != null) {
         if(item.Value.order >= ticket.order) {
@@ -120,7 +120,7 @@ namespace Ballance2.Services
         }
         item = item.Next;
       }
-      //末尾
+      // End of the list.
       list.AddFirst(ticket);
     } 
     private void RemoveActionInList(Action updateAction, LinkedList<GameTimeMachineTimeTicket> list) {
@@ -137,7 +137,7 @@ namespace Ballance2.Services
       while(item != null) {
         current = item.Value;
         if(current.enable) {
-          //睡眠
+          // Sleep.
           if(current.interval > 0) {
             if(current.sleepTick > 0) {
               current.sleepTick--;
@@ -146,7 +146,7 @@ namespace Ballance2.Services
             current.sleepTick = current.interval;
           }
 
-          //执行
+          // Execute.
           try {
             current.updateAction.Invoke();
             if(current.errTickCount > 0)
@@ -166,61 +166,61 @@ namespace Ballance2.Services
     }
 
     /// <summary>
-    /// 注册 Update 更新函数
+    /// Register an Update callback.
     /// </summary>
-    /// <param name="updateAction">更新函数。</param>
-    /// <param name="order">函数的更新顺序。顺序越小，越先被调用。</param>
-    /// <param name="interval">更新函数的更新帧数。默认为1，表示1帧更新一次。设置为2就是2帧更新一次，以此类推。可以动态改变此值。</param>
-    /// <returns>返回一个更新实例，使用此实例可以取消注册更新函数。</returns>
+    /// <param name="updateAction">Update callback.</param>
+    /// <param name="order">Update order; lower values run first.</param>
+    /// <param name="interval">Frame interval, default 1; 2 runs every other frame. Can be changed at runtime.</param>
+    /// <returns>Registration handle used to unregister the callback.</returns>
     public GameTimeMachineTimeTicket RegisterUpdate(Action updateAction, int order = 0, int interval = 0) {
       var ticket = new GameTimeMachineTimeTicket(this, updateAction, order, interval, 1);
       InsertTimeMachineTimeTicketToList(ticket, updates);
       return ticket;
     }
     /// <summary>
-    /// 取消注册 Update 更新函数
+    /// Unregister an Update callback.
     /// </summary>
-    /// <param name="updateAction">更新函数。</param>
+    /// <param name="updateAction">Update callback.</param>
     public void UnRegisterUpdate(Action updateAction) {
       RemoveActionInList(updateAction, updates);
     }
 
     /// <summary>
-    /// 注册 LateUpdate 更新函数
+    /// Register a LateUpdate callback.
     /// </summary>
-    /// <param name="updateAction">更新函数。</param>
-    /// <param name="order">函数的更新顺序。顺序越小，越先被调用。</param>
-    /// <param name="interval">更新函数的更新帧数。默认为1，表示1帧更新一次。设置为2就是2帧更新一次，以此类推。可以动态改变此值。</param>
-    /// <returns>返回一个更新实例，使用此实例可以取消注册更新函数。</returns>
+    /// <param name="updateAction">Update callback.</param>
+    /// <param name="order">Update order; lower values run first.</param>
+    /// <param name="interval">Frame interval, default 1; 2 runs every other frame. Can be changed at runtime.</param>
+    /// <returns>Registration handle used to unregister the callback.</returns>
     public GameTimeMachineTimeTicket RegisterLateUpdate(Action updateAction, int order = 0, int interval = 0) {
       var ticket = new GameTimeMachineTimeTicket(this, updateAction, order, interval, 2);
       InsertTimeMachineTimeTicketToList(ticket, lateUpdates);
       return ticket;
     }
     /// <summary>
-    /// 取消注册 LateUpdate 更新函数
+    /// Unregister a LateUpdate callback.
     /// </summary>
-    /// <param name="updateAction">更新函数。</param>
+    /// <param name="updateAction">Update callback.</param>
     public void UnRegisterLateUpdate(Action updateAction) {
       RemoveActionInList(updateAction, lateUpdates);
     }
 
     /// <summary>
-    /// 注册 FixedUpdate 更新函数
+    /// Register a FixedUpdate callback.
     /// </summary>
-    /// <param name="updateAction">更新函数。</param>
-    /// <param name="order">函数的更新顺序。顺序越小，越先被调用。</param>
-    /// <param name="interval">更新函数的更新帧数。默认为1，表示1帧更新一次。设置为2就是2帧更新一次，以此类推。可以动态改变此值。</param>
-    /// <returns>返回一个更新实例，使用此实例可以取消注册更新函数。</returns>    
+    /// <param name="updateAction">Update callback.</param>
+    /// <param name="order">Update order; lower values run first.</param>
+    /// <param name="interval">Frame interval, default 1; 2 runs every other frame. Can be changed at runtime.</param>
+    /// <returns>Registration handle used to unregister the callback.</returns>
     public GameTimeMachineTimeTicket RegisterFixedUpdate(Action updateAction, int order = 0, int interval = 0) {
       var ticket = new GameTimeMachineTimeTicket(this, updateAction, order, interval, 3);
       InsertTimeMachineTimeTicketToList(ticket, fixUpdates);
       return ticket;
     }
     /// <summary>
-    /// 取消注册 FixedUpdate 更新函数
+    /// Unregister a FixedUpdate callback.
     /// </summary>
-    /// <param name="updateAction">更新函数。</param>
+    /// <param name="updateAction">Update callback.</param>
     public void UnRegisterFixedUpdate(Action updateAction) {
       RemoveActionInList(updateAction, fixUpdates);
     }

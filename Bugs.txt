@@ -1,6 +1,11 @@
-1. 设置时两个按键相同时进行判断
-2. 修复重新开始之后Extrapoint中心点不见了的问题
-3. 修复重新开始之后生命球显示不正确问题
-4. 修改抛出球碎片时隐藏碎片的类型为之前的球类型
-5. 修复球掉落并且游戏结束之后，球下落到世界底板之后被传送回原点问题
-6. 修复石球不容易撞断软木桥
+Historical upstream notes (status not verified)
+
+These inherited notes do not establish which defects remain in the current Unity
+version. Reproduce an issue and create an OpenSpec change before implementing a fix.
+
+1. Detect duplicate key bindings in settings.
+2. Fix the missing center of the extra-points pickup after restarting.
+3. Fix incorrect life-ball display after restarting.
+4. When scattering ball fragments, hide the fragments of the previous ball type.
+5. Fix the ball returning to the origin after game over when it reaches the world floor.
+6. Make the stone ball break the cork bridge more reliably.

@@ -4,13 +4,13 @@ using UnityEngine.UI;
 /*
 * Copyright(c) 2021  mengyu
 *
-* 模块名：     
+* Module:
 * TextValueBinder.cs
 * 
-* 用途：
-* Texe控件数据绑定器
+* Purpose:
+* Text data binder.
 *
-* 作者：
+* Author:
 * mengyu
 */
 

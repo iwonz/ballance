@@ -1267,16 +1267,16 @@ void destroy_all_physics_contract_detection(sPhysicsBody* body) {
 }
 
 void do_physics_coll_detection_handler(sPhysicsBody* body, sPhysicsBody* other, IVP_U_Float_Point speed) {
-  //碰撞处理工具
+  // Collision tool handling.
   auto ptr = body->col_dections.begin;
   if (ptr) {
     auto now_time = body->own_world->environment->get_current_time().get_seconds();
     while (ptr)
     {
       auto this_col_id = ptr->col_id;
-      if (other->col_id == this_col_id) {//当前碰撞层
+      if (other->col_id == this_col_id) {// Current collision layer.
         auto now_speed = speed.fast_real_length();
-        //小于阈值，则不发出事件, 时间过短，不发出
+        // Suppress events below the speed threshold or within the cooldown.
         if (now_time - ptr->last_time > ptr->sleep_afterwards 
           && now_speed > ptr->min_speed 
           && abs(now_speed - body->last_speed) >= ptr->speed_threadhold) {
@@ -1289,7 +1289,7 @@ void do_physics_coll_detection_handler(sPhysicsBody* body, sPhysicsBody* other, 
   }
 }
 float do_physics_contact_detection(sPhysicsBody* body) {
-  //接触处理工具
+  // Touch tool handling.
   check_nullptr_return(body, sFalse);
 
   body->last_speed = physics_get_speed(body);
@@ -1298,7 +1298,7 @@ float do_physics_contact_detection(sPhysicsBody* body) {
   auto ptr = body->contract_dections.begin;
   while (ptr)
   {
-    //时间过短
+    // Interval too short.
     if (ptr->is_contract)  
     {
       if (now_time - ptr->last_contract_time < ptr->time_delay_end) {
@@ -1314,7 +1314,7 @@ float do_physics_contact_detection(sPhysicsBody* body) {
       }
     }
 
-    //检查碰撞物体
+    // Check colliding objects.
     int this_col_id = ptr->col_id, cur_test_id = 0; bool is_coll = false;
     auto* fr_esynapse = body->object->get_first_exact_synapse();
     IVP_Synapse_Friction* fr_synapse = body->object->get_first_friction_synapse();
@@ -1340,10 +1340,10 @@ float do_physics_contact_detection(sPhysicsBody* body) {
     }
 
 
-    //状态变更时
+    // On state change.
     if (is_coll != ptr->is_contract) 
     {
-      //设置开始时间
+      // Set the start time.
       if (is_coll && !ptr->is_contract && !ptr->is_contract_start_check) {
         ptr->last_contract_start_time = now_time;
         ptr->is_contract_start_check = true;

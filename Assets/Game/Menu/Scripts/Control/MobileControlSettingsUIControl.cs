@@ -50,10 +50,10 @@ namespace Ballance2.Menu
           controlKeypadSettting = data.name;
           settings.SetString(SettingConstants.SettingsControlKeypad, data.name);
 
-          //更新列表
+          // Refresh the list.
           ScrollView.UpdateData(false);
 
-          //如果游戏正在运行中，则动态更换键盘
+          // Replace the touch keyboard dynamically if the game is running.
           if (GamePlayUIControl.Instance != null)
             GamePlayUIControl.Instance.ReBuildMobileKeyPad();
         };

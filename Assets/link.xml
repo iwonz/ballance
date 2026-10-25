@@ -1,0 +1,4 @@
+<linker>
+  <!-- Gameplay and UI are loaded from .ballance bundles and through reflection. -->
+  <assembly fullname="Assembly-CSharp" preserve="all" />
+</linker>

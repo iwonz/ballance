@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.IO;
 using Ballance2.Config.Settings;
 using UnityEngine;
@@ -157,17 +157,13 @@ namespace Ballance2.Game.LevelBuilder
         //去除file://前缀
         path = PathUtils.FixFilePathScheme(path);
         //jar特殊处理
-        if(!path.Contains("jar:file://") && !File.Exists(path))
+        if(!PathUtils.IsRemotePath(path) && !File.Exists(path))
         {
           Log.E(TAG, "File not exist : {0}", path);
           errCallback("FILE_NOT_EXISTS", "File not exist: \"" + path + "\"");
           return;
         }
-        //osx前缀 file://
-        #if UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX || UNITY_IOS
-        if(!path.Contains("jar:file://"))
-          path = "file://" + path;
-        #endif
+        path = PathUtils.ToRequestUrl(path);
 
         //加载NMO
 #if !UNITY_EDITOR && UNITY_STANDALONE_WIN

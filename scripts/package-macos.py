@@ -72,10 +72,9 @@ def validate(app):
             with package.open(bundle) as stream:
                 require(stream.read(8) == b"UnityFS\x00", f"Invalid asset bundle: {path}")
             if name.startswith("mod."):
-                code = package.read(f"csharp/{name}.dll")
-                require(code.startswith(b"MZ"), f"Missing managed module code: {path}")
-                managed = contents / "Resources/Data/Managed" / f"{name}.dll"
-                require(code == managed.read_bytes(), f"Stale module DLL in player: {managed}")
+                require(f"csharp/{name}.dll" not in entries, f"Stale built-in mod DLL: {path}")
+    managed = contents / "Resources/Data/Managed/Assembly-CSharp.dll"
+    require(managed.is_file() and managed.stat().st_size > 0, "Missing game and built-in mod code")
     for number in range(1, 14):
         path = contents / "Levels" / f"level{number:02}.ballance"
         with path.open("rb") as stream:

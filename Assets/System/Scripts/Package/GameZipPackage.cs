@@ -35,9 +35,9 @@ namespace Ballance2.Package
 
       try {
         //如果路径以jar:开头，则使用www方式读取
-        if(PackageFilePath.Contains("jar:file://")) {
+        if(PathUtils.IsRemotePath(PackageFilePath)) {
 
-          UnityWebRequest request = UnityWebRequest.Get(PackageFilePath);
+          using var request = UnityWebRequest.Get(PackageFilePath);
           await request.SendWebRequest();
 
           if (request.result == UnityWebRequest.Result.Success)
@@ -57,7 +57,7 @@ namespace Ballance2.Package
         if (zip == null)
           return false;
 
-        UpdateTime = File.GetLastWriteTime(PackageFilePath);
+        UpdateTime = PathUtils.IsRemotePath(PackageFilePath) ? DateTime.MinValue : File.GetLastWriteTime(PackageFilePath);
 
         XmlDocument packageDef = null;
         Sprite logo = null;
@@ -108,9 +108,9 @@ namespace Ballance2.Package
 
       try{
         //如果路径以jar:开头，则使用www方式读取
-        if(PackageFilePath.StartsWith("jar:")) {
+        if(PathUtils.IsRemotePath(PackageFilePath)) {
 
-          UnityWebRequest request = UnityWebRequest.Get(PackageFilePath);
+          using var request = UnityWebRequest.Get(PackageFilePath);
           await request.SendWebRequest();
 
           if (request.result == UnityWebRequest.Result.Success)

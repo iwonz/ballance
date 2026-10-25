@@ -57,13 +57,13 @@ PluginImporter:
   - first:
       Standalone: Win
     second:
-      enabled: 1
+      enabled: 0
       settings:
         CPU: None
   - first:
       Standalone: Win64
     second:
-      enabled: 1
+      enabled: 0
       settings:
         CPU: x86_64
   - first:

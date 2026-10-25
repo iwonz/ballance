@@ -144,6 +144,12 @@ namespace Ballance2.Services
         }
       }
 #else
+      foreach (var file in GamePathManager.builtInPackagesFiles)
+      {
+        var name = Path.GetFileNameWithoutExtension(file);
+        if (!list.ContainsKey(name) && !IsPackageRegistered(name))
+          list.Add(name, new GamePackageRegisterInfo(name, false, true));
+      }
       var dirPath = GamePathManager.GetResRealPath("package", "", false, false);
       if(Directory.Exists(dirPath)) {
         //扫描文件夹中没有的包，添加到列表中
@@ -356,9 +362,9 @@ namespace Ballance2.Services
 
         //如果路径在Core中存在，则使用Core加载
         if (FileUtils.FileExists(realPackagePathInCore)) realPackagePath = realPackagePathInCore;
-        else if (realPackagePath.Contains("jar:file://") || FileUtils.FileExists(realPackagePath))
+        else if (PathUtils.IsRemotePath(realPackagePath) || FileUtils.FileExists(realPackagePath))
           realPackagePathInCore = "";
-        else if (realPackagePathInCore.Contains("jar:file://") || FileUtils.FileExists(realPackagePathInCore)) //如果路径在Packages中存在，则使用Packages加载
+        else if (PathUtils.IsRemotePath(realPackagePathInCore) || FileUtils.FileExists(realPackagePathInCore)) //如果路径在Packages中存在，则使用Packages加载
           realPackagePath = realPackagePathInCore;
         else {
           //不存在则抛出异常
@@ -375,7 +381,7 @@ namespace Ballance2.Services
       if (gamePackage == null)
       {
         //判断文件类型
-        if (realPackagePath.Contains("jar:file://") || FileUtils.TestFileIsZip(realPackagePath))
+        if (PathUtils.IsRemotePath(realPackagePath) || FileUtils.TestFileIsZip(realPackagePath))
           gamePackage = new GameZipPackage();
         else if (FileUtils.TestFileIsAssetBundle(realPackagePath))
           gamePackage = new GameAssetBundlePackage();

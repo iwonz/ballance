@@ -14,8 +14,8 @@ namespace BallancePhysics
     private const string DLL_NNAME = "bphysics_unity";
 #elif UNITY_EDITOR
     private const string DLL_NNAME = "bphysics";
-#elif UNITY_IPHONE
-	  private const string DLL_NNAME = "_Internal";
+#elif UNITY_IOS || UNITY_WEBGL
+    private const string DLL_NNAME = "__Internal";
 #else
     private const string DLL_NNAME = "bphysics";
 #endif

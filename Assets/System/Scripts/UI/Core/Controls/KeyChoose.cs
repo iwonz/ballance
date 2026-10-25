@@ -1,3 +1,6 @@
+#if UNITY_ANDROID && !UNITY_EDITOR
+using Input = Ballance2.InputCompatibility.AndroidInput;
+#endif
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -66,6 +69,19 @@ namespace Ballance2.UI.Core.Controls
     {
       UpdateValue();
     }
+#if UNITY_ANDROID && !UNITY_EDITOR
+    void Update()
+    {
+      if (!waitForKey || !Input.anyKeyDown) return;
+      foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
+      {
+        if (!Input.GetKeyDown(key)) continue;
+        value = key;
+        waitForKey = false;
+        break;
+      }
+    }
+#else
     void OnGUI()
     {
       if (Input.anyKeyDown && waitForKey)
@@ -77,5 +93,6 @@ namespace Ballance2.UI.Core.Controls
         }
       }
     }
+#endif
   }
 }

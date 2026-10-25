@@ -19,7 +19,7 @@ namespace Ballance2.Editor.Modding
 
     private static List<string> allAssetsPath = new List<string>();
 
-    public static string DoPackPackage(BuildTarget packTarget, TextAsset packDefFile, string sourceName, string targetDir, string compiledCode = null)
+    public static string DoPackPackage(BuildTarget packTarget, TextAsset packDefFile, string sourceName, string targetDir, string compiledCode = null, bool includeCode = true)
     {
       string targetPath = targetDir + "/" + sourceName + ".ballance";
       if (!string.IsNullOrEmpty(targetPath))
@@ -73,14 +73,14 @@ namespace Ballance2.Editor.Modding
           //打包
           var manifest = BuildPipeline.BuildAssetBundles(dirTargetPath, new AssetBundleBuild[]{
                         assetBundleBuild
-                    }, BuildAssetBundleOptions.None, packTarget);
+                    }, BuildAssetBundleOptions.ChunkBasedCompression, packTarget);
           if (manifest == null)
             return "BuildAssetBundles failed for " + packPackageName;
 
           EditorUtility.DisplayProgressBar("正在打包", "正在打包，请稍后...", 0.6f);
 
           //ballance 包处理
-          DoSolveBallancePack(packTarget, dirTargetPath, dirTargetPath + "/" + name, targetPath, compiledCode);
+          DoSolveBallancePack(packTarget, dirTargetPath, dirTargetPath + "/" + name, targetPath, compiledCode, includeCode);
 
           EditorUtility.ClearProgressBar();
         }
@@ -118,7 +118,7 @@ namespace Ballance2.Editor.Modding
         }
       }
     }
-    private static void DoSolveBallancePack(BuildTarget target, string dirTargetPath, string bundlePath, string targetPath, string compiledCode)
+    private static void DoSolveBallancePack(BuildTarget target, string dirTargetPath, string bundlePath, string targetPath, string compiledCode, bool includeCode)
     {
       Crc32 crc = new Crc32();
       ZipOutputStream zipStream = ZipUtils.CreateZipFile(targetPath);
@@ -136,21 +136,25 @@ namespace Ballance2.Editor.Modding
       //添加logo图片
       if (File.Exists(projLogoFile)) ZipUtils.AddFileToZip(zipStream, projLogoFile, projModDirPath.Length, ref crc);
 
-      //添加DLL
-      string projDllFileSrc = projModDirPath + Path.DirectorySeparatorChar + ".dll" + Path.DirectorySeparatorChar + packPackageName + ".dll";
-      string projDllFile = projModDirPath + Path.DirectorySeparatorChar + "dll" + Path.DirectorySeparatorChar + packPackageName + ".dll";
-      if (compiledCode != null)
+      if (includeCode)
       {
-        if (!File.Exists(compiledCode))
-          throw new FileNotFoundException("Missing freshly compiled package code", compiledCode);
-        projDllFile = compiledCode;
-      }
-      else if (File.Exists(projDllFileSrc))
-        File.Copy(projDllFileSrc, projDllFile, true);
+        //添加DLL
+        string projDllFileSrc = projModDirPath + Path.DirectorySeparatorChar + ".dll" + Path.DirectorySeparatorChar + packPackageName + ".dll";
+        string projDllFile = projModDirPath + Path.DirectorySeparatorChar + "dll" + Path.DirectorySeparatorChar + packPackageName + ".dll";
+        if (compiledCode != null)
+        {
+          if (!File.Exists(compiledCode))
+            throw new FileNotFoundException("Missing freshly compiled package code", compiledCode);
+          projDllFile = compiledCode;
+        }
+        else if (File.Exists(projDllFileSrc))
+          File.Copy(projDllFileSrc, projDllFile, true);
 
-      //添加DLL
-      if (File.Exists(projDllFile)) 
-        ZipUtils.AddFileToZip(zipStream, projDllFile, "csharp/" + packPackageName + ".dll", ref crc);
+        //添加DLL
+        if (File.Exists(projDllFile))
+          ZipUtils.AddFileToZip(zipStream, projDllFile, "csharp/" + packPackageName + ".dll", ref crc);
+
+      }
 
       zipStream.Finish();
       zipStream.Close();

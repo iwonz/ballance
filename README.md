@@ -5,13 +5,13 @@
 </p>
 <p align="center">
   <a style="text-decoration:none">
-    <img src="https://img.shields.io/badge/unity-2021.3.X-blue?style=flat-square" alt="Unity Version" />
+    <img src="https://img.shields.io/badge/unity-6000.6.7f1-blue?style=flat-square" alt="Unity Version" />
   </a>
-  <a style="text-decoration:none" href="https://github.com/imengyu/ballance/releases">
-    <img src="https://img.shields.io/github/v/release/imengyu/ballance.svg?label=alpha&style=flat-square&color=yellow" alt="Releases" />
+  <a style="text-decoration:none" href="https://github.com/iwonz/ballance/releases">
+    <img src="https://img.shields.io/github/v/release/iwonz/ballance.svg?label=alpha&style=flat-square&color=yellow" alt="Releases" />
   </a>
   <a style="text-decoration:none">
-    <img src="https://img.shields.io/badge/platform-Win%20%7C%20Linux%20%7C%20Mac%20%7C%20iOS%20%7C%20Android-orange?style=flat-square" alt="Platform" />
+    <img src="https://img.shields.io/badge/platform-Win%20%7C%20Linux%20%7C%20Mac%20%7C%20Android%20%7C%20Web-orange?style=flat-square" alt="Platform" />
   </a>
   <a style="text-decoration:none">
     <img src="https://img.shields.io/badge/license-GPL--3.0-green?style=flat-square" alt="License" />
@@ -46,63 +46,26 @@ Compared with the original version, this project has added the following feature
 * Level previewer
 * Mod manager
 
-## System requirements
+## Play and download
 
-Minimum requirements
+[Play in your browser](https://iwonz.github.io/ballance/) or download a build from
+[this fork's Releases](https://github.com/iwonz/ballance/releases).
+Every build includes the original 13 levels and Russian, English and Chinese UI.
 
-* Windows 7+
-* MacOS High Sierra 10.13+ (Intel)
-* macOS Ventura 13.1+ (Apple Silicon / M-series, including M3)
-* Android 6.0+
+| Platform | Release file | Installation / requirements |
+| --- | --- | --- |
+| Web | `Ballance-<version>-WebGL.tar.gz` | Play on GitHub Pages; current browser with WebGL 2 and WebAssembly |
+| Windows | `Ballance-<version>-Windows.zip` | Extract and run `Ballance.exe`; x86-64, Windows 10 21H1+ |
+| Linux | `Ballance-<version>-Linux.tar.gz` | Extract and run `./Ballance.x86_64`; x86-64, Ubuntu 22.04/24.04 |
+| macOS | `Ballance-<version>-macOS.zip` | Extract `Ballance.app`; Apple Silicon, macOS 13.1+ |
+| Android | `Ballance-<version>-Android.apk` | Install APK; ARM64, Android 8.0+; test signing, not a Play Store package |
 
-||Minimum|Recommended|
-|---|---|---|
-|Processor|Quad core 3Ghz+|Dual core 3Ghz+|
-|Memory|1 GB RAM|2 GB RAM|
-|Graphics card|DirectX 10.1 capable GPU with 512 MB VRAM - GeForce GTX 260, Radeon HD 4850 or Intel HD Graphics 5500|DirectX 11 capable GPU with 2 GB VRAM - GeForce GTX 750 Ti, Radeon R7 360|
-|DirectX|11|11|
-|Storage space|60 MB free space|100 MB free space|
-
-## Installation steps
-
-* Windows:
-
-  1. Goto [Releases](https://github.com/imengyu/Ballance/releases) find the latest version.
-  2. Download the zip installation package in assets (1.x.x-windows-x86.zip).
-  3. Unzip all files, then run `Ballance.exe` to start the game.
-
-* Linux:
-
-  1. Goto [Releases](https://github.com/imengyu/Ballance/releases) find the latest version of Linux64 (1.x.x-linux64.zip).
-  2. Unzip all files.
-  3. Set permissions for the main executable:
-
-      ```shell
-      chmod a+x ./Ballance.x86_64
-      ```
-
-  4. Start play
-
-      ```shell
-      ./Ballance.x86_64
-      ```
-
-* MacOS：
-
-  1. Find native Apple Silicon builds in this fork's [Releases](https://github.com/iwonz/ballance/releases).
-
-      * On an M-series Mac (M1, M2, M3 or later), download the `-macOS-AppleSilicon.zip` artifact. Older releases may name it `-OSX-AppleSilicon.zip` or `-osx-arm64.zip`.
-      * On an Intel Mac, use an Intel / x64 artifact from the [upstream releases](https://github.com/imengyu/Ballance/releases).
-
-  2. Extract the ZIP, move `Ballance.app` to Applications, and open it. Apple Silicon builds run natively without Rosetta. See the [macOS build and installation notes](docs/macos-apple-silicon.md) for signing and first-launch details.
-
-* Android：
-
-  Goto [Releases](https://github.com/imengyu/Ballance/releases) find the latest version for Android (1.x.x-android.apk) and download it.
-
-* iOS:
-
-  To be completed
+See [Unity 6.6 player requirements](https://docs.unity3d.com/6000.6/Documentation/Manual/system-requirements.html#player)
+for graphics and driver requirements, and [macOS signing and first-launch notes](docs/macos-apple-silicon.md).
+The macOS build is ad-hoc signed, without Apple notarization. iOS publication is deferred;
+the build script retains an Xcode export target.
+Historical Intel macOS and Unity 2021 builds are available in the
+[upstream releases](https://github.com/imengyu/Ballance/releases).
 
 ## Keys and gameplay
 
@@ -143,14 +106,14 @@ Most levels can be loaded successfully and played, but there are a few restricti
 
 You need:
 
-* Install Unity 2021.3.2+
+* Install Unity 6.6 (6000.6.7f1) and the build modules for your target platforms
 * Install a code editor (VScode or Visual Studio)
-* Clone or download this project `https://github.com/imengyu/Ballance` to your computer.
+* Clone or download this project `https://github.com/iwonz/ballance` to your computer.
 
 Steps:
 
 1. Open the project with unity.
-2. Open `Scenes/MainScene.unity` scene.
+2. Open `Assets/Scenes/Main.unity` scene.
 3. Select the `GameEntry` object, set `Debug Type` to `NoDebug` in the inspector.
 4. Click Run and you can see the game.
 
@@ -158,8 +121,8 @@ Steps:
 
 Please refer [production document](wiki/production.md)。
 
-For a reproducible Apple Silicon build and automatic GitHub Release artifacts,
-see [macOS Apple Silicon builds](docs/macos-apple-silicon.md).
+For Unity 6.6 builds for Windows, Linux, macOS, Android, iOS and Web, and
+publication of Web releases to GitHub Pages, see [build and release instructions](docs/build-and-release.md).
 
 ## Physics Engine
 

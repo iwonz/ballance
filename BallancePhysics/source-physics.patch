@@ -1,0 +1,34 @@
+diff --git a/ivp_controller/ivp_constraint.cxx b/ivp_controller/ivp_constraint.cxx
+index a5c70fd..afad594 100644
+--- a/ivp_controller/ivp_constraint.cxx
++++ b/ivp_controller/ivp_constraint.cxx
+@@ -39,6 +39,7 @@ void IVP_Constraint::deactivate() {
+ }
+ 
+ IVP_Constraint::~IVP_Constraint() {
++    if (callback) callback(this);
+     //get_environment().get_controller_manager()->remove_controller_from_environment(this, IVP_FALSE);
+     if (is_enabled) {
+ 	IVP_Controller_Manager::remove_controller_from_environment(this,IVP_TRUE); //delete silently
+diff --git a/ivp_controller/ivp_constraint.hxx b/ivp_controller/ivp_constraint.hxx
+index c31a78c..83567bc 100644
+--- a/ivp_controller/ivp_constraint.hxx
++++ b/ivp_controller/ivp_constraint.hxx
+@@ -30,6 +30,8 @@ protected:
+     IVP_BOOL is_enabled:2;
+ public:
+     IVP_Constraint();
++    void (*callback)(IVP_Constraint*) = nullptr;
++    void set_delete_callback(void (*value)(IVP_Constraint*)) { callback = value; }
+ 
+     /******************************************************************************************
+      *  Feature:        deactivate()
+diff --git a/ivp_utility/ivu_string.hxx b/ivp_utility/ivu_string.hxx
+index 23aaa53..88dfdad 100644
+--- a/ivp_utility/ivu_string.hxx
++++ b/ivp_utility/ivu_string.hxx
+@@ -1,3 +1,4 @@
++#pragma once
+ //IVP_EXPORT_PUBLIC
+ 
+ #define IVP_WHITESPACE " \t,;\n"

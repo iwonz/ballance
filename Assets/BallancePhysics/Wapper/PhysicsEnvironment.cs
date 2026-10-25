@@ -81,7 +81,10 @@ namespace BallancePhysics.Wapper
     /// <value></value>
     public IntPtr Handle { get; private set; } = IntPtr.Zero;
 
-    private ErrorReportCallback callback = (int level, int len, IntPtr _msg) =>
+    private static readonly ErrorReportCallback callback = ReportPhysicsMessage;
+
+    [AOT.MonoPInvokeCallback(typeof(ErrorReportCallback))]
+    private static int ReportPhysicsMessage(int level, int len, IntPtr _msg)
     {
       string msg = Marshal.PtrToStringAnsi(_msg, len);
       if (level == sInfo)
@@ -93,7 +96,7 @@ namespace BallancePhysics.Wapper
       else 
         Debug.Log(msg);
       return 1;
-    };
+    }
 
     private GameTimeMachine.GameTimeMachineTimeTicket fixedUpdateTicket = null;
 

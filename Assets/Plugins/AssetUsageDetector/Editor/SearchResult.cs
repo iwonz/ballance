@@ -37,7 +37,7 @@ namespace AssetUsageDetectorNamespace
 			}
 
 			public string label;
-			public int instanceId;
+			public EntityId instanceId;
 			public bool isUnityObject, isMainReference;
 			public ReferenceNode.UsedState usedState;
 
@@ -791,7 +791,7 @@ namespace AssetUsageDetectorNamespace
 						}
 					}
 
-					if( Type == GroupType.Scene && !EditorApplication.isPlaying && EditorSceneManager.loadedSceneCount > 1 )
+					if( Type == GroupType.Scene && !EditorApplication.isPlaying && SceneManager.loadedSceneCount > 1 )
 					{
 						// Show context menu when SearchResultGroup's header is right clicked
 						Scene scene = EditorSceneManager.GetSceneByPath( ScenePath );
@@ -1089,8 +1089,8 @@ namespace AssetUsageDetectorNamespace
 		public bool IsMainReference { get; private set; } // True: if belongs to a scene search result group, then it's an object in that scene. If belongs to the assets search result group, then it's an asset
 
 		internal object nodeObject;
-		private int? instanceId; // instanceId of the nodeObject if it is a Unity object, null otherwise
-		public Object UnityObject { get { return instanceId.HasValue ? EditorUtility.InstanceIDToObject( instanceId.Value ) : null; } }
+		private EntityId? instanceId; // EntityId of the nodeObject if it is a Unity object, null otherwise
+		public Object UnityObject { get { return instanceId.HasValue ? EditorUtility.EntityIdToObject( instanceId.Value ) : null; } }
 
 		private readonly List<Link> links = new List<Link>( 2 );
 		public int NumberOfOutgoingLinks { get { return links.Count; } }
@@ -1163,7 +1163,7 @@ namespace AssetUsageDetectorNamespace
 			}
 		}
 
-		internal bool HasLinkToObjectWithDescriptions( int instanceId, List<string> descriptions )
+		internal bool HasLinkToObjectWithDescriptions( EntityId instanceId, List<string> descriptions )
 		{
 			for( int i = links.Count - 1; i >= 0; i-- )
 			{
@@ -1208,7 +1208,7 @@ namespace AssetUsageDetectorNamespace
 			Object unityObject = nodeObject as Object;
 			if( unityObject != null )
 			{
-				instanceId = unityObject.GetInstanceID();
+				instanceId = unityObject.GetEntityId();
 				Label = unityObject.name + " (" + unityObject.GetType().Name + ")";
 			}
 			else if( nodeObject != null )
@@ -1339,7 +1339,7 @@ namespace AssetUsageDetectorNamespace
 			{
 				label = Label,
 				isMainReference = IsMainReference,
-				instanceId = instanceId ?? 0,
+				instanceId = instanceId ?? default,
 				isUnityObject = instanceId.HasValue,
 				usedState = usedState
 			};

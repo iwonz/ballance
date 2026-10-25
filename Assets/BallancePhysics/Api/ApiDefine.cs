@@ -19,7 +19,7 @@ namespace BallancePhysics.Api
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   public delegate void fn_destroy_environment(IntPtr world);
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate void fn_environment_reset_time();
+  public delegate void fn_environment_reset_time(IntPtr world);
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   public delegate void fn_environment_simulate_dtime(IntPtr world, float dtime);
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -125,7 +125,7 @@ namespace BallancePhysics.Api
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   public delegate float fn_get_pi2();
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate float fn_get_point(IntPtr qt, IntPtr buf);
+  public delegate void fn_get_point(IntPtr qt, IntPtr buf);
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   public delegate void fn_delete_raycast_result(IntPtr rs);
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -171,7 +171,7 @@ namespace BallancePhysics.Api
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   public delegate void fn_motion_controller_set_torque_factor(IntPtr controller, float torque_factor);
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate float fn_get_quat(IntPtr qt, IntPtr buf);
+  public delegate void fn_get_quat(IntPtr qt, IntPtr buf);
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   public delegate IntPtr fn_physics_coll_detection(IntPtr body, int col_id, float min_speed, float max_speed, float sleep_afterwards, float speed_threadhold);
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]

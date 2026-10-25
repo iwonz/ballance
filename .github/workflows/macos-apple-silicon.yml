@@ -1,4 +1,4 @@
-name: macOS Apple Silicon
+name: Build checks
 
 on:
   push:
@@ -17,113 +17,17 @@ jobs:
     runs-on: macos-15
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Check scripts and native plugin
         run: |
           python3 scripts/check-localization.py
-          bash -n scripts/build-macos.sh
+          python3 scripts/check-physics-abi.py
+          bash -n scripts/build-macos.sh scripts/build.sh
+          python3 scripts/test-release-tools.py
           python3 -c 'import ast; from pathlib import Path; ast.parse(Path("scripts/package-macos.py").read_text())'
           test "$(uname -m)" = arm64
           lipo Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib -verify_arch arm64
           xcrun clang++ -arch arm64 -std=c++11 -Wall -Wextra -Werror scripts/physics-smoke.cpp -o "$RUNNER_TEMP/physics-smoke"
           "$RUNNER_TEMP/physics-smoke" "$PWD/Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib"
-
-  build:
-    name: Build macOS ARM64 player and game content
-    # Local builds need no GitHub Unity credentials. Automatic release builds
-    # are opt-in; publishing a locally built release must not trigger a second build.
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'release' && vars.UNITY_CI_ENABLED == 'true')
-    needs: native-check
-    runs-on: ubuntu-22.04
-    timeout-minutes: 90
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.release.tag_name || github.ref }}
-          persist-credentials: false
-      - name: Check Unity activation configuration
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        run: |
-          if [[ -z "$UNITY_EMAIL" || -z "$UNITY_PASSWORD" || ( -z "$UNITY_LICENSE" && -z "$UNITY_SERIAL" ) ]]; then
-            echo '::error::Configure UNITY_EMAIL, UNITY_PASSWORD, and UNITY_LICENSE (Personal) or UNITY_SERIAL (Pro). See docs/macos-apple-silicon.md.'
-            exit 1
-          fi
-      - name: Build with Unity
-        uses: game-ci/unity-builder@1d4ee0697f193f54668e98961d79907911f4b4f2 # v4.8.1
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          # International equivalent of the project's 2021.3.33f1c1 editor.
-          unityVersion: 2021.3.33f1
-          targetPlatform: StandaloneOSX
-          buildName: Ballance
-          buildMethod: Ballance2.Editor.MacOSBuild.BuildAppleSilicon
-          versioning: None
-      - name: Preserve application permissions and symlinks for the macOS job
-        run: tar -czf build/macos-player.tar.gz -C build/StandaloneOSX Ballance.app
-      - uses: actions/upload-artifact@v4
-        with:
-          name: macos-player-unsigned
-          path: build/macos-player.tar.gz
-          if-no-files-found: error
-          retention-days: 3
-
-  package:
-    name: Validate, sign and package on Apple Silicon
-    needs: build
-    runs-on: macos-15
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.release.tag_name || github.ref }}
-          persist-credentials: false
-      - uses: actions/download-artifact@v4
-        with:
-          name: macos-player-unsigned
-          path: build
-      - name: Package release ZIP
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: |
-          tar -xzf build/macos-player.tar.gz -C build
-          version="${RELEASE_TAG:-${GITHUB_SHA:0:12}}"
-          version="${version#v}"
-          if [[ ! "$version" =~ ^[a-zA-Z0-9._-]+$ ]]; then
-            echo 'Unsupported release tag for an artifact filename' >&2
-            exit 1
-          fi
-          python3 scripts/package-macos.py build/Ballance.app "build/release/Ballance-${version}-macOS-AppleSilicon.zip"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: macOS-AppleSilicon
-          path: build/release/*
-          if-no-files-found: error
-
-  release:
-    name: Attach Apple Silicon artifacts to the published release
-    if: github.event_name == 'release'
-    needs: package
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: macOS-AppleSilicon
-          path: release
-      - name: Upload release assets
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: gh release upload "$RELEASE_TAG" release/*.zip release/*.sha256

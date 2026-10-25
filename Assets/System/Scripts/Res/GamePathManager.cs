@@ -117,10 +117,13 @@ namespace Ballance2.Res
     /// <summary>
     /// 内置模块的文件名
     /// </summary>
-    private static string[] builtInPackagesFiles = new string[] {
+    internal static readonly string[] builtInPackagesFiles = new string[] {
       "core.assets.skys.ballance",
       "core.sounds.ballance",
       "core.sounds.music.ballance",
+      "mod.invlife.ballance",
+      "mod.selfkill.ballance",
+      "mod.speedball.ballance",
     };
     /// <summary>
     /// 内置关卡的文件名
@@ -199,7 +202,7 @@ namespace Ballance2.Res
           pathbuf = DEBUG_PACKAGES_PATH + pathbuf;
 #elif UNITY_STANDALONE
           pathbuf= Application.dataPath + "/Packages/" + pathbuf;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
           if(CheckPackageInBuiltInPackage(pathbuf))
             pathbuf = Application.streamingAssetsPath + "/BuiltInPackages/Packages/" + pathbuf;
           else 
@@ -215,7 +218,7 @@ namespace Ballance2.Res
           result = DEBUG_PACKAGES_PATH + pathbuf;
 #elif UNITY_STANDALONE
           result = Application.dataPath + "/Packages/" + pathbuf;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
           if(CheckPackageInBuiltInPackage(pathbuf))
             result = Application.streamingAssetsPath + "/BuiltInPackages/Packages/" + pathbuf;
           else 
@@ -235,7 +238,7 @@ namespace Ballance2.Res
           pathbuf = DEBUG_PATH + "/Core/" + pathbuf;
 #elif UNITY_STANDALONE
           pathbuf = Application.dataPath + "/Core/" + pathbuf;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
           pathbuf = Application.streamingAssetsPath + "/BuiltInPackages/Core/" + pathbuf;
 #else
           GameErrorChecker.LastError = GameError.NotImplemented;
@@ -249,7 +252,7 @@ namespace Ballance2.Res
           result = DEBUG_PATH + "/Core/" + pathbuf;
 #elif UNITY_STANDALONE
           result = Application.dataPath + "/Core/" + pathbuf;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
           result = Application.streamingAssetsPath + "/BuiltInPackages/Core/" + pathbuf;
 #else
           GameErrorChecker.LastError = GameError.NotImplemented;
@@ -263,7 +266,7 @@ namespace Ballance2.Res
         return pathorname;
       }
 
-      return (withFileSheme && result.StartsWith("jar:") ? "file:///" : "") + result;
+      return withFileSheme ? PathUtils.ToRequestUrl(result) : result;
     }
     /// <summary>
     /// 将关卡资源的相对路径转为关卡资源真实路径
@@ -286,7 +289,7 @@ namespace Ballance2.Res
         pathbuf = DEBUG_LEVELS_PATH + pathbuf;
 #elif UNITY_STANDALONE
         pathbuf = Application.dataPath + "/Levels/" + pathbuf;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
         if(CheckPackageInBuiltInLevel(pathbuf))
           pathbuf = Application.streamingAssetsPath + "/BuiltInPackages/Levels/" + pathbuf;
         else
@@ -302,7 +305,7 @@ namespace Ballance2.Res
         result = DEBUG_LEVELS_PATH + pathorname;
 #elif UNITY_STANDALONE
         result = Application.dataPath + "/Levels/" + pathorname;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
         if(CheckPackageInBuiltInLevel(pathorname))
           result = Application.streamingAssetsPath + "/BuiltInPackages/Levels/" + pathorname;
         else
@@ -315,7 +318,7 @@ namespace Ballance2.Res
       if(pathorname != "" && !result.EndsWith(".ballance"))
         result += ".ballance";
 
-      return (withFileSheme ? "file:///" : "") + result;
+      return withFileSheme ? PathUtils.ToRequestUrl(result) : result;
     }
     /// <summary>
     /// Replace Path In Resource Identifier (Identifier:Path:Arg0:Arg1)

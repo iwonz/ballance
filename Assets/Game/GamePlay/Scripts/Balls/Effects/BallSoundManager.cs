@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Ballance2.Base;
 using Ballance2.Package;
 using Ballance2.Services;
@@ -208,10 +208,10 @@ namespace Ballance2.Game.GamePlay.Balls
       public SpeedMeter _SpeedMeter = null;
     }
 
-    private Dictionary<int, SoundableBallWorkData> soundableBallWorkDatas = new Dictionary<int, SoundableBallWorkData>();
+    private Dictionary<EntityId, SoundableBallWorkData> soundableBallWorkDatas = new Dictionary<EntityId, SoundableBallWorkData>();
 
     //加载球的撞击和滚动声音
-    private SoundableBallWorkData InitSoundableBallWorkData(int instanceId, Ball.BallSoundConfig _SoundConfig) {
+    private SoundableBallWorkData InitSoundableBallWorkData(EntityId instanceId, Ball.BallSoundConfig _SoundConfig) {
       SoundableBallWorkData data = null;
       if (soundableBallWorkDatas.TryGetValue(instanceId, out data))
         return data;
@@ -250,7 +250,7 @@ namespace Ballance2.Game.GamePlay.Balls
     public void AddSoundableBall(PhysicsObject rigidbody, Ball.BallSoundConfig _SoundConfig) 
     {
       //添加或者获取已有碰撞数据
-      SoundableBallWorkData soundableBallWorkData = InitSoundableBallWorkData(rigidbody.gameObject.GetInstanceID(), _SoundConfig);
+      SoundableBallWorkData soundableBallWorkData = InitSoundableBallWorkData(rigidbody.gameObject.GetEntityId(), _SoundConfig);
 
       //添加声音层工具侦听
       foreach(var value in _SoundCollData) {
@@ -350,7 +350,7 @@ namespace Ballance2.Game.GamePlay.Balls
     /// </summary>
     public void RemoveSoundableBall(PhysicsObject rigidbody, Ball.BallSoundConfig _SoundConfig) 
     {
-      SoundableBallWorkData soundableBallWorkData = InitSoundableBallWorkData(rigidbody.gameObject.GetInstanceID(), _SoundConfig);
+      SoundableBallWorkData soundableBallWorkData = InitSoundableBallWorkData(rigidbody.gameObject.GetEntityId(), _SoundConfig);
 
       //移除回调
       rigidbody.OnPhysicsCollDetection = null;
@@ -377,14 +377,14 @@ namespace Ballance2.Game.GamePlay.Balls
         node = node.Next;
       }
       soundableBallWorkData._CurrentPlayingRollSounds.Clear();
-      soundableBallWorkDatas.Remove(rigidbody.gameObject.GetInstanceID());
+      soundableBallWorkDatas.Remove(rigidbody.gameObject.GetEntityId());
     }
     /// <summary>
     /// 强制停止球的所有声音
     /// </summary>
     public void StopSoundableBallAllSound(PhysicsObject rigidbody, Ball.BallSoundConfig _SoundConfig)
     {
-      SoundableBallWorkData soundableBallWorkData = InitSoundableBallWorkData(rigidbody.gameObject.GetInstanceID(), _SoundConfig);
+      SoundableBallWorkData soundableBallWorkData = InitSoundableBallWorkData(rigidbody.gameObject.GetEntityId(), _SoundConfig);
       var node = soundableBallWorkData._CurrentPlayingRollSounds.First;
       while(node != null) {
         var value = node.Value;

@@ -1,3 +1,4 @@
 ﻿{
-	"name": "RuntimeInspector.Runtime"
+	"name": "RuntimeInspector.Runtime",
+	"references": ["Unity.InputSystem"]
 }

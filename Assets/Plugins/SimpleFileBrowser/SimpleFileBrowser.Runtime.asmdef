@@ -1,3 +1,4 @@
 ﻿{
-	"name": "SimpleFileBrowser.Runtime"
+	"name": "SimpleFileBrowser.Runtime",
+	"references": ["Unity.InputSystem"]
 }

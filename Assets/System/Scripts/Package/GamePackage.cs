@@ -47,22 +47,16 @@ namespace Ballance2.Package
     {
       if (filePath != null)
         PackageFilePath = filePath;
-      var t = new Task<bool>(() => { return true; });
-      t.Start();
-      return t;
+      return Task.FromResult(true);
     }
-    public virtual async Task<bool> LoadPackage()
+    public virtual Task<bool> LoadPackage()
     {
       LoadI18NResource();
 
       //模块代码环境初始化
       if (Type == GamePackageType.Module)
-        return LoadPackageCodeBase();
-      var t = new Task<bool>(() => {
-        return true; 
-      });
-      t.Start();
-      return await t;
+        return Task.FromResult(LoadPackageCodeBase());
+      return Task.FromResult(true);
     }
     public virtual void Destroy()
     {
@@ -187,6 +181,20 @@ namespace Ballance2.Package
       }
       if (IsSystemPackage())
         return true;
+
+      // Built-in mods are compiled with the player, including AOT platforms.
+      switch (PackageName)
+      {
+        case "mod.invlife": PackageEntry = mod.invlife.PackageEntry.Main(); break;
+        case "mod.selfkill": PackageEntry = mod.selfkill.PackageEntry.Main(); break;
+        case "mod.speedball": PackageEntry = mod.speedball.PackageEntry.Main(); break;
+        default: PackageEntry = null; break;
+      }
+      if (PackageEntry != null)
+      {
+        flag |= FLAG_CODE_BASE_LOADED;
+        return true;
+      }
 
       Type type = null;
 
@@ -548,7 +556,7 @@ namespace Ballance2.Package
     /// </summary>
     /// <param name="pathorname">资源路径</param>
     /// <returns>返回 PhysicMaterial 实例，如果未找到，则返回null</returns>
-    public virtual PhysicMaterial GetPhysicMaterialAsset(string pathorname) { return GetAsset<PhysicMaterial>(pathorname); }
+    public virtual PhysicsMaterial GetPhysicMaterialAsset(string pathorname) { return GetAsset<PhysicsMaterial>(pathorname); }
     /// <summary>
     /// 读取模块资源包中的 AudioClip 资源
     /// </summary>

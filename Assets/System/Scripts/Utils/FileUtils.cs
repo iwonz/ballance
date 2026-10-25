@@ -80,7 +80,7 @@ namespace Ballance2.Utils
     /// </summary>
     /// <param name="path">路径</param>
     /// <returns></returns>
-    public static bool FileExists(string path) { return File.Exists(path); }
+    public static bool FileExists(string path) { return File.Exists(PathUtils.FixFilePathScheme(path)); }
     
     /// <summary>
     /// 检查目录是否存在

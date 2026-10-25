@@ -6,13 +6,10 @@ library requires **macOS 13.1 or later**. Intel builds remain separate.
 
 ## Build locally
 
-Install the macOS ARM64 editor for Unity **2021.3.33f1** and activate it through
-Unity Hub. The native macOS editor includes Mono player support. No Unity
-account credentials or license files need to be uploaded to GitHub for a local
-build. The project now pins the international `2021.3.33f1` editor, replacing
-the upstream China edition `2021.3.33f1c1` at the same patch level. Both local
-builds and CI use this version. Do not use Unity's default build button for release packaging: it does
-not generate the external game packages.
+Install Unity **6000.6.7f1** through Unity Hub and activate it locally.
+See [all platform builds and GitHub Pages](build-and-release.md) for the shared
+build workflow. Do not use Unity's default Build button for releases: the game
+also needs its external packages.
 
 On an Apple Silicon Mac with Xcode Command Line Tools and Python 3:
 
@@ -38,12 +35,11 @@ the core package, every module in `Assets/Packages`, and levels 01–13 for
 to match the game's resource loader and Unity's
 [macOS data path](https://docs.unity3d.com/2021.3/Documentation/ScriptReference/Application-dataPath.html).
 Mono preserves support for dynamically
-loaded C# mods. The original architecture and scripting backend settings are
-restored when the build finishes.
+loaded C# mods. The ARM64/Mono settings remain selected after the build.
 
-The built-in mod DLLs are recompiled from their current C# source against the
-newly built player's assemblies before packaging. The checked-in mod DLLs are
-not used as the packaged module code and are not overwritten by this process.
+Built-in mods compile directly with the player. Their checked-in legacy DLLs
+are excluded from player imports and release packages. Desktop Mono builds
+still support loading third-party mod DLLs.
 
 The native physics binary is already checked in at
 `Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib`. Its importer enables
@@ -79,39 +75,11 @@ it needs graphics, so omit `-nographics`. Neither check changes player preferenc
 
 ## GitHub Actions and release assets
 
-For a local source-built release, commit the source and version changes first,
-build with the command above, and complete the gameplay checks below. Create a
-draft release targeting that exact commit, attach the resulting ZIP and checksum,
-then publish the draft. Do not substitute an older upstream binary: packaging
-an existing app does not compile the current source or game content.
-
-The **macOS Apple Silicon** workflow supports these entry points:
-
-* Pull requests and pushes to `main` run the native physics smoke test on an Apple Silicon runner
-  without requiring secrets. They do **not** claim to compile or test the Unity
-  player. This also works for fork PRs.
-* **Actions → macOS Apple Silicon → Run workflow** builds the selected branch
-  and uploads the `macOS-AppleSilicon` artifact for review.
-* Publishing a GitHub Release always runs the native checks. Optionally set the
-  repository Actions variable `UNITY_CI_ENABLED` to `true` to also build its **tag**
-  in CI, then attach
-  `Ballance-<tag-without-v>-macOS-AppleSilicon.zip` and its SHA-256 checksum.
-  Existing assets for other platforms are preserved. Existing files with the
-  same names are not replaced. Leave this variable unset for locally built
-  releases so publication does not require Unity credentials or start a duplicate
-  build.
-
-Before running a full **GitHub Actions** build (not a local build), a repository
-maintainer must configure the
-[GameCI activation secrets](https://game.ci/docs/github/activation/):
-
-* `UNITY_EMAIL` and `UNITY_PASSWORD`;
-* `UNITY_LICENSE` for Personal, or `UNITY_SERIAL` for Pro.
-
-The Unity Mono player is cross-built on Ubuntu with the macOS module. Validation
-and signing run on `macos-15` (ARM64). The Unity step uses GameCI's Linux
-activation path for Personal or Pro licenses. The workflow must exist in the
-release tag. A tag name may contain letters, digits, dots, underscores and hyphens.
+Use the **Unity 6 platform builds** workflow with a licensed self-hosted Apple
+Silicon runner, or build locally and attach the ZIP and checksum to a draft
+release. See [the release guide](build-and-release.md). The **Build checks**
+workflow checks localization, release tooling and ARM64 physics on hosted
+runners; it does not require Unity activation secrets.
 
 ## Release validation and signing
 

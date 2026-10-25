@@ -30,15 +30,19 @@ namespace Ballance2.Utils
     /// <returns>是否是绝对路径</returns>
     public static bool IsAbsolutePath(string path)
     {
-#if (UNITY_EDITOR && UNITY_EDITOR_WIN) || UNITY_STANDALONE_WIN
-      if (path.Length > 2)
-        return path[1] == ':' && (path[2] == '\\' || path[2] == '/');
-      return false;
-#elif (UNITY_EDITOR && UNITY_EDITOR_OSX) || UNITY_ANDROID || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
-      return path.StartsWith("/");
-#elif UNITY_IOS
-      return path.StartsWith("/");
-#endif
+      return Path.IsPathRooted(path) || IsRemotePath(path) || path.StartsWith("file:");
+    }
+
+    public static bool IsRemotePath(string path)
+    {
+      return path.StartsWith("https://", System.StringComparison.OrdinalIgnoreCase) ||
+        path.StartsWith("http://", System.StringComparison.OrdinalIgnoreCase) ||
+        path.StartsWith("jar:", System.StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static string ToRequestUrl(string path)
+    {
+      return IsRemotePath(path) || path.StartsWith("file:") ? path : new System.Uri(Path.GetFullPath(path)).AbsoluteUri;
     }
     /// <summary>
     /// 替换绝对路径至当前项目相对路径
@@ -160,8 +164,8 @@ namespace Ballance2.Utils
     /// <returns>返回不带 file:/// 前缀的路径</returns>
     public static string FixFilePathScheme(string path)
     {
-      if (path.StartsWith("file:///"))
-        return path.Substring(8);
+      if (path.StartsWith("file:"))
+        return new System.Uri(path).LocalPath;
       return path;
     }
 

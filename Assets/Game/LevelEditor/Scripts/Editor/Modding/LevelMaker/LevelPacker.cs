@@ -37,7 +37,7 @@ namespace Ballance2.Editor.Modding.LevelMaker
           //打包
           var ass = BuildPipeline.BuildAssetBundles(dirTargetPath, new AssetBundleBuild[]{
             assetBundleBuild
-          }, BuildAssetBundleOptions.None, packTarget);
+          }, BuildAssetBundleOptions.ChunkBasedCompression, packTarget);
 
           EditorUtility.ClearProgressBar();
           

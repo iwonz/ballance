@@ -1,3 +1,5 @@
+> Unity 6.6 (6000.6.7f1): [Builds, releases and GitHub Pages](docs/build-and-release.md). The instructions below describe the original Unity 2021 version.
+
 # <center>Ballance 平衡球 C#/Unity 实现</center>
 
 <p align="center">
@@ -5,7 +7,7 @@
 </p>
 <p align="center">
   <a style="text-decoration:none">
-    <img src="https://img.shields.io/badge/unity-2021.3.X-blue?style=flat-square" alt="Unity Version" />
+    <img src="https://img.shields.io/badge/unity-6000.6.7f1-blue?style=flat-square" alt="Unity Version" />
   </a>
   <a style="text-decoration:none" href="https://github.com/imengyu/ballance/releases">
     <img src="https://img.shields.io/github/v/release/imengyu/ballance.svg?label=alpha&style=flat-square&color=yellow" alt="Releases" />

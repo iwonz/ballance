@@ -5,6 +5,9 @@ using System.Text;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using TreeView = UnityEditor.IMGUI.Controls.TreeView<int>;
+using TreeViewItem = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
+using TreeViewState = UnityEditor.IMGUI.Controls.TreeViewState<int>;
 #if UNITY_2018_3_OR_NEWER
 using PrefabStage = UnityEditor.SceneManagement.PrefabStage;
 using PrefabStageUtility = UnityEditor.SceneManagement.PrefabStageUtility;
@@ -296,7 +299,7 @@ namespace AssetUsageDetectorNamespace
 					if( linkDescriptions.Count > 0 )
 					{
 						Object prefabObject = PrefabUtility.GetCorrespondingObjectFromSource( unityObject );
-						if( prefabObject && parentData.node.HasLinkToObjectWithDescriptions( prefabObject.GetHashCode(), linkDescriptions ) )
+						if( prefabObject && parentData.node.HasLinkToObjectWithDescriptions( prefabObject.GetEntityId(), linkDescriptions ) )
 							return false;
 					}
 				}

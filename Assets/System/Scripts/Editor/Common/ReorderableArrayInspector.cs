@@ -211,7 +211,7 @@ namespace SubjectNerd.Utilities
                                 property.arraySize++;
 
                                 SerializedProperty target = property.GetArrayElementAtIndex(newIndex);
-                                target.objectReferenceInstanceIDValue = dragged_object.GetInstanceID();
+                                target.objectReferenceValue = dragged_object;
                             }
                         }
                         evt.Use();

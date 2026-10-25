@@ -341,6 +341,7 @@ namespace BallancePhysics.Wapper
           return;
 
         Id = PhysicsApi.API.physics_get_id(Handle);
+        callbackObjects.Add(Handle, this);
 
         currentEnvironment.AddPhysicsObject(Id, this);
 
@@ -361,6 +362,7 @@ namespace BallancePhysics.Wapper
         DestroyComponents();
         Debug.Assert(currentEnvironment != null);
         PhysicsApi.API.unphysicalize(currentEnvironment.Handle, Handle, silently);
+        callbackObjects.Remove(Handle);
         Handle = IntPtr.Zero;
         currentEnvironment.RemovePhysicsObject(this);
       }
@@ -519,8 +521,8 @@ namespace BallancePhysics.Wapper
         m_EnableCollisionEvent = value;
         if(IsPhysicalized) {
           if(m_EnableCollisionEvent) {
-            collisionEventCallback = OnCollisionEvent;
-            frictionEventCallback = OnFrictionEvent;
+            collisionEventCallback = DispatchCollisionEvent;
+            frictionEventCallback = DispatchFrictionEvent;
             PhysicsApi.API.physics_set_collision_listener(Handle, collisionEventCallback, m_CollisionEventCallSleep, frictionEventCallback);
           }
           else
@@ -714,7 +716,7 @@ namespace BallancePhysics.Wapper
       if(IsPhantom()) 
         Debug.LogWarning("Object " + name + " is already phantom");
       else {
-        phantomEventCallback = OnPhantomEvent;
+        phantomEventCallback = DispatchPhantomEvent;
         PhysicsApi.API.physics_convert_to_phantom(Handle, m_ExtraRadius, phantomEventCallback);
       }
     }
@@ -845,6 +847,33 @@ namespace BallancePhysics.Wapper
     private CollisionEventCallback collisionEventCallback = null;
     private FrictionEventCallback frictionEventCallback = null;
     private ContractEventCallback contractEventCallback = null;
+
+    // IL2CPP can pass only static, explicitly annotated callbacks to native code.
+    private static readonly Dictionary<IntPtr, PhysicsObject> callbackObjects = new Dictionary<IntPtr, PhysicsObject>();
+
+    [AOT.MonoPInvokeCallback(typeof(CollisionEventCallback))]
+    private static void DispatchCollisionEvent(IntPtr self, IntPtr other, IntPtr point, IntPtr speed, IntPtr normal) {
+      if (callbackObjects.TryGetValue(self, out var body))
+        body.OnCollisionEvent(self, other, point, speed, normal);
+    }
+
+    [AOT.MonoPInvokeCallback(typeof(FrictionEventCallback))]
+    private static void DispatchFrictionEvent(int create, IntPtr self, IntPtr other, IntPtr friction, IntPtr point, IntPtr speed, IntPtr normal) {
+      if (callbackObjects.TryGetValue(self, out var body))
+        body.OnFrictionEvent(create, self, other, friction, point, speed, normal);
+    }
+
+    [AOT.MonoPInvokeCallback(typeof(PhantomEventCallback))]
+    private static void DispatchPhantomEvent(int enter, IntPtr self, IntPtr other) {
+      if (callbackObjects.TryGetValue(self, out var body))
+        body.OnPhantomEvent(enter, self, other);
+    }
+
+    [AOT.MonoPInvokeCallback(typeof(ContractEventCallback))]
+    private static void DispatchContractEvent(IntPtr self, int id, short type, float speed, short on) {
+      if (callbackObjects.TryGetValue(self, out var body))
+        body.OnContractEvent(self, id, type, speed, on);
+    }
     
     private Dictionary<int, bool> contractStateCache = new Dictionary<int, bool>();
     private Dictionary<int, bool> contractStateCache2 = new Dictionary<int, bool>();
@@ -941,7 +970,7 @@ namespace BallancePhysics.Wapper
     /// 启用当前物体上的接触工具事件发生器
     /// </summary>
     public void EnableContractEventCallback() {
-      contractEventCallback = OnContractEvent;
+      contractEventCallback = DispatchContractEvent;
       PhysicsApi.API.physics_set_contract_listener(Handle, Marshal.GetFunctionPointerForDelegate(contractEventCallback));
     }
     /// <summary>

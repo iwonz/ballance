@@ -1,6 +1,8 @@
 // Runs against the shipped dylib, without Unity or an external IVP source checkout.
 #include "../BallancePhysics/ballance_physics.h"
+#ifndef __EMSCRIPTEN__
 #include <dlfcn.h>
+#endif
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -13,6 +15,11 @@ static void require(bool condition, const char* message) {
 }
 
 int main(int argc, char** argv) {
+#ifdef __EMSCRIPTEN__
+  (void)argc;
+  (void)argv;
+  auto entry = &ballance_physics_entry;
+#else
   require(argc == 2, "Usage: physics-smoke /absolute/path/libbphysics.dylib");
   void* library = dlopen(argv[1], RTLD_NOW | RTLD_LOCAL);
   if (!library) {
@@ -20,6 +27,7 @@ int main(int argc, char** argv) {
     return 1;
   }
   auto entry = reinterpret_cast<void* (*)(int, sInitStruct*)>(dlsym(library, "ballance_physics_entry"));
+#endif
   require(entry != nullptr, "Missing physics entry point");
   require(entry(4, nullptr) == nullptr, "Physics unexpectedly initialized");
   sInitStruct options = {};
@@ -44,15 +52,45 @@ int main(int argc, char** argv) {
   int collisionMasks[32];
   for (int& mask : collisionMasks)
     mask = -1;
-  void* world = createWorld(point, 1.0f / 66.0f, -1, collisionMasks, nullptr);
+  void* gravity = createPoint(0, -9.81f, 0);
+  void* world = createWorld(gravity, 1.0f / 66.0f, -1, collisionMasks, nullptr);
   require(world != nullptr, "Physics world creation failed");
+  auto createQuat = reinterpret_cast<void* (*)(float, float, float, float)>(api[10]);
+  auto destroyQuat = reinterpret_cast<void (*)(void*)>(api[12]);
+  auto physicalize = reinterpret_cast<void* (*)(void*, const char*, int, int, int, int,
+    float, float, float, float, float, float, int, int, int, int, int, int,
+    void*, void*, void*, int, const char*, int, void**, int, void**, float, int)>(api[18]);
+  auto unphysicalize = reinterpret_cast<void (*)(void*, void*, int)>(api[19]);
+  void* rotation = createQuat(0, 0, 0, 1);
+  void* floorPosition = createPoint(0, -100, 0);
+  void* ballPosition = createPoint(0, 3, 0);
+  void* floor = physicalize(world, "floor", 0, 0, 0, 0, 1, 0.5f, 0.1f, 0, 0, 100,
+    1, 0, 1, 1, 0, 1, floorPosition, nullptr, rotation, 0, "", 0, nullptr, 0, nullptr, 0, 0);
+  void* ball = physicalize(world, "ball", 0, 0, 0, 0, 1, 0.5f, 0.1f, 0, 0, 1,
+    1, 0, 1, 1, 0, 0, ballPosition, nullptr, rotation, 0, "", 0, nullptr, 0, nullptr, 0, 0);
+  require(floor && ball, "Physics body creation failed");
   for (int frame = 0; frame < 120; ++frame)
     simulate(world, 1.0f / 60.0f);
+  auto speed = reinterpret_cast<float (*)(void*)>(api[27]);
+  require(speed(ball) < 0.1f, "Ball did not settle on the static collider");
+  auto fixedConstraint = reinterpret_cast<void* (*)(void*, void*)>(api[59]);
+  auto destroyConstraint = reinterpret_cast<void (*)(void*)>(api[62]);
+  void* joint = fixedConstraint(ball, floor);
+  require(joint != nullptr, "Constraint creation failed");
+  destroyConstraint(joint);
+  unphysicalize(world, ball, 1);
+  unphysicalize(world, floor, 1);
+  destroyPoint(ballPosition);
+  destroyPoint(floorPosition);
+  destroyQuat(rotation);
   destroyWorld(world);
+  destroyPoint(gravity);
   destroyPoint(point);
   entry(0, nullptr);
   require(entry(4, nullptr) == nullptr, "Physics shutdown failed");
+#ifndef __EMSCRIPTEN__
   dlclose(library);
-  std::puts("ARM64 physics smoke test passed (ABI 2302)");
+#endif
+  std::puts("Physics smoke test passed (ABI 2302)");
   return 0;
 }

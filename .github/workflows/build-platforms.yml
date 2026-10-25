@@ -1,0 +1,46 @@
+name: Unity 6 platform builds
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Platform to build
+        type: choice
+        options: [WebGL, macOS, Windows, Linux, Android, iOS]
+        default: WebGL
+
+permissions:
+  contents: read
+
+concurrency:
+  group: unity-local-runner
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # A licensed Hub installation with all six build modules. Never run fork PRs here.
+    runs-on: [self-hosted, macOS, ARM64, unity-6000.6.7f1]
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          clean: true
+      - name: Build player and game content
+        env:
+          PLATFORM: ${{ inputs.platform }}
+        run: bash scripts/build.sh "$PLATFORM"
+      - name: Package release asset
+        env:
+          PLATFORM: ${{ inputs.platform }}
+        run: python3 scripts/package-build.py "$PLATFORM"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Ballance-${{ inputs.platform }}
+          path: Builds/releases/*
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: Unity-log-${{ inputs.platform }}
+          path: Logs/build-*.log

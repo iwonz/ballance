@@ -2,6 +2,7 @@ namespace Ballance2
 {
   using System.Collections;
   using System.Collections.Generic;
+  using System.Globalization;
   using UnityEngine;
   
   public class PureAimPlayer : MonoBehaviour {
@@ -24,7 +25,7 @@ namespace Ballance2
       if(PositionArray) {
         foreach(string v in PositionArray.text.Split('|', System.StringSplitOptions.RemoveEmptyEntries)) {
           string[] xyz = v.Split(',');
-          pos.Add(new Vector3(float.Parse(xyz[0]), float.Parse(xyz[1]), float.Parse(xyz[2])));
+          pos.Add(new Vector3(float.Parse(xyz[0], CultureInfo.InvariantCulture), float.Parse(xyz[1], CultureInfo.InvariantCulture), float.Parse(xyz[2], CultureInfo.InvariantCulture)));
           count++;
           if(count > 128) {
             count = 0;
@@ -36,9 +37,9 @@ namespace Ballance2
         foreach(string v in RotationArray.text.Split('|', System.StringSplitOptions.RemoveEmptyEntries)) {
           string[] xyzw = v.Split(',');
           if(RotationIsRightHand)
-            rot.Add(new Quaternion(float.Parse(xyzw[2]), float.Parse(xyzw[1]), -float.Parse(xyzw[0]), -float.Parse(xyzw[3])));
+            rot.Add(new Quaternion(float.Parse(xyzw[2], CultureInfo.InvariantCulture), float.Parse(xyzw[1], CultureInfo.InvariantCulture), -float.Parse(xyzw[0], CultureInfo.InvariantCulture), -float.Parse(xyzw[3], CultureInfo.InvariantCulture)));
           else
-            rot.Add(new Quaternion(float.Parse(xyzw[0]), float.Parse(xyzw[1]), float.Parse(xyzw[2]), float.Parse(xyzw[3])));
+            rot.Add(new Quaternion(float.Parse(xyzw[0], CultureInfo.InvariantCulture), float.Parse(xyzw[1], CultureInfo.InvariantCulture), float.Parse(xyzw[2], CultureInfo.InvariantCulture), float.Parse(xyzw[3], CultureInfo.InvariantCulture)));
           count++;
           if(count > 128) {
             count = 0;

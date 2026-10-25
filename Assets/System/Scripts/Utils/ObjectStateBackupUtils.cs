@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /*
@@ -37,7 +37,7 @@ namespace Ballance2.Utils
       public Vector3 Pos;
       public Quaternion Rot;
     }
-    private static Dictionary<int, ObjectStateBackup> objectBackup = new Dictionary<int, ObjectStateBackup>();
+    private static Dictionary<EntityId, ObjectStateBackup> objectBackup = new Dictionary<EntityId, ObjectStateBackup>();
 
     // 由 GameManager 调用。
     
@@ -52,7 +52,7 @@ namespace Ballance2.Utils
     /// <param name="gameObject">要操作的游戏对象</param>
     public static void ClearObjectBackUp(GameObject gameObject)
     {
-      objectBackup.Remove(gameObject.GetInstanceID());
+      objectBackup.Remove(gameObject.GetEntityId());
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ namespace Ballance2.Utils
     /// <param name="gameObject">要备份的游戏对象</param>
     public static void BackUpObject(GameObject gameObject)
     {
-      var key = gameObject.GetInstanceID();
+      var key = gameObject.GetEntityId();
       if (!objectBackup.TryGetValue(key, out var st))
         st = new ObjectStateBackup();
 
@@ -88,7 +88,7 @@ namespace Ballance2.Utils
     /// <param name="gameObject">要还原的游戏对象</param>
     public static void RestoreObject(GameObject gameObject)
     {
-      var key = gameObject.GetInstanceID();
+      var key = gameObject.GetEntityId();
       if (objectBackup.TryGetValue(key, out var st))
       {
         gameObject.transform.position = st.Pos;

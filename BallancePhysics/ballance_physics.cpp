@@ -2,6 +2,11 @@
 #include "ivp_physics.hxx"
 #include "ivp_templates.hxx"
 #include "ivp_mindist.hxx"
+#if defined(BALLANCE_SOURCE_IVP)
+#include "ivp_mindist_intern.hxx"
+#include <cstdint>
+#define IVP_PTR uintptr_t
+#endif
 #include "ivp_core.hxx"
 #include "ivp_friction.hxx"
 #include "ivp_time.hxx"
@@ -42,7 +47,7 @@
 #if defined(_WINDOWS)
 #	include <windows.h>
 #	include "resource.h"
-#elif defined(__linux__)
+#elif defined(__linux__) || defined(__EMSCRIPTEN__)
 #	include <sstream>
 #	include <unistd.h>
 #elif defined(__APPLE__)
@@ -90,7 +95,7 @@
 #  endif
 #elif defined(__linux__) || defined(__linux) || defined(LINUX)
 #  define OS_LINUX
-#elif !(defined(OS_IOS) || defined(OS_ANDROID))
+#elif !(defined(OS_IOS) || defined(OS_ANDROID) || defined(__EMSCRIPTEN__))
 #  error "Unsupport OS"
 #endif
 
@@ -742,7 +747,9 @@ void* ballance_physics_entry(sBool init, sInitStruct * options)
 {
   if (init == 0) {
     if (initStatus) {
+#if !defined(BALLANCE_SOURCE_IVP)
       ivp_set_message_callback(nullptr);
+#endif
       destroy_small_pool();
       destroy_console();
       initStatus = false;
@@ -751,7 +758,10 @@ void* ballance_physics_entry(sBool init, sInitStruct * options)
   else if (init == 1) {
     if (!initStatus) {
       if (options) {
+        // The public IVP sources write diagnostics directly to stdout.
+#if !defined(BALLANCE_SOURCE_IVP)
         ivp_set_message_callback(callback_ivp_message_callback);
+#endif
 
         if (options->showConsole) init_console();
         
@@ -2269,7 +2279,7 @@ sConstant* set_physics_constraint(sPhysicsBody* body, sPhysicsBody* other, float
   return rs;
 }
 
-void destroy_physics_constraint(sConstant* constant, bool forceDelete) {
+void destroy_physics_constraint(sConstant* constant) {
   check_nullptr(constant);
   if(constant->handle)
     delete constant->handle;

@@ -1,4 +1,7 @@
-﻿using System;
+#if UNITY_ANDROID && !UNITY_EDITOR
+using Input = Ballance2.InputCompatibility.AndroidInput;
+#endif
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;

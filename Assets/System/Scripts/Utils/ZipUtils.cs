@@ -149,10 +149,12 @@ namespace Ballance2.Utils
       byte[] buffer = new byte[1048576];
       while (true)
       {
-        int i = await zip.ReadAsync(buffer, 0, 1048576);
+        // SharpZipLib's Stream.ReadAsync uses worker threads, unavailable on Web.
+        int i = zip.Read(buffer, 0, buffer.Length);
         if (i > 0)
           ms.Write(buffer, 0, i);
         else break;
+        await Task.Yield();
       }
       return ms;
     }

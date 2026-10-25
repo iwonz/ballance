@@ -2,9 +2,9 @@
 set -euo pipefail
 
 project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-unity_editor="${UNITY_EDITOR:-/Applications/Unity/Hub/Editor/2021.3.33f1/Unity.app/Contents/MacOS/Unity}"
+unity_editor="${UNITY_EDITOR:-/Applications/Unity/Hub/Editor/6000.6.7f1/Unity.app/Contents/MacOS/Unity}"
 if [[ ! -x "$unity_editor" ]]; then
-  echo 'Install the macOS ARM64 editor for Unity 2021.3.33f1, or set UNITY_EDITOR to its executable.' >&2
+  echo 'Install the macOS ARM64 editor for Unity 6000.6.7f1, or set UNITY_EDITOR to its executable.' >&2
   exit 1
 fi
 

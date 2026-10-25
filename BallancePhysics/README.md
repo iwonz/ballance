@@ -2,6 +2,12 @@
 
 This is the unity wrapper interface of the IVP physics engine. The CSharp interface is under the directory `/assets/ballancephysics`.
 
+For Unity 6000.6.7f1, use `python3 scripts/build-physics.py WebGL` or
+`python3 scripts/build-physics.py Android` from the repository root. These builds
+pin the IVP revision, apply `source-physics.patch`, and use Unity's toolchains.
+See [build and release instructions](../docs/build-and-release.md).
+Run `python3 scripts/check-physics-abi.py` after changing the native API.
+
 Compile: you need to clone the source code of [ivp physic engine](https://github.com/nillerusr/source-physics), and then compile the project using Visual Studio 2019+.
 
 ---

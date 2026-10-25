@@ -1,3 +1,6 @@
+#if UNITY_ANDROID && !UNITY_EDITOR
+using Input = Ballance2.InputCompatibility.AndroidInput;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;

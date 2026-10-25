@@ -265,6 +265,11 @@ package is removed; Unity's Visual Studio editor integration remains installed.
 
 ## Platform builds
 
+This is the Original maintenance branch. Its edition descriptor preserves the
+classic application identity; shared release tools validate the embedded identity
+and support namespaced tags. Main owns Remaster and the site manifest.
+
+
 [Contract](../openspec/specs/platform-builds/spec.md).
 [PlayerBuild](../Assets/System/Scripts/Editor/PlayerBuild.cs) is the content-aware
 entry point. It builds the core, all package definitions, and 13 levels, stages content
@@ -279,6 +284,11 @@ and CI requirements. Native rebuild provenance lives in
 [build-physics.py](../scripts/build-physics.py), not an unpinned external checkout.
 
 ## Web publication
+
+The shared Pages workflow checks out main and deploys its pinned pair. Original
+releases update only their manifest entry there; no complete branch merges or
+independent single-player deployments are used after the split.
+
 
 [Contract](../openspec/specs/web-publication/spec.md).
 [Pages workflow](../.github/workflows/github-pages.yml) deploys existing release

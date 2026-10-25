@@ -24,6 +24,11 @@ python3 scripts/package-build.py WebGL
 | `Linux` | `Linux/Ballance.x86_64`, x86-64, Mono | `Ballance-<version>-Linux.tar.gz` |
 | `Android` | `Android/Ballance.apk`, ARM64, IL2CPP | `Ballance-<version>-Android.apk` |
 
+The Original descriptor keeps `Ballance` / `com.MengyuGame.Ballance`. New builds
+include build-identity.json; packaging verifies it before producing
+`Ballance-Original-<version>-<platform>` archives for `original/v<version>` tags.
+Legacy published `v1.0.11` assets retain their original names.
+
 Use the same target in both commands. Release assets and SHA-256 sidecars go to
 `Builds/releases/`; filenames use Player Settings -> Version. Move previous outputs
 aside before rebuilding: these tools deliberately refuse to overwrite them.
@@ -89,63 +94,25 @@ submits builds to a mobile store.
 
 ## GitHub Pages
 
-Every release must include its matching Web archive and checksum and deploy that
-version to GitHub Pages, including releases whose main changes are documentation
-or tooling. Release delivery is complete only after the Pages workflow and public
-site checks succeed. Do not reuse or rename an older player as a new version.
+The shared deployment is owned by `main`. Its workflow and release validators are
+shared with this branch through commit `868f41f9`. Before an Original release,
+complete its builds and verification here, create its namespaced tag and draft
+release, and attach all verified archives/checksums including Web. Then update only
+the Original entry in `site/releases.json` on `main`, retaining the Remaster pin.
+Publish only after that manifest change is available on main.
 
-Web uses gzip with **Decompression Fallback**, single-threaded Wasm physics, and
-relative URLs. Custom Content-Encoding or COOP/COEP headers are unnecessary.
-Web releases explicitly use runtime-speed LTO and WebAssembly 2023, retaining full
-managed exception handling. This enables native Wasm exceptions and SIMD without
-reducing graphics quality or changing simulation frequency. Use current browsers;
-the generated Unity 6.6 compiler targets Chrome 95+, Firefox 100+, or Safari 16.4+
-(these minimum versions are not a tested browser matrix). See Unity's [Wasm setting](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/PlayerSettings.WebGL-wasm2023.html)
-and [performance guidance](https://docs.unity3d.com/6000.6/Documentation/Manual/webgl-performance.html).
-Run the [hardware frame checks](validation.md#web-frame-performance) when changing
-rendering, physics hot paths, Web compilation, or gameplay performance.
-The player works below a repository prefix such as `/ballance/`. Generated Web
-files are release assets, not source-controlled content.
+The workflow always checks out main and pins that source commit for both site
+preparation and public verification. It validates both explicit archive/checksum
+pins, preserves the Original launch page directory as `original.html`, places
+Remaster under `remaster/`, and enforces a combined 1,000,000,000-byte limit. It
+fails on missing assets or an unready pin; it cannot deploy only half the site.
+The current public Original remains until main has two verified builds.
 
-1. Set **Settings -> Pages -> Source -> GitHub Actions**.
-2. In the `github-pages` environment, allow deployment from `main` and tags `v*`.
-   A release event runs from its tag. These rules were configured for this fork
-   during release 1.0.9; verify them if repository/environment settings change.
-3. Complete the source change and its OpenSpec record. Build and check Web from the
-   intended release commit using the [validation guide](validation.md).
-4. Create a draft release on that commit's tag. Attach
-   `Ballance-<version>-WebGL.tar.gz` and the matching `.sha256` file, plus the other
-   verified platform assets and checksums. Use a tag such as `v1.0.10`, matching
-   Player Settings -> Version and every archive filename.
-5. Publish the release. **Publish Web to GitHub Pages** validates checksum, safe
-   extraction, required content, size, and the embedded Web player version, then
-   deploys the site. Missing Web assets fail this workflow.
-6. Wait for the workflow's public `release.json` tag check to pass, then test the
-   public URL, including menu, level loading, and controls. Include the release and
-   successful Pages run links in the delivery report. If rollout fails, repair and
-   rerun it before declaring the release delivered.
-
-The current fork's URL is [iwonz.github.io/ballance](https://iwonz.github.io/ballance/)
-unless a custom domain is configured. The site's `release.json` identifies its tag,
-player version, archive, and verified SHA-256. To redeploy or explicitly roll back,
-manually dispatch the workflow with an
-existing release tag; it deploys that release's checked archive. The workflow needs
-no Unity license or Unity secrets.
-
-Test over HTTP, not by opening index.html with file://:
-
-```sh
-python3 -m http.server 8000 --directory Builds
-# Open http://localhost:8000/WebGL/
-```
-
-For a deployment-equivalent check, download/extract the release through
-`python3 scripts/prepare-pages.py <download-dir> <empty-site-dir> <release-tag>`
-and serve the result under a repository subpath. The download directory must contain
-exactly one Web archive and its checksum. The extraction limit is 1 GB uncompressed. Built-in packages are under
-`StreamingAssets/BuiltInPackages`, with same-origin URLs retaining the site prefix.
-Built-in mods are compiled into the player. New external C# DLL mods require Mono;
-Web/Android IL2CPP require adding their source and rebuilding.
+Wait for the Pages workflow and verify both public identities, menus, level loading,
+control and recovery before declaring a release delivered. Roll back one edition by
+restoring only its prior verified manifest entry on main and manually dispatching
+Pages. See the [main release guide](https://github.com/iwonz/ballance/blob/main/docs/build-and-release.md#github-pages)
+for the maintained site procedure. This branch does not carry a second site manifest.
 
 ## GitHub Actions
 

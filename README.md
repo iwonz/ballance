@@ -1,14 +1,28 @@
-# Ballance Unity Rebuild
+# Ballance Original / Native
 
 An open-source Unity recreation of Ballance, with the original 13 levels, native
 IVP physics, custom-level interfaces, built-in mods, and English, Chinese, and
 Russian UI. This fork uses **Unity 6.6 (6000.6.7f1)**.
 
-[Play in your browser](https://iwonz.github.io/ballance/) ·
+[Play Original in your browser](https://iwonz.github.io/ballance/) ·
 [Download releases](https://github.com/iwonz/ballance/releases) ·
 [Agent instructions](AGENTS.md) · [OpenSpec workflow](openspec/README.md)
 
 ![Ballance logo](Assets/Game/Common/Textures/UI/LogoPicture.jpg)
+
+This is the classic Unity edition for the familiar experience, preserved from
+[v1.0.11](https://github.com/iwonz/ballance/releases/tag/v1.0.11), commit `d066bfe5`.
+The annotated [original/v1.0.11 source tag](https://github.com/iwonz/ballance/tree/original/v1.0.11)
+is immutable. "Original / Native" names this project's Unity reconstruction, not
+the original commercial Cyparade executable. Menus, tutorial, tracks and gameplay
+remain classic; this branch accepts necessary fixes and compatibility maintenance.
+
+Remaster development and the common site live on `main`, with independent product
+identity, settings and saves. Use separate Git worktrees and Unity caches. Carry
+applicable fixes as small verified `cherry-pick` commits; do not merge the complete
+branches. New Original versions use `original/v1.0.12` onward and edition-qualified
+archive names. See [release procedure](docs/build-and-release.md#github-pages).
+
 
 **Note: Ballance belongs to Cyparade's work, and the copyright belongs to the original developer Cyparade. The development of this project is for learning purposes only and cannot be used for any commercial purposes. This project follows the GPL-3.0 protocol, but is limited to the code of this project. Any 3D model data, physical engine, images, audio and video, and game data related to Ballance are not within this scope. Any use of these game data for commercial activities without the permission of the copyright owner is illegal.**
 

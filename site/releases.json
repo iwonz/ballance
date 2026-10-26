@@ -1,9 +1,16 @@
 {
-  "schema": 1,
+  "schema": 2,
+  "release": null,
   "editions": {
     "original": {
       "tag": "v1.0.11",
-      "sha256": "3557b247f90e6b3877a5c94ad409da016c669c1b9ca95bb1845208f203b15610"
+      "assets": {
+        "WebGL": "3557b247f90e6b3877a5c94ad409da016c669c1b9ca95bb1845208f203b15610",
+        "Windows": "8a1462df05094675fb656b4aa3880c3a1a27f27e03e3060686523179fb179d89",
+        "Linux": "91e38957f6bb3b0ba96f7b6daa983030ee2ddcda10b62ae599f6ffb33ee6c3b3",
+        "macOS": "e360af56640eba7c73bf6b5eb7411c324bfaa4c5ccbc3d57629fff08bbbae840",
+        "Android": "30778b19cbc360fb472d691c3dfe56332944bd8d3de85f5438b4e55a8125d8a4"
+      }
     },
     "remaster": null
   }

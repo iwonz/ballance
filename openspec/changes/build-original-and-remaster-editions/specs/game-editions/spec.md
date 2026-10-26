@@ -16,7 +16,7 @@ distinguish the Unity recreation from Cyparade's commercial original.
 
 ### Requirement: Independent edition maintenance
 Original and Remaster SHALL have separate development branches, Unity worktrees,
-release version sequences and application/storage identities. Main SHALL own Remaster
+source version sequences and application/storage identities. Public distribution releases SHALL include both editions. Main SHALL own Remaster
 and site sources. Shared fixes SHALL be transferred selectively and verified in the
 receiving branch without merging complete edition histories.
 
@@ -34,3 +34,14 @@ The classic edition SHALL be named Ballance and the remastered edition SHALL be 
 #### Scenario: Identify either edition
 - **WHEN** a player installs, launches or selects an edition on the shared site
 - **THEN** its title is Ballance or Reballance, with no Original or Native suffix added to the classic product name
+
+### Requirement: Project introduction and attribution
+README SHALL explain the history, edition status, branch ownership, play/download paths and development workflow in a logical sequence. It SHALL include labelled real screenshot galleries for both games and a Credits section linking first to imengyu/Ballance, the fork's upstream. The upstream Cyparade rights notice SHALL be preserved verbatim and apply to inherited content in both editions. The GPL-3.0 code license SHALL remain unchanged; separately licensed engines, assets and third-party components SHALL retain their own notices.
+
+#### Scenario: Understand the fork
+- **WHEN** a reader opens README
+- **THEN** they can distinguish Ballance on original from Reballance on main, see actual version-labelled screens and find the upstream project and rights notice
+
+#### Scenario: Reballance branding changes
+- **WHEN** new branding or generated art replaces presentation assets
+- **THEN** it does not remove attribution or relicense inherited game data, physics code or third-party components

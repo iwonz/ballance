@@ -1,4 +1,4 @@
-name: Publish Web to GitHub Pages
+name: Publish Ballance and Reballance to GitHub Pages
 
 on:
   release:
@@ -25,18 +25,50 @@ jobs:
         with:
           ref: main
           persist-credentials: false
-      - name: Pin deployment source
+      - name: Select the approved unified release
+        id: release
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python3 - <<'PY'
+          import os, shutil, sys
+          from pathlib import Path
+          sys.path.insert(0, 'scripts')
+          from release_identity import read_manifest
+          path = Path('site/releases.json')
+          manifest = read_manifest(path)
+          event = os.environ.get('RELEASE_TAG')
+          if event and event != manifest['release']:
+              raise RuntimeError('Published tag is not the approved unified release in main')
+          shutil.copyfile(path, Path(os.environ['RUNNER_TEMP']) / 'approved-release.json')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('tag=' + manifest['release'] + '\n')
+          PY
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.release.outputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Pin immutable deployment source
         id: source
-        run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-      - name: Download and verify both Web releases
+        run: |
+          git merge-base --is-ancestor HEAD origin/main
+          cmp site/releases.json "$RUNNER_TEMP/approved-release.json"
+          python3 - <<'PY'
+          import json, subprocess
+          with open('site/releases.json') as source:
+              manifest = json.load(source)
+          for edition, pin in manifest['editions'].items():
+              branch = 'original' if edition == 'original' else 'main'
+              subprocess.run(['git', 'merge-base', '--is-ancestor', pin['tag'], 'origin/' + branch], check=True)
+          PY
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Verify both games and the attached site from one release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          args=()
-          if [ -n "$RELEASE_TAG" ]; then args+=(--release-tag "$RELEASE_TAG"); fi
-          python3 scripts/prepare-site.py download public --fetch "${args[@]}"
+          python3 scripts/prepare-release.py verify download public --fetch
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
@@ -62,7 +94,7 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v5
-      - name: Verify both published releases
+      - name: Verify the distribution and both public players
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |

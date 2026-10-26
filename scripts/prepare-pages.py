@@ -1,13 +1,26 @@
 #!/usr/bin/env python3
 """Validate and extract one Web release for the GitHub Pages workflow (Python 3.12+)."""
 import argparse
-import hashlib
 import importlib.util
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import tarfile
-from release_identity import EDITIONS, asset_name, parse_tag
+from release_identity import EDITIONS, asset_name, parse_tag, verify_checksum
+
+
+def extract(archive, destination):
+    if any(destination.iterdir()):
+        raise RuntimeError("The Pages staging directory must be empty")
+    with tarfile.open(archive) as bundle:
+        members = bundle.getmembers()
+        if any(PurePosixPath(member.name).is_absolute() or ".." in PurePosixPath(member.name).parts for member in members):
+            raise tarfile.FilterError("Pages archive contains an unsafe path")
+        if any(not member.isfile() and not member.isdir() for member in members):
+            raise RuntimeError("Pages archive contains links or special files")
+        if sum(member.size for member in members) > 1_000_000_000:
+            raise RuntimeError("Pages archive exceeds the 1 GB site limit")
+        bundle.extractall(destination, filter="data")
 
 
 def prepare(download, destination, tag, pinned_sha256=None):
@@ -18,22 +31,8 @@ def prepare(download, destination, tag, pinned_sha256=None):
     archive = archives[0]
     if archive.name != asset_name(tag):
         raise RuntimeError("Web archive version does not match the release tag")
-    expected = Path(str(archive) + ".sha256").read_text().split()[0]
-    with archive.open("rb") as stream:
-        actual = hashlib.file_digest(stream, "sha256").hexdigest()
-    if actual != expected:
-        raise RuntimeError("Web archive checksum mismatch")
-    if pinned_sha256 is not None and actual != pinned_sha256:
-        raise RuntimeError("Web archive checksum differs from the pinned release")
-    if any(destination.iterdir()):
-        raise RuntimeError("The Pages staging directory must be empty")
-    with tarfile.open(archive) as bundle:
-        members = bundle.getmembers()
-        if any(not member.isfile() and not member.isdir() for member in members):
-            raise RuntimeError("Pages archive contains links or special files")
-        if sum(member.size for member in members) > 1_000_000_000:
-            raise RuntimeError("Pages archive exceeds the 1 GB site limit")
-        bundle.extractall(destination, filter="data")
+    actual = verify_checksum(archive, pinned_sha256)
+    extract(archive, destination)
     spec = importlib.util.spec_from_file_location("package_build", Path(__file__).with_name("package-build.py"))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

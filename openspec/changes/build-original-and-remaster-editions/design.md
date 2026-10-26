@@ -24,7 +24,8 @@ ignored worktree for Original and keep main for Remaster/site; no full branch me
 Original retains product and application IDs. Remaster uses Reballance and
 com.iwonz.BallanceRemaster, independently numbered development builds until a release is verified.
 An edition descriptor is read by build/packaging tooling; no runtime edition toggle.
-New tags are <edition>/v<version>, assets <Product>-<version>-<platform>.
+Edition source tags are <edition>/v<version>, assets <Product>-<version>-<platform>.
+Public distributions use release/v<version> on main and contain both independently versioned games.
 Legacy v1.0.11 remains downloadable with its original files. Do not reuse binaries
 under a new version. Release identity includes edition, tag, version and SHA-256.
 
@@ -108,12 +109,11 @@ its assets move under original/ with only host paths rewritten, preserving stora
 Do not preload either Unity instance on the landing. Keep original release.json at
 original/release.json, remaster at remaster/release.json and an aggregate root manifest.
 
-site/releases.json explicitly pins both tag/checksum entries. main owns deployment
-logic. Each release's workflow uses that central implementation and must match a
-manifest entry; missing required assets fail. Prepare both into one staging tree,
-validate total bytes <= 1,000,000,000, then deploy atomically. Do not deploy the new
-site until both real players are verified. To roll back, change one manifest entry
-and redeploy the whole pair. Serialize deployment and verify both identities by HTTP.
+site/releases.json schema 2 pins one distribution tag and both source tags with SHA-256 hashes for WebGL, Windows, Linux, macOS and Android. Null release/remaster pins remain a deliberate publication barrier until gameplay acceptance. The local release preparer verifies all ten packaged artifacts and sidecars, assembles the existing two-player site, and stages one flat upload directory with the players, site archive/checksum, manifest, license, credits and release notes linking both source tags. Reuse an unchanged edition's bytes rather than renaming or rebuilding it.
+
+The Pages workflow selects the approved distribution from main, then checks out that immutable release tag. It downloads the one release's assets, verifies the manifest and all platform hashes, reconstructs the site from its pinned Web inputs and source, and compares the attached site file-for-file before deployment. The attached site is the deployed artifact. Reject unsafe extraction and total size above 1,000,000,000 bytes. Serialize deployment and verify the distribution and both edition identities by HTTP. Update or roll back one game through a new complete distribution while preserving the other pin. Never resolve a game's version through latest.
+
+Inject small localized navigation links into both hosted player pages, outside Unity; retain keyboard focus and stable Original storage paths. Keep the classic footer reachable on narrow/mobile screens by sizing the Web canvas container around it; desktop game presentation remains unchanged. README owns the introductory guide and version-labelled screenshot galleries. CREDITS.md inventories attribution and carries the exact upstream notice; release assets and the site include it and LICENSE. GPL code rights and separately licensed game data are described separately; branding does not grant new rights over inherited content.
 
 ## Risks / Trade-offs
 
@@ -130,8 +130,8 @@ and redeploy the whole pair. Serialize deployment and verify both identities by 
 ## Migration Plan
 
 Preserve Original refs first. Implement and validate locally without replacing live
-v1.0.11. Keep release manifest unready until Remaster assets are genuinely published.
-Use draft releases with verified five-platform assets/checksums, publish, wait for
+v1.0.11. Keep the distribution manifest unready until Remaster gameplay acceptance is complete.
+Prepare one draft distribution with both verified five-platform artifact sets, publish, wait for
 Pages, then exercise both public games. Never overwrite the immutable baseline.
 
 ## Validation
@@ -260,7 +260,7 @@ Pages publication, then required Reballance publication to wait for full gamepla
 acceptance. Do not publish it as a prerelease workaround. Keep outstanding 91-run
 and performance evidence explicit; unavailable physical Android/reference-PC tests
 remain marked unrun as already agreed. The two-game Pages launch waits for eligible
-working releases of both editions.
+working builds of both editions in one unified distribution release.
 
 The interface icon inventory also includes dynamically instantiated touch keypads.
 Use the same atlas for directional/camera buttons and the joystick thumb, retaining

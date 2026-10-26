@@ -8,7 +8,7 @@ player, save namespace, and Pages deployment currently couple these products.
 
 - Preserve d066bfe5 as original/v1.0.11 and maintain an original branch; main owns
   Remaster and the shared site. Transfer fixes selectively, without branch merges.
-- Give editions independent releases, application identities, saves and build trees.
+- Keep independent edition versions, application identities, saves and build trees; publish both games together in one versioned distribution release.
 - Modernize Remaster materials, skies, sound, all menu/HUD/tutorial flows and scalable
   rendering while preserving level topology and the calibrated dry gameplay baseline.
 - Replace Remaster startup/About promotional branding with its own generated cloud-reveal title artwork; redesign records and every remaining menu control while preserving source license notices.
@@ -16,7 +16,8 @@ player, save namespace, and Pages deployment currently couple these products.
   gradual runtime switching, shared visual/contact state, checkpoint restoration and
   environment-independent records. Extend native IVP rather than substituting Unity physics.
 - Publish a bilingual static landing and both verified Web players atomically from
-  pinned release identities, preserving Original browser storage and independent rollback.
+  pinned source tags and platform checksums, preserving Original browser storage and independent rollback. Include the exact two-player site archive in the same release.
+- Rewrite README with branch ownership, run/development instructions, real screenshot galleries, upstream-first Credits and the unchanged upstream rights notice for both editions.
 - Validate all five existing release platforms, the 91 level/preset combinations,
   frame-rate independence and actual hardware performance before claiming completion.
 

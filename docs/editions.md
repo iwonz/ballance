@@ -35,16 +35,24 @@ will use `remaster/`. Verify real browser storage before deploying that relocati
 
 ## Releases
 
-New tags use `original/v<version>` and `remaster/v<version>`, with independent
-version sequences. New assets use `Ballance-<version>-<platform>` or
-`Reballance-<version>-<platform>` and the existing platform extensions.
-Historical tags such as `v1.0.11` retain their unqualified filenames.
+The two games keep independent source versions: `original/v<version>` and
+`remaster/v<version>`. `main` develops Reballance and owns distribution tooling;
+`original` maintains Ballance. A source tag does not require its own GitHub Release.
 
-The shared site is assembled from two explicit release entries; releasing one
-edition must not automatically select another version of the other. Each archive,
-its checksum, embedded version and edition must agree. Retain the
-[release guide](build-and-release.md#github-pages) checks and never publish a player
-under a version it was not built with.
+Public releases use **`release/v<version>` on main** and contain both games. Each
+includes ten platform artifacts and their checksums, the complete shared Pages site
+archive and checksum, the source/version manifest, Credits and license. Asset names
+remain `Ballance-<game-version>-<platform>` and `Reballance-<game-version>-<platform>`;
+the distribution version is separate from either game's version. Historical releases
+such as `v1.0.11` and their files remain intact.
+
+`site/releases.json` pins both source tags and all five checksums per edition.
+Updating or rolling back one edition leaves the other's source tag and hashes
+unchanged; copy its existing verified artifacts into the new distribution. Never
+rename old binaries to pretend they are a new game version, or select the companion
+edition using “latest”. Follow the [unified release procedure](build-and-release.md#github-pages).
+Publication and Pages deployment are owned by main; do not publish a separate
+edition release or restore a single-player Pages workflow on original.
 
 The Remaster and two-player site are being implemented in the
 [active change](../openspec/changes/build-original-and-remaster-editions/proposal.md).

@@ -12,7 +12,8 @@ import shutil
 import unittest
 from unittest.mock import patch
 import zipfile
-from release_identity import asset_name, checkout_edition, parse_tag, validate_build_identity
+from release_identity import (asset_name, checkout_edition, parse_tag, validate_build_identity,
+                              RELEASE_PLATFORMS, read_manifest, site_asset_name)
 
 
 def load(name):
@@ -25,6 +26,7 @@ def load(name):
 package = load("package-build")
 pages = load("prepare-pages")
 site = load("prepare-site")
+release = load("prepare-release")
 
 
 class ReleaseTests(unittest.TestCase):
@@ -198,8 +200,8 @@ class ReleaseTests(unittest.TestCase):
             validate_build_identity(self.root, self.web, "1.0.1")
 
     def site_fixture(self):
-        (self.web / "index.html").write_text('<html><link href="TemplateData/style.css"><script>var buildUrl = "Build"; '
-            'var config = {streamingAssetsUrl: "StreamingAssets", productVersion: "1.0.0"};</script></html>')
+        (self.web / "index.html").write_text('<html><head><link href="TemplateData/style.css"></head><body><script>var buildUrl = "Build"; '
+            'var config = {streamingAssetsUrl: "StreamingAssets", productVersion: "1.0.0"};</script><div id="unity-footer"></div></body></html>')
         self.archive_web()
         downloads = self.root / "pair"
         shutil.copytree(self.download, downloads / "original")
@@ -208,17 +210,31 @@ class ReleaseTests(unittest.TestCase):
         Path(str(self.archive) + ".sha256").unlink()
         self.tag = "remaster/v1.0.0"
         self.archive = self.download / asset_name(self.tag)
-        (self.web / "index.html").write_text('productName: "Reballance", productVersion: "1.0.0"')
+        (self.web / "index.html").write_text('<html><head></head><body><header><a id="home" href="../">About</a><button id="fullscreen">Full screen</button></header>'
+            '<script>const config = {productName: "Reballance", productVersion: "1.0.0"};</script></body></html>')
         (self.web / "build-identity.json").write_text(json.dumps({"edition": "remaster", "version": "1.0.0", "productName": "Reballance", "applicationIdentifier": "com.iwonz.BallanceRemaster"}))
         self.archive_web()
         shutil.copytree(self.download, downloads / "remaster")
         source = self.root / "site"
         source.mkdir()
         (source / "index.html").write_text('<a href="original.html">Original</a><a href="remaster/">Remaster</a>')
+        (source / "assets").mkdir()
+        for name in ("player-navigation.js", "player-navigation.css"):
+            (source / "assets" / name).write_text('navigation fixture')
         manifest = source / "releases.json"
-        manifest.write_text(json.dumps({"schema": 1, "editions": {
-            "original": {"tag": "v1.0.0", "sha256": original_digest},
-            "remaster": {"tag": self.tag, "sha256": hashlib.sha256(self.archive.read_bytes()).hexdigest()}}}))
+        data = {"schema": 2, "release": "release/v1.0.0", "editions": {
+            "original": {"tag": "v1.0.0", "assets": {"WebGL": original_digest}},
+            "remaster": {"tag": self.tag, "assets": {"WebGL": hashlib.sha256(self.archive.read_bytes()).hexdigest()}}}}
+        for edition, pin in data["editions"].items():
+            for platform in RELEASE_PLATFORMS[1:]:
+                path = downloads / edition / asset_name(pin["tag"], platform)
+                path.write_bytes((edition + platform).encode())
+                digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                Path(str(path) + ".sha256").write_text(digest + "  " + path.name + "\n")
+                pin["assets"][platform] = digest
+        manifest.write_text(json.dumps(data))
+        (source.parent / "LICENSE").write_text("license fixture")
+        (source.parent / "CREDITS.md").write_text("credits fixture")
         return downloads, source, manifest
 
     def test_two_editions_and_original_page_directory(self):
@@ -230,6 +246,8 @@ class ReleaseTests(unittest.TestCase):
             self.assertIn(path, host)
         self.assertFalse((self.destination / "original/index.html").exists())
         self.assertTrue((self.destination / "remaster/index.html").is_file())
+        self.assertIn('href="remaster/"', host)
+        self.assertIn('href="../original.html"', (self.destination / "remaster/index.html").read_text())
         self.assertEqual(json.loads((self.destination / "release.json").read_text())["editions"], identities)
 
     def test_pair_failure_never_publishes_half_a_site(self):
@@ -256,6 +274,138 @@ class ReleaseTests(unittest.TestCase):
     def test_original_template_requires_path_audit_on_change(self):
         with self.assertRaisesRegex(RuntimeError, "Unrecognized"):
             site.original_host('<html><base href="original/"></html>')
+
+    def release_fixture(self):
+        downloads, source, manifest = self.site_fixture()
+        output = self.root / "release"
+        release.prepare(downloads, output, source, manifest)
+        return output, source, manifest
+
+    def test_unified_release_round_trip(self):
+        output, source, manifest = self.release_fixture()
+        data = read_manifest(manifest)
+        self.assertEqual({p.name for p in output.iterdir()}, set(release.release_files(data)))
+        public = self.root / "deployed"
+        release.verify(output, public, source, manifest)
+        self.assertEqual(json.loads((public / "release.json").read_text())["release"], data["release"])
+        for edition, name, _ in release.player_assets(data):
+            self.assertEqual((output / name).read_bytes(), (self.root / "pair" / edition / name).read_bytes())
+        self.assertIn("imengyu/Ballance", (output / "RELEASE-NOTES.md").read_text())
+
+    def test_missing_or_corrupt_native_asset_blocks_site(self):
+        output, source, manifest = self.release_fixture()
+        data = read_manifest(manifest)
+        asset = output / asset_name(data["editions"]["original"]["tag"], "Android")
+        public = self.root / "deployed"
+        asset.write_bytes(b"changed")
+        with self.assertRaisesRegex(RuntimeError, "checksum"):
+            release.verify(output, public, source, manifest)
+        asset.unlink()
+        with self.assertRaisesRegex(RuntimeError, "Missing"):
+            release.verify(output, public, source, manifest)
+        self.assertFalse(public.exists())
+
+    def test_wrong_attached_manifest_rejected(self):
+        output, source, manifest = self.release_fixture()
+        data = read_manifest(manifest)
+        data["release"] = "release/v9.0.0"
+        (output / "releases.json").write_text(json.dumps(data))
+        with self.assertRaisesRegex(RuntimeError, "manifest differs"):
+            release.verify(output, self.root / "deployed", source, manifest)
+
+    def test_site_must_match_release_even_with_valid_sidecar(self):
+        output, source, manifest = self.release_fixture()
+        archive = output / site_asset_name(read_manifest(manifest)["release"])
+        extracted = self.root / "changed-site"
+        extracted.mkdir()
+        pages.extract(archive, extracted)
+        (extracted / "index.html").write_text("wrong landing")
+        with tarfile.open(archive, "w:gz") as bundle:
+            for path in extracted.iterdir():
+                bundle.add(path, arcname=path.name)
+        Path(str(archive) + ".sha256").write_text(hashlib.sha256(archive.read_bytes()).hexdigest())
+        with self.assertRaisesRegex(RuntimeError, "attached site differs"):
+            release.verify(output, self.root / "deployed", source, manifest)
+
+    def test_incomplete_release_has_no_partial_output(self):
+        downloads, source, manifest = self.site_fixture()
+        (downloads / "remaster" / asset_name(self.tag, "Windows")).unlink()
+        output = self.root / "release"
+        with self.assertRaises(FileNotFoundError):
+            release.prepare(downloads, output, source, manifest)
+        self.assertFalse(output.exists())
+
+    def test_release_does_not_overwrite_outputs(self):
+        output, source, manifest = self.release_fixture()
+        with self.assertRaisesRegex(RuntimeError, "must not exist"):
+            release.prepare(self.root / "pair", output, source, manifest)
+        with self.assertRaisesRegex(RuntimeError, "must not exist"):
+            release.verify(output, self.destination, source, manifest)
+
+    def test_incomplete_manifest_and_unready_distribution_rejected(self):
+        _, _, path = self.site_fixture()
+        valid = json.loads(path.read_text())
+        for tag in (None, "v1.0.0", "remaster/v1.0.0", "release/v1.0.0\nunsafe"):
+            path.write_text(json.dumps(dict(valid, release=tag)))
+            with self.assertRaises(RuntimeError):
+                read_manifest(path)
+        del valid["editions"]["original"]["assets"]["Windows"]
+        path.write_text(json.dumps(valid))
+        with self.assertRaisesRegex(RuntimeError, "five platform"):
+            read_manifest(path)
+
+    def test_unchanged_edition_survives_distribution_update(self):
+        output, source, manifest = self.release_fixture()
+        data = read_manifest(manifest)
+        original = data["editions"]["original"]
+        data["release"] = "release/v1.0.1"
+        pin = data["editions"]["remaster"]
+        previous = pin["tag"]
+        pin["tag"] = "remaster/v1.0.1"
+        folder = self.root / "pair/remaster"
+        for path in folder.iterdir():
+            path.unlink()
+        for platform in RELEASE_PLATFORMS:
+            path = folder / asset_name(pin["tag"], platform)
+            if platform == "WebGL":
+                host = self.web / "index.html"
+                host.write_text(host.read_text().replace('productVersion: "1.0.0"', 'productVersion: "1.0.1"'))
+                identity_path = self.web / "build-identity.json"
+                identity = json.loads(identity_path.read_text())
+                identity["version"] = "1.0.1"
+                identity_path.write_text(json.dumps(identity))
+                with tarfile.open(path, "w:gz") as bundle:
+                    for source_file in self.web.iterdir():
+                        bundle.add(source_file, arcname=source_file.name)
+            else:
+                path.write_bytes((platform + 'new build').encode())
+            pin["assets"][platform] = hashlib.sha256(path.read_bytes()).hexdigest()
+            Path(str(path) + '.sha256').write_text(pin["assets"][platform])
+        manifest.write_text(json.dumps(data))
+        updated = self.root / "updated"
+        release.prepare(self.root / "pair", updated, source, manifest)
+        self.assertEqual(read_manifest(updated / "releases.json")["editions"]["original"], original)
+        for platform in RELEASE_PLATFORMS:
+            name = asset_name(original["tag"], platform)
+            self.assertEqual((updated / name).read_bytes(), (output / name).read_bytes())
+        self.assertNotEqual(read_manifest(updated / 'releases.json')['editions']['remaster']['tag'], previous)
+        release.verify(updated, self.root / 'updated-site', source, manifest)
+
+    def test_site_archive_rejects_absolute_paths(self):
+        archive = self.root / "unsafe.tar.gz"
+        with tarfile.open(archive, "w:gz") as bundle:
+            member = tarfile.TarInfo("/index.html")
+            member.size = 1
+            bundle.addfile(member, io.BytesIO(b"x"))
+        with self.assertRaises(tarfile.FilterError):
+            pages.extract(archive, self.destination)
+
+    def test_missing_navigation_cannot_ship(self):
+        downloads, source, manifest = self.site_fixture()
+        (source / 'assets/player-navigation.js').unlink()
+        with self.assertRaisesRegex(RuntimeError, 'Missing player navigation'):
+            site.prepare(downloads, self.destination, source, manifest)
+        self.assertEqual(list(self.destination.iterdir()), [])
 
 
 if __name__ == "__main__":

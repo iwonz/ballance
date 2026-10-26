@@ -33,7 +33,7 @@
 ## 5. Site and publication
 
 - [ ] 5.1 Build responsive RU/EN landing using actual game captures with both play links, attribution and reduced motion; verify keyboard/mobile/language behavior without Unity downloads.
-- [ ] 5.2 Implement manifest-pinned two-edition Pages preparation and deployment, combined-size validation and independent rollback; pass archive/workflow tests and both public identity checks.
+- [ ] 5.2 Implement manifest-pinned unified-release Pages preparation and deployment, combined-size validation and independent rollback; pass archive/workflow tests and both public identity checks.
 - [x] 5.3 Preserve Original browser storage at original.html with edition-specific resource paths; test an existing profile, independent Remaster reset and all subpath requests.
 
 ## 6. Acceptance and delivery
@@ -47,3 +47,9 @@
 - [x] 6.6 Apply Ballance / Reballance public names and keep only the latest canonical macOS installations; add verified replacement/duplicate cleanup tooling and remove obsolete installed apps, delete obsolete build/disabled bundles, use -dev names for temporary applications, and remove stale catalog registrations without touching saves.
 
 - [x] 6.7 Remove the verified legacy .app-backup bundle, cover that suffix in installer tests, transfer the fix to Original, and verify both canonical installations and preserved profiles.
+
+## 7. Unified distribution and project guide
+
+- [x] 7.1 Replace separate public release delivery with a single distribution manifest, ten verified platform artifacts, attached two-player site, immutable-source Pages deployment and per-player switch links; test incomplete/corrupt/mismatched releases and unchanged-edition pins.
+- [x] 7.2 Rewrite README with introduction, branch table, run/development/release instructions, real labelled galleries and upstream-first Credits; preserve the exact upstream rights notice and include legal notices in distribution/site artifacts.
+- [ ] 7.3 Run release-tool, workflow, context and local HTTP/browser checks; record results and limits, commit and push authorized source changes without publishing unaccepted Reballance builds.

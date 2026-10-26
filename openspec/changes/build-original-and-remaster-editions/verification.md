@@ -881,3 +881,32 @@ The user reported solid HUD blocks, an unwanted centered preset title, unnatural
   menu (`dev11-menu-return.png`), then closed the isolated test browser. The
   development-11 browser console log contained no matching gameplay exception or
   shader-error diagnostics; unrelated connection warnings remain outside that claim.
+
+
+## 2026-10-26 — Unified distributions, branch guides and attribution
+
+### Checks
+
+- `python3 scripts/test-release-tools.py`: 28 tests passed, including complete distribution round-trip, missing/corrupt native artifacts, manifest mismatch, substituted site with a valid sidecar, unsafe archive paths, no-overwrite/atomic failure, missing navigation assets and a Reballance version update preserving every Ballance byte.
+- `python3 scripts/test-agent-context.py`: 5 tests passed.
+- `openspec validate --all --strict --no-interactive`: 14 items passed; `python3 scripts/check-agent-context.py` passed.
+- `actionlint .github/workflows/github-pages.yml` (local actionlint 1.7.12): passed. Both changed site scripts passed `node --check`. Source-ancestry checks accepted the preserved Original tag and main source, and rejected the opposite branch.
+- `git diff --check`: passed. README/Credits/gallery relative links were checked; the supplied upstream rights notice is retained verbatim in README and CREDITS.md.
+- All five existing Ballance 1.0.11 archives were hashed against their sidecars before adding their unchanged hashes to the schema-2 manifest.
+- Prepared and verified a local-only distribution from real Ballance 1.0.11 and Reballance 1.0.0-dev.11 artifacts for all five platforms. The fixture manifest uses `release/v1.0.0-local`; no Git tag or public release was created. `prepare-release.py prepare` and `verify` passed, comparing the attached site file-for-file with reconstructed pinned inputs. The combined site is approximately 449 MB, below 1,000,000,000 bytes.
+- Served the extracted site under a repository-style prefix and passed `verify-site.py` for the distribution and both edition identities. Real browser navigation exercised landing → Ballance → Reballance → Ballance; Unity loaded both players. The landing made no Unity Build requests before a game was selected.
+- Checked RU/EN landing switching, saved host-language selection, both per-player switch links, and keyboard Tab/Enter from loaded Ballance into Reballance. At 390×844, both host pages have a 390 px document width; both classic navigation links and all Reballance header controls fit within the viewport. Fixed the classic template's otherwise offscreen footer on narrow screens. At 320 px, the Russian Reballance header wraps its controls without horizontal overflow.
+- Visually inspected the desktop landing capture and all gallery content used for claims. The galleries contain eight actual version-labelled menu/selection/gameplay/settings captures, not generated concepts.
+- Original's independent documentation-only change `align-classic-project-guide` completed its lifecycle and was archived. Its strict/context/delivery checks passed; no classic code, assets, binaries or saves changed.
+
+### Results
+
+Main remains Reballance/shared-publication ownership and original remains classic Ballance. Public distribution tags use `release/v*`; `original/v*` and `remaster/v*` remain independently versioned source identities. The preparer stages ten platform artifacts and sidecars, the complete site archive/checksum, pinned manifest, source-linked release notes, LICENSE and CREDITS.md. Pages selects the approved distribution from main, checks out its immutable tag, validates all attached artifacts and deploys the attached site only after exact content comparison.
+
+README now introduces the fork, explains play/download/development/release paths and both branches, includes the real galleries, credits imengyu/Ballance first and preserves the exact Cyparade notice. The credits inventory distinguishes GPL-covered project code from separately licensed game data, engine and components without claiming new permissions. Original's README and publication guide point to the shared main-owned procedure.
+
+### Limitations
+
+No new release tags, public releases or Pages deployment were performed: full Reballance gameplay acceptance remains unfinished. Committed distribution/remaster pins remain null and fail closed. `check-agent-context.py --base HEAD` on main still rejects delivery without a completed archived broad change; that gate has not been bypassed. The active change must not be archived to conceal unfinished gameplay work.
+
+This turn changed publication tooling, host navigation and documentation, not Unity runtime or native binaries. No new hardware performance or device qualification is claimed. The browser retained existing Unity telemetry connection failures, the classic missing-script warning and legacy synchronization warning; no failed local game-resource URL was observed. Later game/mobile screenshot attempts timed out, so those checks rely on DOM geometry, keyboard/navigation results and existing labelled captures rather than new visual gameplay acceptance. The required full level/preset playthroughs and unavailable target devices remain recorded as incomplete/unrun.

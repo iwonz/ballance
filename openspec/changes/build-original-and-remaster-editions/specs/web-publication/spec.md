@@ -25,23 +25,23 @@ archive names and verified checksums. Legacy v1.0.11 SHALL remain a valid Origin
 - **THEN** preparation fails even if each player alone fits
 
 ### Requirement: Release-triggered deployment
-Every published edition release SHALL trigger mandatory preparation and atomic Pages
-deployment of the two explicitly pinned editions and landing. Main SHALL own the
-deployment implementation and release manifest. Missing assets or an event tag not
-pinned in the manifest SHALL fail visibly. Manual dispatch SHALL allow restoring a
-previously verified edition pair. Delivery SHALL remain incomplete until deployment succeeds.
+Every public distribution release SHALL contain both editions' five platform artifacts and SHA-256 sidecars, a pinned manifest, and the complete two-player Pages archive with its checksum. Distribution tags SHALL use release/v<version> on main; original/v* and remaster/v* SHALL identify independent source versions without requiring separate public releases. Existing releases SHALL remain unchanged. Main SHALL own publication. A release event SHALL match the distribution pin, and deployment SHALL use that release's immutable source and attached site. Missing, corrupt or mismatched assets SHALL fail before deployment. Delivery SHALL remain incomplete until deployment and public checks succeed.
 
 #### Scenario: Publish Web release
-- **WHEN** a pinned edition release is published with its archive and checksum
-- **THEN** the workflow validates both editions and deploys the site without a Unity license
+- **WHEN** a verified distribution release is published
+- **THEN** its downloads contain both games and the exact site deployed to Pages without a Unity license
 
 #### Scenario: Missing Web asset
-- **WHEN** either pinned release lacks its required Web asset or checksum
-- **THEN** the workflow fails and leaves the previously deployed site intact
+- **WHEN** either edition lacks any required platform archive or checksum, or the site archive differs from the pinned inputs
+- **THEN** validation fails and the previously deployed site remains intact
+
+#### Scenario: Update or roll back one edition
+- **WHEN** a new distribution pins a different verified source version for one edition
+- **THEN** the other edition keeps identical version and artifact checksums, and the new release includes the entire pair
 
 #### Scenario: Redeploy older version
-- **WHEN** one manifest entry is changed to a verified older release and deployed
-- **THEN** that edition rolls back while the other retains its pinned identity
+- **WHEN** the workflow is manually dispatched with an unchanged distribution pin
+- **THEN** it verifies and redeploys that release's attached site, regardless of later landing changes on main
 
 ### Requirement: Deployment permissions and browser verification
 Pages SHALL use GitHub Actions with intended release refs allowed. Serialized deployment
@@ -85,3 +85,10 @@ SHALL preserve Original's saved profile and all requests SHALL retain the reposi
 #### Scenario: Returning Original player
 - **WHEN** a browser with an existing root-hosted v1.0.11 save opens original.html
 - **THEN** its saved data is available and no Remaster data is imported
+
+### Requirement: Switch between games
+Each hosted player SHALL offer keyboard-accessible links to the landing and the other edition, with Russian/English labels. Switching SHALL navigate between independent player pages, preserving their storage directories and not loading both Unity runtimes together.
+
+#### Scenario: Switch from either game
+- **WHEN** the player follows the edition switch link
+- **THEN** the other game opens at its own stable URL under the same repository prefix

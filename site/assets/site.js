@@ -40,6 +40,7 @@ const englishAlt = new Map([...document.querySelectorAll('[data-alt]')].map(node
 let language = navigator.language.toLowerCase().startsWith('ru') ? 'ru' : 'en';
 try { const saved = localStorage.getItem('ballance.site.language'); if (['ru','en'].includes(saved)) language = saved; } catch {}
 let selected = 0;
+let distribution = null;
 const buttons = presets.map((preset, index) => {
   const button = document.createElement('button');
   button.type = 'button';
@@ -67,6 +68,19 @@ function renderLanguage() {
   button.setAttribute('aria-label', language === 'ru' ? 'Switch to English' : 'Переключить на русский');
   document.title = language === 'ru' ? 'Ballance — Над облаками' : 'Ballance — Above the clouds';
   renderPresets();
+  renderDistribution();
+}
+function renderDistribution() {
+  if (!distribution) return;
+  const original = distribution.editions.original.tag.split('/').pop().replace(/^v/, '');
+  const remaster = distribution.editions.remaster.tag.split('/').pop().replace(/^v/, '');
+  document.querySelector('[data-i18n="downloadsText"]').textContent = language === 'ru'
+    ? `Один релиз: Ballance ${original} и Reballance ${remaster}. Обе игры для пяти платформ, контрольные суммы и полный архив сайта.`
+    : `One release: Ballance ${original} and Reballance ${remaster}. Both games for five platforms, checksums and the complete site archive.`;
+  const link = document.querySelector('[data-i18n="downloadOriginal"]');
+  link.textContent = language === 'ru' ? 'Скачать обе игры ↗' : 'Download both games ↗';
+  link.href = 'https://github.com/iwonz/ballance/releases/tag/' + distribution.release;
+  document.querySelector('[data-i18n="development"]').textContent = `Reballance ${remaster}`;
 }
 document.querySelector('#language').addEventListener('click', () => {
   language = language === 'ru' ? 'en' : 'ru';
@@ -74,3 +88,13 @@ document.querySelector('#language').addEventListener('click', () => {
   renderLanguage();
 });
 renderLanguage();
+fetch('releases.json').then(response => {
+  if (!response.ok) throw new Error('Release manifest unavailable');
+  return response.json();
+}).then(value => {
+  if (value.schema === 2 && /^release\/v\d+\.\d+\.\d+(?:-[\w.-]+)?$/.test(value.release)
+      && typeof value.editions?.original?.tag === 'string' && typeof value.editions?.remaster?.tag === 'string') {
+    distribution = value;
+    renderDistribution();
+  }
+}).catch(() => {});

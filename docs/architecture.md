@@ -349,19 +349,24 @@ and CI requirements. Native rebuild provenance lives in
 ## Web publication
 
 [Contract](../openspec/specs/web-publication/spec.md).
-[Pages workflow](../.github/workflows/github-pages.yml) checks out a pinned `main`
-commit and assembles published assets; it does not build Unity.
-[prepare-pages.py](../scripts/prepare-pages.py) validates individual archive safety,
-checksum, size, content and identity.
-[prepare-site.py](../scripts/prepare-site.py) consumes the two explicit pins in
-`site/releases.json`, stages the landing and both players atomically, and enforces
-the combined Pages size limit. It retains Original's HTML in the previous page
-directory. [verify-site.py](../scripts/verify-site.py) checks both public identities.
-The null development Remaster pin intentionally prevents deployment.
+[Pages workflow](../.github/workflows/github-pages.yml) selects the unified distribution
+pin from `main`, checks out its immutable `release/v*` source and deploys the attached
+site; it does not build Unity. [release_identity.py](../scripts/release_identity.py)
+owns source/distribution tag parsing and the schema-2 five-platform manifest.
+[prepare-release.py](../scripts/prepare-release.py) stages and verifies both sets of
+five platform artifacts, notices and the complete site archive.
+[prepare-pages.py](../scripts/prepare-pages.py) validates individual Web archive
+safety, checksum, size, content and identity. [prepare-site.py](../scripts/prepare-site.py)
+stages the landing and both players atomically, adds edition navigation and enforces
+the combined Pages size limit. Original's HTML stays in the previous page directory.
+[verify-site.py](../scripts/verify-site.py) checks the distribution and both public
+identities. Null distribution/Reballance pins intentionally prevent deployment.
 
 The [release guide](build-and-release.md#github-pages) owns setup and independent
-rollback. HTTP identity checks do not cover gameplay: test both public players,
-including preserved Original storage, menu, control, fall/rebirth and return.
+rollback through complete distribution releases. HTTP identity checks do not cover
+gameplay: test both public players, preserved Original storage, navigation, menu,
+control, fall/rebirth and return. [README](../README.md) introduces both games;
+[Credits](../CREDITS.md) owns upstream attribution and the preserved rights notice.
 
 ## Known gaps
 

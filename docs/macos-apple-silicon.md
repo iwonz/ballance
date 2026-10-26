@@ -28,7 +28,8 @@ shared content-aware build and packaging commands. Outputs are
 `Builds/macOS/Ballance.app` (`Ballance-dev.app` for development versions),
 `Builds/releases/Ballance-<version>-macOS.zip` and its checksum. Existing outputs
 are not overwritten. Follow [local installation and cleanup](build-and-release.md#local-macos-installation)
-after packaging; obsolete unpacked apps are deleted after verified replacement.
+after packaging; obsolete unpacked apps, including legacy `.app-backup` and `.app.disabled`
+copies, are deleted after verified replacement.
 
 The build entry point is `Ballance2.Editor.PlayerBuild.Build`.
 It selects ARM64 and Mono, explicitly builds `Assets/Scenes/Main.unity`, builds

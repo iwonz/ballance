@@ -74,7 +74,7 @@ New classic assets SHALL use Ballance-<version>-<platform> and remaster assets S
 - **THEN** its filename uses its public product name and validation checks the matching edition identity and version
 
 ### Requirement: Stable local macOS installations
-Local macOS installation SHALL maintain one current application per edition. Stable applications SHALL use `/Applications/Ballance.app` and `/Applications/Reballance.app`; a development version SHALL replace its edition's installed application using a `-dev` filename suffix. Installation SHALL validate identity and copied contents before replacing the installed version, and remove obsolete matching installed application bundles from application folders. After validating a replacement, obsolete matching unpacked builds and retired `.app.disabled` copies in both build and application folders SHALL be deleted. Successful stable delivery SHALL remove temporary development applications. Stale matching catalog entries SHALL be removed without resetting unrelated application registrations. Cleanup SHALL preserve saved games, source worktrees and release archives. A failed copy or validation SHALL leave the installed version usable.
+Local macOS installation SHALL maintain one current application per edition. Stable applications SHALL use `/Applications/Ballance.app` and `/Applications/Reballance.app`; a development version SHALL replace its edition's installed application using a `-dev` filename suffix. Installation SHALL validate identity and copied contents before replacing the installed version, and remove obsolete matching installed application bundles from application folders. After validating a replacement, obsolete matching unpacked builds and retired `.app.disabled` and legacy `.app-backup` copies in both build and application folders SHALL be deleted. Successful stable delivery SHALL remove temporary development applications. Stale matching catalog entries SHALL be removed without resetting unrelated application registrations. Cleanup SHALL preserve saved games, source worktrees and release archives. A failed copy or validation SHALL leave the installed version usable.
 
 #### Scenario: Replace a development player
 - **WHEN** a newer verified Remaster application is installed locally
@@ -91,3 +91,7 @@ Local macOS installation SHALL maintain one current application per edition. Sta
 #### Scenario: Rediscovered diagnostic builds
 - **WHEN** macOS registers an old unpacked build again despite its noindex directory
 - **THEN** installation removes the obsolete matching bundle and its old catalog entry after validating the current installation
+
+#### Scenario: Legacy backup suffix
+- **WHEN** an obsolete matching `.app-backup` bundle remains after a successful installation
+- **THEN** cleanup deletes that bundle and preserves unrelated backups and release archives

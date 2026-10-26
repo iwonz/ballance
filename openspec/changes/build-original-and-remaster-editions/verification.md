@@ -95,9 +95,9 @@ completed. No user's persistent browser profile was used.
   host/resource relocation. The October 26 disposable score/progress fixture also
   survives relocation and deletion of the separate Reballance storage root. Both
   public players and independent rollback still need browser acceptance.
-- All five development players and archives were built. The latest covering, sky,
-  loading-screen and HUD refinements still require refreshed players; there is no
-  Remaster release. Keep this change active where evidence is incomplete.
+- All five development-11 players and archives include the current covering, sky,
+  loading-screen and HUD refinements. Complete player acceptance is still open;
+  there is no Remaster release. Keep this change active where evidence is incomplete.
 
 ### Native dry replay comparison
 
@@ -862,3 +862,22 @@ The user reported solid HUD blocks, an unwanted centered preset title, unnatural
   and background activity prevent attributing that entire difference to the patch.
   Wasm SHA-256 is unchanged because the current runtime edits are shader/texture
   content; the Web archive identity/hash above distinguishes development 11.
+
+- Both development-11 cadence samples had zero intervals above 33.34 ms; longest
+  intervals including capture boundaries were 22.6 / 24.3 ms. The reciprocal of
+  the mean slowest 1% frame intervals was 50.38 / 49.66 FPS. GPU, memory and heavier
+  sector budgets remain unmeasured by this capture.
+- Continued ordinary keyboard movement through the opening road and first guarded
+  turns in level 01/Moscow, with camera rotation and pauses between observations.
+  This is a partial traversal, explicitly not one of the 91 completed runs.
+  Retained the route captures under `Builds/checks/output/playwright/dev11-level01-*`.
+- Pushed implementation commit `33e8ac19` to main. CI run `40304900766` passed
+  strict specification/context validation and shipped ARM64 physics; the completed
+  change record gate failed because full acceptance remains unfinished. No tag,
+  release, manifest promotion or Pages deployment was performed. Final cloud
+  softness/scale in gameplay, all 91 full runs and full performance coverage remain
+  open; do not reinterpret the two good cadence samples as release acceptance.
+- Confirmed the in-game exit dialog and successful return to the centered main
+  menu (`dev11-menu-return.png`), then closed the isolated test browser. The
+  development-11 browser console log contained no matching gameplay exception or
+  shader-error diagnostics; unrelated connection warnings remain outside that claim.

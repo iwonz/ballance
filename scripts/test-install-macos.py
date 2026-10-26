@@ -137,6 +137,19 @@ class InstallationTests(unittest.TestCase):
         installer.remove_build_copy(app, "remaster", "1.0.0-dev.1")
         self.assertTrue(app.exists())
 
+    def test_legacy_backup_is_retired_and_cleanup_checks_edition(self):
+        app = self.app("Builds/Ballance-1.0.8.app-backup", edition="original", version="1.0.8")
+        other = self.app("Builds/Reballance.app-backup")
+        target = self.app("Applications/Ballance.app", edition="original", version="1.0.11")
+        unrelated = self.root / "Builds/Notes.app-backup-extra"
+        unrelated.mkdir()
+        self.assertEqual(list(installer.bundles([self.root / "Builds"])), [])
+        self.assertEqual(installer.duplicates("original", target, [self.root / "Builds"], include_retired=True), [app])
+        with patch.object(installer, "unregister"):
+            installer.remove_build_copy(app, "original", "1.0.11")
+        self.assertFalse(app.exists())
+        self.assertTrue(other.exists() and unrelated.exists() and target.exists())
+
     def test_install_deletes_disabled_applications_after_validating_replacement(self):
         source = self.app("Builds/New-dev.app", version="1.0.0-dev.3")
         old = self.app("Applications/Reballance.app.disabled", version="1.0.0-dev.1")

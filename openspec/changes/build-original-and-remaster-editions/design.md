@@ -340,6 +340,16 @@ the development-10 captures as the comparison; reject variants that reintroduce
 wave bands, repeated rows or excessive cost. Audit the first tutorial greeting as
 part of the same public-name check in all four languages.
 
+Smaller density, altered vertical envelopes and alternative lighting did not
+resolve the stretched forms. The retained correction reduces the macro domain
+distortion from 2.6 to 0.55 noise-space units: the former displacement folded and
+stretched otherwise round billows. Expand the density volume's world-space repeat
+period while preserving billow size by doubling its cell count and halving texture
+frequency; retain the 128-cubed texture dimensions, light samples and
+cache dimensions. The distance-bounded march below reduces excess primary samples. Inspect direct/cached silhouettes and all
+presets, retain the translated-camera check against repeated rows, then compare
+the result in rebuilt players. Final reference-art acceptance remains separate.
+
 
 ### Diagnostic console material compatibility
 
@@ -348,3 +358,14 @@ legacy UI blur shader lacks the `_MainTex` property expected by uGUI, causing a
 material error and recursive graphic-rebuild diagnostics. Add the standard
 per-renderer texture property without changing the blur algorithm, then recheck
 console rendering and `/s reset` in the isolated browser profile. Retain its GUID.
+
+### Powered foreground frame follow-up
+
+Development 10 still misses the frame budget on Apple M3 after charging and a
+foreground capture. Its shader always allocates 240 primary samples even for a
+short ray crossing the cloud layer vertically. Compare a distance-bounded march
+with 0.08/0.05/0.03 density-space step lengths at Low/Medium/High, clamped to 32–240
+samples. Keep density, extinction per unit length, light probes, cache dimensions
+and weather/physics unchanged. Retain fixed-step screenshots for comparison at
+all presets, headings and both repeat periods. Reject visible banding or silhouette
+loss, and measure the rebuilt player separately; editor render time is not FPS.

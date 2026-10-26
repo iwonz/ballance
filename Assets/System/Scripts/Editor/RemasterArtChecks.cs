@@ -112,17 +112,19 @@ namespace Ballance2.Editor
         sky.SetFloat("_WeatherTime",0);
         Save("Clouds-distribution-origin");
         var originalClouds = capture.GetPixels32();
-        camera.transform.position += Vector3.right*(240/.23f);
-        Save("Clouds-distribution-old-period");
-        var translatedClouds = capture.GetPixels32();
-        double difference = 0;
-        for (int pixel=0; pixel<originalClouds.Length; pixel++) {
-          var a = originalClouds[pixel]; var b = translatedClouds[pixel];
-          difference += Math.Abs(a.r-b.r)+Math.Abs(a.g-b.g)+Math.Abs(a.b-b.b);
+        foreach (float frequency in new[] { .23f, .115f }) {
+          camera.transform.position = new Vector3(240/frequency,100,0);
+          Save(frequency == .23f ? "Clouds-distribution-old-period" : "Clouds-distribution-current-period");
+          var translatedClouds = capture.GetPixels32();
+          double difference = 0;
+          for (int pixel=0; pixel<originalClouds.Length; pixel++) {
+            var a = originalClouds[pixel]; var b = translatedClouds[pixel];
+            difference += Math.Abs(a.r-b.r)+Math.Abs(a.g-b.g)+Math.Abs(a.b-b.b);
+          }
+          difference /= originalClouds.Length*3*255.0;
+          if (difference < .015) throw new InvalidOperationException("Cloud deck repeats at texture frequency "+frequency+": "+difference);
+          Debug.Log("REMASTER_CLOUD_TRANSLATION_DIFFERENCE: "+frequency+" / "+difference);
         }
-        difference /= originalClouds.Length*3*255.0;
-        if (difference < .015) throw new InvalidOperationException("Cloud deck repeats at the old texture period: "+difference);
-        Debug.Log("REMASTER_CLOUD_TRANSLATION_DIFFERENCE: "+difference);
         camera.transform.position = new Vector3(0,100,0);
         foreach (int heading in new[] { 45, 135, 225, 315 }) {
           camera.transform.rotation = Quaternion.Euler(25,heading,0);

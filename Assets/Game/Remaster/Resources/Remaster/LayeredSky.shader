@@ -37,10 +37,10 @@ Shader "Ballance/Remaster/LayeredSky"
       float density(float3 q, float height, float3 groups, float2 lod)
       {
         float vertical = saturate(1-abs(height-(groups.g-.5)*.65)/lerp(.85,1.3,groups.b));
-        float shape = tex3Dlod(_CloudVolume,float4(q*.23,lod.x)).r;
+        float shape = tex3Dlod(_CloudVolume,float4(q*.115,lod.x)).r;
         float3 rotated = float3(q.x*.36+q.z*.93,q.y,q.z*.36-q.x*.93);
         float detail = .5;
-        if (_CloudQuality > 1) detail = tex3Dlod(_CloudVolume,float4(rotated*.61+float3(.31,.73,.19),lod.y)).r;
+        if (_CloudQuality > 1) detail = tex3Dlod(_CloudVolume,float4(rotated*.305+float3(.31,.73,.19),lod.y)).r;
         float coverage = lerp(.275,.165,saturate(_Weather.x)) + (groups.r-.5)*.25;
         float body = shape - coverage - (1-vertical)*.38;
         return saturate((body+(detail-.5)*.23)*5)*smoothstep(0,.3,vertical);
@@ -53,9 +53,10 @@ Shader "Ballance/Remaster/LayeredSky"
         float a = (layer-1.7-origin.y)/dy, b = (layer+1.7-origin.y)/dy;
         float start = max(0,min(a,b)), end = min(35,max(a,b));
         if (end <= start) return 0;
-        const int steps = 240;
+        float stepLength = _CloudQuality > 2 ? .03 : _CloudQuality > 1 ? .05 : .08;
+        int steps = (int)clamp(ceil((end-start)/stepLength),32,240);
         float stride = (end-start)/steps;
-        float2 lod = max(0,log2(stride*float2(.23,.61)*128));
+        float2 lod = max(0,log2(stride*float2(.115,.305)*128));
         float3 drift = float3(_WeatherTime*.0009,0,_WeatherTime*.0003)/.23;
         float3 sun = normalize(float3(_CloudSun.x,max(_CloudSun.y,.2),_CloudSun.z));
         float forward = pow(saturate(dot(direction,sun)),8);
@@ -69,7 +70,7 @@ Shader "Ballance/Remaster/LayeredSky"
           // Nearby light samples share the slow macro field, not the billow density.
           float2 groupPosition = float2(q.x*.8+q.z*.6,q.z*.8-q.x*.6)*.16;
           float3 groups = cloudGroups(groupPosition);
-          q += (cloudGroups(groupPosition*2.17+19.7)-.5)*2.6;
+          q += (cloudGroups(groupPosition*2.17+19.7)-.5)*.55;
           float height = p.y-layer;
           float d = density(q,height,groups,lod);
           if (d > .002) {

@@ -147,7 +147,7 @@ namespace Ballance2.Editor
 
     private static float Billows(Vector3 p)
     {
-      const int cells = 4;
+      const int cells = 8;
       p *= cells;
       int x = Mathf.FloorToInt(p.x), y = Mathf.FloorToInt(p.y), z = Mathf.FloorToInt(p.z);
       float nearest = 10;
@@ -170,7 +170,7 @@ namespace Ballance2.Editor
       var pixels = new byte[size*size*size];
       for (int z=0; z<size; z++) for (int y=0; y<size; y++) for (int x=0; x<size; x++) {
         var p = new Vector3((float)x/size,(float)y/size,(float)z/size);
-        float shape = Billows(p)*.8f + Noise3D(p,8)*.15f + Noise3D(p,16)*.05f;
+        float shape = Billows(p)*.8f + Noise3D(p,16)*.15f + Noise3D(p,32)*.05f;
         pixels[(z*size+y)*size+x] = (byte)Mathf.RoundToInt(Mathf.Clamp01(shape)*255);
       }
       volume.SetPixelData(pixels,0); volume.Apply();

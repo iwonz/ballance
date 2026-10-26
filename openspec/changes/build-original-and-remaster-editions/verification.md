@@ -775,3 +775,90 @@ The user reported solid HUD blocks, an unwanted centered preset title, unnatural
   isolated test browser and its localhost server after retaining the evidence;
   further qualified frame measurements need a charging, available test machine.
   Full playthroughs and remaining acceptance items are still unchecked.
+
+### Powered foreground follow-up and development 11 cloud candidate
+
+- The user connected charging power; a new isolated Chrome 155 session calibrated
+  at 59.974 Hz on the blank page. Development 10 remained Medium/Auto/100%, Moscow,
+  1920 x 1079 internal rendering in a 2560 x 1439 canvas. Initial powered gameplay
+  samples varied from 25–40 FPS amid changing background load; retained all reports
+  (`dev10-powered-moscow-1793005825473.json`,
+  `dev10-powered-cadence-1793006012154.json`) without qualifying them.
+- With the user keeping Chrome foregrounded, two 30-second cadence captures gave
+  47.83/48.86 FPS, frame p95 45.2/44.0 ms and p99 55.8/55.7 ms. The before/after
+  screenshots show an unpaused wooden ball on a round level-01 platform,
+  not the earlier start-platform fixture. Report:
+  `Builds/checks/output/playwright/dev10-foreground-cadence-1793007240750.json`.
+  A further 30-second capture with GPU instrumentation gave 48.97 FPS, p95/p99
+  40.1/49.9 ms and CPU callback p95 5.9 ms. Report:
+  `Builds/checks/output/playwright/dev10-foreground-gpu.json`. The raw GPU p95 was
+  174.02 ms despite much shorter draw intervals; no GPU budget pass is inferred.
+  All three foreground samples fail the frame budget. These views do not establish
+  an identical-position before/after comparison with earlier start-area captures.
+- Closed only the agent's isolated test Chrome session after saving evidence and
+  told the user the foreground window was no longer required. Other applications
+  and actual player profiles were not changed by the browser captures.
+- Additional cloud experiments (optical-depth lighting, altered vertical envelope,
+  mixed coarse-noise shapes) were rejected and retained under `Builds/checks/`.
+  The selected shape correction reduces excessive domain distortion and doubles
+  the density texture's world period while preserving billow size and 128-cubed
+  texture dimensions. It does not modify physics or collision meshes.
+- `RemasterArtChecks.RenderClouds` passed with the exact editor for the fixed-step
+  shape candidate and then the adaptive-step candidate. Both old/current period
+  translations pass: adaptive normalized image differences 0.06045 / 0.04595.
+  Logs: `/tmp/reballance-dev11-cloud-baseline.log` and
+  `/tmp/reballance-dev11-cloud-adaptive.log`, both exit 0. External Unity telemetry
+  and licensing-token warnings remain, without shader/compilation failures.
+- Preserved the fixed-step renders in `Builds/checks/dev11-cloud-fixed-step`.
+  Compared 43 preset/quality/palette/heading/motion images against adaptive steps;
+  worst mean absolute RGB difference was 0.3243 out of 255, worst RMS 0.6161,
+  maximum channel difference 5. Inspected Moscow direct and heading 225 renders:
+  no new visible marching bands, with rounder forms than development 10. Evidence:
+  `Builds/checks/dev11-cloud-step-comparison.json`. This supports retaining the
+  optimization, but does not certify player FPS or final reference-art quality.
+- Development 11 source uses version 1.0.0-dev.11 / Android code 12. Matching player
+  builds, installation and performance comparison are pending at this point.
+
+- macOS and WebGL development-11 content builds and packages passed. macOS
+  packaging verified ABI 2304, ARM64 and ad-hoc signing. Archive SHA-256 values:
+  macOS `f7ec0abf032108b260e87384bdd0e338030d997a2bb41adfe80b25170023e606`;
+  WebGL `f12675c721122fa6db39e22ff64c2fc06b1e9ff187740afac81d731d721ac41e`.
+- Installed development 11 at `/Applications/Reballance-dev.app`; installer removed
+  its unpacked source. Inventory shows only this app and Ballance 1.0.11 in the
+  installation/build roots, including retired suffixes. All 1,935 protected
+  Original/profile files retained identical hashes. Evidence:
+  `Builds/checks/dev11-app-inventory.json` and `dev11-protected-before.json`.
+- Strict OpenSpec (14 items), context (13 capabilities), localization (341 Russian
+  values) and whitespace checks passed after the cloud changes. No GUIDs, native
+  libraries or collision data changed. Finder capture still returns
+  `cgWindowNotFound`; the launcher grid remains visually unverified.
+
+- Windows x86-64, Linux x86-64 and Android ARM64 development-11 content builds and
+  packaging also passed. Android's temporary input backend was restored to Both
+  after its IL2CPP build. Matching archive SHA-256 values:
+  Windows `6b3f6365a386e85655da7adff2340ffee545baeadcdde35f93a9adac5cc1b701`;
+  Linux `44f3cb086caa94926cc560f976f8ffc8479b81dea5109ba97430c47b43d285cc`;
+  Android `fb41872444895c9050b6061114794b77c4f426218f2292794c5ee0fff6d06ea4`.
+  This is packaging evidence, not execution on those three physical platforms.
+- The development-11 isolated Web player displayed the corrected Reballance
+  tutorial greeting. Enter advanced through the actual spawn sequence; the next
+  card displayed LeftShift + LeftArrow / RightArrow. Escape skipped the tutorial,
+  and a second Escape opened pause. Selected Moscow in graphics with Medium,
+  Auto, 100%, 2x AA and actual 1920 x 1079, then resumed through the transition.
+  Captures: `Builds/checks/output/playwright/dev11-tutorial.png`,
+  `dev11-tutorial-controls.png`, `dev11-pause.png`, `dev11-moscow-settings.png`,
+  and `dev11-moscow-ready.png`. These are actual WebGL canvas images; ordinary
+  page screenshots timed out, so OS window visibility is not established by them.
+
+- After all build processes exited and AC charging reached 95%, two development-11
+  Moscow/Medium/Auto/100% samples recorded 59.964 / 59.964 FPS over 30 seconds each
+  (1,799 drawn frames each), frame p95 18.7 / 18.9 ms, p99 19.5 / 19.6 ms and CPU
+  callback p95 4.2 / 4.1 ms. Evidence:
+  `Builds/checks/output/playwright/dev11-cadence.json`, with before/after canvas PNGs.
+  The tab remained visible and the scene resumed after the full weather transition.
+  This is a useful draw-cadence result, not a complete GPU/reference qualification:
+  no GPU timer queries were included and OS compositor screenshots were unavailable.
+  Development-10's foreground samples were about 48–49 FPS; different capture times
+  and background activity prevent attributing that entire difference to the patch.
+  Wasm SHA-256 is unchanged because the current runtime edits are shader/texture
+  content; the Web archive identity/hash above distinguishes development 11.

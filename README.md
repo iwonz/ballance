@@ -23,7 +23,7 @@ Each step builds on the work before it. The Unity projects are community reconst
 
 ## Project status
 
-**Current published version: [1.0.11](https://github.com/iwonz/ballance/releases/tag/v1.0.11).**
+**Current release: [1.0.12](https://github.com/iwonz/ballance/releases/tag/v1.0.12).**
 This is the classic Unity reconstruction, not the original commercial Cyparade
 executable. Its menus, tutorial, tracks and mechanics preserve the familiar experience.
 

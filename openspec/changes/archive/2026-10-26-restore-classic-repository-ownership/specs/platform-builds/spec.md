@@ -34,4 +34,3 @@ New classic assets SHALL use Ballance-<version>-<platform>. The original edition
 #### Scenario: Package either edition
 - **WHEN** a verified current player is packaged
 - **THEN** its filename uses its public product name and validation checks the matching edition identity and version
-

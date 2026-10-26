@@ -2,9 +2,17 @@
 
 ## Upstream project
 
-**[imengyu/Ballance](https://github.com/imengyu/Ballance)**, created by **mengyu / Happy Dreamfish (imengyu)**, is the upstream Unity recreation from which this repository was forked. Its code, tools and reconstruction work are the foundation of both Ballance and Reballance. Thanks to its contributors and translators.
+**Direct upstream: [imengyu/Ballance](https://github.com/imengyu/Ballance)**, created by
+**mengyu / Happy Dreamfish (imengyu)**. This classic fork builds on that Unity
+recreation, its tools, contributors and translators. **iwonz** adds Russian
+localization, compatibility maintenance and Windows/Linux/macOS/Android/Web support.
 
-**Cyparade** created the original Ballance game and owns the original game's rights. This repository is an independent learning project; neither its classic Unity recreation nor Reballance is an official Cyparade release. **iwonz** maintains this classic fork; Reballance lives in its own repository.
+**Cyparade** created the original Ballance game and owns its original rights.
+The project lineage continues from Cyparade to imengyu/Ballance, then to
+[iwonz/ballance](https://github.com/iwonz/ballance), and finally to
+[Reballance](https://github.com/iwonz/reballance), iwonz's personal creative project
+built on this maintained fork. These are independent community projects, not official
+Cyparade releases.
 
 ## Preserved upstream notice
 

@@ -2,14 +2,26 @@
 
 The familiar journey above the clouds.
 
-This project continues **[imengyu/Ballance](https://github.com/imengyu/Ballance)** by
-Happy Dreamfish: a Unity reconstruction of Cyparade's Ballance. Guide wood, stone and
-paper balls over suspended paths, bridges and rails through the 13 classic levels.
-This fork maintains the classic game with fixes, compatibility and current Unity tooling.
+**Ballance** is iwonz's maintained fork of
+**[imengyu/Ballance](https://github.com/imengyu/Ballance)**, the Unity recreation of
+Cyparade's game. It adds Russian localization, compatibility improvements and
+multiplatform builds, including a browser version, while keeping the classic menus,
+tutorial, tracks and mechanics.
 
-[Play in your browser](https://iwonz.github.io/ballance/) · [Download](https://github.com/iwonz/ballance/releases) · [Screenshots](#screenshots) · [Development](#development) · [Credits](#credits)
+Guide wood, stone and paper balls through the 13 classic levels above the clouds.
 
-## About this version
+[Play and download](#play-and-download) · [Project history](#project-history) · [Screenshots](#screenshots) · [Development](#development) · [Credits](#credits)
+
+## Project history
+
+1. **Ballance — Cyparade.** The original game introduced the wood, stone and paper balls and their paths above the clouds.
+2. **[imengyu/Ballance](https://github.com/imengyu/Ballance) — mengyu / Happy Dreamfish.** The open-source Unity recreation provided the foundation for these projects.
+3. **[iwonz/ballance](https://github.com/iwonz/ballance) — iwonz.** A maintained fork of that recreation, adding Russian localization, compatibility updates and builds for Windows, Linux, macOS, Android and the Web, while preserving the classic experience.
+4. **[iwonz/reballance](https://github.com/iwonz/reballance) — iwonz.** A personal hobby project built on **iwonz/ballance**: an imaginative take on the familiar game, experimenting with materials, clouds, menus and weather.
+
+Each step builds on the work before it. The Unity projects are community reconstructions and adaptations; Cyparade created the original game.
+
+## Project status
 
 **Current published version: [1.0.11](https://github.com/iwonz/ballance/releases/tag/v1.0.11).**
 This is the classic Unity reconstruction, not the original commercial Cyparade
@@ -28,6 +40,8 @@ retained as `archive/original-before-repository-split`; classic development cont
 on `main`. [Repository boundaries](docs/editions.md).
 
 ## Play and download
+
+[Play Ballance in the browser](https://iwonz.github.io/ballance/) or [download the published builds](https://github.com/iwonz/ballance/releases).
 
 | Platform | Release asset | Requirements / launch |
 | --- | --- | --- |
@@ -54,7 +68,7 @@ feature of the current Windows x64 release.
 Actual Ballance 1.0.11 Web captures. Click an image to view it full size.
 [Capture provenance](docs/images/README.md).
 
-### Ballance · 1.0.11
+**Captured build: Ballance · 1.0.11**
 
 | Main menu | Level selection |
 | --- | --- |
@@ -128,9 +142,17 @@ retain their languages.
 
 ## Credits
 
-First, **[imengyu/Ballance](https://github.com/imengyu/Ballance)** by **mengyu / Happy Dreamfish (imengyu)**: the upstream Unity recreation this repository was forked from. This project builds on that work and its contributors' efforts.
+**Direct upstream: [imengyu/Ballance](https://github.com/imengyu/Ballance)** by
+**mengyu / Happy Dreamfish (imengyu)**. This repository builds on that Unity
+recreation and its contributors' work.
 
-**Cyparade** created the original Ballance. **iwonz** maintains this classic fork. Reballance development lives in its [own repository](https://github.com/iwonz/reballance). Native physics derives from [nillerusr/source-physics](https://github.com/nillerusr/source-physics). Thanks also to the bundled tool, UI, compression, font and localization contributors; [CREDITS.md](CREDITS.md) lists their projects and retained notices.
+**Cyparade** created the original Ballance. **iwonz** maintains this fork's Russian
+localization, compatibility and multiplatform/Web builds, and uses it as the base
+for the separate hobby project **[Reballance](https://github.com/iwonz/reballance)**.
+
+Native physics derives from [nillerusr/source-physics](https://github.com/nillerusr/source-physics).
+Thanks also to the bundled tool, UI, compression, font and localization contributors;
+[CREDITS.md](CREDITS.md) lists their projects and retained notices.
 
 ## License and original game rights
 

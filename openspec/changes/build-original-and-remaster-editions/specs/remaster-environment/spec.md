@@ -70,6 +70,10 @@ level-wide implementation or runtime evidence.
 - **WHEN** the first complete Remaster is reported delivered
 - **THEN** verification includes the 91 level/preset results and identifies tested hardware and limitations
 
+#### Scenario: Directed runtime integration
+- **WHEN** automated checks directly select sectors or create ball types
+- **THEN** they run in an isolated profile and retain their results as integration evidence, without counting them as full level completions
+
 ### Requirement: Volumetric clouds and coherent material relief
 Remaster clouds SHALL have soft, dense, enveloping volume, layered depth and internal light response consistent with the generated title illustration. Snow, rain and vegetation SHALL have visible motion and material response appropriate to their environment. Base materials and coverings SHALL use coherent albedo, normal, height and roughness data, authored through image generation, reproducible code and Unity's material/shader capabilities. Relief SHALL preserve the calibrated collision geometry and readable route edges.
 
@@ -84,6 +88,14 @@ Remaster clouds SHALL have soft, dense, enveloping volume, layered depth and int
 #### Scenario: Refreshed stock skies
 - **WHEN** the menu or any built-in level displays a stock sky
 - **THEN** it uses the modern textured cloud presentation, retains its day/night palette, and shows no visible wave-like sampling bands
+
+#### Scenario: Legacy cloud plane
+- **WHEN** a built-in environment loads, restarts or changes cloud quality
+- **THEN** its old scrolling plane cannot cover the modern sky, and texture animation does not modify shared source materials
+
+#### Scenario: Cloud-deck clearance
+- **WHEN** the player reaches a low platform on a built-in level
+- **THEN** the lower cloud volume remains below the playable route so the camera sees billow shapes instead of being immersed in diffuse cloud density
 
 #### Scenario: Irregular cloud distribution
 - **WHEN** the player rotates or travels above the cloud deck

@@ -28,7 +28,8 @@ edition-aware build and packaging commands. Outputs are `Builds/macOS/Ballance.a
 or `Reballance.app`, with a `-dev` suffix for development versions, and a matching
 ZIP/checksum under `Builds/releases`. Existing outputs are not overwritten. Follow
 [local installation and cleanup](build-and-release.md#local-macos-installation)
-after packaging; obsolete unpacked apps are deleted after verified replacement.
+after packaging; obsolete unpacked apps, including legacy `.app-backup` and `.app.disabled`
+copies, are deleted after verified replacement.
 
 The build entry point is `Ballance2.Editor.PlayerBuild.Build`.
 It selects ARM64 and Mono, explicitly builds `Assets/Scenes/Main.unity`, builds

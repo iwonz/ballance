@@ -54,7 +54,8 @@ namespace Ballance2.Game.Remaster
       var floors = new HashSet<string>(owner.Profile.coverings, StringComparer.Ordinal);
       foreach (var renderer in surfaces)
         if (floors.Contains(renderer.name)) lowest = Mathf.Min(lowest,renderer.bounds.min.y);
-      sky.SetFloat("_CloudBase", float.IsInfinity(lowest) ? -300 : lowest-300);
+      // The lower volume extends up to 408 units above its base.
+      sky.SetFloat("_CloudBase", float.IsInfinity(lowest) ? -600 : lowest-600);
       rainMaterial = new Material(Resources.Load<Shader>("Remaster/Precipitation"));
       snowMaterial = new Material(rainMaterial); rainMaterial.SetFloat("_Streak",1);
       rain = MakeParticles("Rain", true); snow = MakeParticles("Snow", false);

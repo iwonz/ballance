@@ -149,8 +149,12 @@ namespace Ballance2.Editor
                       if (flag == null || flag.sprite == null) throw new InvalidOperationException("Missing language flag: " + key);
                     }
                   if (name == "GamePlayUI") {
+                    if (!page.TryGetComponent(out CanvasGroup visibility))
+                      throw new InvalidOperationException("HUD visibility component missing");
                     foreach (string path in new[] { "ScoreBoard/ScoreText", "ScoreBoard/Counter caption", "Life summary/Lives", "Life summary/Counter caption" }) {
                       var label = page.transform.Find(path).GetComponent<Text>();
+                      if (!label.TryGetComponent(out Shadow shadow) || !label.TryGetComponent(out Outline outline))
+                        throw new InvalidOperationException("HUD contrast components missing: " + path);
                       if (label.cachedTextGenerator.vertexCount < 4)
                         throw new InvalidOperationException("Clipped HUD text: " + path + " " + language + " " + size);
                     }

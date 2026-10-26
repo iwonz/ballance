@@ -38,6 +38,11 @@ namespace Ballance2.Game.Remaster
         controller.world.BeforeSimulation += controller.Advance;
       }
       if (controller.Profile != null) {
+        var builder = LevelBuilder.LevelBuilder.Instance;
+        if (builder.CurrentLevelSkyLayer != null) {
+          Destroy(builder.CurrentLevelSkyLayer);
+          builder.CurrentLevelSkyLayer = null;
+        }
         controller.presentation = new EnvironmentPresentation(controller, preview);
         controller.surfaces = new EnvironmentSurfaces(controller.Profile, preview);
       }

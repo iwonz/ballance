@@ -37,12 +37,14 @@ namespace Ballance2.Editor
           foreach (var name in group["objects"]) mechanisms.Add(name.Value<string>());
         foreach (string name in entry.Value.mechanisms) Require(mechanisms.Contains(name), "covering references an existing mechanism instance");
       }
-      Require(PlayerBuild.DefaultOutput(BuildTarget.StandaloneOSX) == "Builds/macOS/Reballance.app", "native bundle uses the product name");
+      string development = PlayerSettings.bundleVersion.Contains("-dev.") ? "-dev" : "";
+      Require(PlayerBuild.DefaultOutput(BuildTarget.StandaloneOSX) == "Builds/macOS/Reballance" + development + ".app", "native bundle uses the product and development name");
       Require(PlayerBuild.DefaultOutput(BuildTarget.StandaloneWindows64) == "Builds/Windows/Reballance.exe", "Windows executable uses the product name");
       Require(PlayerBuild.DefaultOutput(BuildTarget.StandaloneLinux64) == "Builds/Linux/Reballance.x86_64", "Linux executable uses the product name");
       Require(PlayerBuild.DefaultOutput(BuildTarget.Android) == "Builds/Android/Reballance.apk", "Android package uses the product name");
       CheckMovingSupports();
       CheckVegetation();
+      CheckTextureScrolling();
       var rainSamples = EnvironmentAudio.CreateRainSamples();
       Require(rainSamples.Length == 22050 * 8 * 2, "eight-second stereo rain loop");
       double rainEnergy = 0, rainMean = 0;
@@ -161,6 +163,29 @@ namespace Ballance2.Editor
         UnityEngine.Object.DestroyImmediate(root);
         scheduler.SetValue(null, previousScheduler);
         BallancePhysics.PhysicsSystemInit.DoInit();
+      }
+    }
+
+    private static void CheckTextureScrolling()
+    {
+      var material = new Material(Shader.Find("Unlit/Texture"));
+      material.mainTextureOffset = new Vector2(.1f, .2f);
+      var plane = GameObject.CreatePrimitive(PrimitiveType.Quad);
+      try {
+        var renderer = plane.GetComponent<Renderer>();
+        renderer.sharedMaterial = material;
+        var scroller = plane.AddComponent<Ballance2.Game.TextureScroller>();
+        var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+        typeof(Ballance2.Game.TextureScroller).GetMethod("OnEnable", flags).Invoke(scroller, null);
+        typeof(Ballance2.Game.TextureScroller).GetField("scrollOff", flags).SetValue(scroller, new Vector2(.3f, .4f));
+        typeof(Ballance2.Game.TextureScroller).GetMethod("Update", flags).Invoke(scroller, null);
+        var block = new MaterialPropertyBlock(); renderer.GetPropertyBlock(block);
+        var offset = block.GetVector("_MainTex_ST");
+        Require(Mathf.Abs(offset.z - .3f) < .0001f && Mathf.Abs(offset.w - .4f) < .0001f, "scrolling reaches only the renderer");
+        Require(material.mainTextureOffset == new Vector2(.1f, .2f) && renderer.sharedMaterial == material,
+          "cloud scrolling preserves the shared source material");
+      } finally {
+        UnityEngine.Object.DestroyImmediate(plane); UnityEngine.Object.DestroyImmediate(material);
       }
     }
 

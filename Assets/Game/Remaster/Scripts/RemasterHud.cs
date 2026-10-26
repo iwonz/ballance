@@ -14,10 +14,10 @@ namespace Ballance2.Game.Remaster
 
     private static void Contrast(Text text)
     {
-      var shadow = text.GetComponent<Shadow>() ?? text.gameObject.AddComponent<Shadow>();
+      if (!text.TryGetComponent(out Shadow shadow)) shadow = text.gameObject.AddComponent<Shadow>();
       shadow.effectColor = new Color(.025f, .055f, .075f, .85f);
       shadow.effectDistance = new Vector2(0, -1.5f);
-      var outline = text.GetComponent<Outline>() ?? text.gameObject.AddComponent<Outline>();
+      if (!text.TryGetComponent(out Outline outline)) outline = text.gameObject.AddComponent<Outline>();
       outline.effectColor = new Color(.025f, .055f, .075f, .45f);
       outline.effectDistance = new Vector2(.7f, -.7f);
       text.raycastTarget = false;
@@ -43,7 +43,7 @@ namespace Ballance2.Game.Remaster
     public static void Install(GamePlayUIControl control)
     {
       var hud = control.gameObject.AddComponent<RemasterHud>();
-      hud.visibility = control.GetComponent<CanvasGroup>() ?? control.gameObject.AddComponent<CanvasGroup>();
+      if (!control.TryGetComponent(out hud.visibility)) hud.visibility = control.gameObject.AddComponent<CanvasGroup>();
       var score = control._ScoreText.rectTransform.parent as RectTransform;
       RemasterTheme.Place(score, .028f, .89f, .19f, .975f);
       score.GetComponent<Image>().enabled = false;

@@ -9,19 +9,26 @@ namespace Ballance2.Game.Remaster
     public const string Prefix = "ballance.remaster.v1.";
     public const string IndexKey = Prefix + "settings-index";
     [Serializable] private class KeyIndex { public List<string> keys = new List<string>(); }
+#if UNITY_EDITOR
+    private static string editorTestPrefix;
+    private static string StoragePrefix => editorTestPrefix ?? Prefix;
+#else
+    private const string StoragePrefix = Prefix;
+#endif
+    private static string StorageIndex => StoragePrefix + "settings-index";
 
-    public static int GetInt(string key, int fallback = 0) => PlayerPrefs.GetInt(Prefix + key, fallback);
-    public static float GetFloat(string key, float fallback = 0) => PlayerPrefs.GetFloat(Prefix + key, fallback);
-    public static string GetString(string key, string fallback = "") => PlayerPrefs.GetString(Prefix + key, fallback);
-    public static void SetInt(string key, int value) { PlayerPrefs.SetInt(Prefix + key, value); Remember(key); }
-    public static void SetFloat(string key, float value) { PlayerPrefs.SetFloat(Prefix + key, value); Remember(key); }
-    public static void SetString(string key, string value) { PlayerPrefs.SetString(Prefix + key, value); Remember(key); }
+    public static int GetInt(string key, int fallback = 0) => PlayerPrefs.GetInt(StoragePrefix + key, fallback);
+    public static float GetFloat(string key, float fallback = 0) => PlayerPrefs.GetFloat(StoragePrefix + key, fallback);
+    public static string GetString(string key, string fallback = "") => PlayerPrefs.GetString(StoragePrefix + key, fallback);
+    public static void SetInt(string key, int value) { PlayerPrefs.SetInt(StoragePrefix + key, value); Remember(key); }
+    public static void SetFloat(string key, float value) { PlayerPrefs.SetFloat(StoragePrefix + key, value); Remember(key); }
+    public static void SetString(string key, string value) { PlayerPrefs.SetString(StoragePrefix + key, value); Remember(key); }
     public static void Save() => PlayerPrefs.Save();
 
     private static KeyIndex ReadIndex()
     {
       try {
-        var index = JsonUtility.FromJson<KeyIndex>(PlayerPrefs.GetString(IndexKey, "{}"));
+        var index = JsonUtility.FromJson<KeyIndex>(PlayerPrefs.GetString(StorageIndex, "{}"));
         return index != null && index.keys != null ? index : new KeyIndex();
       } catch (ArgumentException) { return new KeyIndex(); }
     }
@@ -29,10 +36,10 @@ namespace Ballance2.Game.Remaster
     private static void Remember(string key)
     {
       var index = ReadIndex();
-      string stored = Prefix + key;
+      string stored = StoragePrefix + key;
       if (!index.keys.Contains(stored)) {
         index.keys.Add(stored);
-        PlayerPrefs.SetString(IndexKey, JsonUtility.ToJson(index));
+        PlayerPrefs.SetString(StorageIndex, JsonUtility.ToJson(index));
       }
       Save();
     }
@@ -40,8 +47,8 @@ namespace Ballance2.Game.Remaster
     public static void Reset()
     {
       foreach (string key in ReadIndex().keys)
-        if (key != null && key.StartsWith(Prefix, StringComparison.Ordinal)) PlayerPrefs.DeleteKey(key);
-      PlayerPrefs.DeleteKey(IndexKey);
+        if (key != null && key.StartsWith(StoragePrefix, StringComparison.Ordinal)) PlayerPrefs.DeleteKey(key);
+      PlayerPrefs.DeleteKey(StorageIndex);
       Save();
     }
 

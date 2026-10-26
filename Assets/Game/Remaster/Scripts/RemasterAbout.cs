@@ -17,10 +17,10 @@ namespace Ballance2.Game.Remaster
       holder.transform.SetParent(old.parent, false); holder.transform.SetSiblingIndex(old.GetSiblingIndex());
       holder.GetComponent<LayoutElement>().preferredHeight = 180;
       RemasterIntro.Artwork(holder.transform);
-      var layout = old.parent.GetComponent<VerticalLayoutGroup>() ?? old.parent.gameObject.AddComponent<VerticalLayoutGroup>();
+      if (!old.parent.TryGetComponent(out VerticalLayoutGroup layout)) layout = old.parent.gameObject.AddComponent<VerticalLayoutGroup>();
       layout.childControlHeight = layout.childControlWidth = true;
       layout.childForceExpandHeight = false; layout.childForceExpandWidth = true; layout.spacing = 18;
-      var fit = old.parent.GetComponent<ContentSizeFitter>() ?? old.parent.gameObject.AddComponent<ContentSizeFitter>();
+      if (!old.parent.TryGetComponent(out ContentSizeFitter fit)) fit = old.parent.gameObject.AddComponent<ContentSizeFitter>();
       fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
       foreach (Transform child in old.parent) if (child.name == "Space") child.gameObject.SetActive(false);
       var text = old.parent.Find("Text").GetComponent<Text>();

@@ -137,13 +137,17 @@ validates separate resource profiles for thirteen built-in levels.
 [EnvironmentController](../Assets/Game/Remaster/Scripts/EnvironmentController.cs)
 attaches at level completion, subscribes to IVP's simulation loop and releases on
 unload. GamePlayManager/SectorManager connect restart, recovery and checkpoints;
-preview uses the same profiles. Custom content without a matching built-in path
+preview uses the same profiles. Attaching a built-in profile removes the legacy
+scrolling cloud plane, including its restart/settings/preview reference. Texture
+scrolling for custom content uses renderer properties without changing shared
+materials. Custom content without a matching built-in path
 keeps authored visuals and dry physics.
 
 [EnvironmentSurfaces](../Assets/Game/Remaster/Scripts/EnvironmentSurfaces.cs) binds
 local regions to physical transforms and render property blocks.
 [EnvironmentPresentation](../Assets/Game/Remaster/Scripts/EnvironmentPresentation.cs)
-owns sky, lighting and precipitation lifetimes.
+owns sky, lighting and precipitation lifetimes, placing the lower cloud volume
+below the lowest covered floor.
 [RemasterSkyRenderer](../Assets/Game/Remaster/Scripts/RemasterSkyRenderer.cs) renders
 the sky into bounded cubemaps, updates one face per frame from a fixed snapshot,
 and blends completed captures. It restores the source sky after the scene pass;

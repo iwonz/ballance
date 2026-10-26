@@ -14,7 +14,7 @@ Shader "Ballance/Remaster/LayeredSky"
     _CloudQuality ("Cloud layers", Float) = 1
     _CloudVolume ("Periodic cloud density", 3D) = "white" {}
     _CloudGroups ("Large cloud groups", 2D) = "grey" {}
-    _CloudBase ("Cloud deck altitude", Float) = -240
+    _CloudBase ("Cloud deck altitude", Float) = -600
     _CloudSun ("Sun direction", Vector) = (.3,.6,.4,0)
   }
   SubShader
@@ -74,9 +74,9 @@ Shader "Ballance/Remaster/LayeredSky"
           float d = density(q,height,groups,lod);
           if (d > .002) {
             float shadow = _CloudQuality > 2
-              ? density(q+sun*.32,height+sun.y*.32,groups,lod)*.65 + density(q+sun*.85,height+sun.y*.85,groups,lod)*.35
-              : density(q+sun*.5,height+sun.y*.5,groups,lod);
-            float light = exp(-shadow*3.2);
+              ? density(q+sun*.08,height+sun.y*.08,groups,lod)*.65 + density(q+sun*.24,height+sun.y*.24,groups,lod)*.35
+              : density(q+sun*.12,height+sun.y*.12,groups,lod);
+            float light = saturate(.6+(d-shadow)*3)*exp(-shadow*.4);
             float3 ambient = lerp(float3(.46,.59,.73),float3(.67,.75,.85),saturate((p.y-layer)*.5+.5));
             float3 color = ambient*.45 + warm*(.18+light*.45+forward*.05);
             color = lerp(color,color*float3(.22,.32,.48),night);

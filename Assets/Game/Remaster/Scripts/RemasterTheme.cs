@@ -34,7 +34,7 @@ namespace Ballance2.Game.Remaster
     public static void Apply(GameObject root, bool panel = false)
     {
       if (panel) {
-        var background = root.GetComponent<Image>() ?? root.AddComponent<Image>();
+        if (!root.TryGetComponent(out Image background)) background = root.AddComponent<Image>();
         background.sprite = null;
         background.color = Panel;
         var layout = root.GetComponent<VerticalLayoutGroup>();
@@ -206,7 +206,7 @@ namespace Ballance2.Game.Remaster
     {
       if (button == null) return;
       foreach (var image in button.GetComponentsInChildren<Image>(true)) image.enabled = false;
-      var background = button.GetComponent<Image>() ?? button.gameObject.AddComponent<Image>();
+      if (!button.TryGetComponent(out Image background)) background = button.gameObject.AddComponent<Image>();
       background.enabled = true; Surface(background, Control); button.targetGraphic = background;
       var label = button.GetComponentInChildren<Text>(true);
       if (label != null) label.gameObject.SetActive(false);

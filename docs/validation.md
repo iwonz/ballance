@@ -260,6 +260,21 @@ four languages at portrait, Full HD, QHD and 4K. Inspect the generated images in
 or keyboard acceptance. The interactive graphics page, all other pages, tutorial
 and physical touch still need player checks.
 
+`Ballance2.Editor.RemasterRuntimeChecks.Run` enters play mode through the normal
+main scene, renders the diagnostic console, and exercises the native world, three ball bodies, all sector
+activations, pause, interrupted preset selection, fall recovery, restart and
+return to the menu. Invoke it with graphics enabled and **without `-batchmode`,
+`-nographics` or `-quit`** (the loader waits for rendered end-of-frame events);
+the runner exits the editor with a success/failure code. Optional `-checkLevel
+level01 -checkPreset Standard` arguments select one scenario while diagnosing a
+failure; the default visits all 13 by 7 combinations. Reports and temporary game
+files are retained under a new `Builds/checks/runtime-<timestamp>` directory.
+Editor-only preference and file-path overrides keep the player's actual profile
+untouched, and temporary preference keys are removed at exit. A known Unity
+Editor search-index exception is retained separately from game errors. These
+directed checks explicitly set sectors and ball types: they do **not** count as
+91 full playthroughs, transformation-platform interactions or performance evidence.
+
 For a native flat-course replay:
 
 ```sh

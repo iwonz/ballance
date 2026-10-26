@@ -92,7 +92,7 @@ namespace Ballance2.Editor
         sky.SetTexture("_UpTex",sky.GetTexture("_FrontTex"));
         sky.SetTexture("_CloudVolume",Resources.Load<Texture3D>("Remaster/CloudDensity"));
         sky.SetTexture("_CloudGroups",Resources.Load<Texture2D>("Remaster/CloudGroups"));
-        sky.SetFloat("_CloudBase",-300); sky.SetVector("_CloudSun",new Vector4(.4f,.6f,-.2f,0));
+        sky.SetFloat("_CloudBase",-600); sky.SetVector("_CloudSun",new Vector4(.4f,.6f,-.2f,0));
         camera.gameObject.AddComponent<Skybox>().material = sky;
         var skyCache = camera.gameObject.AddComponent<RemasterSkyRenderer>();
         camera.clearFlags = CameraClearFlags.Skybox;

@@ -11,6 +11,8 @@
 - [ ] 2.3 Connect load/unload, pause, preview, checkpoint, restart and runtime selection; verify lifecycle tests and player transitions.
 - [ ] 2.4 Isolate saves and make records independent of environment, preserving earlier preset/rules scores; test migration, reload, malformed files, reset isolation and completion after preset changes.
 
+- [x] 2.5 Run isolated play-mode lifecycle checks across all level/preset combinations, retain the report and fix observed runtime failures; distinguish directed scenarios from full playthroughs.
+
 ## 3. Native weather physics
 
 - [x] 3.1 Extend IVP ABI for material-pair/local-region profiles and persistent-contact updates with owned cleanup; pass ABI and native dry/wet/ice tests.
@@ -32,7 +34,7 @@
 
 - [ ] 5.1 Build responsive RU/EN landing using actual game captures with both play links, attribution and reduced motion; verify keyboard/mobile/language behavior without Unity downloads.
 - [ ] 5.2 Implement manifest-pinned two-edition Pages preparation and deployment, combined-size validation and independent rollback; pass archive/workflow tests and both public identity checks.
-- [ ] 5.3 Preserve Original browser storage at original.html with edition-specific resource paths; test an existing profile, independent Remaster reset and all subpath requests.
+- [x] 5.3 Preserve Original browser storage at original.html with edition-specific resource paths; test an existing profile, independent Remaster reset and all subpath requests.
 
 ## 6. Acceptance and delivery
 
@@ -43,3 +45,5 @@
 - [ ] 6.5 Push edition refs and verified release source, attach assets/checksums, publish, wait for Pages and exercise both public players; retain release and workflow links.
 
 - [x] 6.6 Apply Ballance / Reballance public names and keep only the latest canonical macOS installations; add verified replacement/duplicate cleanup tooling and remove obsolete installed apps, delete obsolete build/disabled bundles, use -dev names for temporary applications, and remove stale catalog registrations without touching saves.
+
+- [x] 6.7 Remove the verified legacy .app-backup bundle, cover that suffix in installer tests, transfer the fix to Original, and verify both canonical installations and preserved profiles.

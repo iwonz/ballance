@@ -46,7 +46,7 @@ Work in progress; this is not release acceptance.
 ## Results
 
 The Original baseline is preserved remotely. Main has independent Remaster product
-identity, settings storage, per-preset/rules records, a tested weather state model
+identity, settings storage, environment-independent records with legacy imports, a tested weather state model
 and lifecycle hooks, an initial graphics settings panel/render-resolution path,
 and draft landing/atomic Pages preparation. Presentation and gameplay integration
 still require player validation; these are development changes, not a finished
@@ -80,20 +80,21 @@ completed. No user's persistent browser profile was used.
   mechanism traversal remain unverified. All authored profile winds remain zero
   pending calibration; 229 floors and 96 mechanisms have draft coverage footprints.
 - Nine generated albedo sources, fern cutouts, 72 shared materials, refined ball
-  silhouettes, layered skies, precipitation, pooled tracks and rain audio are
+  silhouettes, layered skies, precipitation without footprint trails and rain audio are
   implemented. Seamless tiling, material scale, audible sound and final placement
   require player acceptance across all levels. The integrated art is developmental.
-- Forty-eight editor menu/grid/HUD previews pass across four languages and four
+- 656 editor interface previews pass across four languages and four
   resolutions. Full menu/tutorial navigation, mobile safe areas, actual resolution
   changes, fullscreen and all seven player presets still need complete checks.
 - State-model and persistence fixtures pass; actual player checkpoint/rebirth,
-  transformed supports, unranked completion unlock, Web/Android save replacement
+  transformed supports, completion after environment changes, Web/Android save replacement
   and isolated reset require further browser/device acceptance.
 - No 91-run acceptance, target PC performance, QHD/4K performance, physical Android
   input/audio/lifecycle, or Windows/Linux gameplay has been performed.
 - Pages has not been deployed. A disposable Original language preference survives
-  host/resource relocation; complete score-file relocation, both public players
-  and independent rollback still need browser acceptance.
+  host/resource relocation. The October 26 disposable score/progress fixture also
+  survives relocation and deletion of the separate Reballance storage root. Both
+  public players and independent rollback still need browser acceptance.
 - All five development players and archives were built. The latest covering, sky,
   loading-screen and HUD refinements still require refreshed players; there is no
   Remaster release. Keep this change active where evidence is incomplete.
@@ -585,3 +586,159 @@ The user reported solid HUD blocks, an unwanted centered preset title, unnatural
   native/script checks and specification/context validation, but failed the
   completed-change delivery gate because the Remaster lifecycle is unfinished.
   No release or Pages deployment was triggered.
+
+
+### October 26: remaining macOS backup and browser-profile compatibility
+
+- Found one legacy `Builds/checks/Ballance-1.0.8.app-backup` bundle that the earlier
+  `.app.disabled` scan did not cover. Extended the installer suffix match narrowly,
+  added a regression test, and removed the verified 102,348,863-byte bundle through
+  the installer. Compared 1,027 file hashes across both installed applications and
+  real saved profiles/preferences: unchanged. Local evidence is retained in
+  `Builds/checks/legacy-backup-cleanup-{before,result}.json`.
+- Main commit `5e818a1c` was cherry-picked with provenance onto Original as
+  `52d10c9c`; Original's completed cleanup record was archived in `cb55a241` and
+  pushed. Original passed 20 installer tests, 18 release-tool tests, strict specs,
+  context and delivery checks. No hosted run was returned for the Original branch.
+- Finder's Applications accessibility list exposed one Ballance and one
+  Reballance-dev. The dedicated macOS application launcher did not expose a usable
+  window; a later Finder attempt returned `cgWindowNotFound`. This is not visual
+  acceptance of the user's launcher search grid.
+- Used a separate Playwright Chromium profile on `http://127.0.0.1:8019/ballance/`
+  with the checksum-verified published v1.0.11 Web archive. Seeded explicit synthetic
+  classic-format score/progress files, then verified that the old player displayed
+  `Storage fixture / 12345`. This fixture is not an earned score or a playthrough.
+- Relocated resources into `original/` and generated `original.html` through the
+  actual `prepare-site.py` host rewrite. In the same browser profile, the relocated
+  player displayed the same records and allowed level 02 to load. All requested
+  local resources, including `original/StreamingAssets/BuiltInPackages/Levels/level02.ballance`,
+  returned 200/304. Only external Unity telemetry requests failed.
+- Original retained IDBFS root `/idbfs/5d12899e7756fa13c9a642bd216b0069`;
+  Reballance used `/idbfs/4868d52aa1adda0d03b0b851db46edf7`. Reballance's records page
+  was empty, with no automatic import. After closing the player, deleted only the
+  Reballance root in this disposable browser fixture, then reopened Original and
+  rechecked its visible record, unlocked level and file hashes. This was a browser
+  storage-isolation test, not a shipped settings-reset UI interaction; the
+  `RemasterPreferences.Reset` boundary is covered separately by `EnvironmentChecks`.
+- Score SHA-256 stayed `8ab922d8e519a1eaf5cb16906da932aa1dbb5fa348a43c4aeef92d158bfc36b7`;
+  progress SHA-256 stayed `15c7de43630607b4e16778c3633d7bd55c3f463aa2c07e9ce3b41146de415d68`.
+  Unity session telemetry changes PlayerPrefs on reload, so that entire file is not
+  claimed byte-identical. Evidence: `Builds/checks/storage-after-reset.json`,
+  `storage-original-requests.txt`, and `output/playwright/storage-*.png` under checks.
+- Main fast checks passed: 14 strict OpenSpec items, context, 341 Russian
+  translations, 20 installer tests and 18 release-tool tests. This does not close
+  the active change's full gameplay or publication gates.
+
+- Follow-up actual reset test: created a complete Original profile by running its
+  player, then seeded the same explicit score/progress fixture. Enabled Reballance's
+  built-in developer console by eight version-button clicks and reload; executed
+  `/s reset`. The indexed Reballance DebugMode key was removed and the environment
+  reset to Standard, while all three Original files (scores, progress, PlayerPrefs)
+  retained their exact hashes. Evidence: `Builds/checks/resetqa-valid-before.json`
+  and `resetqa-valid-after.json`. A preliminary `s reset` without the required slash
+  only logged text and is not counted as execution. An earlier fixture without its
+  parent directory record was discarded and recreated through normal Original startup.
+- Opening the developer console exposed a missing `_MainTex` property on the legacy
+  UI blur shader, followed by recursive uGUI rebuild diagnostics. The successful
+  reset boundary does not mean console rendering passed; its correction and a new
+  player check are still required.
+
+
+### Complete directed lifecycle matrix (development 10)
+
+- Ran `Ballance2.Editor.RemasterRuntimeChecks.Run` in Unity 6000.6.7f1's normal
+  rendered editor on Apple M3; no batchmode or headless flag. All 91 unique
+  level/preset combinations passed, covering 476 sector activations, normal menu
+  loading, three native ball bodies, pause/resume, interrupted weather selection,
+  fall/life loss, checkpoint recovery, restart and native-world release.
+- Report: `Builds/checks/runtime-20261026-065537/report.json`; 91 screenshots are
+  beside it. Duration 2,939.83 seconds; process exit 0, `passed: true`, no game
+  errors, no editor diagnostics and no exit errors. All 1,027 installed-app and
+  real-profile file hashes remained unchanged after the complete run.
+- Earlier attempts exposed a missing HUD CanvasGroup from Unity's missing-component
+  wrapper, and shared-material UV mutation by TextureScroller. The component
+  creation paths now use TryGetComponent; scrolling uses renderer property blocks.
+  The preflight also correctly recognizes `Reballance-dev.app`. The old built-in
+  cloud plane is removed on environment attachment; custom levels retain theirs.
+- The runner sets sectors and creates balls directly. This evidence does not count
+  as any of the 91 required complete playthroughs, actual transformation-trigger
+  interaction, calibrated input replay, audible output or a performance capture.
+  The later cloud-clearance and console-material corrections require their own
+  rendered checks; this matrix predates those two visual changes.
+
+
+### Cloud clearance and diagnostic console follow-up
+
+- Kept the lower volume 600 units below the lowest covered floor; its shader
+  integration band extends at most 408 units above the base. Lower platforms no
+  longer sit inside that volume. The seven-preset art render, all three quality
+  settings, thirteen stock palettes, headings, motion and translation checks passed.
+  Final art log: `/tmp/reballance-dev10-art-final.log`.
+- Shortened existing light taps to the billow scale and used their directional
+  density difference for shading, without more ray steps, samples or larger caches.
+  Compared cached/direct clouds and several headings. A sharper density experiment
+  looked worse and was reverted; its captures remain in
+  `Builds/checks/cloud-density-dev10-rejected`. Distant blur and final reference-art
+  fidelity still need visual/performance acceptance; these renders do not certify it.
+- Added the uGUI per-renderer `_MainTex` property to the existing console blur
+  shader. A new play-mode check opens/renders the real diagnostic console before
+  running the requested scenario. `level06/Moscow` passed all five sectors with no
+  game or exit errors, including the corrected cloud clearance. Evidence:
+  `Builds/checks/runtime-20261026-075027/report.json`, process exit 0. The subsequent
+  light-tap adjustment is covered by the art renders, not a second full lifecycle matrix.
+- The user cannot open the macOS launcher now. Its visual check remains explicitly
+  unrun; this does not change the verified file/index cleanup.
+
+- `RemasterUIVisualChecks.Run` completed with exit 0 and
+  `REMASTER_UI_PREVIEWS_RENDERED` in `/tmp/reballance-dev10-ui.log`: 656 page/HUD/control
+  captures across four languages and portrait/Full HD/QHD/4K. New checks require
+  actual HUD CanvasGroup, Shadow and Outline components. Inspected the Russian
+  portrait main menu and Full HD HUD; full keyboard/touch navigation remains open.
+  The ABI checker also passed all 92 delegates.
+
+### Development 10 packaged-player follow-up
+
+- Content-aware macOS and WebGL builds completed successfully with Unity
+  6000.6.7f1. Both development-10 archives and SHA-256 sidecars were packaged;
+  macOS packaging verified ARM64, ad-hoc signing, ABI 2304 smoke and archive contents.
+- Installed `/Applications/Reballance-dev.app` 1.0.0-dev.10 using the verified
+  installer, which removed its unpacked source after replacement. The remaining
+  834 baseline Original/profile files matched their prior hashes. The inventory
+  `Builds/checks/dev10-app-inventory.json` and Spotlight both showed only this app
+  and `/Applications/Ballance.app` 1.0.11 in the inspected roots.
+- Opened the installed native player through macOS UI automation. The generated
+  Reballance title, first-level loading, movement, pause, settings and interrupted
+  Moscow/London selection worked. Restored Moscow before quitting. The graphics
+  page reported Medium, Auto, 100% and actual 1280 x 800. The HUD had corner
+  counters without solid panels or a centered preset label. This smoke did not
+  complete a level or measure frame-time percentiles; the application log had no
+  gameplay exception. External Unity telemetry connection failures remain present.
+- Native observation still shows overly large, soft cloud forms. The current
+  cloud presentation is not accepted against the reference artwork. Further
+  shape/detail and cost calibration is required before visual completion.
+- Five context-checker self-tests and Web lifecycle checks passed again. The
+  macOS launcher grid remains uninspected because no usable launcher window was
+  available and the user cannot open it now.
+
+- Web archive SHA-256: `d9cdb2a75b5ee09b8b43c067b1b2af90bb618e0d1fb4867e8a08ce49fdb6902d`;
+  macOS archive SHA-256: `6ffcfeeb2a0f1c055066b2b4dcd3bda387d5535bbbd10b9c63977485edd0b67c`.
+- Ran the Web player in an isolated Chrome 155 profile on Apple M3, with Unity and
+  the native game closed. The 1280 x 768 CSS viewport at DPR 2 produced a 2560 x 1439
+  canvas and displayed 1920 x 1079 internal 3D resolution, Medium/Auto/100%.
+  `dev10-frame-capture-1793002727365.json` recorded 59.96 FPS in the animated menu
+  over 30 seconds, frame p95/p99 18.6/19.7 ms and CPU callback p95/p99 4.4/5.2 ms.
+- Two subsequent Moscow level-01 captures recorded 29.96/29.86 FPS, frame p95
+  35.8/35.8 ms and p99 40.2/44.5 ms. Evidence and before/after images are beside
+  `Builds/checks/output/playwright/dev10-moscow-capture-1793003148026.json`.
+  These runs fail the performance target. Chrome's UI showed Energy Saver enabled;
+  `pmset -g batt` reported 17% and discharging despite the AC Power label. The
+  hardware power condition must be resolved before a qualified comparison.
+  A separate visible blank-page animation calibration returned 29.9914 Hz, so the
+  approximately 30 FPS interval is also present without Unity rendering.
+- Raw WebGL GPU query p95 values were 82.99 ms in the menu and 205.41/204.01 ms in
+  Moscow despite much shorter draw-submission intervals. All queries resolved
+  without a disjoint flag, but these timings cannot be treated as per-frame GPU
+  execution cost without investigating the Metal/browser timing behavior. No GPU
+  budget pass is claimed. Initial screenshot attempts in an inactive/oversized
+  test window timed out; explicit foregrounding and a Retina context produced the
+  retained captures. These observations do not substitute for complete gameplay.

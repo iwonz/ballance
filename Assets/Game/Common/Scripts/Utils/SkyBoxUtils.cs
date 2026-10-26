@@ -55,7 +55,7 @@ namespace Ballance2.Game.Utils
         material.SetTexture("_UpTex",SkyFront);
         material.SetTexture("_CloudVolume",Resources.Load<Texture3D>("Remaster/CloudDensity"));
         material.SetTexture("_CloudGroups",Resources.Load<Texture2D>("Remaster/CloudGroups"));
-        material.SetFloat("_CloudBase",-300);
+        material.SetFloat("_CloudBase",-600);
         material.SetVector("_CloudSun",-GameManager.GameLight.transform.forward);
       }
       return material;

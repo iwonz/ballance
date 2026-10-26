@@ -34,7 +34,7 @@ Use stable enum values standard, weather, moscow, london, sahara, hongkong, cali
 LevelEnvironmentProfile data is separate from Level.json and owns sector sequences,
 intensity limits and surface regions for thirteen built-in levels. Unknown custom
 levels keep authored surroundings and dry behavior. SurfaceState contains wetness,
-snow, ice, sand and vegetation cover; native profiles, shaders, trails and sound consume
+snow, ice, sand and vegetation cover; native profiles, shaders and sound consume
 the same resolved state. Local regions attach to collider transforms, including moving
 mechanisms. Preserve original collider source meshes when improving render silhouettes.
 
@@ -280,3 +280,71 @@ application folders and checks running executables through real paths as well as
 the Builds symlink. Stable delivery replaces
 the development installation and removes its temporary copies. Release archives
 remain separate packaging evidence until publication checks complete.
+
+## Runtime integration evidence
+
+Add an editor-only play-mode runner using the normal entry scene, native IVP and
+level loader. Give it a temporary preference namespace and file root before game
+startup, retain per-level/preset results, and stop on runtime exceptions or timeout.
+Exercise pause, interrupted weather transitions, checkpoint restore, restart, ball
+creation and level teardown. Direct sector/ball setup is classified as integration
+evidence; it must not be reported as an unaided playthrough or satisfy the 91 full
+completion requirement. Player performance is measured separately with no runner
+or simultaneous build. The stale macOS output-name assertion must accept the
+development suffix while retaining stable-name validation.
+
+### Legacy cloud overlay removal
+
+Runtime acceptance exposed the old `FinalSkyLayer` / `FinalSkyVoterx` plane still
+covering the new sky. After a validated built-in environment attaches, destroy
+that presentation-only plane and clear its loader reference so settings, restart,
+preview and completion callbacks cannot re-enable it. Unknown custom levels keep
+their authored plane. TextureScroller uses a renderer property block so its
+remaining custom-level use cannot mutate a shared material or persist play-mode
+animation into source assets. Verify both behaviors in editor/runtime checks and
+inspect a rebuilt player before claiming the cloud direction is accepted.
+
+### Play-mode UI component creation
+
+The runtime check reproduced a missing HUD CanvasGroup hidden by edit-mode
+render fixtures. Replace null-coalescing GetComponent/AddComponent calls in the
+Remaster UI with TryGetComponent, which handles Unity's missing-component wrappers.
+Apply the same correction to HUD contrast, panel backgrounds and About layout.
+Require real HUD visibility/contrast components in the visual fixture and exercise
+HUD update/pause/resume during play mode.
+
+### Legacy unpacked backup cleanup
+
+The scoped inventory found one remaining old `Ballance-1.0.8.app-backup` bundle.
+Treat the exact `.app-backup` suffix as retired alongside `.app.disabled`; keep
+the existing bundle identity/version, process and replacement validation checks.
+Do not broaden matching to arbitrary backup directories or archives. Cherry-pick
+the shared installer correction to Original and verify it independently.
+
+
+### Cloud-deck clearance follow-up
+
+Runtime captures still show oversized blurred cloud shading under low platforms.
+The current deck's possible upper extent is roughly 390 world units above its
+base, while its base is placed only 300 below the lowest floor. Inspect a lower
+deck placement against the same gameplay views before accepting the cloud visuals.
+Keep camera visibility above the volume, calibrate the existing light-tap distance
+to the billow size without additional samples, retain the cached render budget, and
+compare direct/cached renders, headings and translated positions. This is a visual
+placement correction; collision geometry and weather physics remain unchanged.
+
+The packaged development-10 player still has oversized smooth billows. Compare a
+smaller base billow scale and coherent multi-scale density detail in the existing
+volume texture before increasing runtime sample counts or cache dimensions. Retain
+the development-10 captures as the comparison; reject variants that reintroduce
+wave bands, repeated rows or excessive cost. Audit the first tutorial greeting as
+part of the same public-name check in all four languages.
+
+
+### Diagnostic console material compatibility
+
+The actual Web settings-reset test opens the shipped diagnostic console. Its
+legacy UI blur shader lacks the `_MainTex` property expected by uGUI, causing a
+material error and recursive graphic-rebuild diagnostics. Add the standard
+per-renderer texture property without changing the blur algorithm, then recheck
+console rendering and `/s reset` in the isolated browser profile. Retain its GUID.

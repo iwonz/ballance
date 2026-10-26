@@ -32,6 +32,8 @@ namespace Ballance2.Game
     public Vector2 ScrollSpeed;
 
     private Vector2 scrollOff;
+    private Renderer target;
+    private MaterialPropertyBlock properties;
 
     private void Start()
     {
@@ -47,20 +49,24 @@ namespace Ballance2.Game
       }
     }
     private void OnEnable() {
-      var renderer = GetComponent<Renderer>();
-      if (renderer)
-        Material = renderer.sharedMaterial;
+      if (properties == null) properties = new MaterialPropertyBlock();
+      target = GetComponent<Renderer>();
+      if (target)
+        Material = target.sharedMaterial;
     }
     private void Update()
     {
-      if (Material != null)
+      if (Material != null && target != null)
       {
         var x = scrollOff.x + ScrollSpeed.x * Time.deltaTime;
         var y = scrollOff.y + ScrollSpeed.y * Time.deltaTime;
         if (x < 1) x += 1; if (x > 1) x -= 1;
         if (y < 1) y += 1; if (y > 1) y -= 1;
         scrollOff = new Vector2(x, y);
-        Material.SetTextureOffset("_MainTex", scrollOff);
+        var scale = Material.GetTextureScale("_MainTex");
+        target.GetPropertyBlock(properties);
+        properties.SetVector("_MainTex_ST", new Vector4(scale.x, scale.y, scrollOff.x, scrollOff.y));
+        target.SetPropertyBlock(properties);
       }
     }
   }

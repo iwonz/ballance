@@ -74,7 +74,7 @@ namespace Ballance2.Game.Remaster
 
     private void Build(RectTransform root)
     {
-      var panel = root.GetComponent<Image>() ?? root.gameObject.AddComponent<Image>();
+      if (!root.TryGetComponent(out Image panel)) panel = root.gameObject.AddComponent<Image>();
       panel.color = new Color(0.035f, 0.085f, 0.11f, 0.96f);
       Label(root, Tr("Settings"), 28, TextAnchor.MiddleLeft, new Vector2(0.08f, 0.89f), new Vector2(0.92f, 0.98f));
       var viewport = Rect("Viewport", root, new Vector2(0.08f, 0.19f), new Vector2(0.92f, 0.87f));

@@ -40,6 +40,11 @@ mediator, manager, packages, UI, time, pools, sound, and physics.
 [SystemInit.xml](../Assets/System/Resources/SystemInit.xml), loads core/system/user
 packages, and switches logical scenes. These are event-driven states within the
 main Unity scene, not separate player scene builds.
+
+Known Web startup gap: the intro can enter the menu before `core.assets.skys`
+finishes loading. The first menu then has a plain background; reloading restored
+the sky in the v1.0.12 public smoke. Follow-up work should order menu sky creation
+after package readiness without changing classic content or save identity.
 [GameMediator](../Assets/System/Scripts/Services/GameMediator.cs) and
 [GameEventEmitter](../Assets/System/Scripts/Base/GameEventEmitter.cs) provide the
 global/package and object-level event paths. Read teardown as well as registration

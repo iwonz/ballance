@@ -108,7 +108,7 @@ def bundles(roots, include_retired=False):
         for parent, directories, _ in os.walk(root, followlinks=False):
             for name in list(directories):
                 path = Path(parent) / name
-                retired = bool(re.search(r"\.app\.disabled(?:-\d+)?$", name))
+                retired = bool(re.search(r"\.app(?:\.disabled(?:-\d+)?|-backup)$", name))
                 if name.endswith(".app") or retired:
                     directories.remove(name)
                     if not path.is_symlink() and (include_retired or not retired):

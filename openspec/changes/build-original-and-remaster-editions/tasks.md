@@ -52,4 +52,4 @@
 
 - [x] 7.1 Replace separate public release delivery with a single distribution manifest, ten verified platform artifacts, attached two-player site, immutable-source Pages deployment and per-player switch links; test incomplete/corrupt/mismatched releases and unchanged-edition pins.
 - [x] 7.2 Rewrite README with introduction, branch table, run/development/release instructions, real labelled galleries and upstream-first Credits; preserve the exact upstream rights notice and include legal notices in distribution/site artifacts.
-- [ ] 7.3 Run release-tool, workflow, context and local HTTP/browser checks; record results and limits, commit and push authorized source changes without publishing unaccepted Reballance builds.
+- [x] 7.3 Run release-tool, workflow, context and local HTTP/browser checks; record results and limits, commit and push authorized source changes without publishing unaccepted Reballance builds.

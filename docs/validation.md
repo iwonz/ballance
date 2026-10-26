@@ -125,8 +125,8 @@ For Web, serve over HTTP beneath a prefix such as `/ballance/`; test packaged
 release content as well as build output when publication code changes. Observe
 network failures and browser/Unity logs. Check user-initiated audio playback;
 an AudioContext or source counter alone does not establish audible sound.
-For Pages, wait for the workflow's public `release.json` check, verify its tag matches
-the published release, and test the deployed player. A release is not fully delivered
+For Pages, wait for the workflow's public `release.json` check, verify its distribution tag and both edition pins
+match the unified release, and test both players and their switch links. A release is not fully delivered
 until Pages serves that version successfully.
 
 For Android, signature, zipalign, native LOAD alignment, and APK content inspection

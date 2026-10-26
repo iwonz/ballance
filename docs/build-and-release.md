@@ -1,8 +1,9 @@
 # Build and release
 
 Use **Unity 6000.6.7f1**, as pinned in ProjectSettings. Do not mix Unity 2021
-players or AssetBundles with current outputs. Every release rebuilds the player,
-core, six built-in packages, and levels 01-13 for its target.
+players or AssetBundles with current outputs. A new game version rebuilds the player,
+core, six built-in packages, and levels 01-13 for its target. A unified distribution
+may carry the other game's unchanged verified archives forward without rebuilding it.
 
 ## Local builds
 
@@ -94,25 +95,27 @@ submits builds to a mobile store.
 
 ## GitHub Pages
 
-The shared deployment is owned by `main`. Its workflow and release validators are
-shared with this branch through commit `868f41f9`. Before an Original release,
-complete its builds and verification here, create its namespaced tag and draft
-release, and attach all verified archives/checksums including Web. Then update only
-the Original entry in `site/releases.json` on `main`, retaining the Remaster pin.
-Publish only after that manifest change is available on main.
+The shared publication process is owned by `main`. This branch produces classic
+Ballance builds and immutable `original/v<version>` source tags; it does not publish
+separate new GitHub Releases. All new public distributions use `release/v<version>`
+on main and include **both Ballance and Reballance**, all ten platform artifacts and
+checksums, source pins, Credits, license and the complete two-player Pages archive.
 
-The workflow always checks out main and pins that source commit for both site
-preparation and public verification. It validates both explicit archive/checksum
-pins, preserves the Original launch page directory as `original.html`, places
-Remaster under `remaster/`, and enforces a combined 1,000,000,000-byte limit. It
-fails on missing assets or an unready pin; it cannot deploy only half the site.
-The current public Original remains until main has two verified builds.
+Build and verify any changed Ballance version here, then hand its five platform
+artifacts and SHA-256 sidecars to the [main release procedure](https://github.com/iwonz/ballance/blob/main/docs/build-and-release.md#github-pages).
+An unchanged edition is carried forward byte-for-byte from its verified source tag;
+never rename it to pretend it is a new game version. Keep legacy releases intact.
 
-Wait for the Pages workflow and verify both public identities, menus, level loading,
-control and recovery before declaring a release delivered. Roll back one edition by
-restoring only its prior verified manifest entry on main and manually dispatching
-Pages. See the [main release guide](https://github.com/iwonz/ballance/blob/main/docs/build-and-release.md#github-pages)
-for the maintained site procedure. This branch does not carry a second site manifest.
+Main's manifest pins the distribution and both source versions. Its workflow verifies
+all assets and deploys the exact site attached to that one release. It checks both
+public identities, and delivery also requires actual browser gameplay checks. To roll
+back only Ballance, prepare a new complete distribution with its older verified pin
+and leave Reballance's pin unchanged. Never select either game through “latest”.
+
+The shared landing launches Ballance at `/ballance/original.html`, with resources
+under `original/`, preserving its original page-directory save identity. Reballance
+uses `/ballance/remaster/`. Both pages link to the other game and the landing. Test
+existing browser storage before deployment; independent saves must remain separate.
 
 ## GitHub Actions
 

@@ -1,10 +1,11 @@
 # Ballance
 
-An open-source Unity recreation of Ballance, with the original 13 levels, native
+The classic maintenance branch of the Unity recreation forked from
+**[imengyu/Ballance](https://github.com/imengyu/Ballance)**, with the original 13 levels, native
 IVP physics, custom-level interfaces, built-in mods, and English, Chinese, and
 Russian UI. This fork uses **Unity 6.6 (6000.6.7f1)**.
 
-[Play Original in your browser](https://iwonz.github.io/ballance/) ·
+[Play Ballance in your browser](https://iwonz.github.io/ballance/) ·
 [Download releases](https://github.com/iwonz/ballance/releases) ·
 [Agent instructions](AGENTS.md) · [OpenSpec workflow](openspec/README.md)
 
@@ -17,12 +18,32 @@ is immutable. This project is a Unity reconstruction, not
 the original commercial Cyparade executable. Menus, tutorial, tracks and gameplay
 remain classic; this branch accepts necessary fixes and compatibility maintenance.
 
-Remaster development and the common site live on `main`, with independent product
-identity, settings and saves. Use separate Git worktrees and Unity caches. Carry
-applicable fixes as small verified `cherry-pick` commits; do not merge the complete
-branches. New Original versions use `original/v1.0.12` onward and edition-qualified
-archive names. See [release procedure](docs/build-and-release.md#github-pages).
+## Project structure
 
+| Branch | Game | Responsibility |
+| --- | --- | --- |
+| `original` (this checkout) | Ballance | Classic gameplay, fixes and compatibility |
+| [`main`](https://github.com/iwonz/ballance/tree/main) | Reballance | Active development, shared site and unified publication |
+
+Use separate Git worktrees and Unity caches. Transfer applicable fixes as focused,
+verified `cherry-pick` commits; do not merge the complete branches. Each game keeps
+its own application identity, settings, saves and source-version sequence.
+
+New Ballance source tags use `original/v<version>`; Reballance uses `remaster/v<version>`.
+A new **public release** is a single `release/v<version>` distribution on main containing
+both games for all five platforms, their checksums and the complete two-player site.
+Updating one game preserves the other game's verified files unchanged. Do not publish
+an independent classic release. Follow the [shared release procedure](https://github.com/iwonz/ballance/blob/main/docs/build-and-release.md#github-pages).
+
+The current public game remains Ballance 1.0.11 while Reballance finishes gameplay
+acceptance. The [main project guide](https://github.com/iwonz/ballance#readme) contains
+both editions' status, galleries and development/release instructions.
+
+## Original game rights
+
+This is a learning project. The code license and separately copyrighted game content
+have different scopes; see [Credits and rights](https://github.com/iwonz/ballance/blob/main/CREDITS.md).
+The following upstream notice applies to inherited content in both games and is retained verbatim.
 
 **Note: Ballance belongs to Cyparade's work, and the copyright belongs to the original developer Cyparade. The development of this project is for learning purposes only and cannot be used for any commercial purposes. This project follows the GPL-3.0 protocol, but is limited to the code of this project. Any 3D model data, physical engine, images, audio and video, and game data related to Ballance are not within this scope. Any use of these game data for commercial activities without the permission of the copyright owner is illegal.**
 
@@ -79,7 +100,7 @@ leaves developer mode. Use a test profile when changing scores or settings.
 
 ## Credits and third-party components
 
-The original Unity remake is by mengyu; this fork continues its code and content.
+**[imengyu/Ballance](https://github.com/imengyu/Ballance)** by **mengyu / Happy Dreamfish (imengyu)** is the upstream Unity recreation this project was forked from. Cyparade created the original game; iwonz maintains this fork and Reballance. See the [shared Credits inventory](https://github.com/iwonz/ballance/blob/main/CREDITS.md) for the full component notices and license boundaries.
 Native physics derives from [source-physics](https://github.com/nillerusr/source-physics).
 Bundled components include [QuickOutline](https://github.com/chrisnolet/QuickOutline),
 [Unity SharpZipLib](https://docs.unity3d.com/Packages/com.unity.sharp-zip-lib@1.4/manual/index.html),
@@ -89,5 +110,10 @@ Bundled components include [QuickOutline](https://github.com/chrisnolet/QuickOut
 [SimpleFileBrowser](https://github.com/yasirkula/UnitySimpleFileBrowser).
 Retain their notices under `Assets/Plugins` and `Assets/Resources/ThirdPartAllLincnse`.
 
-![Original levels](DemoImages/11.jpg)
-![Level preview](DemoImages/1.jpg)
+## Screenshots
+
+Actual Ballance 1.0.11 Web captures. See [both galleries and capture provenance](https://github.com/iwonz/ballance#screenshots) for more screens and Reballance development captures.
+
+| Main menu | Gameplay |
+| --- | --- |
+| ![Ballance main menu](https://raw.githubusercontent.com/iwonz/ballance/main/docs/images/ballance-1.0.11-menu.png) | ![Ballance level 2](https://raw.githubusercontent.com/iwonz/ballance/main/docs/images/ballance-1.0.11-gameplay.png) |

@@ -55,13 +55,9 @@ namespace Ballance2.UI.Core.Controls
 
     public void UpdateOn()
     {
-      var active = Ballance2.Game.Remaster.RemasterTheme.Accent;
-      var inactive = Ballance2.Game.Remaster.RemasterTheme.Control;
       if (!UseButtonStyle)
       {
-        Ballance2.Game.Remaster.RemasterTheme.Surface(Background.GetComponent<Image>(), inactive);
-        Ballance2.Game.Remaster.RemasterIcons.Set(DragImage, on ? Ballance2.Game.Remaster.RemasterIcon.Check : Ballance2.Game.Remaster.RemasterIcon.Minus);
-        DragImage.color = on ? Color.white : new Color(.55f, .63f, .65f);
+        DragImage.sprite = on ? ActiveImage : DeactiveImage;
         Drag.anchoredPosition = new Vector2(
             on ? 31.6f : 10.5f,
             Drag.anchoredPosition.y
@@ -69,20 +65,9 @@ namespace Ballance2.UI.Core.Controls
       }
       else
       {
-        SetButtonColor(CheckedButton, on, active, inactive);
-        SetButtonColor(UnCheckedButton, !on, active, inactive);
+        CheckedButton.sprite = on ? ActiveImage : DeactiveImage;
+        UnCheckedButton.sprite = on ? DeactiveImage : ActiveImage;
       }
-    }
-
-    private static void SetButtonColor(Image image, bool selected, Color active, Color inactive)
-    {
-      Ballance2.Game.Remaster.RemasterTheme.Surface(image, Color.white);
-      var button = image.GetComponent<Button>();
-      var colors = button.colors; colors.normalColor = selected ? active : inactive;
-      colors.highlightedColor = colors.selectedColor = new Color(.4f, .62f, .6f);
-      button.colors = colors;
-      var label = image.GetComponentInChildren<Text>();
-      if (label != null) label.color = selected ? new Color(.035f, .085f, .11f) : new Color(.91f, .95f, .94f);
     }
 
     public bool isOn

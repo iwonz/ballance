@@ -1,5 +1,4 @@
-using Ballance2.Game.Remaster;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 /*
@@ -32,7 +31,6 @@ namespace Ballance2.UI.CoreUI
 
     private void Start()
     {
-      RemasterTheme.Apply(gameObject, true);
       ButtonShowErrorContent.onClick.AddListener(() =>
       {
         ButtonShowErrorContent.gameObject.SetActive(false);
@@ -53,7 +51,7 @@ namespace Ballance2.UI.CoreUI
       });
       ButtonDebugger.onClick.AddListener(() =>
       {
-        RemasterPreferences.SetInt("core.DebugMode", 1);
+        PlayerPrefs.SetInt("core.DebugMode", 1);
         GameSystem.QuitPlayer();
       });
       ButtonContinue.onClick.AddListener(() =>

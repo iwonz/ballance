@@ -35,7 +35,7 @@ When a request changes scope, update the same change's artifacts before continui
 - Ball gameplay uses native IVP through `Assets/BallancePhysics`, not Unity Rigidbody physics. Unity colliders still serve trigger and presentation paths.
 - Pair native creation with cleanup; keep C/C# calling conventions, struct layouts, static AOT callbacks, and delegate lifetimes consistent. Follow [native instructions](BallancePhysics/AGENTS.md).
 - `Assets/Plugins` mostly contains third-party code. Keep vendor changes narrow, retain licenses, and explain local integration changes. `AndroidInput.cs` is project-owned.
-- Run local macOS players through `scripts/install-macos.py`; use the canonical latest Original and Remaster applications. Do not register additional diagnostic app copies. See the build guide for installation and cleanup.
+- Run local macOS players through `scripts/install-macos.py`; use the canonical latest Ballance application. Do not register additional diagnostic app copies. See the build guide for installation and cleanup.
 - Do not commit generated players, caches, logs, credentials, signing keys, or machine-specific configuration. Do not rewrite native binaries for a documentation change.
 - iOS work is deferred. Windows/Linux are x86-64, macOS and Android release targets are ARM64; check the build guide before changing platform support.
 
@@ -43,4 +43,4 @@ When a request changes scope, update the same change's artifacts before continui
 
 Run the relevant checks, review the diff for unintended behavior or asset churn, and update the verification record with outcomes and limits. Report what changed, why, what was checked, and anything still unverified. Commit/push/publish when the user requests it; preparing repository context does not require a new binary release.
 
-Every new public release must be one unified distribution from main containing both Ballance and Reballance, their five-platform archives/checksums, and the complete two-player site archive/checksum. Edition source tags do not require separate public releases. Deploy that exact site to GitHub Pages. Attach verified assets before publishing, wait for the Pages workflow, and verify the public release identity and browser behavior before reporting delivery complete. A missing Web asset or failed Pages deployment is a failed release delivery, not an optional follow-up. Follow [the release guide](docs/build-and-release.md#github-pages).
+Every published release must include this repository's Ballance platform builds and matching Web archive/checksum. Publish only Ballance assets under its own v<version> tag; Reballance has an independent repository. Pages must deploy the matching Web player. Attach verified assets before publishing, wait for Pages, and verify public identity and browser behavior before reporting delivery complete. Follow [the release guide](docs/build-and-release.md#github-pages).

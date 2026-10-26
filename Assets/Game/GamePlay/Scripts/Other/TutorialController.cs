@@ -1,5 +1,4 @@
 using Ballance2.Base;
-using Ballance2.Game.Remaster;
 using Ballance2.Package;
 using Ballance2.Services;
 using Ballance2.Services.I18N;
@@ -10,7 +9,9 @@ using UnityEngine.UI;
 
 namespace Ballance2.Game.GamePlay.Other
 {
-    /// <summary>Replayable first-level hints driven by the existing authored triggers.</summary>
+    /// <summary>
+    /// First-level tutorial controller.
+    /// </summary>
     public class TutorialController : MonoBehaviour
     {
         public ParentConstraint Pfeil_HochHost;
@@ -38,229 +39,502 @@ namespace Ballance2.Game.GamePlay.Other
         public GameObject Tut_ExtraPointEnd;
         public GameObject Tut_CheckpointEnd;
 
-        private GameEventHandler entry;
-        private GamePlayManager game;
-        private GameUIManager ui;
-        private RectTransform card;
-        private Text text;
-        private Button next, skip;
-        private int step, skipKey;
-        private bool active, subscribed, spawned, busy, modal;
-        private float movementHintTime;
+        private const string TAG = "TutorialController";
+
+        private bool _Tutorial = false;
+        private int _TutorialStep = 1;
+        private bool _TutorialShouldDisablePointDown = false;
+        private bool _TutorialBallFinded = false;
+        private bool _TutorialCamFinded = false;
+        private int _TutorialCurrWaitkey;
+        private RectTransform _TutorialUI = null;
+        private Text _TutorialUIText = null;
+        private Image _TutorialUIBg = null;
+        private Button _TutorialUIButtonContinue = null;
+        private Button _TutorialUIButtonQuit = null;
+
+        private GameSoundManager GameSoundManager;
+        private GameUIManager GameUIManager;
+        private GamePlayManager GamePlayManager;
+        private GameEventHandler _EventEntery = null;
 
         private void Start()
         {
-            game = GamePlayManager.Instance;
-            ui = GameUIManager.Instance;
-            entry = GameMediator.Instance.RegisterEventHandler(GamePackage.GetSystemPackage(),
-                "CoreTutorialLevelEventHandler", "TutorialHandler", (_, args) => {
-                    if ((string)args[0] == "beforeStart" && !subscribed) {
-                        game.EventBeforeStart.On(BeforeStart);
-                        game.EventQuit.On(Quit);
-                        subscribed = true;
-                    } else if ((string)args[0] == "beforeQuit") Detach();
-                    return false;
-                });
-        }
+            GameSoundManager = Services.GameSoundManager.Instance;
+            GameUIManager = Services.GameUIManager.Instance;
+            GamePlayManager = GamePlay.GamePlayManager.Instance;
 
-        private void BeforeStart(params object[] args)
-        {
-            Cleanup();
-            HideArrows();
-            game._ShouldStartByCustom = false;
-            game.CanEscPause = true;
-            if (RemasterPreferences.GetInt("tutorial.dismissed") != 0) return;
-            active = true; spawned = false; busy = false; step = 1;
-            game._ShouldStartByCustom = true;
-            game.GamePhysicsWorld.Simulate = false;
-            CreateCard();
-            BindTriggers();
-            StartSeq();
-        }
+            GameEventEmitterDelegate startFun = (_) =>
+            {
+                Log.D(TAG, "Init Tutorial");
 
-        private void CreateCard()
-        {
-            card = ui.InitViewToCanvas(GamePackage.GetSystemPackage().GetPrefabAsset("GameTutorialUI.prefab"), "GameTutorialUI", false);
-            var panel = (RectTransform)card.GetChild(0);
-            var buttons = (RectTransform)card.GetChild(1);
-            foreach (var layout in card.GetComponentsInChildren<LayoutGroup>()) layout.enabled = false;
-            RemasterTheme.Place(panel, .06f, .58f, .94f, .94f);
-            panel.GetComponent<Image>().sprite = null;
-            panel.GetComponent<Image>().color = new Color(.035f, .085f, .11f, .96f);
-            text = panel.GetChild(0).GetComponent<Text>();
-            RemasterTheme.Place(text.rectTransform, .035f, .07f, .965f, .93f);
-            text.font = RemasterTheme.Font; text.fontSize = 24; text.lineSpacing = 1.2f;
-            text.resizeTextForBestFit = true; text.resizeTextMinSize = 16; text.resizeTextMaxSize = 24;
-            RemasterTheme.Place(buttons, .06f, .49f, .94f, .56f);
-            next = buttons.GetChild(0).GetComponent<Button>();
-            skip = buttons.GetChild(1).GetComponent<Button>();
-            RemasterTheme.Place((RectTransform)next.transform, .51f, 0, 1, 1);
-            RemasterTheme.Place((RectTransform)skip.transform, 0, 0, .49f, 1);
-            next.onClick.RemoveAllListeners(); skip.onClick.RemoveAllListeners();
-            next.onClick.AddListener(Continue);
-            skip.onClick.AddListener(Skip);
-            RemasterTheme.Apply(card.gameObject);
-            foreach (var label in new[] { next.GetComponentInChildren<Text>(), skip.GetComponentInChildren<Text>() }) label.fontSize = 20;
-            skip.GetComponentInChildren<Ballance2.UI.Core.Controls.I18NText>().resourceKey = "core.ui.Remaster.SkipTutorial";
-        }
+                GamePlayManager._ShouldStartByCustom = true;
+                GamePlayManager.CanEscPause = false;
 
-        public void StartSeq() => Show(1, true);
+                _TutorialStep = 1;
+                _Tutorial = true;
+                _TutorialShouldDisablePointDown = true;
 
-        private void Show(int value, bool pause)
-        {
-            if (!active || busy) return;
-            ClearKeys();
-            step = value; modal = pause;
-            if (pause && spawned) game.PauseLevel(false);
-            game.CanEscPause = !pause;
-            if (pause) game._IsCountDownPoint = false;
-            text.text = HintText(value, Application.isMobilePlatform);
-            card.gameObject.SetActive(true);
-            next.gameObject.SetActive(value != 4);
-            skip.gameObject.SetActive(true);
-            if (value != 4) next.Select();
-            // Escape is reserved by the card while modal; movement bindings remain untouched.
-            if (pause) skipKey = ui.WaitKey(KeyCode.Escape, true, Skip, GamepadButton.B);
-        }
+                // Hide arrows first.
+                Tut_Richt_Pfeil01.SetActive(false);
+                Tut_Richt_Pfeil02.SetActive(false);
+                Tut_Richt_Pfeil03.SetActive(false);
+                Tut_Richt_Pfeil04.SetActive(false);
+                Pfeil_Rund02.SetActive(false);
+                Pfeil_Rund01.SetActive(false);
+                Pfeil_Hoch.SetActive(false);
+                // Initialize tutorial UI.
+                _TutorialUI = GameUIManager.InitViewToCanvas(GamePackage.GetSystemPackage().GetPrefabAsset("GameTutorialUI.prefab"), "GameTutorialUI", false);
+                var view = _TutorialUI.transform.GetChild(0);
+                var buttonView = _TutorialUI.transform.GetChild(1);
+                _TutorialUIBg = view.GetComponent<Image>();
+                _TutorialUIText = view.GetChild(0).GetComponent<Text>();
+                _TutorialUIButtonContinue = buttonView.GetChild(0).GetComponent<Button>();
+                _TutorialUIButtonQuit = buttonView.GetChild(1).GetComponent<Button>();
+                _TutorialUI.gameObject.SetActive(false);
+                StartSeq();
 
-        public static string HintText(int value, bool touch)
-        {
-            string result = I18N.Tr("core.ui.Remaster.Tutorial" + value);
-            var settings = GameManager.Instance.GameSettings;
-            string Key(string key) => settings.GetKeyCode(key).ToString();
-            string movement = touch ? I18N.Tr("core.ui.Remaster.TouchMove") :
-                Key(SettingConstants.SettingsControlKeyFront) + " / " + Key(SettingConstants.SettingsControlKeyBack) + " / " +
-                Key(SettingConstants.SettingsControlKeyLeft) + " / " + Key(SettingConstants.SettingsControlKeyRight);
-            string rotation = touch ? I18N.Tr("core.ui.Remaster.TouchRotate") :
-                Key(SettingConstants.SettingsControlKeyRoate) + " + " + Key(SettingConstants.SettingsControlKeyLeft) + " / " + Key(SettingConstants.SettingsControlKeyRight);
-            string overhead = touch ? I18N.Tr("core.ui.Remaster.TouchLook") : Key(SettingConstants.SettingsControlKeyUpCam);
-            return result.Replace("{move}", movement).Replace("{rotate}", rotation).Replace("{look}", overhead);
-        }
+                // Move to the ball spawn position.
+                Pfeil_HochHost.transform.position = GamePlayManager.SectorManager.CurrentLevelRestPoints[1].point.transform.position;
+                // Make arrows follow camera rotation.
+                var constraintSource = new ConstraintSource();
+                constraintSource.sourceTransform = GamePlayManager.CamManager._CamOrientTransform;
+                constraintSource.weight = 1;
 
-        private void Continue()
-        {
-            if (!active || busy) return;
-            ClearKeys();
-            if (step == 1) {
-                busy = true;
-                card.gameObject.SetActive(false);
-                game.GamePhysicsWorld.Simulate = true;
-                game.BallManager.KeyListener.IsListenKey = true;
-                game._Start(true, () => {
-                    if (!active) return;
-                    spawned = true; busy = false;
-                    game._ShouldStartByCustom = false;
-                    Show(2, true);
-                });
-            } else if (step == 2) Show(3, true);
-            else if (step == 3) {
-                HideTutorial();
-                game.ResumeLevel();
-                movementHintTime = 0;
-                Show(4, false);
-            } else {
-                bool finished = step == 10;
-                HideTutorial();
-                game.ResumeLevel();
-                if (finished) Finish();
-            }
-        }
+                if (_TutorialCamFinded)
+                    Pfeil_Runter.SetSource(0, constraintSource);
+                else
+                    Pfeil_Runter.AddSource(constraintSource);
 
-        private void Skip()
-        {
-            if (!active || busy) return;
-            bool restart = !spawned;
-            bool resume = modal || restart;
-            Finish();
-            if (resume) game.ResumeLevel(restart);
-        }
+                Pfeil_Runter.rotationOffset = new Vector3(-90, 0, 0);
+                if (_TutorialCamFinded)
+                    Pfeil_HochHost.SetSource(0, constraintSource);
+                else
+                    Pfeil_HochHost.AddSource(constraintSource);
 
-        private void Finish()
-        {
-            RemasterPreferences.SetInt("tutorial.dismissed", 1);
-            active = false;
-            HideTutorial();
-            ClearTriggers();
-            HideArrows();
-            game._ShouldStartByCustom = false;
-            game.CanEscPause = true;
-            game.BallManager.KeyListener.IsListenKey = true;
-        }
-
-        private void Update()
-        {
-            if (active && step == 4 && game.GamePhysicsWorld.Simulate) {
-                movementHintTime += Time.deltaTime;
-                if (movementHintTime >= 12) HideTutorial();
-            }
-        }
-
-        private void Hint(int value, GameObject target = null)
-        {
-            if (!active || busy || value <= step) return;
-            Show(value, true);
-            if (target != null) {
-                var position = target.transform.position + Vector3.up * 3;
-                Pfeil_Runter.transform.position = position;
-                Pfeil_Runter.gameObject.SetActive(true);
-            }
-        }
-
-        private void BindTriggers()
-        {
-            Tut_ExtraLife.onTriggerEnter = (_, other) => Hint(5, Tut_ExtraLifeEnd);
-            Tut_StoneTranfo.onTriggerEnter = (_, other) => Hint(6, Tut_StoneTranfoEnd);
-            Tut_Rampe.onTriggerEnter = (_, other) => {
-                if (other != null && other.gameObject.name == "BallStone") Hint(7, Tut_WoodTranfoEnd);
+                Pfeil_HochHost.SetRotationOffset(0, new Vector3(0, -90, 0));
+                _TutorialCamFinded = true;
             };
-            Tut_ExtraPoint.onTriggerEnter = (_, other) => Hint(8, Tut_ExtraPointEnd);
-            Tut_Checkpoint.onTriggerEnter = (_, other) => Hint(9, Tut_CheckpointEnd);
-            Tut_End.onTriggerEnter = (_, other) => Hint(10);
-            Tut_KeyEnd.onTriggerEnter = (_, other) => { if (step == 4) HideTutorial(); };
+            GameEventEmitterDelegate fallFun = (_) =>
+            {
+                Log.D(TAG, "Fall handler");
+
+                _Tutorial = true;
+                Tut_Richt_Pfeil01.SetActive(false);
+                Tut_Richt_Pfeil02.SetActive(false);
+                Tut_Richt_Pfeil03.SetActive(false);
+                Tut_Richt_Pfeil04.SetActive(false);
+            };
+            GameEventEmitterDelegate quitFun = (_) =>
+            {
+                Log.D(TAG, "Start quit");
+
+                _Tutorial = false;
+                GameTimer.Delay(1, () =>
+                {
+                    // Remove key listeners.
+                    if (_TutorialCurrWaitkey > 0)
+                    {
+                        GameUIManager.DeleteKeyListen(_TutorialCurrWaitkey);
+                    }
+
+                    // Reset and restore.
+                    GamePlayManager._ShouldStartByCustom = false;
+
+                    // Delete UI.
+                    if (_TutorialUI != null)
+                    {
+                        UnityEngine.Object.Destroy(_TutorialUI.gameObject);
+                        _TutorialUI = null;
+                    }
+                });
+
+            };
+
+            _EventEntery = GameMediator.Instance.RegisterEventHandler(
+              GamePackage.GetSystemPackage(),
+              "CoreTutorialLevelEventHandler",
+              "TutorialHandler",
+              (evtName, param) =>
+            {
+                var type = param[0] as string;
+                if (type == "beforeStart")
+                {
+                    GamePlayManager.EventBeforeStart.On(startFun);
+                    GamePlayManager.EventFall.On(fallFun);
+                    GamePlayManager.EventQuit.On(quitFun);
+                }
+                else if (type == "beforeQuit")
+                {
+                    GamePlayManager.EventBeforeStart.Off(startFun);
+                    GamePlayManager.EventFall.Off(fallFun);
+                    GamePlayManager.EventQuit.Off(quitFun);
+                    // Unregister events.
+                    if (_EventEntery != null)
+                    {
+                        GameMediator.Instance.UnRegisterEventHandler("CoreTutorialLevelEventHandler", _EventEntery);
+                        _EventEntery = null;
+                    }
+                }
+                return false;
+            });
         }
 
+        /// <summary>
+        /// Start the sequence.
+        /// </summary>
+        public void StartSeq()
+        {
+            Log.D(TAG, "Tutorial StartSeq");
+
+            if (!_Tutorial)
+                return;
+
+            int step1KeyReturn = 0;
+            int step1KeyQ = 0;
+
+            var funStepLock = false;
+            var funQuitLock = false;
+            GameManager.VoidDelegate funQuit = () =>
+            {
+                if (!funQuitLock)
+                {
+                    funQuitLock = true;
+                    GameSoundManager.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.Normal);
+                    // Press Q to exit.
+                    GameUIManager.DeleteKeyListen(step1KeyReturn);
+                    HideTutorial();
+                    // Restore ball movement keys.
+                    GamePlayManager.BallManager.KeyListener.IsListenKey = true;
+                    // Resume gameplay.
+                    GamePlayManager._ShouldStartByCustom = false;
+                    GamePlayManager.CanEscPause = true;
+                    GamePlayManager.ResumeLevel(true);
+
+                    Tut_ExtraLife.onTriggerEnter = null;
+                    Tut_StoneTranfo.onTriggerEnter = null;
+                    Tut_Rampe.onTriggerEnter = null;
+                    Tut_ExtraPoint.onTriggerEnter = null;
+                    Tut_Checkpoint.onTriggerEnter = null;
+                    Tut_End.onTriggerEnter = null;
+                }
+            };
+            GameManager.VoidDelegate funStep2 = () =>
+            {
+                var BallManager = GamePlayManager.BallManager;
+
+                GameSoundManager.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.Normal);
+
+                // Enable control at this point.
+                BallManager.SetControllingStatus(BallControlStatus.Control);
+                GamePlayManager._IsCountDownPoint = true;
+                GamePlayManager.CanEscPause = true;
+                _TutorialShouldDisablePointDown = false;
+
+                // Bind the current ball.
+                var ballWoodConstraintSource = new ConstraintSource();
+                ballWoodConstraintSource.sourceTransform = BallManager.CurrentBall.transform;
+                ballWoodConstraintSource.weight = 1;
+                if (_TutorialBallFinded)
+                    Tut_Richt_Pfeil.SetSource(0, ballWoodConstraintSource);
+                else
+                    Tut_Richt_Pfeil.AddSource(ballWoodConstraintSource);
+                Tut_Richt_Pfeil.constraintActive = true;
+                Tut_Richt_Pfeil.rotationAxis = Axis.None;
+                _TutorialBallFinded = true;
+
+                // Next step: directional key navigation.
+                GameUIManager.UIFadeManager.AddFadeOut(Pfeil_Hoch, 1, true, null);
+                GameUIManager.UIFadeManager.AddFadeIn(Tut_Richt_Pfeil01, 1, null);
+                GameUIManager.UIFadeManager.AddFadeIn(Tut_Richt_Pfeil02, 1, null);
+                GameUIManager.UIFadeManager.AddFadeIn(Tut_Richt_Pfeil03, 1, null);
+                GameUIManager.UIFadeManager.AddFadeIn(Tut_Richt_Pfeil04, 1, null);
+
+                _TutorialUIButtonContinue.gameObject.SetActive(false);
+
+                // Stretch arrows when their keys are pressed.
+                GameEventEmitterDelegate FlushBallPushListener = (_) =>
+                {
+                    if (BallManager.KeyStateBack)
+                        Tut_Richt_Pfeil03.transform.localPosition = new Vector3(-4, 0.5f, 0);
+                    else
+                        Tut_Richt_Pfeil03.transform.localPosition = new Vector3(-2, 0.5f, 0);
+                    if (BallManager.KeyStateForward)
+                        Tut_Richt_Pfeil04.transform.localPosition = new Vector3(6, 1, 0);
+                    else
+                        Tut_Richt_Pfeil04.transform.localPosition = new Vector3(4, 1, 0);
+                    if (BallManager.KeyStateLeft)
+                        Tut_Richt_Pfeil01.transform.localPosition = new Vector3(1, 0, 5);
+                    else
+                        Tut_Richt_Pfeil01.transform.localPosition = new Vector3(1, 0, 3);
+                    if (BallManager.KeyStateRight)
+                        Tut_Richt_Pfeil02.transform.localPosition = new Vector3(1, 0, -5);
+                    else
+                        Tut_Richt_Pfeil02.transform.localPosition = new Vector3(1, 0, -3);
+                };
+                BallManager.EventFlushBallPush.On(FlushBallPushListener);
+
+                // Hide the four directional arrows.
+                GameManager.VoidDelegate hideRichtPfeil = () =>
+                {
+                    GameUIManager.UIFadeManager.AddFadeOut(Tut_Richt_Pfeil01, 1, true, null);
+                    GameUIManager.UIFadeManager.AddFadeOut(Tut_Richt_Pfeil02, 1, true, null);
+                    GameUIManager.UIFadeManager.AddFadeOut(Tut_Richt_Pfeil03, 1, true, null);
+                    GameUIManager.UIFadeManager.AddFadeOut(Tut_Richt_Pfeil04, 1, true, null);
+                    GameTimer.Delay(1, () =>
+                    {
+                        Tut_Richt_Pfeil.constraintActive = false;
+                        _TutorialUIButtonContinue.gameObject.SetActive(true);
+                        BallManager.EventFlushBallPush.Off(FlushBallPushListener);
+                    });
+                };
+
+                GameTimer.Delay(1, () =>
+                {
+                    _TutorialStep = 4;
+                    ShowTutorialText();
+                });
+
+                // Hide the key arrow after at most 15 seconds.
+                GameTimer.Delay(15.000f, () =>
+                {
+                    if (_TutorialStep == 4)
+                    {
+                        _TutorialStep = 0;
+                        HideTutorial();
+                        hideRichtPfeil();
+                    }
+                });
+                // Or hide it when the ball reaches the wooden bridge.
+                Tut_KeyEnd.onTriggerEnter = (e, v) =>
+                {
+                    if (_TutorialStep == 4)
+                    {
+                        _TutorialStep = 0;
+                        HideTutorial();
+                        hideRichtPfeil();
+                    }
+                };
+            };
+            GameManager.VoidDelegate funStep1 = () =>
+            {
+                GameSoundManager.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.Normal);
+
+                // Next step: overhead view with Space.
+                GameUIManager.UIFadeManager.AddFadeOut(Pfeil_Rund01, 1, true, null);
+                GameUIManager.UIFadeManager.AddFadeOut(Pfeil_Rund02, 1, true, null);
+
+                GameTimer.Delay(1, () =>
+                {
+                    GameUIManager.UIFadeManager.AddFadeIn(Pfeil_Hoch, 1, null);
+                    _TutorialStep = 3;
+                    ShowTutorialText();
+                });
+
+                _TutorialCurrWaitkey = GameUIManager.WaitKey(KeyCode.Return, true, funStep2, GamepadButton.A);
+            };
+            GameManager.VoidDelegate commonTurHide = null;
+            GameManager.VoidDelegate funSeq = () =>
+            {
+                GameSoundManager.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.Normal);
+                _TutorialUIButtonQuit.gameObject.SetActive(false);
+                GameUIManager.DeleteKeyListen(step1KeyQ);
+                // Restore ball movement keys.
+                GamePlayManager.BallManager.KeyListener.IsListenKey = true;
+
+                // Advance to the next step.
+                HideTutorial();
+
+                // Ball spawn sequence.
+                GamePlayManager._Start(true, () =>
+                {
+
+                    // Spawn the ball without enabling control.
+                    GamePlayManager.BallManager.SetControllingStatus(BallControlStatus.LockMode);
+
+                    // Show arrows.
+                    GameUIManager.UIFadeManager.AddFadeIn(Pfeil_Rund01, 1, null);
+                    GameUIManager.UIFadeManager.AddFadeIn(Pfeil_Rund02, 1, null);
+
+                    _TutorialStep = 2;
+                    ShowTutorialText();
+
+                    _TutorialCurrWaitkey = GameUIManager.WaitKey(KeyCode.Return, true, funStep1,GamepadButton.A);
+                });
+
+                // Move arrows to the specified position.
+                commonTurHide = () =>
+                {
+                    GameSoundManager.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.Normal);
+                    GamePlayManager.ResumeLevel(false);
+                    HideTutorial();
+                };
+                GameManager.VoidDelegate commonTurReturn = () =>
+                {
+                    GamePlayManager.PauseLevel(false);
+                    _TutorialCurrWaitkey = GameUIManager.WaitKey(KeyCode.Return, true, commonTurHide, GamepadButton.A);
+                };
+                GameManager.VoidDelegate commonTurTipSound = () =>
+                {
+                    GameSoundManager.PlayFastVoice("core.sounds:Hit_Stone_Kuppel.wav", GameSoundType.Normal);
+                };
+
+                // Configure tutorials activated by triggers.
+                Tut_ExtraLife.onTriggerEnter = (s, o) =>
+                {
+                    if (_TutorialStep < 5)
+                    {
+                        _TutorialStep = 5;
+                        ShowTutorialText();
+                        commonTurTipSound();
+                        commonTurReturn();
+                        MoveArrowToObject(Tut_ExtraLifeEnd);
+                    }
+                };
+                Tut_StoneTranfo.onTriggerEnter = (s, o) =>
+                {
+                    if (_TutorialStep < 6)
+                    {
+                        _TutorialStep = 6;
+                        ShowTutorialText();
+                        commonTurTipSound();
+                        commonTurReturn();
+                        MoveArrowToObject(Tut_StoneTranfoEnd);
+                    }
+                };
+                Tut_Rampe.onTriggerEnter = (body, other) =>
+                {
+                    // Stone ball uphill hint.
+                    if (other != null && other.gameObject.tag == "Ball" && other.gameObject.name == "BallStone")
+                    {
+                        if (_TutorialStep < 7)
+                        {
+                            _TutorialStep = 7;
+                            ShowTutorialText();
+                            commonTurTipSound();
+                            commonTurReturn();
+                            MoveArrowToObject(Tut_WoodTranfoEnd);
+                        }
+                    }
+                };
+                Tut_ExtraPoint.onTriggerEnter = (s, o) =>
+                {
+                    if (_TutorialStep < 8)
+                    {
+                        _TutorialStep = 8;
+                        ShowTutorialText();
+                        commonTurTipSound();
+                        commonTurReturn();
+                        MoveArrowToObject(Tut_ExtraPointEnd);
+                    }
+                };
+                Tut_Checkpoint.onTriggerEnter = (s, o) =>
+                {
+                    if (_TutorialStep < 9)
+                    {
+                        _TutorialStep = 9;
+                        ShowTutorialText();
+                        commonTurTipSound();
+                        commonTurReturn();
+                        MoveArrowToObject(Tut_CheckpointEnd);
+                    }
+                };
+                Tut_End.onTriggerEnter = (s, o) =>
+                {
+                    if (_TutorialStep < 10)
+                    {
+                        _TutorialStep = 10;
+                        ShowTutorialText();
+                        commonTurTipSound();
+                        commonTurReturn();
+                    }
+                };
+            };
+
+            _TutorialUIButtonContinue.onClick.RemoveAllListeners();
+            _TutorialUIButtonQuit.onClick.RemoveAllListeners();
+            _TutorialUIButtonContinue.onClick.AddListener(() =>
+            {
+
+                // Prevent advancing too quickly through key presses.
+                if (funStepLock)
+                    return;
+                funStepLock = true;
+                GameTimer.Delay(1, () => funStepLock = false);
+
+                if (_TutorialStep == 1)
+                    funSeq();
+                else if (_TutorialStep == 2)
+                    funStep1();
+                else if (_TutorialStep == 3)
+                    funStep2();
+                else if (_TutorialStep >= 5)
+                    commonTurHide();
+            });
+            _TutorialUIButtonQuit.onClick.AddListener(() => funQuit());
+
+            // Temporarily disable ball movement keys.
+            GamePlayManager.BallManager.KeyListener.IsListenKey = false;
+
+            GameTimer.Delay(0.5f, () =>
+            {
+                ShowTutorialText();
+                // Step 1: Q exits; Enter continues.
+                step1KeyReturn = GameUIManager.WaitKey(KeyCode.Return, true, () => funSeq(), GamepadButton.A);
+                step1KeyQ = GameUIManager.WaitKey(KeyCode.Q, true, () => funQuit(), GamepadButton.B);
+            });
+        }
+
+        private void MoveArrowToObject(GameObject obj)
+        {
+            var arrowPosition = obj.transform.position;
+            arrowPosition.y = arrowPosition.y + 3;
+            Pfeil_Runter.transform.position = arrowPosition;
+            Pfeil_Runter.gameObject.SetActive(true);
+            Pfeil_Runter_Trigger.transform.position = arrowPosition;
+            Pfeil_Runter_Trigger.onTriggerEnter = (s, g) =>
+            {
+                GameUIManager.UIFadeManager.AddFadeOut(Pfeil_Runter.gameObject, 0.5f, true, null);
+            };
+        }
+        private void ShowTutorialText()
+        {
+            if (_TutorialUI.gameObject.activeSelf)
+            {
+                GameUIManager.UIFadeManager.AddFadeOut(_TutorialUIText, 0.3f, false);
+                GameTimer.Delay(0.350f, () =>
+                {
+                    _TutorialUIText.text = I18N.Tr("core.ui.TutorialText" + _TutorialStep);
+                    _TutorialUIText.gameObject.SetActive(true);
+                    GameUIManager.UIFadeManager.AddFadeIn(_TutorialUIText, 0.3f);
+                });
+            }
+            else
+            {
+                _TutorialUIText.text = I18N.Tr("core.ui.TutorialText" + _TutorialStep);
+                _TutorialUI.gameObject.SetActive(true);
+                _TutorialUIText.gameObject.SetActive(true);
+                GameUIManager.UIFadeManager.AddFadeIn(_TutorialUIText, 0.5f);
+                GameUIManager.UIFadeManager.AddFadeIn(_TutorialUIBg, 0.5f);
+            }
+            GamePlayManager._IsCountDownPoint = false;
+        }
+
+        /// <summary>
+        /// Hide the tutorial.
+        /// </summary>
         public void HideTutorial()
         {
-            ClearKeys();
-            if (card != null) card.gameObject.SetActive(false);
-            if (Pfeil_Runter != null) Pfeil_Runter.gameObject.SetActive(false);
-            game.CanEscPause = true;
-            modal = false;
-        }
+            GameUIManager.UIFadeManager.AddFadeOut(_TutorialUIText, 0.6f, true);
+            GameUIManager.UIFadeManager.AddFadeOut(_TutorialUIBg, 0.6f, true);
 
-        private void ClearKeys()
-        {
-            if (skipKey != 0 && ui != null) ui.DeleteKeyListen(skipKey);
-            skipKey = 0;
+            GameTimer.Delay(0.6f, () =>
+            {
+                _TutorialUI.gameObject.SetActive(false);
+            });
+
+            if (!_TutorialShouldDisablePointDown)
+                GamePlayManager._IsCountDownPoint = true;
         }
-        private void HideArrows()
-        {
-            foreach (var arrow in new[] { Tut_Richt_Pfeil01, Tut_Richt_Pfeil02, Tut_Richt_Pfeil03, Tut_Richt_Pfeil04,
-                Pfeil_Rund01, Pfeil_Rund02, Pfeil_Hoch, Pfeil_Runter != null ? Pfeil_Runter.gameObject : null })
-                if (arrow != null) arrow.SetActive(false);
-        }
-        private void ClearTriggers()
-        {
-            foreach (var trigger in new[] { Tut_ExtraLife, Tut_StoneTranfo, Tut_Rampe, Tut_ExtraPoint, Tut_Checkpoint, Tut_End, Tut_KeyEnd })
-                if (trigger != null) trigger.onTriggerEnter = null;
-        }
-        private void Cleanup()
-        {
-            active = false; ClearKeys(); ClearTriggers();
-            if (card != null) Destroy(card.gameObject);
-            card = null;
-        }
-        private void Quit(params object[] args) => Cleanup();
-        private void Detach()
-        {
-            Cleanup();
-            if (subscribed && game != null) { game.EventBeforeStart.Off(BeforeStart); game.EventQuit.Off(Quit); }
-            subscribed = false;
-            if (entry != null) {
-                if (GameMediator.Instance != null) GameMediator.Instance.UnRegisterEventHandler("CoreTutorialLevelEventHandler", entry);
-                entry = null;
-            }
-        }
-        private void OnDestroy() => Detach();
     }
 }

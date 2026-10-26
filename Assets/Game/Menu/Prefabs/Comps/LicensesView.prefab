@@ -210,7 +210,6 @@ MonoBehaviour:
   - UnityRecyclingListView
   - UnityRuntimeSceneGizmo
   - UnityRuntimeInspector
-  - NotoSansCJK
 --- !u!1 &6332297538632272784
 GameObject:
   m_ObjectHideFlags: 0

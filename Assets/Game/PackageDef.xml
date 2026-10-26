@@ -2,13 +2,13 @@
 <Package name="core" version="{internal.core.version}">
   <BaseInfo>
     <Name>{core.package.Name}</Name>
-    <Author>iwonz</Author>
+    <Author>Ballance</Author>
     <Logo>PackageLogo.png</Logo>
     <Introduction>{core.package.Introduction}</Introduction>
     <Description>{core.package.Description}</Description>
-    <Link>https://github.com/iwonz/ballance</Link>
-    <AuthorLink>https://github.com/iwonz/ballance</AuthorLink>
-    <DocLink>https://github.com/iwonz/ballance/tree/main/docs</DocLink>
+    <Link>https://imengyu.top/ballanceProject</Link>
+    <AuthorLink>https://imengyu.top/</AuthorLink>
+    <DocLink>https://imengyu.top/ballanceProject/doc</DocLink>
     <VersionName>{internal.core.versionName}</VersionName>
   </BaseInfo>
   <EntryCode>PackageEntry</EntryCode>

@@ -1,12 +1,20 @@
-name: Publish Ballance and Reballance to GitHub Pages
+name: Publish Web to GitHub Pages
 
 on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Ballance v<version> release to deploy or roll back to
+        required: true
+        type: string
 
 permissions:
   contents: read
+
+env:
+  RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
 
 concurrency:
   group: github-pages
@@ -19,56 +27,23 @@ jobs:
       contents: read
       pages: read
     outputs:
-      source: ${{ steps.source.outputs.commit }}
+      sha256: ${{ steps.prepare.outputs.sha256 }}
     steps:
       - uses: actions/checkout@v7
         with:
           ref: main
           persist-credentials: false
-      - name: Select the approved unified release
-        id: release
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: |
-          python3 - <<'PY'
-          import os, shutil, sys
-          from pathlib import Path
-          sys.path.insert(0, 'scripts')
-          from release_identity import read_manifest
-          path = Path('site/releases.json')
-          manifest = read_manifest(path)
-          event = os.environ.get('RELEASE_TAG')
-          if event and event != manifest['release']:
-              raise RuntimeError('Published tag is not the approved unified release in main')
-          shutil.copyfile(path, Path(os.environ['RUNNER_TEMP']) / 'approved-release.json')
-          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
-              output.write('tag=' + manifest['release'] + '\n')
-          PY
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ steps.release.outputs.tag }}
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Pin immutable deployment source
-        id: source
-        run: |
-          git merge-base --is-ancestor HEAD origin/main
-          cmp site/releases.json "$RUNNER_TEMP/approved-release.json"
-          python3 - <<'PY'
-          import json, subprocess
-          with open('site/releases.json') as source:
-              manifest = json.load(source)
-          for edition, pin in manifest['editions'].items():
-              branch = 'original' if edition == 'original' else 'main'
-              subprocess.run(['git', 'merge-base', '--is-ancestor', pin['tag'], 'origin/' + branch], check=True)
-          PY
-          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-      - name: Verify both games and the attached site from one release
+      - name: Download and verify Web release
+        id: prepare
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          python3 scripts/prepare-release.py verify download public --fetch
+          mkdir download public
+          archive=$(PYTHONPATH=scripts python3 -c 'import os; from release_identity import asset_name; print(asset_name(os.environ["RELEASE_TAG"]))')
+          gh release download "$RELEASE_TAG" --pattern "$archive" --pattern "$archive.sha256" --dir download
+          python3 scripts/prepare-pages.py download public "$RELEASE_TAG"
+          echo "sha256=$(jq -r .sha256 public/release.json)" >> "$GITHUB_OUTPUT"
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
@@ -80,23 +55,28 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
-      contents: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: ${{ needs.prepare.outputs.source }}
-          persist-credentials: false
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v5
-      - name: Verify the distribution and both public players
+      - name: Verify the published release
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          EXPECTED_SHA: ${{ needs.prepare.outputs.sha256 }}
         run: |
-          python3 scripts/verify-site.py "$PAGE_URL" site/releases.json
-          echo "Verified both pinned editions at $PAGE_URL" >> "$GITHUB_STEP_SUMMARY"
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error --max-time 5 \
+              "${PAGE_URL%/}/release.json?tag=$RELEASE_TAG&attempt=$attempt" -o deployed-release.json \
+              && jq -e --arg tag "$RELEASE_TAG" --arg sha "$EXPECTED_SHA" '.tag == $tag and .sha256 == $sha' deployed-release.json; then
+              echo "Verified $RELEASE_TAG at $PAGE_URL" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "GitHub Pages did not serve the requested release: $RELEASE_TAG" >&2
+          exit 1

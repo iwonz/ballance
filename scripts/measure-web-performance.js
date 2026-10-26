@@ -137,18 +137,16 @@ async (page) => {
       const response = await fetch(config.codeUrl);
       if (!response.ok) throw new Error("Cannot identify the measured Wasm build.");
       const digest = await crypto.subtle.digest("SHA-256", await response.arrayBuffer());
-      return { productName: config.productName, version: config.productVersion, codeUrl: config.codeUrl,
+      return { version: config.productVersion, codeUrl: config.codeUrl,
         sha256: Array.from(new Uint8Array(digest), value => value.toString(16).padStart(2, "0")).join("") };
     });
     await capture("menu");
-    const remaster = report.build.productName === "Reballance";
-    await click(0.5, remaster ? 0.4325 : 0.24);
+    await click(0.5, 0.24);
     await game.waitForTimeout(1200);
-    await click(remaster ? 0.162 : 0.5, remaster ? 0.2695 : 0.15);
-    await waitFor(remaster ? "[GamePlayManager] Should Start By Custom" : "[TutorialController] Tutorial StartSeq");
+    await click(0.5, 0.15);
+    await waitFor("[TutorialController] Tutorial StartSeq");
     await game.waitForTimeout(2000);
-    if (remaster) await click(0.28, 0.475);
-    else await game.keyboard.press("q", { delay: 150 });
+    await game.keyboard.press("q", { delay: 150 });
     await waitFor("[GamePlayManager] Resume");
     await game.waitForTimeout(3000);
     // Exercise input and the live ball before measuring the unpaused start area.

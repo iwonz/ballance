@@ -50,14 +50,6 @@ namespace Ballance2.Editor
         const string alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
         roboto.RequestCharactersInTexture(alphabet, 20);
         foreach (var c in alphabet) Require(roboto.HasCharacter(c), "Cyrillic glyph " + c);
-        var remasterFont = Ballance2.Game.Remaster.RemasterTheme.Font;
-        Require(remasterFont != null, "embedded Remaster font");
-        var resources = new XmlDocument();
-        resources.Load("Assets/Game/PackageLanguageRes.xml");
-        var glyphs = string.Concat(resources.SelectNodes("//Text").Cast<XmlNode>().Select(node => node.InnerText));
-        remasterFont.RequestCharactersInTexture(glyphs, 20);
-        foreach (char c in glyphs.Distinct().Where(c => !char.IsControl(c)))
-          Require(remasterFont.HasCharacter(c), "Remaster localization glyph U+" + ((int)c).ToString("X4"));
 
         var languagePage = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Menu/Prefabs/Pages/PageLanguage.prefab");
         var button = languagePage.transform.Find("BtnRussian");

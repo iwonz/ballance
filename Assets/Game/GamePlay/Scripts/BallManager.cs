@@ -120,7 +120,6 @@ namespace Ballance2.Game.GamePlay
         #region Keyboard
 
         private int settingsCallbackId = 0;
-        private GameSettingsActuator controlSettings;
         private KeyListener keyListener = null;
         private KeyCode keyFront = KeyCode.None;
         private KeyCode keyBack = KeyCode.None;
@@ -145,7 +144,6 @@ namespace Ballance2.Game.GamePlay
         {
             // Initialize control settings.
             var GameSettings = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME);
-            controlSettings = GameSettings;
             settingsCallbackId = GameSettings.RegisterSettingsUpdateCallback(SettingConstants.SettingsControl, (groupName, action) =>
             {
                 _OnControlSettingsChanged();
@@ -156,8 +154,8 @@ namespace Ballance2.Game.GamePlay
         }
         private void _UnInitSettings()
         {
-            controlSettings?.UnRegisterSettingsUpdateCallback(settingsCallbackId);
-            controlSettings = null;
+            var GameSettings = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME);
+            GameSettings.UnRegisterSettingsUpdateCallback(settingsCallbackId);
         }
         private void _OnControlSettingsChanged()
         {
@@ -268,7 +266,7 @@ namespace Ballance2.Game.GamePlay
         }
         private void _UnInitKeys()
         {
-            if (keyListener != null) keyListener.ClearKeyListen();
+            keyListener.ClearKeyListen();
         }
 
         #endregion
@@ -322,7 +320,7 @@ namespace Ballance2.Game.GamePlay
         }
         private void _DeleteCommands()
         {
-            if (GameManager.Instance != null) GameManager.Instance.GameDebugCommandServer?.UnRegisterCommand(_CommandId);
+            GameManager.Instance.GameDebugCommandServer.UnRegisterCommand(_CommandId);
         }
 
         #endregion
@@ -396,7 +394,7 @@ namespace Ballance2.Game.GamePlay
         }
         private void _DeleteEvents()
         {
-            if (GameManager.GameMediator != null) GameManager.GameMediator.UnRegisterEventEmitter("BallManager");
+            GameManager.GameMediator.UnRegisterEventEmitter("BallManager");
         }
 
         #endregion
@@ -455,9 +453,6 @@ namespace Ballance2.Game.GamePlay
             // Set physics parameters.
             body.Fixed = false;
             body.Mass = physicsData.Mass;
-            body.ConfigureSurface(name == "BallWood" ? BallancePhysics.Api.SurfaceMaterial.WoodBall :
-                name == "BallStone" ? BallancePhysics.Api.SurfaceMaterial.StoneBall :
-                name == "BallPaper" ? BallancePhysics.Api.SurfaceMaterial.PaperBall : BallancePhysics.Api.SurfaceMaterial.None, null);
             if (physicsData.BallRadius > 0)
             {
                 body.UseBall = true;
@@ -526,8 +521,6 @@ namespace Ballance2.Game.GamePlay
             // Set the name.
             if (gameObject.name != name)
                 gameObject.name = name;
-
-            Ballance2.Game.Remaster.RemasterBallVisual.Install(body, name);
 
             EventBallRegistered.Emit(ball, body);
 

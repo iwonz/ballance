@@ -2,7 +2,6 @@ Shader "Unlit/UI_BGBlur"
 {
 	Properties
 	{
-		[PerRendererData] _MainTex("Sprite Texture", 2D) = "white" {}
 		_Size("Size", float) = 1
 		_Color("Color", Color) = (1,1,1,1)
 	}

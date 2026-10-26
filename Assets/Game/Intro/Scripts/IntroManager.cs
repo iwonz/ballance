@@ -25,7 +25,6 @@ namespace Ballance2.Game {
 
       if (IntroUI == null) {
         IntroUI = GameUIManager.InitViewToCanvas(thisGamePackage.GetPrefabAsset("IntroUI.prefab"), "IntroUI", true);
-        Ballance2.Game.Remaster.RemasterIntro.Install(IntroUI);
         IntroUI.SetAsFirstSibling();  
       }
 

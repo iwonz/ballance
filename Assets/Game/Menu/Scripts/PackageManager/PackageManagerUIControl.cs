@@ -125,7 +125,6 @@ namespace Ballance2.Menu
       TextTitle.text = data.name;
       TextIntrod.text = data.introduction;
       ImageLogo.sprite = data.logo;
-      Ballance2.Game.Remaster.RemasterPackages.Row(item,data.packageName);
 
       // Open settings button.
       if(data.hasSettingsUI) {
@@ -152,7 +151,7 @@ namespace Ballance2.Menu
           });
         }
 
-        if(packageStateChanges.TryGetValue(data.packageName, out var pack))
+        if(packageStateChanges.TryGetValue(name, out var pack))
           ToggleEnable.isOn = pack.newState;// Cached state.
         else
           ToggleEnable.isOn = data.enableLoad;
@@ -399,7 +398,6 @@ namespace Ballance2.Menu
         var item = GameManager.Instance.InstancePrefab(control.PrefabButton, PageContent, name);
         var cls = item.GetComponent<Button>();
         cls.onClick.AddListener(() => onClick());
-        Ballance2.Game.Remaster.RemasterTheme.Apply(item);
         item.transform.SetAsFirstSibling();
         var text = item.transform.Find("Text").GetComponent<Text>();
         if (text != null)
@@ -418,7 +416,6 @@ namespace Ballance2.Menu
 
         var item = GameManager.Instance.InstancePrefab(control.PrefabSubTitle, PageContent, name);
         var cls = item.GetComponent<Text>();
-        Ballance2.Game.Remaster.RemasterTheme.Apply(item);
         item.transform.SetAsFirstSibling();
         cls.text = title;
         return new PackageSettingsUIControlInfo<Text>(null, cls);
@@ -436,7 +433,6 @@ namespace Ballance2.Menu
         var item = GameManager.Instance.InstancePrefab(control.PrefabText, PageContent, name);
         var cls = item.GetComponent<Text>();
         cls.text = title;
-        Ballance2.Game.Remaster.RemasterTheme.Apply(item);
         item.transform.SetAsFirstSibling();
         return new PackageSettingsUIControlInfo<Text>(null, cls);
       }
@@ -457,7 +453,6 @@ namespace Ballance2.Menu
         cls.Text.defaultString = title;
         valueBinder.MessageCenter = MessageCenter;
         valueBinder.Name = name; 
-        Ballance2.Game.Remaster.RemasterTheme.Apply(item);
         item.transform.SetAsFirstSibling();
         return new PackageSettingsUIControlInfo<KeyChoose>(MessageCenter.SubscribeValueBinder(valueBinder, valueUpdateCallback), cls);
       }
@@ -475,7 +470,6 @@ namespace Ballance2.Menu
         var item = GameManager.Instance.InstancePrefab(control.PrefabUpdown, PageContent, name);
         var cls = item.GetComponent<Updown>();
         var valueBinder = item.AddComponent<UpdownValueBinder>();
-        Ballance2.Game.Remaster.RemasterTheme.Apply(item);
         item.transform.SetAsFirstSibling();
         valueBinder.MessageCenter = MessageCenter;
         valueBinder.Name = name; 
@@ -496,7 +490,6 @@ namespace Ballance2.Menu
         var item = GameManager.Instance.InstancePrefab(control.PrefabToogle, PageContent, name);
         var cls = item.GetComponent<ToggleEx>();
         var valueBinder = item.AddComponent<ToggleExValueBinder>();
-        Ballance2.Game.Remaster.RemasterTheme.Apply(item);
         item.transform.SetAsFirstSibling();
         valueBinder.MessageCenter = MessageCenter;
         valueBinder.Name = name; 
@@ -517,7 +510,6 @@ namespace Ballance2.Menu
         var item = GameManager.Instance.InstancePrefab(control.PrefabInput, PageContent, name);
         var cls = item.GetComponent<InputField>();
         var valueBinder = item.AddComponent<InputFieldValueBinder>();
-        Ballance2.Game.Remaster.RemasterTheme.Apply(item);
         item.transform.SetAsFirstSibling();
         valueBinder.MessageCenter = MessageCenter;
         valueBinder.Name = name; 
@@ -534,10 +526,9 @@ namespace Ballance2.Menu
         if (CheckIsCustomControl())
           return null;
 
-        var item = GameManager.Instance.InstancePrefab(control.PrefabSlider, PageContent, name);
+        var item = GameManager.Instance.InstancePrefab(control.PrefabInput, PageContent, name);
         var cls = item.GetComponent<Slider>();
         var valueBinder = item.AddComponent<SliderValueBinder>();
-        Ballance2.Game.Remaster.RemasterTheme.Apply(item);
         item.transform.SetAsFirstSibling();
         valueBinder.MessageCenter = MessageCenter;
         valueBinder.Name = name; 

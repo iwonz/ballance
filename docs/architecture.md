@@ -11,8 +11,6 @@ in change records. Check selection is centralized in [validation.md](validation.
 | --- | --- |
 | `Assets/System` | Startup, package/services framework, UI primitives, resource paths, editor checks |
 | `Assets/Game` | Core package, gameplay, menus, original levels, level loading and editor authoring |
-| `Assets/Game/Remaster` | Remaster environment, rendering, UI and isolated settings/records |
-| `site` | Static bilingual landing and explicit two-edition release manifest |
 | `Assets/Packages` | Six built-in resource/mod packages and package templates |
 | `Assets/BallancePhysics` | Managed native-physics wrapper, editor inspectors, shipped plugins |
 | `BallancePhysics` | C++ bridge and pinned-source patch; see its AGENTS.md |
@@ -123,48 +121,6 @@ Do not substitute Unity Rigidbody physics for IVP. Validate movement, collision,
 transformation, checkpoint recovery, zero-life failure, pause/resume, restart,
 completion, and return to menu; one successful level load does not cover these.
 
-## Remaster environment and editions
-
-[Active contract](../openspec/changes/build-original-and-remaster-editions/specs/remaster-environment/spec.md);
-[edition maintenance](editions.md). The Original worktree and immutable baseline
-are independent of `main`; there is no runtime edition switch. The Remaster is in
-development, with outstanding acceptance recorded in the active change.
-
-[EnvironmentState](../Assets/Game/Remaster/Scripts/EnvironmentState.cs) owns the seven
-preset IDs and simulation-time run state.
-[LevelEnvironmentProfile](../Assets/Game/Remaster/Scripts/LevelEnvironmentProfile.cs)
-validates separate resource profiles for thirteen built-in levels.
-[EnvironmentController](../Assets/Game/Remaster/Scripts/EnvironmentController.cs)
-attaches at level completion, subscribes to IVP's simulation loop and releases on
-unload. GamePlayManager/SectorManager connect restart, recovery and checkpoints;
-preview uses the same profiles. Attaching a built-in profile removes the legacy
-scrolling cloud plane, including its restart/settings/preview reference. Texture
-scrolling for custom content uses renderer properties without changing shared
-materials. Custom content without a matching built-in path
-keeps authored visuals and dry physics.
-
-[EnvironmentSurfaces](../Assets/Game/Remaster/Scripts/EnvironmentSurfaces.cs) binds
-local regions to physical transforms and render property blocks.
-[EnvironmentPresentation](../Assets/Game/Remaster/Scripts/EnvironmentPresentation.cs)
-owns sky, lighting and precipitation lifetimes, placing the lower cloud volume
-below the lowest covered floor.
-[RemasterSkyRenderer](../Assets/Game/Remaster/Scripts/RemasterSkyRenderer.cs) renders
-the sky into bounded cubemaps, updates one face per frame from a fixed snapshot,
-and blends completed captures. It restores the source sky after the scene pass;
-reflections retain the volumetric material.
-[SurfaceState](../Assets/BallancePhysics/Api/SurfaceState.cs) is shared with the
-native bridge. The Standard-based surface and layered-sky shaders live in
-`Assets/Game/Remaster/Resources/Remaster`.
-[Material authoring](../Assets/System/Scripts/Editor/RemasterMaterialAuthoring.cs)
-updates shared materials without changing collision meshes; source assets and
-licenses are documented in [remaster-art.md](remaster-art.md).
-
-Known Remaster gaps: floor footprints and sector weather remain draft placements;
-moving supports, weather sound, vegetation, silhouettes and all-level playability
-need implementation or acceptance. Native builds disable floating-point contraction
-to preserve the shipped Original's dry replay; the diagnostic comparison matched
-all three balls exactly. Full Unity input/camera/mechanism acceptance remains open.
-
 ## Physics runtime
 
 [Contract](../openspec/specs/physics-runtime/spec.md).
@@ -182,11 +138,7 @@ Web uses `__Internal` and a static `.a`; other current targets use dynamic nativ
 libraries. Keep AOT callbacks static and rooted, and preserve destruction order.
 Collision layers are independent of Unity's layer system. Run ABI and native smoke
 checks, then affected player gameplay; static signature checks do not execute every
-native function or cover all targets. Remaster ABI 2304 appends material-region,
-world-weather and contact-state entries. The material manager refreshes persistent
-contacts and applies rolling resistance/wind in the native simulation. Original
-retains ABI 2302. Rebuild sources and per-target hashes are recorded in
-`BallancePhysics/provenance`; target execution limits remain in verification records.
+native function or cover all targets.
 
 ## Player input
 
@@ -230,23 +182,9 @@ advice for recognized software renderers, without changing preferences or runnin
 per-frame diagnostics. Device names are displayed as literal text; an unfamiliar
 name is not treated as certified hardware acceleration.
 
-[RemasterTheme](../Assets/Game/Remaster/Scripts/RemasterTheme.cs) styles existing
-uGUI pages and embeds Noto CJK for the maintained languages.
-[RemasterMenuLayout](../Assets/Game/Remaster/Scripts/RemasterMenuLayout.cs) arranges
-main/level menus without replacing their bound buttons;
-[TutorialController](../Assets/Game/GamePlay/Scripts/Other/TutorialController.cs)
-provides skip/replay and binding-aware contextual cards.
-[RemasterHud](../Assets/Game/Remaster/Scripts/RemasterHud.cs) presents scores, lives
-without panel backings, a preset heading or practice-run classification. Existing dialogs/package pages still require
-complete visual and navigation acceptance.
-
-[RemasterSettingsPanel](../Assets/Game/Remaster/Scripts/RemasterSettingsPanel.cs)
-separates environment selection from graphics quality.
-[RemasterGraphics](../Assets/Game/Remaster/Scripts/RemasterGraphics.cs) renders the
-3D scene into an aspect-preserving target independently of uGUI scale, displays
-actual dimensions and refreshes sky reflections.
-[RemasterSafeArea](../Assets/Game/Remaster/Scripts/RemasterSafeArea.cs) fits UI roots
-to mobile safe areas. The responsive Web host is under `Assets/WebGLTemplates/Remaster`.
+Known UI gap: the existing Web resolution selector can display `Unknow %` in a
+fresh browser profile. Use the actual canvas dimensions for performance evidence;
+the selector label is not a reliable measurement of render resolution.
 
 [GameSoundManager](../Assets/System/Scripts/Services/GameSoundManager.cs) owns mixers
 and registered sources; [MusicManager](../Assets/Game/GamePlay/Scripts/MusicManager.cs)
@@ -263,8 +201,7 @@ handles lookups and formatting.
 [SettingsUIControl](../Assets/Game/Menu/Scripts/Control/SettingsUIControl.cs) saves the
 language before prompting restart. Resources live in `Assets/Resources/StaticLangResource.xml`,
 `Assets/Game/PackageLanguageRes*.xml`, and package language files. `I18NText` prefab
-bindings and the bundled fonts are part of this boundary. Original retains Bank
-Gothic/Roboto; Remaster uses the licensed Noto CJK font described in the art guide.
+bindings and the bundled Bank Gothic/Roboto font fallback are part of this boundary.
 Use [translation guidance](../HelpTranslate.md), the Python checker, editor resource
 checks, and rendered UI checks. English-only maintenance prose does not apply to
 language resource values or their test fixtures.
@@ -274,22 +211,17 @@ language resource values or their test fixtures.
 [Contract](../openspec/specs/player-persistence/spec.md).
 [GameSettingsManager](../Assets/System/Scripts/Services/GameSettingsManager.cs) and
 [GameCoreSettingsActuator](../Assets/Game/Common/Scripts/Settings/GameCoreSettingsActuator.cs)
-use [RemasterPreferences](../Assets/Game/Remaster/Scripts/RemasterPreferences.cs)
-with an edition namespace and a registered-key reset boundary. Original keys are
-not imported or deleted.
-[RemasterRecords](../Assets/Game/Remaster/Scripts/RemasterRecords.cs) stores the
-legacy score payload in one environment-independent table, using temporary files
-and replacement. It validates and merges earlier preset/rules files once, preserving
-the original files; the shared file prevents repeated imports.
-[HighscoreManager](../Assets/Game/GamePlay/Scripts/HighScore/HighscoreManager.cs)
-keeps scores and level unlocks shared within Reballance regardless of environment
-selection. Score arithmetic and gameplay timers have no weather dependency. Product/application identity isolates
-the native data root; Web editions use different page-directory roots.
+store package-prefixed PlayerPrefs values. Reset clears all PlayerPrefs, so do not
+run it against a user's real profile during tests.
+[HighscoreManager](../Assets/Game/GamePlay/Scripts/HighScore/HighscoreManager.cs) reads
+`HighscoreData.json` (JSON strings inside its `data` and `names` fields) and
+`LevelPassStateData.json` from persistent storage. Preserve this existing format.
+Package state uses XML; mobile/Web writable content paths differ from shipped content.
 
-Known limits: there is no general corrupt-file recovery or cross-device sync. Web
-file replacement and browser-close persistence still need acceptance; enabling
-auto-sync in the Web template is not proof of crash-safe persistence. Validate
-save/reload, reset isolation and malformed data using temporary profiles.
+Known gaps: high-score parsing has no general corrupt-file recovery; writes are not
+an atomic transaction; browser close does not guarantee the game's normal quit/save
+path. Do not promise crash-safe or cross-device persistence. Validate with temporary
+profiles/files and include save/reload and malformed-data behavior when changing it.
 
 ## Developer tools
 
@@ -333,6 +265,10 @@ package is removed; Unity's Visual Studio editor integration remains installed.
 
 ## Platform builds
 
+This repository's main branch owns classic Ballance. Its original edition descriptor
+preserves application/storage identity; release tools validate new v<version> builds
+and retain historical archive compatibility. Reballance lives in its own repository.
+
 [Contract](../openspec/specs/platform-builds/spec.md).
 [PlayerBuild](../Assets/System/Scripts/Editor/PlayerBuild.cs) is the content-aware
 entry point. It builds the core, all package definitions, and 13 levels, stages content
@@ -349,30 +285,17 @@ and CI requirements. Native rebuild provenance lives in
 ## Web publication
 
 [Contract](../openspec/specs/web-publication/spec.md).
-[Pages workflow](../.github/workflows/github-pages.yml) selects the unified distribution
-pin from `main`, checks out its immutable `release/v*` source and deploys the attached
-site; it does not build Unity. [release_identity.py](../scripts/release_identity.py)
-owns source/distribution tag parsing and the schema-2 five-platform manifest.
-[prepare-release.py](../scripts/prepare-release.py) stages and verifies both sets of
-five platform artifacts, notices and the complete site archive.
-[prepare-pages.py](../scripts/prepare-pages.py) validates individual Web archive
-safety, checksum, size, content and identity. [prepare-site.py](../scripts/prepare-site.py)
-stages the landing and both players atomically, adds edition navigation and enforces
-the combined Pages size limit. Original's HTML stays in the previous page directory.
-[verify-site.py](../scripts/verify-site.py) checks the distribution and both public
-identities. Null distribution/Reballance pins intentionally prevent deployment.
-
-The [release guide](build-and-release.md#github-pages) owns setup and independent
-rollback through complete distribution releases. HTTP identity checks do not cover
-gameplay: test both public players, preserved Original storage, navigation, menu,
-control, fall/rebirth and return. [README](../README.md) introduces both games;
-[Credits](../CREDITS.md) owns upstream attribution and the preserved rights notice.
-
-## Known gaps
-
-- Dormant ray-query wrappers need a separately verified repair before use: the managed
-  single-hit wrapper calls the object-query delegate; the multi-hit wrapper leaves its
-  lists uninitialized, and native multi-hit allocation/iteration/cleanup is inconsistent.
+[Pages workflow](../.github/workflows/github-pages.yml) deploys existing release
+assets; it does not build Unity.
+[prepare-pages.py](../scripts/prepare-pages.py) checks checksum, archive safety,
+size, complete Web content, and tag/archive/player version agreement. Every release
+must pass this deployment; missing Web assets fail rather than skip the workflow.
+The generated `release.json` is checked over HTTP after deployment to confirm the
+requested release is live. gzip fallback and single-threaded physics avoid
+custom server headers. Asset requests must retain the repository URL prefix.
+The [release guide](build-and-release.md#github-pages) owns setup and rollback steps.
+Test the served URL, menu, first level, control, fall/rebirth, and return to menu;
+an HTTP 200 response alone is not a gameplay check.
 
 ## Agent development
 
@@ -383,3 +306,7 @@ control, fall/rebirth and return. [README](../README.md) introduces both games;
 The context checker and its self-tests validate structure and delivery records;
 strict OpenSpec validation owns requirement/delta parsing. These are guardrails,
 not substitutes for reading changed code or reviewing scenario evidence.
+
+Local macOS installation and obsolete-player cleanup are owned by
+[scripts/install-macos.py](../scripts/install-macos.py); see
+[the installation procedure](build-and-release.md#local-macos-installation).

@@ -105,14 +105,12 @@ namespace Ballance2.Menu
         InputFieldAuthor.text = package.BaseInfo.Author;
         InputFieldUpdateTime.text = package.UpdateTime.ToShortDateString();
         TextExplain.text = package.BaseInfo.Description;
-        Ballance2.Game.Remaster.RemasterPackages.Details(this,name);
 
         itemDependsPrefabPool.Clear();
         if(package.BaseInfo.Dependencies.Count > 0) {
           foreach(var p in package.BaseInfo.Dependencies) {
             var go = itemDependsPrefabPool.NextAvailableObject();
             if (go == null) { Log.W("PackageManagerContent", "Dependency row capacity exhausted."); break; }
-            Ballance2.Game.Remaster.RemasterTheme.Apply(go);
             var text = go.transform.Find("Text").GetComponent<Text>();
             var button = go.transform.Find("Button").GetComponent<Button>();
 
@@ -161,7 +159,6 @@ namespace Ballance2.Menu
         } else {
           var go = itemDependsPrefabPool.NextAvailableObject();
           if (go == null) return;
-          Ballance2.Game.Remaster.RemasterTheme.Apply(go);
           var text = go.transform.Find("Text").GetComponent<Text>();
           var button = go.transform.Find("Button").GetComponent<Button>();
           text.text = I18N.Tr("core.ui.PackageManagerNoDepends");
@@ -171,8 +168,6 @@ namespace Ballance2.Menu
 
         ScrollView.gameObject.SetActive(true);
         ContentNotFound.gameObject.SetActive(false);
-        Canvas.ForceUpdateCanvases();
-        ScrollView.GetComponent<ScrollRect>().verticalNormalizedPosition = 1;
       }
     }
   }

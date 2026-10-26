@@ -5,9 +5,9 @@
     <Author>Ballance</Author>
     <Introduction>{core.sounds.music.package.Introduction}</Introduction>
     <Description>{core.sounds.music.package.Description}</Description>
-    <Link>https://github.com/iwonz/ballance</Link>
-    <AuthorLink>https://github.com/iwonz/ballance</AuthorLink>
-    <DocLink>https://github.com/iwonz/ballance/tree/main/docs</DocLink>
+    <Link>https://imengyu.top/ballanceProject</Link>
+    <AuthorLink>https://imengyu.top/ballanceProject</AuthorLink>
+    <DocLink>https://imengyu.top/ballanceProject</DocLink>
     <VersionName>1.0</VersionName>
     <Logo>PackageLogo.png</Logo>
     <Dependencies>

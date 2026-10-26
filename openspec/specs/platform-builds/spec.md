@@ -54,3 +54,44 @@ Content-aware release builds SHALL explicitly use the engine's automatic graphic
 #### Scenario: Rebuild after local graphics overrides
 - **WHEN** a supported release target is built after local graphics settings were changed
 - **THEN** the build restores automatic graphics API selection and, for Web, the high-performance preference
+
+### Requirement: Independent edition identity
+New Original builds SHALL use the original descriptor, historical Ballance product/application identity, original/v<version> tags and product-based archive names. Packaging SHALL verify the embedded edition, version, product and application identifier. Existing legacy releases SHALL remain valid and unchanged.
+
+#### Scenario: Incorrect build relabeling
+- **WHEN** a build identity does not match the checkout edition or selected version
+- **THEN** packaging rejects it instead of renaming an older or different-edition player
+
+#### Scenario: Classic maintenance
+- **WHEN** the original branch receives build or publication tooling
+- **THEN** its gameplay assets, native ABI, application identity and save data remain independent from Remaster
+
+### Requirement: Product release names
+New classic assets SHALL use Ballance-<version>-<platform> and remaster assets SHALL use Reballance-<version>-<platform>. Technical original/remaster edition IDs and tag prefixes SHALL remain unchanged. Published legacy files SHALL remain immutable.
+
+#### Scenario: Package either edition
+- **WHEN** a verified current player is packaged
+- **THEN** its filename uses its public product name and validation checks the matching edition identity and version
+
+### Requirement: Stable local macOS installations
+Local macOS installation SHALL maintain one current application per edition. Stable applications SHALL use `/Applications/Ballance.app` and `/Applications/Reballance.app`; a development version SHALL replace its edition's installed application using a `-dev` filename suffix. Installation SHALL validate identity and copied contents before replacing the installed version, and remove obsolete matching installed application bundles from application folders. After validating a replacement, obsolete matching unpacked builds and retired `.app.disabled` and legacy `.app-backup` copies in both build and application folders SHALL be deleted. Successful stable delivery SHALL remove temporary development applications. Stale matching catalog entries SHALL be removed without resetting unrelated application registrations. Cleanup SHALL preserve saved games, source worktrees and release archives. A failed copy or validation SHALL leave the installed version usable.
+
+#### Scenario: Replace a development player
+- **WHEN** a newer verified Remaster application is installed locally
+- **THEN** the current Remaster application is replaced, obsolete installed Remaster bundles and build copies are deleted, and the canonical Original and both editions' saves remain intact
+
+#### Scenario: Invalid replacement
+- **WHEN** the source identity is wrong or a copied application fails validation
+- **THEN** installation stops before replacing the current application or cleaning its alternatives
+
+#### Scenario: Stable application names
+- **WHEN** either edition is updated or the old Ballance Original installation is migrated
+- **THEN** the application menu exposes one current version per edition, named Ballance and Reballance for stable versions or with a -dev suffix during development, without duplicate copies or temporary staging entries
+
+#### Scenario: Rediscovered diagnostic builds
+- **WHEN** macOS registers an old unpacked build again despite its noindex directory
+- **THEN** installation removes the obsolete matching bundle and its old catalog entry after validating the current installation
+
+#### Scenario: Legacy backup suffix
+- **WHEN** an obsolete matching `.app-backup` bundle remains after a successful installation
+- **THEN** cleanup deletes that bundle and preserves unrelated backups and release archives

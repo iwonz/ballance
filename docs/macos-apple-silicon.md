@@ -23,18 +23,18 @@ For an editor installed elsewhere, set its executable path explicitly:
 UNITY_EDITOR="/path/to/Unity.app/Contents/MacOS/Unity" bash scripts/build-macos.sh
 ```
 
-Close any editor already using this project first. The wrapper uses the shared
-edition-aware build and packaging commands. Outputs are `Builds/macOS/Ballance.app`
-or `Reballance.app`, with a `-dev` suffix for development versions, and a matching
-ZIP/checksum under `Builds/releases`. Existing outputs are not overwritten. Follow
-[local installation and cleanup](build-and-release.md#local-macos-installation)
+Close any editor already using this project first. The wrapper delegates to the
+shared content-aware build and packaging commands. Outputs are
+`Builds/macOS/Ballance.app` (`Ballance-dev.app` for development versions),
+`Builds/releases/Ballance-<version>-macOS.zip` and its checksum. Existing outputs
+are not overwritten. Follow [local installation and cleanup](build-and-release.md#local-macos-installation)
 after packaging; obsolete unpacked apps, including legacy `.app-backup` and `.app.disabled`
 copies, are deleted after verified replacement.
 
 The build entry point is `Ballance2.Editor.PlayerBuild.Build`.
 It selects ARM64 and Mono, explicitly builds `Assets/Scenes/Main.unity`, builds
 the core package, every module in `Assets/Packages`, and levels 01–13 for
-`StandaloneOSX`. Packages go under the app's `Contents/{Core,Packages,Levels}`
+`StandaloneOSX`. Packages go under `Ballance.app/Contents/{Core,Packages,Levels}`
 to match the game's resource loader and Unity's
 [macOS data path](https://docs.unity3d.com/6000.6/Documentation/ScriptReference/Application-dataPath.html).
 Mono preserves support for dynamically
@@ -60,9 +60,8 @@ Built-in menus, settings, tutorials, level labels, mod descriptions and dialogs
 are translated. Player-entered names, third-party content, diagnostic stack traces
 and original third-party license texts are not rewritten.
 
-Ballance bundles Roboto as the Bank Gothic fallback. Reballance uses the bundled
-Noto CJK family described in [the art guide](remaster-art.md). Neither depends on
-fonts installed on the Mac.
+Roboto is bundled for Cyrillic; the original Bank Gothic menu font explicitly
+references it as a fallback. This does not depend on fonts installed on the Mac.
 
 Translation coverage and format placeholders are checked in CI without Unity:
 
@@ -90,7 +89,7 @@ runners; it does not require Unity activation secrets.
 library has an ARM64 slice, no native dependency points to a build-machine path,
 and the physics plugin, Unity framework, Mono runtime, core packages and all
 13 levels are present. The native smoke test loads the actual packaged physics
-library, verifies the checkout's ABI (2302 for Original, 2304 for Remaster), exercises vector allocation/readback,
+library, verifies ABI version 2302, exercises vector allocation/readback,
 simulates a physics world for 120 frames, and checks initialization/shutdown.
 It runs directly on Apple Silicon.
 

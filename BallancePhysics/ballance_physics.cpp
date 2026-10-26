@@ -38,9 +38,6 @@
 #include <list>
 #include <map>
 #include <string>
-#include <vector>
-#include <cmath>
-#include <algorithm>
 
 #include "SimpleLinkedList.hpp"
 #include "SimpleStack.hpp"
@@ -59,7 +56,7 @@
 
 #define security_check_number 2123
 
-#if _MSC_VER && !defined(BALLANCE_SOURCE_IVP)
+#if _MSC_VER
 #pragma comment(lib, "ivp_compactbuilder.lib")
 #pragma comment(lib, "ivp_physics.lib")
 #endif
@@ -234,9 +231,6 @@ struct sPhysicsWorld
   std::map<sUint, sSurface*> createdSurfaces;
   bool disableSim;
   int securityCheck;
-  sSurfaceState weather = {};
-  float wind[3] = {};
-  bool refresh_weather = false;
 };
 struct sPhysicsBody
 {
@@ -265,10 +259,6 @@ struct sPhysicsBody
   sPhysicsWorld* own_world;
   char name[32];
   int securityCheck;
-  int surface_kind = 0;
-  std::vector<sSurfaceRegion> surface_regions;
-  sSurfaceContact surface_contact = {};
-  IVP_Real_Object* surface_support = nullptr;
 };
 struct sMotionController
 {
@@ -681,7 +671,7 @@ private:
 
 #pragma region Main
 
-#define VER 2304
+#define VER 2302
 
 void init_functions(int i);
 void init_crash_handler();
@@ -866,7 +856,7 @@ int get_version() { return VER; }
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <dbghelp.h>
+#include <DbgHelp.h>
 #pragma comment(lib, "Dbghelp.lib")
 
 BOOL GenerateCrashInfo(PEXCEPTION_POINTERS pExInfo, LPCWSTR info_file_name, LPCWSTR file_name, SYSTEMTIME tm, LPCWSTR dir) {
@@ -885,20 +875,20 @@ BOOL GenerateCrashInfo(PEXCEPTION_POINTERS pExInfo, LPCWSTR info_file_name, LPCW
 }
 LONG GenerateMiniDump(PEXCEPTION_POINTERS pExInfo)
 {
-  wchar_t dmp_path[MAX_PATH];
-  GetTempPathW(MAX_PATH, dmp_path);
+  TCHAR dmp_path[MAX_PATH];
+  GetTempPath(MAX_PATH, dmp_path);
 
   SYSTEMTIME tm;
   GetLocalTime(&tm);
-  wchar_t file_name[128];
-  swprintf_s(file_name, 128, L"%s\\BallancePhysicsCrashDump%d%02d%02d-%02d%02d%02d.dmp", dmp_path,
+  TCHAR file_name[128];
+  swprintf_s(file_name, L"%s\\BallancePhysicsCrashDump%d%02d%02d-%02d%02d%02d.dmp", dmp_path,
     tm.wYear, tm.wMonth, tm.wDay, tm.wHour, tm.wMinute, tm.wSecond);
-  wchar_t info_file_name[128];
-  swprintf_s(info_file_name, 128, L"%s\\BallancePhysicsCrashDump%d%02d%02d-%02d%02d%02d.txt", dmp_path,
+  TCHAR info_file_name[128];
+  swprintf_s(info_file_name, L"%s\\BallancePhysicsCrashDump%d%02d%02d-%02d%02d%02d.txt", dmp_path,
     tm.wYear, tm.wMonth, tm.wDay, tm.wHour, tm.wMinute, tm.wSecond);
 
   //Create file
-  HANDLE hFile = CreateFileW(file_name, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
+  HANDLE hFile = CreateFile(file_name, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
     FILE_ATTRIBUTE_NORMAL, NULL);
 
   //Generate Crash info
@@ -906,8 +896,8 @@ LONG GenerateMiniDump(PEXCEPTION_POINTERS pExInfo)
 
   //Gen Dump File and show dialog
 
-  wchar_t expInfo[128];
-  swprintf_s(expInfo, 128, L"Exception !!! Address : 0x%IX  Code : 0x%08X  (0x%08X)",
+  TCHAR expInfo[128];
+  swprintf_s(expInfo, L"Exception !!! Address : 0x%IX  Code : 0x%08X  (0x%08X)",
     (ULONG_PTR)pExInfo->ExceptionRecord->ExceptionAddress, pExInfo->ExceptionRecord->ExceptionCode,
     pExInfo->ExceptionRecord->ExceptionFlags);
 
@@ -920,15 +910,15 @@ LONG GenerateMiniDump(PEXCEPTION_POINTERS pExInfo)
     MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpWithDataSegs, (pExInfo ? &expParam : NULL), NULL, NULL);
     CloseHandle(hFile);
 
-    wchar_t info[300];
-    swprintf_s(info, 300, L"Dump file: %s \nLast Error : %d", file_name, GetLastError());
-    MessageBoxW(NULL, info, L"GenerateMiniDump", MB_ICONERROR | MB_SYSTEMMODAL);
+    TCHAR info[300];
+    swprintf_s(info, L"Dump file: %s \nLast Error : %d", file_name, GetLastError());
+    MessageBox(NULL, info, L"GenerateMiniDump", MB_ICONERROR | MB_SYSTEMMODAL);
   }
   else
   {
-    wchar_t info[300];
-    swprintf_s(info, 300, L"Fail to create dump file: %s \nLast Error : %d", file_name, GetLastError());
-    MessageBoxW(NULL, info, L"GenerateMiniDump", MB_ICONERROR | MB_SYSTEMMODAL);
+    TCHAR info[300];
+    swprintf_s(info, L"Fail to create dump file: %s \nLast Error : %d", file_name, GetLastError());
+    MessageBox(NULL, info, L"GenerateMiniDump", MB_ICONERROR | MB_SYSTEMMODAL);
   }
   return EXCEPTION_EXECUTE_HANDLER;
 }
@@ -1381,175 +1371,12 @@ float do_physics_contact_detection(sPhysicsBody* body) {
 
 #pragma region BaseCreationAndDestruction
 
-static bool surface_range(float value, float low, float high) {
-  return std::isfinite(value) && value >= low && value <= high;
-}
-
-static bool weather_active(const sSurfaceState& s) {
-  return s.wetness > 0 || s.snow > 0 || s.ice > 0 || s.sand > 0 || s.vegetation > 0;
-}
-
-static float surface_smooth(float value) {
-  value = std::max(0.0f, std::min(1.0f, value));
-  return value * value * (3.0f - 2.0f * value);
-}
-
-static float surface_hash(int x, int y) {
-  unsigned int h = unsigned(x) * 0x9e3779b9u ^ unsigned(y) * 0x85ebca6bu;
-  h ^= h >> 16; h *= 0x7feb352du; h ^= h >> 15;
-  return float(h & 65535u) / 65535.0f;
-}
-
-static float surface_noise(float x, float y) {
-  int ix = int(std::floor(x)), iy = int(std::floor(y));
-  float u = surface_smooth(x - ix), v = surface_smooth(y - iy);
-  float a = surface_hash(ix, iy), b = surface_hash(ix + 1, iy);
-  float c = surface_hash(ix, iy + 1), d = surface_hash(ix + 1, iy + 1);
-  return (a + (b - a) * u) * (1 - v) + (c + (d - c) * u) * v;
-}
-
-static float surface_region_mask(const sSurfaceRegion& region, const IVP_U_Point& local, const IVP_U_Float_Point& normal) {
-  int thin = std::fabs(normal.k[1]) >= std::fabs(normal.k[0]) && std::fabs(normal.k[1]) >= std::fabs(normal.k[2]) ? 1 :
-    std::fabs(normal.k[0]) > std::fabs(normal.k[2]) ? 0 : 2;
-  int a = (thin + 1) % 3, b = (thin + 2) % 3;
-  float u = float(local.k[a] - region.center[a]) / region.extent[a];
-  float v = float(local.k[b] - region.center[b]) / region.extent[b];
-  float vertical = float(std::fabs(local.k[thin] - region.center[thin])) / region.extent[thin];
-  float radius = std::sqrt(u * u + v * v);
-  if (radius > 1.54f || vertical > 1.1f) return 0;
-  float edge = .72f + .46f * surface_noise(u * 3 + region.center[a] * .037f, v * 3 + region.center[b] * .037f)
-    + .14f * (surface_noise(u * 11 + region.center[a] * .037f, v * 11 + region.center[b] * .037f) - .5f);
-  return (1 - surface_smooth((radius * edge - .78f) / .22f)) * (1 - surface_smooth((vertical - 1) / .1f));
-}
-
-static sSurfaceState sample_surface(sPhysicsBody* floor, const IVP_U_Point& point, const IVP_U_Float_Point& normal) {
-  const sSurfaceState& weather = floor->own_world->weather;
-  sSurfaceState result = { weather.wetness, 0, 0, 0, 0 };
-  IVP_U_Point local;
-  IVP_U_Float_Point local_normal;
-  auto cache = floor->object->get_cache_object();
-  cache->transform_position_to_object_coords(&point, &local);
-  cache->transform_vector_to_object_coords(&normal, &local_normal);
-  cache->remove_reference();
-  float top = surface_smooth((float(normal.k[1]) - 0.35f) / 0.45f);
-  for (const auto& region : floor->surface_regions) {
-    float mask = surface_region_mask(region, local, local_normal) * top;
-    result.snow = std::max(result.snow, weather.snow * region.snow * mask);
-    result.ice = std::max(result.ice, weather.ice * region.ice * mask);
-    result.sand = std::max(result.sand, weather.sand * region.sand * mask);
-    result.vegetation = std::max(result.vegetation, weather.vegetation * region.vegetation * mask);
-  }
-  return result;
-}
-
-class WeatherMaterialManager : public IVP_Material_Manager {
-public:
-  WeatherMaterialManager() : IVP_Material_Manager(IVP_TRUE) {}
-  IVP_DOUBLE get_friction_factor(IVP_Contact_Situation* situation) override {
-    IVP_DOUBLE dry = IVP_Material_Manager::get_friction_factor(situation);
-    auto a = static_cast<sPhysicsBody*>(situation->objects[0]->client_data);
-    auto b = static_cast<sPhysicsBody*>(situation->objects[1]->client_data);
-    if (!a || !b) return dry;
-    int ball_index = a->surface_kind >= 1 && a->surface_kind <= 3 ? 0 : 1;
-    auto ball = ball_index == 0 ? a : b;
-    auto floor = ball_index == 0 ? b : a;
-    if (ball->surface_kind < 1 || ball->surface_kind > 3 || floor->surface_kind < 4 || floor->surface_kind > 7)
-      return dry;
-    IVP_U_Float_Point normal = situation->surf_normal;
-    if (ball_index == 0) normal.mult(-1);
-    auto state = sample_surface(floor, situation->contact_point_ws, normal);
-    // Rows: wood/stone/paper balls. Columns: stone/wood/metal/rubber surfaces.
-    static const float wet[3][4] = { { .82f, .76f, .64f, .92f }, { .86f, .8f, .7f, .94f }, { .9f, .86f, .8f, .96f } };
-    float factor = 1 + (wet[ball->surface_kind - 1][floor->surface_kind - 4] - 1) * state.wetness;
-    factor *= 1 + (0.22f - 1) * state.ice;
-    factor *= 1 + .08f * state.snow + .12f * state.sand;
-    float resistance = (.65f * state.snow + .95f * state.sand + .1f * state.vegetation)
-      * (ball->surface_kind == 2 ? .6f : ball->surface_kind == 3 ? 1.3f : 1);
-    if (!ball->surface_support || resistance >= ball->surface_contact.resistance) {
-      auto& contact = ball->surface_contact;
-      contact.supportId = floor->id;
-      contact.state = state; contact.friction = float(dry * factor); contact.resistance = resistance;
-      for (int i = 0; i < 3; ++i) {
-        contact.point[i] = float(situation->contact_point_ws.k[i]);
-        contact.normal[i] = normal.k[i];
-      }
-      ball->surface_support = floor->object;
-    }
-    return dry * factor;
-  }
-};
-
-int environment_set_surface_state(sPhysicsWorld* world, const sSurfaceState* state, float wind_x, float wind_y, float wind_z) {
-  if (!world || !state || !surface_range(state->wetness, 0, 1) || !surface_range(state->snow, 0, 1) ||
-      !surface_range(state->ice, 0, 1) || !surface_range(state->sand, 0, 1) || !surface_range(state->vegetation, 0, 1) ||
-      !surface_range(wind_x, -2, 2) || !surface_range(wind_y, -2, 2) || !surface_range(wind_z, -2, 2) ||
-      wind_x * wind_x + wind_y * wind_y + wind_z * wind_z > 4.00001f) return 0;
-  if (memcmp(&world->weather, state, sizeof(*state)) != 0) world->refresh_weather = true;
-  world->weather = *state;
-  world->wind[0] = wind_x; world->wind[1] = wind_y; world->wind[2] = wind_z;
-  return 1;
-}
-
-int physics_set_surface_regions(sPhysicsBody* body, int kind, int count, const sSurfaceRegion* regions) {
-  if (!body || kind < 0 || kind > 7 || count < 0 || count > 8 || (count && !regions)) return 0;
-  for (int n = 0; n < count; ++n) {
-    const auto& r = regions[n];
-    for (int i = 0; i < 3; ++i)
-      if (!surface_range(r.center[i], -1000000, 1000000) || !surface_range(r.extent[i], .001f, 1000000)) return 0;
-    if (!surface_range(r.snow, 0, 1) || !surface_range(r.ice, 0, 1) || !surface_range(r.sand, 0, 1) || !surface_range(r.vegetation, 0, 1)) return 0;
-  }
-  body->surface_kind = kind;
-  body->surface_regions.clear();
-  if (count) body->surface_regions.assign(regions, regions + count);
-  body->own_world->refresh_weather = true;
-  return 1;
-}
-
-int physics_get_surface_contact(sPhysicsBody* body, sSurfaceContact* result) {
-  if (!body || !result) return 0;
-  *result = body->surface_contact;
-  return body->surface_support ? 1 : 0;
-}
-
-static void apply_weather(sPhysicsWorld* world, float seconds) {
-  bool refresh = world->refresh_weather || weather_active(world->weather);
-  world->refresh_weather = false;
-  for (auto body = world->global_listener->active_bodies.begin; body; body = body->next) {
-    if (body->surface_kind < 1 || body->surface_kind > 3 || body->object->get_core()->physical_unmoveable) continue;
-    body->surface_contact = {}; body->surface_support = nullptr;
-    if (refresh) {
-      for (auto synapse = body->object->get_first_friction_synapse(); synapse; synapse = synapse->get_next())
-        synapse->get_contact_point()->recompute_friction();
-    }
-    const auto& contact = body->surface_contact;
-    if (body->surface_support && contact.resistance > 0) {
-      IVP_U_Point point(contact.point[0], contact.point[1], contact.point[2]);
-      IVP_U_Float_Point support_speed;
-      body->surface_support->get_core()->get_surface_speed_ws(&point, &support_speed);
-      IVP_U_Float_Point relative = body->object->get_core()->speed;
-      relative.subtract(&support_speed);
-      float along_normal = 0;
-      for (int i = 0; i < 3; ++i) along_normal += relative.k[i] * contact.normal[i];
-      float decay = 1 - std::exp(-contact.resistance * seconds);
-      for (int i = 0; i < 3; ++i) relative.k[i] = -(relative.k[i] - along_normal * contact.normal[i]) * decay;
-      body->object->async_add_speed_object_ws(&relative);
-    }
-    float sensitivity = body->surface_kind == 2 ? .12f : body->surface_kind == 3 ? 1 : .4f;
-    if (world->wind[0] || world->wind[1] || world->wind[2]) {
-      IVP_U_Float_Point wind;
-      for (int i = 0; i < 3; ++i) wind.k[i] = world->wind[i] * seconds * sensitivity;
-      body->object->async_add_speed_object_ws(&wind);
-    }
-  }
-}
-
 sPhysicsWorld* create_environment(IVP_U_Point* gravity, float suimRate, int layerMask, int* layerToMask, EventCallback eventCallback)
 {
   IVP_Environment_Manager* pEnvManager;
   pEnvManager = IVP_Environment_Manager::get_environment_manager();
 
   IVP_Application_Environment appl_env;
-  appl_env.material_manager = new WeatherMaterialManager();
 
   if (functions[255] == (void*)1)
     appl_env.collision_filter = nullptr;
@@ -1623,7 +1450,6 @@ void environment_simulate_dtime(sPhysicsWorld* world, float dtime) {
     __try
     {
 #endif
-      apply_weather(world, dtime);
       world->environment->simulate_dtime(dtime);
 #if DEBUG
     }
@@ -2652,9 +2478,6 @@ void init_functions(int i) {
   functions[i++] = (void*)physics_remove_contract_listener;
   functions[i++] = (void*)do_update_all_physics_contact_detection;
   functions[i++] = (void*)get_stats;
-  functions[i++] = (void*)environment_set_surface_state;
-  functions[i++] = (void*)physics_set_surface_regions;
-  functions[i++] = (void*)physics_get_surface_contact;
 
 }
 

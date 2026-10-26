@@ -15,10 +15,8 @@ python3 scripts/test-agent-context.py
 python3 scripts/check-localization.py
 python3 scripts/check-physics-abi.py
 python3 scripts/test-release-tools.py
-python3 scripts/test-install-macos.py
 python3 scripts/test-web-performance.py
 node --check scripts/measure-web-performance.js
-node scripts/test-web-lifecycle.js
 bash -n scripts/build.sh scripts/build-macos.sh scripts/setup-openspec.sh
 ```
 
@@ -110,25 +108,11 @@ xcrun clang++ -arch arm64 -std=c++11 -Wall -Wextra -Werror \
 /tmp/ballance-physics-smoke Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib
 ```
 
-The Remaster smoke test checks ABI 2304, vectors, gravity/collision, a fixed
-constraint, unchanged dry contact behavior, wet material pairs, local ice,
-three-ball rolling resistance/wind, transformed supports, and cleanup.
-`check-physics-abi.py` compares the managed signatures with
+The smoke test checks ABI 2302, vectors, a gravity/collision simulation, a fixed
+constraint, and cleanup. `check-physics-abi.py` compares the managed signatures with
 the bridge declarations. Neither proves every exported function or target works.
 The Web native rebuild runs an equivalent Wasm smoke before installing its output.
 Use the [release guide](build-and-release.md) for Android/Web rebuild commands.
-
-`Ballance2.Editor.EnvironmentChecks.Run` validates the thirteen profile inventories,
-continuous/pause/checkpoint state transitions, records and preference isolation,
-render dimensions, moving coverage regions, shared-score migration, side vegetation,
-generated rain samples, and shader compilation. It does not establish level
-completion or visual/audio quality. `test-web-lifecycle.js` checks save flushing,
-the automatic IDBFS queue, restart/exit signals, timeout and write failures; exercise
-the actual host navigation and persisted profile in a rebuilt browser player too.
-`Ballance2.Editor.EnvironmentChecks.CheckShutdown` creates a settled native contact,
-destroys the global physics API, and checks body/world cleanup plus component
-teardown without live services. Also quit a native player with a level loaded;
-the fixture cannot validate platform render-target presentation or OS quit events.
 
 ## Player and browser smoke
 
@@ -141,8 +125,8 @@ For Web, serve over HTTP beneath a prefix such as `/ballance/`; test packaged
 release content as well as build output when publication code changes. Observe
 network failures and browser/Unity logs. Check user-initiated audio playback;
 an AudioContext or source counter alone does not establish audible sound.
-For Pages, wait for the workflow's public `release.json` check, verify its distribution tag and both edition pins
-match the published release, and test both deployed players and switch links. A release is not fully delivered
+For Pages, wait for the workflow's public `release.json` check, verify its tag and Web checksum
+match the Ballance release, and test the deployed player. A release is not fully delivered
 until Pages serves that version successfully.
 
 For Android, signature, zipalign, native LOAD alignment, and APK content inspection
@@ -238,71 +222,3 @@ Known baseline gaps are linked from [architecture.md](architecture.md), includin
 legacy NMO, package trust, persistence robustness, and unfinished editor paths.
 Record a regression or newly reproduced defect in a focused OpenSpec change instead
 of silently changing the baseline to promise behavior the code does not provide.
-
-## Remaster environment and edition checks
-
-The ongoing Original/Remaster change has its own [verification record](../openspec/changes/build-original-and-remaster-editions/verification.md).
-Keep incomplete acceptance items open even when compilation and model tests pass.
-
-```sh
-python3 scripts/check-physics-abi.py
-python3 scripts/test-release-tools.py
-python3 scripts/test-install-macos.py
-python3 scripts/check-localization.py
-```
-
-With the exact Unity editor and a closed project, run
-`Ballance2.Editor.EnvironmentChecks.Run` for profiles, blends, checkpoint/record
-state, settings isolation, ABI layouts and resolution calculations. Run
-`Ballance2.Editor.RemasterUIVisualChecks.Run` to render the main/level menus in all
-four languages at portrait, Full HD, QHD and 4K. Inspect the generated images in
-`Builds/checks/remaster-ui`; nonzero rectangles and glyph coverage are not visual
-or keyboard acceptance. The interactive graphics page, all other pages, tutorial
-and physical touch still need player checks.
-
-`Ballance2.Editor.RemasterRuntimeChecks.Run` enters play mode through the normal
-main scene, renders the diagnostic console, and exercises the native world, three ball bodies, all sector
-activations, pause, interrupted preset selection, fall recovery, restart and
-return to the menu. Invoke it with graphics enabled and **without `-batchmode`,
-`-nographics` or `-quit`** (the loader waits for rendered end-of-frame events);
-the runner exits the editor with a success/failure code. Optional `-checkLevel
-level01 -checkPreset Standard` arguments select one scenario while diagnosing a
-failure; the default visits all 13 by 7 combinations. Reports and temporary game
-files are retained under a new `Builds/checks/runtime-<timestamp>` directory.
-Editor-only preference and file-path overrides keep the player's actual profile
-untouched, and temporary preference keys are removed at exit. A known Unity
-Editor search-index exception is retained separately from game errors. These
-directed checks explicitly set sectors and ball types: they do **not** count as
-91 full playthroughs, transformation-platform interactions or performance evidence.
-
-For a native flat-course replay:
-
-```sh
-python3 scripts/measure-physics.py .worktrees/original/Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib --output Builds/checks/original-replay.json
-python3 scripts/measure-physics.py Assets/BallancePhysics/Plugins/macOS/libbphysics.dylib --output Builds/checks/remaster-replay.json --compare Builds/checks/original-replay.json
-```
-
-The harness uses the three shipped parameter sets, raw paper OBJ vertices, a 66 Hz
-IVP tick and 30/60/120/144 Hz frame grouping, with three repetitions each. It writes
-source/library hashes and refuses to overwrite measurements. Its tolerance comes
-from baseline repeatability before comparing the new library. This excludes Unity
-input sampling, imported mesh conversion, camera and mechanisms; it cannot replace
-the required player replay or 91 full level/preset runs.
-
-The reference PC target is RTX 3060 12 GB, Core i5-12400, 16 GB RAM, Windows 11,
-High quality, Full HD at 60 FPS. It remains an unmeasured target. Retain the Apple
-M3 gate above as additional evidence; measure QHD/4K separately. Record actual
-internal render dimensions, quality, preset, sector, device/API, frame percentiles,
-1% low method, CPU/GPU, memory and cold loading.
-
-For publication, run `prepare-release.py verify` against the complete unified
-release: all ten pinned artifacts, sidecars, manifest, notices and attached site.
-It compares the site against `prepare-site.py` output from the immutable release
-source. Check the distribution and both public identities with `verify-site.py`. Use an isolated browser profile to test
-Original progress at the old root URL, reload it at `original.html`, then verify
-Remaster reset cannot alter it. A two-player HTTP success does not establish input,
-recovery, save compatibility or independent release rollback.
-
-## Remaster visual authoring checks
-
-Use the exact Unity editor with graphics enabled for `Ballance2.Editor.RemasterUIVisualChecks.Run` (localized screens in their runtime-width containers), `Ballance2.Editor.RemasterReliefAuthoring.Generate` (reproducible linear relief imports and periodic-edge checks), and `Ballance2.Editor.RemasterArtChecks.Render` (moving-light materials, all cloud qualities, stock palettes, headings and a non-repetition camera translation). `RenderClouds` regenerates only the density volume before rendering the sky fixtures. Check cached sky orientation, resize, source-material restoration and level unload in native and Web players. Preview output lives under `Builds/checks/`; it is generated evidence, not maintained source. Inspect the images and actual players; a successful renderer or shader compile does not establish visual quality, menu input behavior or a frame budget.

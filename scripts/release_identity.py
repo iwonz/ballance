@@ -1,4 +1,4 @@
-"""Release identities shared by packaging and Pages; legacy tags remain Original."""
+"""Ballance release identities shared by packaging and Pages."""
 import json
 import hashlib
 from pathlib import Path
@@ -8,41 +8,7 @@ import re
 VERSION = r"[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?"
 EDITIONS = {
     "original": ("Ballance", "com.MengyuGame.Ballance"),
-    "remaster": ("Reballance", "com.iwonz.BallanceRemaster"),
 }
-RELEASE_PLATFORMS = ("WebGL", "Windows", "Linux", "macOS", "Android")
-
-
-def distribution_version(tag):
-    match = re.fullmatch(rf"release/v({VERSION})", tag) if isinstance(tag, str) else None
-    if not match:
-        raise RuntimeError("Pin a verified unified release using release/v<version>")
-    return match[1]
-
-
-def site_asset_name(tag):
-    return f"Ballance-Reballance-{distribution_version(tag)}-site.tar.gz"
-
-
-def read_manifest(path):
-    manifest = json.loads(path.read_text())
-    if not isinstance(manifest, dict) or set(manifest) != {"schema", "release", "editions"} or manifest["schema"] != 2:
-        raise RuntimeError("The unified release requires manifest schema 2")
-    distribution_version(manifest["release"])
-    if not isinstance(manifest["editions"], dict) or set(manifest["editions"]) != set(EDITIONS):
-        raise RuntimeError("The release requires both edition pins")
-    for edition, pin in manifest["editions"].items():
-        if not isinstance(pin, dict) or set(pin) != {"tag", "assets"}:
-            raise RuntimeError(f"{edition} is not ready: pin a verified source tag and five platform checksums")
-        if not isinstance(pin["tag"], str) or parse_tag(pin["tag"])[0] != edition:
-            raise RuntimeError(f"Invalid {edition} source tag")
-        if not isinstance(pin["assets"], dict) or set(pin["assets"]) != set(RELEASE_PLATFORMS):
-            raise RuntimeError(f"{edition} requires all five platform checksums")
-        if any(not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{64}", value) for value in pin["assets"].values()):
-            raise RuntimeError(f"Invalid {edition} artifact checksum")
-    return manifest
-
-
 def checksum(path):
     with path.open("rb") as stream:
         return hashlib.file_digest(stream, "sha256").hexdigest()
@@ -63,15 +29,16 @@ def verify_checksum(path, pinned=None):
 
 
 def parse_tag(tag):
-    match = re.fullmatch(rf"(?:(original|remaster)/)?v({VERSION})", tag)
+    match = re.fullmatch(rf"(?:original/)?v({VERSION})", tag)
     if not match:
-        raise RuntimeError("Invalid release tag; use original/v1.0.12 or remaster/v1.0.0")
-    return match[1] or "original", match[2], match[1] is None
+        raise RuntimeError("Invalid Ballance release tag; use v<version>")
+    legacy = tag in {"v1.0.8", "v1.0.9", "v1.0.10", "v1.0.11"}
+    return "original", match[1], legacy
 
 
 def asset_name(tag, platform="WebGL"):
     edition, version, legacy = parse_tag(tag)
-    prefix = "Ballance" if edition == "original" else "Reballance"
+    prefix = "Ballance"
     extension = "zip" if platform in ("macOS", "Windows") else "apk" if platform == "Android" else "tar.gz"
     return f"{prefix}-{version}-{platform}.{extension}"
 
@@ -90,7 +57,7 @@ def checkout_edition(root):
 def validate_build_identity(root, folder, version):
     edition = checkout_edition(root)
     if edition is None:
-        return "v" + version
+        raise RuntimeError("Missing Ballance checkout identity")
     path = folder / "build-identity.json"
     if not path.is_file():
         raise RuntimeError("Missing build identity; rebuild this edition before packaging")
@@ -100,4 +67,4 @@ def validate_build_identity(root, folder, version):
                 "applicationIdentifier": edition["applicationIdentifier"]}
     if built != expected:
         raise RuntimeError("Build identity does not match this checkout; do not relabel an older player")
-    return f"{edition['id']}/v{version}"
+    return "v" + version

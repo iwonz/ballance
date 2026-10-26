@@ -1,4 +1,3 @@
-using Ballance2.Game.Remaster;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,15 +16,68 @@ namespace Ballance2.Game.GamePlay
     private const string TAG = "HighscoreManager";
     private int HighscoreManagerCommand = 0;
 
-    private RemasterRecords records;
-    private RemasterRecords.Scores Current => records.Current;
-    private Dictionary<string, List<HighscoreDataItem>> Data { get => Current.Data; set => Current.Data = value; }
-    private List<string> LevelNames { get => Current.Names; set => Current.Names = value; }
-    private Dictionary<string, bool> LevelPassStateData => records.Unlocks;
+    private Dictionary<string, List<HighscoreDataItem>> Data = null;
+    private Dictionary<string, bool> LevelPassStateData = null;
+    private List<string> LevelNames = null;
 
-    private void Start() => InitCommand();
-    internal void Load() => records = new RemasterRecords(Ballance2.Res.GamePathManager.PersistentDataPath);
-    internal void Save() => records.Save();
+    private string HighscoreDataPath;
+    private string LevelPassStateDataPath;
+
+    private void Start() {
+      // Commands.
+      InitCommand();
+    }
+
+    // Load; called automatically by the system.
+    internal void Load() {
+      HighscoreDataPath = Application.persistentDataPath + "/HighscoreData.json";
+      LevelPassStateDataPath = Application.persistentDataPath + "/LevelPassStateData.json";
+      
+      // Load level high scores.
+      if (GameManager.Instance.FileExists(HighscoreDataPath)) {
+        using (StreamReader reader = File.OpenText(HighscoreDataPath))
+        {
+          JToken obj = JToken.ReadFrom(new JsonTextReader(reader));
+          JToken dataObj = JToken.Parse(obj["data"].Value<string>());
+          JToken namesObj = JToken.Parse(obj["names"].Value<string>());
+          // do stuff
+          if (dataObj.HasValues) {
+            Data = dataObj.ToObject<Dictionary<string, List<HighscoreDataItem>>>();
+            LevelNames = namesObj.ToObject<List<string>>();
+          } else {
+            Data = DefaultHighscoreDataGenerator.DefaultHighscoreData;
+            LevelNames = new List<string>(DefaultHighscoreDataGenerator.DefaultHighscoreLevelNamesData);
+          }
+        }
+      }
+      else
+      {
+        Data = DefaultHighscoreDataGenerator.DefaultHighscoreData;
+        LevelNames = new List<string>(DefaultHighscoreDataGenerator.DefaultHighscoreLevelNamesData);
+      }
+      // Load level completion state.
+      if (GameManager.Instance.FileExists(LevelPassStateDataPath))
+      { 
+        using (StreamReader reader = File.OpenText(LevelPassStateDataPath))
+        {
+          JToken data = JToken.ReadFrom(new JsonTextReader(reader));
+          LevelPassStateData = data.ToObject<Dictionary<string, bool>>();
+        }
+      } else {
+        LevelPassStateData = new Dictionary<string, bool>();
+      }
+    }
+    // Save; called automatically by the system.
+    internal void Save() {
+      // Save level high scores.
+      JObject obj = new JObject();
+      obj["data"] = JsonConvert.SerializeObject(Data);
+      obj["names"] = JsonConvert.SerializeObject(LevelNames);
+      GameManager.Instance.WriteFile(HighscoreDataPath, false, obj.ToString());
+
+      // Save level completion state.
+      GameManager.Instance.WriteFile(LevelPassStateDataPath, false, JsonConvert.SerializeObject(LevelPassStateData));
+    }
 
     private static GameObject HighscoreManagerGameObject = null;
 
@@ -45,7 +97,7 @@ namespace Ballance2.Game.GamePlay
         HighscoreManagerCommand = GameManager.Instance.GameDebugCommandServer.RegisterCommand("highscore", (keyword, fullCmd, argsCount, args) => {
           var type = args[0];
           if (type == "clear") {
-            Data = new Dictionary<string, List<HighscoreDataItem>>();
+            Data = DefaultHighscoreDataGenerator.DefaultHighscoreData;
             LevelNames = new List<string>(DefaultHighscoreDataGenerator.DefaultHighscoreLevelNamesData);
             LevelPassStateData.Clear();
             Log.D(TAG, "Reset to default");
@@ -110,7 +162,6 @@ namespace Ballance2.Game.GamePlay
     /// <param name="userName">Player name.</param>
     /// <param name="score">Score.</param>
     public void AddItem(string levelName, string userName, int score) {
-      AddLevelPassState(levelName);
       // Get or create data.
       var list = GetData(levelName);
       if (list == null) {
@@ -118,6 +169,9 @@ namespace Ballance2.Game.GamePlay
         Data[levelName] = list;
       }
       
+      // Mark the level as completed.
+      AddLevelPassState(levelName);
+
       // Insert data.
       HighscoreDataItem item = new HighscoreDataItem(userName, score, DateTime.Now.ToString("yyyy/M/d"));
 
@@ -126,13 +180,11 @@ namespace Ballance2.Game.GamePlay
         // Insert at the appropriate position.
         if (score > list[i].score) {
           list.Insert(i, item);
-          records.Save();
           return;
         }
       }
       // Append at the end.
       list.Add(item);
-      records.Save();
     }
     /// <summary>
     /// Check whether the score is a new high score for the level.
@@ -155,9 +207,7 @@ namespace Ballance2.Game.GamePlay
     /// </summary>
     /// <param name="levelName">Level name.</param>
     public void AddLevelPassState(string levelName) {
-      if (string.IsNullOrEmpty(levelName)) return;
       LevelPassStateData[levelName] = true;
-      records.Save();
     }
     /// <summary>
     /// Check whether a level has been completed.
@@ -177,7 +227,7 @@ namespace Ballance2.Game.GamePlay
     public void TryAddDefaultLevelHighScore(string levelName, List<HighscoreDataItem> data) {
       if (!Data.ContainsKey(levelName)) {
         Data[levelName] = data != null ? data : DefaultHighscoreDataGenerator.DefaultHightScoreLev01To11Data;
-        if (!LevelNames.Contains(levelName)) LevelNames.Add(levelName);
+        LevelNames.Add(levelName);
       }
     }
   }

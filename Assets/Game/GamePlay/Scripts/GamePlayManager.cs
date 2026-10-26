@@ -266,8 +266,8 @@ namespace Ballance2.Game.GamePlay
         }
         private void _DeleteCommands()
         {
-            var GameDebugCommandServer = GameManager.Instance != null ? GameManager.Instance.GameDebugCommandServer : null;
-            if (GameDebugCommandServer != null) _CommandIds.ForEach((id) => GameDebugCommandServer.UnRegisterCommand(id));
+            var GameDebugCommandServer = GameManager.Instance.GameDebugCommandServer;
+            _CommandIds.ForEach((id) => GameDebugCommandServer.UnRegisterCommand(id));
             _CommandIds.Clear();
         }
 
@@ -525,7 +525,6 @@ namespace Ballance2.Game.GamePlay
         // Respawn without consuming a life.
         internal void _Rebirth()
         {
-            Ballance2.Game.Remaster.EnvironmentController.Active?.Run.RestoreCheckpoint();
             BallManager.SetControllingStatus(BallControlStatus.NoControl);
             this._SetCamPos();
             this._Start(true, null);
@@ -533,7 +532,6 @@ namespace Ballance2.Game.GamePlay
         // LevelBuilder is ready; initialize GamePlayManager.
         internal void _InitAndStart()
         {
-            Ballance2.Game.Remaster.EnvironmentController.Active?.Run.Restart(Ballance2.Game.Remaster.RemasterPreferences.Preset);
             this.CurrentLevelPass = false;
             this.CurrentDisableStart = false;
             this._IsGamePlaying = false;
@@ -686,8 +684,6 @@ namespace Ballance2.Game.GamePlay
             Log.D(TAG, "Pass");
 
             this.CurrentLevelPass = true;
-            HighscoreManager.Instance.AddLevelPassState(this.CurrentLevelName);
-            if (!string.IsNullOrEmpty(this.NextLevelName)) HighscoreManager.Instance.AddLevelPassState(this.NextLevelName);
             this._SoundLastSector.Stop(); // Stop the final sector's music.
             this._Stop(BallControlStatus.FreeMode);
 

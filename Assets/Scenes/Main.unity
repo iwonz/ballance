@@ -1253,7 +1253,7 @@ MonoBehaviour:
   - Object: {fileID: 5196423555617978852, guid: 0b9d31b052434d747b63835bf32caaa9, type: 3}
     Name: GameDebugFloatButton
   GameAssets:
-  - Object: {fileID: 2800000, guid: 5726c24c18c84aafb3f853d654298c90, type: 3}
+  - Object: {fileID: 2800000, guid: a840bb745c75d6049b8b192d3eb30cdf, type: 3}
     Name: LogoInSystem
   - Object: {fileID: 24100000, guid: 20498c8cca58ec440a6d5cc8d9afab20, type: 2}
     Name: GameMainAudioMixer

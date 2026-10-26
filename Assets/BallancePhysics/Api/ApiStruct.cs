@@ -8,7 +8,7 @@ namespace BallancePhysics.Api
 {
   public class ApiStruct
   {
-    public const int Version = 2304;
+    public const int Version = 2302;
     
     public bool InitSuccess { get; private set; } = false;
 
@@ -64,19 +64,6 @@ namespace BallancePhysics.Api
     public fn_physics_set_col_id physics_set_col_id;
     public fn_do_update_all_physics_contact_detection do_update_all_physics_contact_detection;
     private fn_get_stats _get_stats;
-    public fn_environment_set_surface_state environment_set_surface_state;
-    private fn_physics_set_surface_regions _physics_set_surface_regions;
-    public fn_physics_get_surface_contact physics_get_surface_contact;
-
-    public void physics_set_surface_regions(IntPtr body, SurfaceMaterial material, SurfaceRegion[] regions)
-    {
-      int count = regions?.Length ?? 0;
-      var handle = count == 0 ? default(GCHandle) : GCHandle.Alloc(regions, GCHandleType.Pinned);
-      try {
-        if (_physics_set_surface_regions(body, (int)material, count, count == 0 ? IntPtr.Zero : handle.AddrOfPinnedObject()) == 0)
-          throw new ArgumentException("Invalid native surface regions");
-      } finally { if (handle.IsAllocated) handle.Free(); }
-    }
 
     public void get_stats(IntPtr env, ref int active_count, ref double time) {
       IntPtr active_count_ptr = Marshal.AllocHGlobal(Marshal.SizeOf<int>());
@@ -567,9 +554,6 @@ namespace BallancePhysics.Api
       physics_remove_contract_listener = Marshal.GetDelegateForFunctionPointer<fn_physics_remove_contract_listener>(apiArray[i++]);
       do_update_all_physics_contact_detection = Marshal.GetDelegateForFunctionPointer<fn_do_update_all_physics_contact_detection>(apiArray[i++]);
       _get_stats = Marshal.GetDelegateForFunctionPointer<fn_get_stats>(apiArray[i++]);
-      environment_set_surface_state = Marshal.GetDelegateForFunctionPointer<fn_environment_set_surface_state>(apiArray[i++]);
-      _physics_set_surface_regions = Marshal.GetDelegateForFunctionPointer<fn_physics_set_surface_regions>(apiArray[i++]);
-      physics_get_surface_contact = Marshal.GetDelegateForFunctionPointer<fn_physics_get_surface_contact>(apiArray[i++]);
       InitSuccess = true;
     }
       

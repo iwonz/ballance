@@ -1,22 +1,22 @@
 <I18n>
   <Language name="ChineseSimplified">
-    <Text name="core.package.Name">Reballance 核心</Text>
-    <Text name="core.package.Introduction">Reballance 基础系统包，包含全部自带基础球与基础机关</Text>
-    <Text name="core.package.Description">Reballance 基础系统包，包含全部自带基础球与基础机关，是所有MOD的基础依赖，不可卸载。</Text>
+    <Text name="core.package.Name">Ballance 核心</Text>
+    <Text name="core.package.Introduction">Ballance 基础系统包，包含全部自带基础球与基础机关</Text>
+    <Text name="core.package.Description">Ballance 基础系统包，包含全部自带基础球与基础机关，是所有MOD的基础依赖，不可卸载。</Text>
   </Language>
   <Language name="English">
-    <Text name="core.package.Name">Reballance Core</Text>
-    <Text name="core.package.Introduction">Reballance Basic system package, including all basic balls and basic moduls.</Text>
-    <Text name="core.package.Description">Reballance The basic system package, including all basic balls and basic moduls, is the basic dependency of all MODS and cannot be unloaded.</Text>
+    <Text name="core.package.Name">Ballance Core</Text>
+    <Text name="core.package.Introduction">Ballance Basic system package, including all basic balls and basic moduls.</Text>
+    <Text name="core.package.Description">Ballance The basic system package, including all basic balls and basic moduls, is the basic dependency of all MODS and cannot be unloaded.</Text>
   </Language>
   <Language name="ChineseTraditional">
-    <Text name="core.package.Name">Reballance 核心</Text>
-    <Text name="core.package.Introduction">Reballance 基礎系統包，包含全部自帶基礎球與基礎機關</Text>
-    <Text name="core.package.Description">Reballance 基礎系統包，包含全部自帶基礎球與基礎機關，是所有MOD的基礎依賴，不可卸載。</Text>
+    <Text name="core.package.Name">Ballance 核心</Text>
+    <Text name="core.package.Introduction">Ballance 基礎系統包，包含全部自帶基礎球與基礎機關</Text>
+    <Text name="core.package.Description">Ballance 基礎系統包，包含全部自帶基礎球與基礎機關，是所有MOD的基礎依賴，不可卸載。</Text>
   </Language>
   <Language name="Russian">
-    <Text name="core.package.Name">Основа Reballance</Text>
-    <Text name="core.package.Introduction">Основные шары и механизмы Reballance.</Text>
-    <Text name="core.package.Description">Основной системный модуль Reballance с базовыми шарами и механизмами. Необходим всем модификациям; удалить его нельзя.</Text>
+    <Text name="core.package.Name">Основа Ballance</Text>
+    <Text name="core.package.Introduction">Основные шары и механизмы Ballance.</Text>
+    <Text name="core.package.Description">Основной системный модуль Ballance с базовыми шарами и механизмами. Необходим всем модификациям; удалить его нельзя.</Text>
   </Language>
 </I18n>

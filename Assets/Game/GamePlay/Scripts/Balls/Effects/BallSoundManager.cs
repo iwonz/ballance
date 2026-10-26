@@ -81,8 +81,7 @@ namespace Ballance2.Game.GamePlay.Balls
       }));
     }
     private void OnDestroy() {
-      if (GameMediator.Instance != null && _MyEventHandlers.Count > 0)
-        GameMediator.Instance.UnRegisterEventHandler(GameEventNames.EVENT_LEVEL_BUILDER_BEFORE_START, _MyEventHandlers[0]);
+      GameMediator.Instance.UnRegisterEventHandler(GameEventNames.EVENT_LEVEL_BUILDER_BEFORE_START, _MyEventHandlers[0]);
     }
 
     #region Collision data
@@ -342,7 +341,7 @@ namespace Ballance2.Game.GamePlay.Balls
           soundableBallWorkData._SpeedMeter = rigidbody.gameObject.AddComponent<SpeedMeter>();
         soundableBallWorkData._SpeedMeter.Enabled = true;
         soundableBallWorkData._SpeedMeter.Callback = (meter) => {
-          HandlerBallRollSpeedChange(meter.NowAbsoluteSpeed, _SoundConfig, soundableBallWorkData, rigidbody);
+          HandlerBallRollSpeedChange(meter.NowAbsoluteSpeed, _SoundConfig, soundableBallWorkData);
         };
       }
     }
@@ -398,16 +397,10 @@ namespace Ballance2.Game.GamePlay.Balls
     /// <summary>
     /// Update rolling sound volume and pitch.
     /// </summary>
-    private void HandlerBallRollSpeedChange(float speed, Ball.BallSoundConfig _SoundConfig, SoundableBallWorkData soundableBallWorkData, PhysicsObject body)
+    private void HandlerBallRollSpeedChange(float speed, Ball.BallSoundConfig _SoundConfig, SoundableBallWorkData soundableBallWorkData)
     {
       float vol = Mathf.Min(1, _SoundConfig.RollSound.VolumeBase + BallRollSpeedVolumeCruve.Evaluate(speed / _SoundConfig.RollSoundSpeedReference));
       float pit = Mathf.Min(1, _SoundConfig.RollSound.PitchBase + (speed * _SoundConfig.RollSound.PitchFactor));
-      if (body.TryGetSurfaceContact(out var contact)) {
-        var surface = contact.state;
-        float soft = Mathf.Clamp01(surface.snow + surface.sand * .6f + surface.vegetation * .3f);
-        vol *= Mathf.Lerp(1, .45f, soft) * Mathf.Lerp(1, .85f, surface.wetness);
-        pit *= Mathf.Lerp(1, .78f, soft);
-      }
 
       if (GameManager.DebugMode)
         _SoundConfig._SoundManagerDebugString.Clear();

@@ -2,25 +2,20 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 8
+  serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: P_Modul_30_Board
-  m_Shader: {fileID: 4800000, guid: 4bbb514e479504d8e8ddb2d5a6ec1c5a, type: 3}
-  m_Parent: {fileID: 0}
-  m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _EMISSION
-  m_InvalidKeywords: []
+  m_Shader: {fileID: 4800000, guid: 6e100b1f744cbca44ac87f9ca18e8ac2, type: 3}
+  m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 0
-  m_EnableInstancingVariants: 1
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -44,14 +39,6 @@ Material:
         m_Texture: {fileID: 2800000, guid: 24541e71934f22b41aeaebc3da73e16a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _IceRelief:
-        m_Texture: {fileID: 2800000, guid: a4e0f872c03e04c6a83865a2089a9594, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _IceTex:
-        m_Texture: {fileID: 2800000, guid: aaa9e2f4cb344428abe865c681dfb9b0, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: a092c89a84c9b1045a0303b09884f10d, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -60,44 +47,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MossRelief:
-        m_Texture: {fileID: 2800000, guid: c5b97825a439b4fa2a67ada0a5eaf591, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MossTex:
-        m_Texture: {fileID: 2800000, guid: e5f2bcd3f56843ec8797ab5c97eddcb1, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _NaturalTex:
-        m_Texture: {fileID: 2800000, guid: e398b37f9ac4c4d7bb9d7899b4d0c544, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ReliefTex:
-        m_Texture: {fileID: 2800000, guid: 8af152305e4bd477b8da97676ede416a, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SandRelief:
-        m_Texture: {fileID: 2800000, guid: 3966bf7399bed4aedae8e63fca363e69, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SandTex:
-        m_Texture: {fileID: 2800000, guid: e0baea27354949569a1af3e376bd6dbd, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SnowRelief:
-        m_Texture: {fileID: 2800000, guid: c0d53b5ff4fa54f3a8ecc8ff6a4514ce, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SnowTex:
-        m_Texture: {fileID: 2800000, guid: 12a799b6a1fd482e9cf788ad5ac81cc5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -109,33 +64,24 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DetailScale: 4
     - _DstBlend: 0
     - _Gloss: 100
     - _GlossMapScale: 1
     - _Glossiness: 1
     - _GlossyReflections: 1
-    - _HeightScale: 0.025
     - _Metallic: 0
-    - _MicroRelief: 0.06
     - _Mode: 0
-    - _NaturalBlend: 0.42
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _RegionCount: 0
-    - _Smoothness: 0.36
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _Vegetation: 0
     - _ZWrite: 1
     m_Colors:
     - _AmbientColor: {r: 0, g: 0, b: 0, a: 1}
     - _Color: {r: 0.9150943, g: 0.9150943, b: 0.9150943, a: 1}
-    - _Emission: {r: 0, g: 0, b: 0, a: 1}
+    - _Emission: {r: 0.42745098, g: 0.42745098, b: 0.42745098, a: 1}
     - _EmissionColor: {r: 0.42745098, g: 0.42745098, b: 0.42745098, a: 1}
     - _SpecColor: {r: 0.21568628, g: 0.21568628, b: 0.21568628, a: 1}
-    - _Surface: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
-  m_AllowLocking: 1

@@ -1,5 +1,4 @@
-using Ballance2.Game.Remaster;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using Ballance2.Game;
 using Ballance2.Utils;
@@ -49,7 +48,7 @@ namespace Ballance2.Services
       if (!settingsActuators.TryGetValue(packageName, out gameSettingsActuator))
       {
          if (customActuator != null) {
-          settingsActuators.Add(packageName, customActuator);
+          settingsActuators.Add(packageName, gameSettingsActuator);
           return customActuator;
         }
         if (customActuator == null && packageName == GamePackageManager.SYSTEM_PACKAGE_NAME)
@@ -64,8 +63,7 @@ namespace Ballance2.Services
     /// </summary>
     public static void ResetDefaultSettings()
     {
-      RemasterPreferences.Reset();
-      EnvironmentController.Select(EnvironmentPreset.Standard);
+      PlayerPrefs.DeleteAll();
 
       foreach (var actuator in settingsActuators)
         actuator.Value.NotifyAll();
@@ -125,7 +123,7 @@ namespace Ballance2.Services
     /// <param name="value">Setting value.</param>
     public virtual void SetInt(string key, int value)
     {
-      RemasterPreferences.SetInt(basePackName + "." + key, value);
+      PlayerPrefs.SetInt(basePackName + "." + key, value);
     }
     /// <summary>
     /// Get an integer setting.
@@ -135,7 +133,7 @@ namespace Ballance2.Services
     /// <returns></returns>
     public virtual int GetInt(string key, int defaultValue)
     {
-      return RemasterPreferences.GetInt(basePackName + "." + key, defaultValue);
+      return PlayerPrefs.GetInt(basePackName + "." + key, defaultValue);
     }
     /// <summary>
     /// Get a KeyCode setting.
@@ -145,7 +143,7 @@ namespace Ballance2.Services
     /// <returns></returns>
     public virtual KeyCode GetKeyCode(string key, KeyCode defaultValue)
     {
-      return (KeyCode)RemasterPreferences.GetInt(basePackName + "." + key, (int)defaultValue);
+      return (KeyCode)PlayerPrefs.GetInt(basePackName + "." + key, (int)defaultValue);
     }
     /// <summary>
     /// Set a string setting.
@@ -154,7 +152,7 @@ namespace Ballance2.Services
     /// <param name="value">Setting value.</param>
     public virtual void SetString(string key, string value)
     {
-      RemasterPreferences.SetString(basePackName + "." + key, value);
+      PlayerPrefs.SetString(basePackName + "." + key, value);
     }
     /// <summary>
     /// Get a string setting.
@@ -164,7 +162,7 @@ namespace Ballance2.Services
     /// <returns></returns>
     public virtual string GetString(string key, string defaultValue)
     {
-      return RemasterPreferences.GetString(basePackName + "." + key, defaultValue);
+      return PlayerPrefs.GetString(basePackName + "." + key, defaultValue);
     }
     /// <summary>
     /// Set a floating-point setting.
@@ -173,7 +171,7 @@ namespace Ballance2.Services
     /// <param name="value">Setting value.</param>
     public virtual void SetFloat(string key, float value)
     {
-      RemasterPreferences.SetFloat(basePackName + "." + key, value);
+      PlayerPrefs.SetFloat(basePackName + "." + key, value);
     }
     /// <summary>
     /// Get a floating-point setting.
@@ -183,7 +181,7 @@ namespace Ballance2.Services
     /// <returns></returns>
     public virtual float GetFloat(string key, float defaultValue)
     {
-      return RemasterPreferences.GetFloat(basePackName + "." + key, defaultValue);
+      return PlayerPrefs.GetFloat(basePackName + "." + key, defaultValue);
     }
     /// <summary>
     /// Set a boolean setting.
@@ -192,7 +190,7 @@ namespace Ballance2.Services
     /// <param name="value">Setting value.</param>
     public virtual void SetBool(string key, bool value)
     {
-      RemasterPreferences.SetString(basePackName + "." + key, value.ToString());
+      PlayerPrefs.SetString(basePackName + "." + key, value.ToString());
     }
     /// <summary>
     /// Get a boolean setting.
@@ -202,24 +200,24 @@ namespace Ballance2.Services
     /// <returns></returns>
     public virtual bool GetBool(string key, bool defaultValue = false)
     {
-      return bool.Parse(RemasterPreferences.GetString(basePackName + "." + key, defaultValue.ToString()));
+      return bool.Parse(PlayerPrefs.GetString(basePackName + "." + key, defaultValue.ToString()));
     }
 
     public virtual string GetString(string key)
     {
-      return RemasterPreferences.GetString(basePackName + "." + key, "");
+      return PlayerPrefs.GetString(basePackName + "." + key, "");
     }
     public virtual float GetFloat(string key)
     {
-      return RemasterPreferences.GetFloat(basePackName + "." + key, 0);
+      return PlayerPrefs.GetFloat(basePackName + "." + key, 0);
     }    
     public virtual bool GetBool(string key)
     {
-      return bool.Parse(RemasterPreferences.GetString(basePackName + "." + key, "False"));
+      return bool.Parse(PlayerPrefs.GetString(basePackName + "." + key, "False"));
     }
     public virtual int GetInt(string key)
     {
-      return RemasterPreferences.GetInt(basePackName + "." + key, 0);
+      return PlayerPrefs.GetInt(basePackName + "." + key, 0);
     }
     public virtual KeyCode GetKeyCode(string key)
     {

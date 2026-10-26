@@ -4,7 +4,7 @@
 
 **[imengyu/Ballance](https://github.com/imengyu/Ballance)**, created by **mengyu / Happy Dreamfish (imengyu)**, is the upstream Unity recreation from which this repository was forked. Its code, tools and reconstruction work are the foundation of both Ballance and Reballance. Thanks to its contributors and translators.
 
-**Cyparade** created the original Ballance game and owns the original game's rights. This repository is an independent learning project; neither its classic Unity recreation nor Reballance is an official Cyparade release. **iwonz** maintains this fork and the Reballance development branch.
+**Cyparade** created the original Ballance game and owns the original game's rights. This repository is an independent learning project; neither its classic Unity recreation nor Reballance is an official Cyparade release. **iwonz** maintains this classic fork; Reballance lives in its own repository.
 
 ## Preserved upstream notice
 
@@ -39,4 +39,4 @@ Reballance's new name, code and generated presentation assets do not relicense i
 
 The original notices in `Assets/Plugins`, `Assets/Resources/ThirdPartAllLincnse` and package metadata remain authoritative for those components. This attribution index does not replace them.
 
-Reballance presentation work includes imagegen-assisted art and code-derived material maps. The screenshot galleries show actual game output, with version and provenance recorded in [the gallery index](https://github.com/iwonz/ballance/blob/main/docs/images/README.md); screenshots retain the underlying game content's rights.
+Reballance presentation work is maintained in [iwonz/reballance](https://github.com/iwonz/reballance). The screenshot galleries show actual game output, with version and provenance recorded in [the gallery index](https://github.com/iwonz/ballance/blob/main/docs/images/README.md); screenshots retain the underlying game content's rights.

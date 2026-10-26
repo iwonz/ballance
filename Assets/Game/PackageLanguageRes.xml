@@ -238,7 +238,7 @@ Ballance 平衡球 是一款滚球游戏。
     <Text name="core.ui.Remaster.TouchMove">方向键或屏幕摇杆</Text>
     <Text name="core.ui.Remaster.TouchRotate">左右旋转视角按钮</Text>
     <Text name="core.ui.Remaster.TouchLook">俯视按钮</Text>
-    <Text name="core.ui.Remaster.Tutorial1">欢迎来到 Ballance
+    <Text name="core.ui.Remaster.Tutorial1">欢迎来到 Reballance
 保持平衡，找到出口。提示会在需要时出现。你可以随时跳过，也可以在关卡选择中重新开启教程。</Text>
     <Text name="core.ui.Remaster.Tutorial2">观察四周
 使用 {rotate} 将视角旋转 90°。看清下一块平台，有助于通过狭窄的转弯。</Text>
@@ -560,7 +560,7 @@ Development and level documentation: https://github.com/iwonz/ballance/tree/main
     <Text name="core.ui.Remaster.TouchMove">the directional pad or joystick</Text>
     <Text name="core.ui.Remaster.TouchRotate">the left and right camera buttons</Text>
     <Text name="core.ui.Remaster.TouchLook">the overhead-view button</Text>
-    <Text name="core.ui.Remaster.Tutorial1">Welcome to Ballance
+    <Text name="core.ui.Remaster.Tutorial1">Welcome to Reballance
 Keep your balance and find the exit. These short hints appear when you need them. You can skip them at any time and replay the tutorial from level selection.</Text>
     <Text name="core.ui.Remaster.Tutorial2">Look around
 Rotate the camera by 90° with {rotate}. A clear view of the next platform makes narrow turns easier.</Text>
@@ -821,7 +821,7 @@ https://github.com/iwonz/ballance/issues/ 向我們迴響錯誤
     <Text name="core.ui.Remaster.TouchMove">方向鍵或螢幕搖桿</Text>
     <Text name="core.ui.Remaster.TouchRotate">左右旋轉視角按鈕</Text>
     <Text name="core.ui.Remaster.TouchLook">俯視按鈕</Text>
-    <Text name="core.ui.Remaster.Tutorial1">歡迎來到 Ballance
+    <Text name="core.ui.Remaster.Tutorial1">歡迎來到 Reballance
 保持平衡，找到出口。提示會在需要時出現。你可以隨時略過，也可以在關卡選擇中重新開啟教學。</Text>
     <Text name="core.ui.Remaster.Tutorial2">觀察四周
 使用 {rotate} 將視角旋轉 90°。看清下一塊平台，有助於通過狹窄的轉彎。</Text>
@@ -1132,7 +1132,7 @@ https://github.com/iwonz/ballance/issues/ 向我們迴響錯誤
     <Text name="core.ui.Remaster.TouchMove">экранные стрелки или джойстик</Text>
     <Text name="core.ui.Remaster.TouchRotate">кнопки поворота камеры влево и вправо</Text>
     <Text name="core.ui.Remaster.TouchLook">кнопку обзора сверху</Text>
-    <Text name="core.ui.Remaster.Tutorial1">Добро пожаловать в Ballance
+    <Text name="core.ui.Remaster.Tutorial1">Добро пожаловать в Reballance
 Сохраняйте равновесие и найдите выход. Короткие подсказки появляются по ходу игры. Их можно пропустить в любой момент и снова включить в выборе уровней.</Text>
     <Text name="core.ui.Remaster.Tutorial2">Осмотритесь
 Поворачивайте камеру на 90°: {rotate}. Хороший обзор следующей платформы помогает на узких поворотах.</Text>

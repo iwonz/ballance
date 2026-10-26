@@ -742,3 +742,36 @@ The user reported solid HUD blocks, an unwanted centered preset title, unnatural
   budget pass is claimed. Initial screenshot attempts in an inactive/oversized
   test window timed out; explicit foregrounding and a Retina context produced the
   retained captures. These observations do not substitute for complete gameplay.
+
+### Development 10 console and rejected cloud candidate
+
+- Enabled diagnostic mode through the real About/version control in the isolated
+  Web profile, reloaded, and opened the console with F12. The console and its
+  background blur rendered without the former missing `_MainTex` exception or
+  recursive Graphic errors. Evidence: `Builds/checks/output/playwright/dev10-console-report.json`
+  and `dev10-console-canvas.png`. A normal page screenshot timed out; the retained
+  image is the actual 2560 x 1439 WebGL canvas captured during an animation frame.
+  External connection failures, a test-host 404 and FMOD metadata-query warnings
+  remain in the log. This does not establish audible sound acceptance.
+- Compared a smaller-scale density volume, a second billow octave and jittered
+  ray starts against the packaged development-10 baseline. The editor art check
+  compiled and completed (`/tmp/reballance-cloud-jitter-candidate.log`, exit 0),
+  but visible folds/ridges made the result unsuitable. Preserved the rejected
+  images, shader, authoring source and volume in
+  `Builds/checks/cloud-detail-jitter-rejected`, then restored those three source
+  files to commit `154d0920`. No rejected cloud change enters a player or release.
+- Corrected the first Remaster tutorial greeting to Reballance in all four
+  maintained languages. Legacy tutorial text and third-party notices are intact.
+  This resource correction is not yet included in the installed development-10
+  player and still needs its next content build and rendered tutorial check.
+- Re-ran `check-localization.py` (341 Russian translations across 12 resources),
+  strict OpenSpec validation (14 items), `check-agent-context.py` (13 capabilities)
+  and `git diff --check`; all passed for the greeting and evidence update.
+- CI run `40292790386` passed specification/context validation and the shipped
+  ARM64 checks; its completed-change-record step failed as expected for this
+  active, unfinished change. No release tag, release or Pages publication occurred.
+- The battery subsequently reached 9% and was still discharging despite the AC
+  Power label. Native UI capture again returned `cgWindowNotFound`. Closed the
+  isolated test browser and its localhost server after retaining the evidence;
+  further qualified frame measurements need a charging, available test machine.
+  Full playthroughs and remaining acceptance items are still unchecked.

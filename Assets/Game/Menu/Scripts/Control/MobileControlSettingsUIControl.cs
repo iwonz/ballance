@@ -29,7 +29,12 @@ namespace Ballance2.Menu
 
       ScrollView.updateFunc = (index, item) => {
         var data = items[index];
-        var Listener = item.GetComponent<EventTriggerListener>();
+        // EventTrigger swallows drag events before the list can scroll.
+        item.GetComponent<EventTriggerListener>().enabled = false;
+        var button = item.GetComponent<Button>();
+        if (button == null) button = item.gameObject.AddComponent<Button>();
+        button.transition = Selectable.Transition.None;
+        button.onClick.RemoveAllListeners();
         var ImageBg = item.Find("ImageBg");
         var text = item.Find("Text").GetComponent<Text>();
         var ImageBgActive = item.Find("ImageBgActive");
@@ -45,10 +50,19 @@ namespace Ballance2.Menu
 
         text.text = data.explain;
         image.sprite = data.image;
+        image.rectTransform.anchorMin = new Vector2(.03f, .1f);
+        image.rectTransform.anchorMax = new Vector2(.35f, .9f);
+        image.rectTransform.offsetMin = image.rectTransform.offsetMax = Vector2.zero;
+        text.rectTransform.anchorMin = new Vector2(.38f, .1f);
+        text.rectTransform.anchorMax = new Vector2(.97f, .9f);
+        text.rectTransform.offsetMin = text.rectTransform.offsetMax = Vector2.zero;
+        image.preserveAspect = true;
+        text.resizeTextForBestFit = true; text.resizeTextMinSize = 14; text.resizeTextMaxSize = 22;
 
-        Listener.onClick = (o) => {
+        button.onClick.AddListener(() => {
           controlKeypadSettting = data.name;
           settings.SetString(SettingConstants.SettingsControlKeypad, data.name);
+          PlayerPrefs.Save();
 
           // Refresh the list.
           ScrollView.UpdateData(false);
@@ -56,14 +70,15 @@ namespace Ballance2.Menu
           // Replace the touch keyboard dynamically if the game is running.
           if (GamePlayUIControl.Instance != null)
             GamePlayUIControl.Instance.ReBuildMobileKeyPad();
-        };
+          if (data.name == "Tilt") Touch.MobileTilt.Start(true); else Touch.MobileTilt.Stop();
+        });
       };
       ScrollView.itemCountFunc = () => {
         return items.Count;
       };
 
       page.OnShow = (o) => {
-        controlKeypadSettting = settings.GetString("control.keypad", "BaseCenter");
+        controlKeypadSettting = settings.GetString(SettingConstants.SettingsControlKeypad, "BaseJoyLeft");
         LoadList();
         ScrollView.UpdateData(false);
       };

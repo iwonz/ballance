@@ -98,6 +98,7 @@ namespace Ballance2.Menu
       KeypadUIManager.AddKeypad("BaseRight", package.GetPrefabAsset("KeypadRight.prefab"), package.GetSpriteAsset("keypad_r.png"), I18N.Tr("core.ui.SettingsControlKeypadBaseRight"));
       KeypadUIManager.AddKeypad("BaseJoyLeft", package.GetPrefabAsset("KeypadJoyLeft.prefab"), package.GetSpriteAsset("keypad_joy_l.png"), I18N.Tr("core.ui.SettingsControlKeypadBaseJoyLeft"));
       KeypadUIManager.AddKeypad("BaseJoyRight", package.GetPrefabAsset("KeypadJoyRight.prefab"), package.GetSpriteAsset("keypad_joy_r.png"), I18N.Tr("core.ui.SettingsControlKeypadBaseJoyRight"));
+      KeypadUIManager.AddKeypad("Tilt", package.GetPrefabAsset("KeypadJoyLeft.prefab"), package.GetSpriteAsset("keypad_joy_l.png"), I18N.Tr("core.ui.MobileTilt"));
     }
   }
 }

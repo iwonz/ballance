@@ -192,7 +192,7 @@ namespace Ballance2.Editor
         PlayerSettings.WebGL.debugSymbolMode = WebGLDebugSymbolMode.External;
         PlayerSettings.WebGL.initialMemorySize = 256;
         PlayerSettings.WebGL.maximumMemorySize = 2048;
-        PlayerSettings.WebGL.template = ReadEdition()?.id == "remaster" ? "PROJECT:Remaster" : "APPLICATION:Default";
+        PlayerSettings.WebGL.template = ReadEdition()?.id == "remaster" ? "PROJECT:Remaster" : "PROJECT:Mobile";
       }
       AssetDatabase.SaveAssets();
     }

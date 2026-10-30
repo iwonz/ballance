@@ -51,7 +51,8 @@ namespace Ballance2.Menu.Touch
     }
     private void OnDestroy()
     {
-      GameManager.Instance.GameSettings.UnRegisterSettingsUpdateCallback(settingsUpdateCallbackId);
+      if (GameManager.Instance != null)
+        GameManager.Instance.GameSettings.UnRegisterSettingsUpdateCallback(settingsUpdateCallbackId);
     }
 
     private int settingsUpdateCallbackId = 0;

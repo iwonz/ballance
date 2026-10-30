@@ -156,6 +156,17 @@ delta scaling, primary touch, and EnhancedTouch. The Android build temporarily
 selects Input System only and restores editor configuration afterward.
 Touch controllers live in `Assets/Game/Menu/Scripts/Touch`; keypad layout and settings
 live under `Menu/Scripts/Game` and `Menu/Scripts/Control`.
+[MobileControls](../Assets/Game/Menu/Scripts/Touch/MobileControls.cs) enables runtime
+touch layouts for Android and mobile Web, owns camera swipes/pause, safe-area fitting
+and interruption cleanup. The existing joystick and directional controllers own
+individual EventSystem pointers. Web capability comes from `navigator.maxTouchPoints`,
+not the virtual Touchscreen Unity allocates on desktop browsers. New profiles use the left analog joystick; saved
+layouts remain valid. [MobileTilt](../Assets/Game/Menu/Scripts/Touch/MobileTilt.cs)
+calibrates normalized gravity, filters jitter and gives a held joystick priority.
+The [browser sensor bridge](../Assets/Plugins/WebGL/MobileTilt.jslib) requests permission
+only after opting in, rejects stale/background samples and removes listeners on cleanup.
+The mobile settings list includes tilt with joystick fallback; its recenter action
+also enables sensors when the browser needs a fresh gesture.
 [InputChecks](../Assets/System/Scripts/Editor/InputChecks.cs) uses virtual devices;
 physical touch layout, timing, and ergonomics still need an Android device.
 
@@ -186,6 +197,10 @@ the reported device/API when graphics settings become visible. It shows localize
 advice for recognized software renderers, without changing preferences or running
 per-frame diagnostics. Device names are displayed as literal text; an unfamiliar
 name is not treated as certified hardware acceleration.
+
+The shipped `GlobalGamePermissionTipDialog` prefab reports a missing-script warning
+in Web startup. Its legacy custom-package permission flow needs separate inspection;
+the mobile sensor permission dialog uses the browser bridge described above.
 
 Known UI gap: the existing Web resolution selector can display `Unknow %` in a
 fresh browser profile. Use the actual canvas dimensions for performance evidence;
@@ -288,6 +303,10 @@ and CI requirements. Native rebuild provenance lives in
 [build-physics.py](../scripts/build-physics.py), not an unpinned external checkout.
 
 ## Web publication
+
+The [Web host](../Assets/WebGLTemplates/Mobile/index.html) fits the visible viewport,
+respects safe-area insets, suppresses canvas touch scrolling and caps coarse-pointer
+rendering at DPR 1. Fullscreen uses a browser gesture and requests landscape when supported.
 
 [Contract](../openspec/specs/web-publication/spec.md).
 [Pages workflow](../.github/workflows/github-pages.yml) deploys existing release

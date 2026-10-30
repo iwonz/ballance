@@ -17,6 +17,7 @@ python3 scripts/check-physics-abi.py
 python3 scripts/test-release-tools.py
 python3 scripts/test-web-performance.py
 node --check scripts/measure-web-performance.js
+node scripts/test-mobile-tilt.js
 bash -n scripts/build.sh scripts/build-macos.sh scripts/setup-openspec.sh
 ```
 
@@ -69,7 +70,17 @@ and run relevant checks individually instead of claiming the aggregate passed.
 
 `Ballance2.Editor.InputChecks.Run` exercises supported key mapping, held keyboard
 state, mouse position/scaling, and touch state on virtual devices. It is not a
-real-device or full frame-timing test.
+real-device or full frame-timing test. It also invokes `MobileInputChecks.Run` for
+joystick pointer ownership, immediate press, cancellation and bounded tilt mapping.
+The Node tilt bridge check covers permission denial, orientation mapping, stale data,
+visibility and late permission cancellation. These fixtures do not measure a real sensor.
+
+For mobile acceptance, open an isolated touch browser profile in portrait and landscape:
+start level 01 with touch, continue/skip the tutorial, move while operating camera buttons,
+swipe the free area, release outside the joystick, pause/resume, rotate and switch layouts.
+Opt into tilt in Controls, enable/recenter, then deny permission or remove sensor data and
+confirm touch fallback. Exercise native Android on a connected phone when available;
+record the device/browser and any unavailable real sensor/comfort/audio checks explicitly.
 
 `Ballance2.Editor.LocalizationChecks.Run` can also run separately to validate runtime
 XML, fallbacks, Cyrillic coverage, and prefab bindings. For visual previews, use

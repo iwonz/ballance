@@ -11,6 +11,7 @@ namespace Ballance2.Editor
   {
     public static void Run()
     {
+      MobileInputChecks.Run();
       var keyboard = InputSystem.AddDevice<Keyboard>();
       var mouse = InputSystem.AddDevice<Mouse>();
       var screen = InputSystem.AddDevice<Touchscreen>();

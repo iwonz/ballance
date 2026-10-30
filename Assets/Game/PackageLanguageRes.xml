@@ -1,5 +1,13 @@
 <I18n>
   <Language name="ChineseSimplified">
+    <Text name="core.ui.MobileTilt">倾斜与触控</Text>
+    <Text name="core.ui.MobilePause">暂停</Text>
+    <Text name="core.ui.MobileRecenter">校准</Text>
+    <Text name="core.ui.MobileTouchHint">摇杆或箭头移动。镜头按钮或滑动转向。按住眼睛俯视。</Text>
+    <Text name="core.ui.MobileTiltHint">舒适地握住手机后校准。按住摇杆时优先使用触控。</Text>
+    <Text name="core.ui.MobileTiltUnavailable">传感器不可用。请使用摇杆或点击校准启用传感器。</Text>
+    <Text name="core.ui.MobileSensorAllow">允许倾斜控制</Text>
+
     <Text name="core.ui.Back">返回</Text>
     <Text name="core.ui.Ok">确定</Text>
     <Text name="core.ui.Yes">是</Text>
@@ -56,8 +64,8 @@
     <Text name="core.ui.SettingsControlKeypadBaseLeft">按键式左</Text>
     <Text name="core.ui.SettingsControlKeypadBaseRight">按键式右</Text>
     <Text name="core.ui.SettingsControlKeypadBaseCenter">按键式两侧</Text>
-    <Text name="core.ui.SettingsControlKeypadBaseJoyLeft">摇杆式左（不能走单轨）</Text>
-    <Text name="core.ui.SettingsControlKeypadBaseJoyRight">摇杆式右（不能走单轨）</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseJoyLeft">左侧摇杆</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseJoyRight">右侧摇杆</Text>
     <Text name="core.ui.SettingsAudioTilte">声音</Text>
     <Text name="core.ui.SettingsAudioBackground">背景音乐音量</Text>
     <Text name="core.ui.SettingsAudioMain">主音量</Text>
@@ -218,6 +226,14 @@ Ballance Rebuild 是滚球 Ballance 游戏的开源 Unity 重制版，由 快乐
     </Text>
   </Language>
   <Language name="English">
+    <Text name="core.ui.MobileTilt">Tilt + touch fallback</Text>
+    <Text name="core.ui.MobilePause">Pause</Text>
+    <Text name="core.ui.MobileRecenter">Recenter</Text>
+    <Text name="core.ui.MobileTouchHint">Joystick or arrows: move. Camera buttons or swipe: turn. Hold eye: look down.</Text>
+    <Text name="core.ui.MobileTiltHint">Hold comfortably, then Recenter. Joystick overrides tilt while held.</Text>
+    <Text name="core.ui.MobileTiltUnavailable">Tilt unavailable. Use the joystick or tap Recenter to enable sensors.</Text>
+    <Text name="core.ui.MobileSensorAllow">Allow tilt control</Text>
+
     <Text name="core.ui.RebuildBy">Unity remake by</Text>
     <Text name="core.level.1">Level 1</Text>
     <Text name="core.level.2">Level 2</Text>
@@ -348,8 +364,8 @@ Music: {10}</Text>
     <Text name="core.ui.SettingsControlKeypadBaseLeft">Action keys in left</Text>
     <Text name="core.ui.SettingsControlKeypadBaseRight">Action keys in right</Text>
     <Text name="core.ui.SettingsControlKeypadBaseCenter">Action keys two side</Text>
-    <Text name="core.ui.SettingsControlKeypadBaseJoyLeft">Joystick in left (Cannot walk on a monorail)</Text>
-    <Text name="core.ui.SettingsControlKeypadBaseJoyRight">Joystick in right (Cannot walk on a monorail)</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseJoyLeft">Joystick on left</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseJoyRight">Joystick on right</Text>
     <Text name="core.ui.SettingsAudioTilte">Audio</Text>
     <Text name="core.ui.SettingsAudioBackground">Background music volume</Text>
     <Text name="core.ui.SettingsAudioMain">Main volume</Text>
@@ -494,6 +510,14 @@ Welcome to discuss the game at Ballance Discord.
     </Text>
   </Language>
   <Language name="ChineseTraditional">
+    <Text name="core.ui.MobileTilt">傾斜與觸控</Text>
+    <Text name="core.ui.MobilePause">暫停</Text>
+    <Text name="core.ui.MobileRecenter">校準</Text>
+    <Text name="core.ui.MobileTouchHint">搖桿或箭頭移動。鏡頭按鈕或滑動轉向。按住眼睛俯視。</Text>
+    <Text name="core.ui.MobileTiltHint">舒適地握住手機後校準。按住搖桿時優先使用觸控。</Text>
+    <Text name="core.ui.MobileTiltUnavailable">感測器無法使用。請使用搖桿或點擊校準啟用感測器。</Text>
+    <Text name="core.ui.MobileSensorAllow">允許傾斜控制</Text>
+
     <Text name="core.ui.Back">返回</Text>
     <Text name="core.ui.Ok">確定</Text>
     <Text name="core.ui.Yes">是</Text>
@@ -550,8 +574,8 @@ Welcome to discuss the game at Ballance Discord.
     <Text name="core.ui.SettingsControlKeypadBaseLeft">按鍵式左</Text>
     <Text name="core.ui.SettingsControlKeypadBaseRight">按鍵式右</Text>
     <Text name="core.ui.SettingsControlKeypadBaseCenter">按鍵式两侧</Text>
-    <Text name="core.ui.SettingsControlKeypadBaseJoyLeft">搖杆式左（不能走單軌）</Text>
-    <Text name="core.ui.SettingsControlKeypadBaseJoyRight">搖杆式右（不能走單軌）</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseJoyLeft">左側搖桿</Text>
+    <Text name="core.ui.SettingsControlKeypadBaseJoyRight">右側搖桿</Text>
     <Text name="core.ui.SettingsAudioTilte">聲音</Text>
     <Text name="core.ui.SettingsAudioBackground">背景音樂音量</Text>
     <Text name="core.ui.SettingsAudioMain">主音量</Text>
@@ -709,6 +733,14 @@ Ballance Rebuild是滾球Ballance遊戲的開源Unity重製版，由快樂的夢
     </Text>
   </Language>
   <Language name="Russian">
+    <Text name="core.ui.MobileTilt">Наклон + джойстик</Text>
+    <Text name="core.ui.MobilePause">Пауза</Text>
+    <Text name="core.ui.MobileRecenter">Калибровка</Text>
+    <Text name="core.ui.MobileTouchHint">Джойстик или стрелки — движение. Кнопки или свайп — камера. Глаз — вид сверху.</Text>
+    <Text name="core.ui.MobileTiltHint">Держите телефон удобно и нажмите «Калибровка». Джойстик временно заменяет наклон.</Text>
+    <Text name="core.ui.MobileTiltUnavailable">Датчик недоступен. Используйте джойстик или нажмите «Калибровка».</Text>
+    <Text name="core.ui.MobileSensorAllow">Разрешить управление наклоном</Text>
+
     <Text name="core.ui.RebuildBy">Автор версии на Unity</Text>
     <Text name="core.level.1">Уровень 1</Text>
     <Text name="core.level.2">Уровень 2</Text>

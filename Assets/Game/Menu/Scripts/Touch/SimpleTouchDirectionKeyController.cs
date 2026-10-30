@@ -1,9 +1,5 @@
-#if UNITY_ANDROID && !UNITY_EDITOR
-using Input = Ballance2.InputCompatibility.AndroidInput;
-#endif
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 using UnityEngine.EventSystems;
 using Ballance2.UI.Utils;
 using Ballance2.Services;
@@ -15,7 +11,7 @@ namespace Ballance2.Menu.Touch
   /// Mobile keyboard UI controller.
   /// </summary>
   [RequireComponent(typeof(KeypadGridLayout))]
-  public class SimpleTouchDirectionKeyController : UIBehaviour
+  public class SimpleTouchDirectionKeyController : UIBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
   {
     public Image ImageForward;
     public Image ImageForwardLeft;
@@ -34,7 +30,7 @@ namespace Ballance2.Menu.Touch
       if(stat)
         currentState |= dir;
       else
-        currentState ^= dir;
+        currentState &= ~dir;
 
       ImageForwardLeft.enabled = (currentState & KeyPadJoystickDirection.LeftForward) == KeyPadJoystickDirection.LeftForward;
       ImageForwardRight.enabled = (currentState & KeyPadJoystickDirection.RightForward) == KeyPadJoystickDirection.RightForward;
@@ -109,27 +105,14 @@ namespace Ballance2.Menu.Touch
 
     private KeyPadJoystickDirection currentState;
     private KeypadGridLayout keypadGridLayout;
-    private bool state = false;
+    private int? pointer;
     private Rect rect = new Rect();
-    private Canvas Canvas;
     private int settingsUpdateCallbackId = 0;
 
-    private void InitRect() {
-      rect = (transform as RectTransform).rect;
-      if (RectInRight)
-        rect.x = Screen.width + ((transform as RectTransform).anchoredPosition.x - rect.width) * Canvas.scaleFactor;
-      else 
-        rect.x = (transform as RectTransform).anchoredPosition.x * Canvas.scaleFactor;
-      
-      rect.y = (transform as RectTransform).anchoredPosition.y * Canvas.scaleFactor;
-      rect.width = rect.width * Canvas.scaleFactor;
-      rect.height = rect.height * Canvas.scaleFactor;
-    }
     private void InitKeys() {
       var GameSettings = GameManager.Instance.GameSettings;
       settingsUpdateCallbackId = GameSettings.RegisterSettingsUpdateCallback(SettingConstants.SettingsControl, (groupName, action) => {
         SetKeysSize(GameSettings.GetFloat(SettingConstants.SettingsControlKeySize));
-        InitRect();
         return false;
       });
       SetKeysSize(GameSettings.GetFloat(SettingConstants.SettingsControlKeySize));
@@ -142,57 +125,35 @@ namespace Ballance2.Menu.Touch
     {
       keypadGridLayout = GetComponent<KeypadGridLayout>();
       currentState = KeyPadJoystickDirection.None;
-      Canvas = GetComponentInParent<Canvas>().rootCanvas;
       InitKeys();
-      InitRect();
       base.Start();
-    }
-    protected override void OnRectTransformDimensionsChange() {
-      InitRect();
     }
     protected override void OnDestroy()
     {
       base.OnDestroy();
-      GameManager.Instance.GameSettings.UnRegisterSettingsUpdateCallback(settingsUpdateCallbackId);
+      if (GameManager.Instance != null)
+        GameManager.Instance.GameSettings.UnRegisterSettingsUpdateCallback(settingsUpdateCallbackId);
     }
 
-    private void Update()
+    public void OnPointerDown(PointerEventData data)
     {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-      for (int i = 0; i < Input.touchCount; i++)
-      {
-        var touch =  Input.GetTouch(i);
-        if(rect.Contains(touch.position)) {
-          HandleTouchPos(touch.position);
-          state = true;
-          return;
-        }
-      }
-      if(state == true) {
-        state = false;
-        ClearState();
-      }
-#else
-      if(!state) {
-        if(Input.GetMouseButtonDown(0)) {
-          var pos = Input.mousePosition;
-          if(rect.Contains(pos)) {
-            HandleTouchPos(pos);
-            state = true;
-          }
-        }
-      } else if(state) {
-        var pos = Input.mousePosition;
-        if(Input.GetMouseButtonUp(0)) {
-          state = false;
-          ClearState();
-        }
-        else if(rect.Contains(pos)) 
-          HandleTouchPos(pos);
-        else 
-          ClearState();
-      }
-#endif
+      if (pointer.HasValue || data.button != PointerEventData.InputButton.Left) return;
+      pointer = data.pointerId;
+      OnDrag(data);
     }
+    public void OnDrag(PointerEventData data)
+    {
+      if (pointer != data.pointerId) return;
+      var area = (RectTransform)transform;
+      rect = area.rect;
+      if (RectTransformUtility.ScreenPointToLocalPointInRectangle(area, data.position, data.pressEventCamera, out var point) && rect.Contains(point))
+        HandleTouchPos(point);
+      else ClearState();
+    }
+    public void OnPointerUp(PointerEventData data) { if (pointer == data.pointerId) Release(); }
+    public void Release() { pointer = null; ClearState(); }
+    protected override void OnDisable() { Release(); base.OnDisable(); }
+    private void OnApplicationFocus(bool focused) { if (!focused) Release(); }
+    private void OnApplicationPause(bool paused) { if (paused) Release(); }
   }
 }

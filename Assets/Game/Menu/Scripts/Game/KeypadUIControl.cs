@@ -21,7 +21,23 @@ namespace Ballance2.Menu
       InitKeySize();
     }
     private void OnDestroy() {
-     GameManager.Instance.GameSettings.UnRegisterSettingsUpdateCallback(settingsUpdateCallbackId);
+     if (GameManager.Instance != null)
+       GameManager.Instance.GameSettings.UnRegisterSettingsUpdateCallback(settingsUpdateCallbackId);
+    }
+
+    private void OnDisable() { Release(); }
+    public void Release() {
+      shiftPressCount = 0;
+      lastCameraSpaceByShift = false;
+      foreach (var joystick in GetComponentsInChildren<SimpleTouchController>(true)) joystick.EndDrag();
+      foreach (var direction in GetComponentsInChildren<SimpleTouchDirectionKeyController>(true)) direction.Release();
+      var play = Game.GamePlay.GamePlayManager.Instance;
+      if (play == null || play.BallManager == null) return;
+      var ball = play.BallManager;
+      ball.KeyStateForward = ball.KeyStateBack = ball.KeyStateLeft = ball.KeyStateRight = false;
+      ball.KeyStateUp = ball.KeyStateDown = false;
+      ball.RemoveAllBallPush();
+      if (play.CamManager != null) play.CamManager.RotateUp(false);
     }
     
     // Keyboard size settings.
@@ -148,7 +164,7 @@ namespace Ballance2.Menu
             }
           };
           listener.onUp = (_) => {
-            shiftPressCount--;
+            shiftPressCount = Mathf.Max(0, shiftPressCount - 1);
             if (lastCameraSpaceByShift && GamePlayManager.BallManager.CanControllCamera) {
               lastCameraSpaceByShift = false;
               CamManager.RotateUp(false);

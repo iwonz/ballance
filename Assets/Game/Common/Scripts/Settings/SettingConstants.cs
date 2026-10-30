@@ -57,7 +57,7 @@ namespace Ballance2.Game
       { SettingsVoiceBackground, 20.0f },
       { SettingsVoiceUI, 80.0f },
       { SettingsVoiceMain, 100.0f },
-      { SettingsControlKeypad, "BaseCenter" },
+      { SettingsControlKeypad, "BaseJoyLeft" },
       { SettingsControlKeyReverse, false },
       { SettingsControlKeyUp, (int)KeyCode.Q },
       { SettingsControlKeyDown, (int)KeyCode.E },

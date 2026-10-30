@@ -37,9 +37,8 @@ namespace Ballance2.Menu
       _ScoreBoardActive.gameObject.SetActive(false);
 
         // Create a touch keyboard on mobile.
-        #if (UNITY_ANDROID || UNITY_IOS)
         // Show the on-screen keyboard only when the device has a touchscreen.
-        if (UnityEngine.InputSystem.Touchscreen.current != null)
+        if (Touch.MobileControls.Available)
         {
             _CurrentMobileKeyPadShow = true;
             ReBuildMobileKeyPad();
@@ -56,7 +55,6 @@ namespace Ballance2.Menu
                     _CurrentMobileKeyPad.gameObject.SetActive(false);
             });
         }
-      #endif
 
       // Create debug information.
       if (GameManager.DebugMode) {
@@ -100,6 +98,7 @@ namespace Ballance2.Menu
     private void DestroyMobileKeyPad() {
       // Destroy the keyboard.
       if (_CurrentMobileKeyPad != null) {
+        _CurrentMobileKeyPad.gameObject.SetActive(false);
         Destroy(_CurrentMobileKeyPad.gameObject);
         _CurrentMobileKeyPad = null;
       }
@@ -115,7 +114,7 @@ namespace Ballance2.Menu
       if (!KeypadUIManager.GetKeypadRegistered(controlKeypadSettting)) 
       {
         Log.E("GamePlayUIControl", "Keypad in setting \"" + controlKeypadSettting + "\" not found, use default keypad insted.");
-        keyPad = KeypadUIManager.GetKeypad("BaseCenter");
+        keyPad = KeypadUIManager.GetKeypad("BaseJoyLeft");
       } 
       else 
       {
@@ -124,6 +123,7 @@ namespace Ballance2.Menu
 
       // Create the keyboard.
       _CurrentMobileKeyPad = GameUIManager.Instance.InitViewToCanvas(keyPad.prefab, "GameMobileKeypad", false);
+      _CurrentMobileKeyPad.gameObject.AddComponent<Touch.MobileControls>();
       // When the on-screen keyboard is hidden.
       if (!_CurrentMobileKeyPadShow)
         _CurrentMobileKeyPad.gameObject.SetActive(false);

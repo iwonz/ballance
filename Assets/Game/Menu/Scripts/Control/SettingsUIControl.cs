@@ -229,11 +229,7 @@ namespace Ballance2.Menu
                 if (updateControlReverse != null) updateControlReverse.Invoke(GameSettings.GetBool(SettingConstants.SettingsControlKeyReverse));
                 if (updateControlUISize != null) updateControlUISize.Invoke(GameSettings.GetFloat(SettingConstants.SettingsControlKeySize));
 
-#if UNITY_IOS || UNITY_ANDROID
-                GameUIManager.GoPage("PageSettingsControlsMobile");
-#else
-                GameUIManager.GoPage("PageSettingsControls") ;
-#endif
+                GameUIManager.GoPage(Touch.MobileControls.Available ? "PageSettingsControlsMobile" : "PageSettingsControls");
             });
             MessageCenter.SubscribeEvent("BtnSettingsAudioClick", () =>
             {

@@ -27,8 +27,10 @@ namespace Ballance2.Menu
       PageGamePause.CreateContent(package);
       PageGameQuitAsk.CreateContent(package);
       PageGameRestartAsk.CreateContent(package);
-      PageGamePause.CreateContent(package);
+      PageGameQuitAsk.Content.gameObject.AddComponent<Touch.MobileMenuList>();
+      PageGameRestartAsk.Content.gameObject.AddComponent<Touch.MobileMenuList>();
       PageGamePause.CanEscBack = false;
+      PageGamePause.Content.gameObject.AddComponent<Touch.MobilePauseLayout>();
       PageGameWin.CreateContent(package);
       PageGameWinRestartAsk.CreateContent(package);
       PageGameWin.CanEscBack = false;

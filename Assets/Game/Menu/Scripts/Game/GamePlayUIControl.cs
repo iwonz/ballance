@@ -103,6 +103,9 @@ namespace Ballance2.Menu
         _CurrentMobileKeyPad = null;
       }
     }
+    public void ReleaseMobileInput() {
+      if (_CurrentMobileKeyPad != null) _CurrentMobileKeyPad.GetComponent<KeypadUIControl>().Release();
+    }
     internal void ReBuildMobileKeyPad() {
       // Destroy the keyboard.
       DestroyMobileKeyPad();
@@ -123,6 +126,7 @@ namespace Ballance2.Menu
 
       // Create the keyboard.
       _CurrentMobileKeyPad = GameUIManager.Instance.InitViewToCanvas(keyPad.prefab, "GameMobileKeypad", false);
+      _CurrentMobileKeyPad.SetAsFirstSibling();
       _CurrentMobileKeyPad.gameObject.AddComponent<Touch.MobileControls>();
       // When the on-screen keyboard is hidden.
       if (!_CurrentMobileKeyPadShow)

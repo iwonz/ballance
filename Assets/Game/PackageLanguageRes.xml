@@ -2,10 +2,11 @@
   <Language name="ChineseSimplified">
     <Text name="core.ui.MobileTilt">倾斜与触控</Text>
     <Text name="core.ui.MobilePause">暂停</Text>
+    <Text name="core.ui.TutorialSkip">跳过教程</Text>
     <Text name="core.ui.MobileRecenter">校准</Text>
     <Text name="core.ui.MobileTouchHint">摇杆或箭头移动。镜头按钮或滑动转向。按住眼睛俯视。</Text>
     <Text name="core.ui.MobileTiltHint">舒适地握住手机后校准。按住摇杆时优先使用触控。</Text>
-    <Text name="core.ui.MobileTiltUnavailable">传感器不可用。请使用摇杆或点击校准启用传感器。</Text>
+    <Text name="core.ui.MobileTiltUnavailable">传感器不可用。请使用摇杆。</Text>
     <Text name="core.ui.MobileSensorAllow">允许倾斜控制</Text>
 
     <Text name="core.ui.Back">返回</Text>
@@ -224,14 +225,43 @@ Ballance Rebuild 是滚球 Ballance 游戏的开源 Unity 重制版，由 快乐
 
 也欢迎在 Ballance 吧讨论游戏。
     </Text>
+    <Text name="core.ui.TutorialTouch1">欢迎来到 Ballance！
+点击“继续”学习，或跳过教程。右上角菜单可暂停游戏、打开设置或退出。</Text>
+    <Text name="core.ui.TutorialTouch2">视图旋转
+点击摄像机箭头，或在空白游戏区域左右滑动，让视图旋转 90°。</Text>
+    <Text name="core.ui.TutorialTouch3">俯瞰视图
+按住眼睛按钮，升高摄像机并观察前方道路。</Text>
+    <Text name="core.ui.TutorialTouch4">移动球
+转动视图，让两座塔楼之间的道路朝向前方。拖动摇杆或按方向按钮滚动球，沿路前进！</Text>
+    <Text name="core.ui.TutorialTouch5">额外生命球：
+如果你从轨道上掉下来，你就会失去一条生命。你的剩余生命将显示在屏幕的右下角。通过碰撞“额外生命球”，你可以获得额外的生命。</Text>
+    <Text name="core.ui.TutorialTouch6">变球器：
+通过使用“变球器”，你可以改变球的材质。变球器显示的材料表示变球器的类型。
+
+这是一个石质变球器。</Text>
+    <Text name="core.ui.TutorialTouch7">这个斜坡太陡了，不能用石球！
+
+找一个木制变球器，再试一次。
+
+提示：转动视图，以获得更好的方向。向后滚动可能很危险！</Text>
+    <Text name="core.ui.TutorialTouch8">额外分数球：
+
+左边的显示屏显示的是你的实际时间点，在比赛中时间点会不断减少。你可以通过多拿一个分数球来提高分数。</Text>
+    <Text name="core.ui.TutorialTouch9">检查点：
+
+这是你必须通过的第一个检查点。
+
+如果你在游戏中失去了生命，你可以从最后一个检查点继续游戏。</Text>
+    <Text name="core.ui.TutorialTouch10">观察道路，选择合适的球材质，在狭窄路段慢慢前进。点击“继续”完成教程。</Text>
   </Language>
   <Language name="English">
     <Text name="core.ui.MobileTilt">Tilt + touch fallback</Text>
     <Text name="core.ui.MobilePause">Pause</Text>
+    <Text name="core.ui.TutorialSkip">Skip tutorial</Text>
     <Text name="core.ui.MobileRecenter">Recenter</Text>
     <Text name="core.ui.MobileTouchHint">Joystick or arrows: move. Camera buttons or swipe: turn. Hold eye: look down.</Text>
     <Text name="core.ui.MobileTiltHint">Hold comfortably, then Recenter. Joystick overrides tilt while held.</Text>
-    <Text name="core.ui.MobileTiltUnavailable">Tilt unavailable. Use the joystick or tap Recenter to enable sensors.</Text>
+    <Text name="core.ui.MobileTiltUnavailable">Tilt unavailable. Use the joystick.</Text>
     <Text name="core.ui.MobileSensorAllow">Allow tilt control</Text>
 
     <Text name="core.ui.RebuildBy">Unity remake by</Text>
@@ -508,14 +538,37 @@ If you want to develop your own mod and level for Ballance, welcome to https://g
 
 Welcome to discuss the game at Ballance Discord.
     </Text>
+    <Text name="core.ui.TutorialTouch1">Welcome to Ballance!
+Tap Continue to learn the controls, or skip the tutorial. The menu in the upper-right corner lets you pause, open settings or leave.</Text>
+    <Text name="core.ui.TutorialTouch2">View rotation
+Tap the camera arrows or swipe left or right on the free game area to turn the view by 90°.</Text>
+    <Text name="core.ui.TutorialTouch3">Overview
+Hold the eye button to raise the camera and look at the path ahead.</Text>
+    <Text name="core.ui.TutorialTouch4">Navigation
+Turn the camera until the path with two towers is ahead. Drag the joystick or hold a direction button to roll the ball. Follow the path!</Text>
+    <Text name="core.ui.TutorialTouch5">Life Extra:
+If you fall off the track, you lose one life. Your remaining lifes are displayed at the right bottom of the screen. You receive an additional life by picking up a "Life Extra".</Text>
+    <Text name="core.ui.TutorialTouch6">Transformer:
+With the use of "transformers" you can change the material of the ball. The material of the transformer field indicates the type of transformer.
+This is a stone transformer.</Text>
+    <Text name="core.ui.TutorialTouch7">This slope is too steep for a stoneball!
+Look for a wood transformer and try again.
+Hint: Turn the view , to get a better orientation. Rolling backwards can be dangerous!</Text>
+    <Text name="core.ui.TutorialTouch8">Point Extra:
+The display on the left shows your actual time-points, which are constantly decreasing during the game. You increase your score by picking up a Point Extra.</Text>
+    <Text name="core.ui.TutorialTouch9">Checkpoints:
+This is the first checkpoint you have to pass.
+In case you loose a life during the game, you can continue the game from the last checkpoint.</Text>
+    <Text name="core.ui.TutorialTouch10">Look ahead, choose the right ball material and take your time on narrow paths. Tap Continue to finish the tutorial.</Text>
   </Language>
   <Language name="ChineseTraditional">
     <Text name="core.ui.MobileTilt">傾斜與觸控</Text>
     <Text name="core.ui.MobilePause">暫停</Text>
+    <Text name="core.ui.TutorialSkip">略過教學</Text>
     <Text name="core.ui.MobileRecenter">校準</Text>
     <Text name="core.ui.MobileTouchHint">搖桿或箭頭移動。鏡頭按鈕或滑動轉向。按住眼睛俯視。</Text>
     <Text name="core.ui.MobileTiltHint">舒適地握住手機後校準。按住搖桿時優先使用觸控。</Text>
-    <Text name="core.ui.MobileTiltUnavailable">感測器無法使用。請使用搖桿或點擊校準啟用感測器。</Text>
+    <Text name="core.ui.MobileTiltUnavailable">感測器無法使用。請使用搖桿。</Text>
     <Text name="core.ui.MobileSensorAllow">允許傾斜控制</Text>
 
     <Text name="core.ui.Back">返回</Text>
@@ -731,14 +784,43 @@ Ballance Rebuild是滾球Ballance遊戲的開源Unity重製版，由快樂的夢
 
 也歡迎在Ballance吧討論遊戲。
     </Text>
+    <Text name="core.ui.TutorialTouch1">歡迎來到 Ballance！
+點擊「繼續」學習，或跳過教學。右上角選單可暫停遊戲、開啟設定或離開。</Text>
+    <Text name="core.ui.TutorialTouch2">視圖旋轉
+點擊攝影機箭頭，或在空白遊戲區域左右滑動，讓視圖旋轉 90°。</Text>
+    <Text name="core.ui.TutorialTouch3">俯瞰視圖
+按住眼睛按鈕，升高攝影機並觀察前方道路。</Text>
+    <Text name="core.ui.TutorialTouch4">移動球
+轉動視圖，讓兩座塔樓之間的道路朝向前方。拖動搖桿或按方向按鈕滾動球，沿路前進！</Text>
+    <Text name="core.ui.TutorialTouch5">額外生命球：
+如果你從軌道上掉下來，你就會失去一條生命。 你的剩餘生命將顯示在荧幕的右下角。 通過碰撞“額外生命球”，你可以獲得額外的生命。</Text>
+    <Text name="core.ui.TutorialTouch6">變球器：
+通過使用“變球器”，你可以改變球的材質。 變球器顯示的資料表示變球器的類型。
+
+這是一個石質變球器。</Text>
+    <Text name="core.ui.TutorialTouch7">這個斜坡太陡了，不能用石球！
+
+找一個木制變球器，再試一次。
+
+提示：轉動視圖，以獲得更好的方向。 向後滾動可能很危險！</Text>
+    <Text name="core.ui.TutorialTouch8">額外分數球：
+
+左邊的顯示幕顯示的是你的實際時間點，在比賽中時間點會不斷减少。 你可以通過多拿一個分數球來提高分數。</Text>
+    <Text name="core.ui.TutorialTouch9">檢查點：
+
+這是你必須通過的第一個檢查點。
+
+如果你在遊戲中失去了生命，你可以從最後一個檢查點繼續遊戲。</Text>
+    <Text name="core.ui.TutorialTouch10">觀察道路，選擇合適的球材質，在狹窄路段慢慢前進。點擊「繼續」完成教學。</Text>
   </Language>
   <Language name="Russian">
     <Text name="core.ui.MobileTilt">Наклон + джойстик</Text>
     <Text name="core.ui.MobilePause">Пауза</Text>
+    <Text name="core.ui.TutorialSkip">Пропустить обучение</Text>
     <Text name="core.ui.MobileRecenter">Калибровка</Text>
     <Text name="core.ui.MobileTouchHint">Джойстик или стрелки — движение. Кнопки или свайп — камера. Глаз — вид сверху.</Text>
     <Text name="core.ui.MobileTiltHint">Держите телефон удобно и нажмите «Калибровка». Джойстик временно заменяет наклон.</Text>
-    <Text name="core.ui.MobileTiltUnavailable">Датчик недоступен. Используйте джойстик или нажмите «Калибровка».</Text>
+    <Text name="core.ui.MobileTiltUnavailable">Датчик недоступен. Используйте джойстик.</Text>
     <Text name="core.ui.MobileSensorAllow">Разрешить управление наклоном</Text>
 
     <Text name="core.ui.RebuildBy">Автор версии на Unity</Text>
@@ -1001,5 +1083,29 @@ Ballance Rebuild是滾球Ballance遊戲的開源Unity重製版，由快樂的夢
 Руководства по созданию модификаций и уровней: https://github.com/imengyu/Ballance/wiki
 
 Обсудить игру можно в сообществе Ballance в Discord.</Text>
+    <Text name="core.ui.TutorialTouch1">Добро пожаловать в Ballance!
+Нажимайте «Продолжить», чтобы освоить управление, или пропустите обучение. Меню справа вверху позволяет поставить игру на паузу, открыть настройки или выйти.</Text>
+    <Text name="core.ui.TutorialTouch2">Вращение камеры
+Нажимайте кнопки со стрелками камеры или проводите пальцем влево и вправо по свободной области игры, чтобы поворачивать вид на 90°.</Text>
+    <Text name="core.ui.TutorialTouch3">Обзор сверху
+Удерживайте кнопку с глазом, чтобы поднять камеру и осмотреть путь впереди.</Text>
+    <Text name="core.ui.TutorialTouch4">Движение
+Поверните камеру так, чтобы дорожка с двумя башнями оказалась перед вами. Перемещайте джойстик или удерживайте кнопки направлений, чтобы катить шар. Следуйте по дорожке!</Text>
+    <Text name="core.ui.TutorialTouch5">Дополнительная жизнь
+При падении с дорожки вы теряете жизнь. Оставшиеся жизни показаны в правом нижнем углу экрана. Подбирайте бонусы жизни, чтобы получить дополнительные попытки.</Text>
+    <Text name="core.ui.TutorialTouch6">Преобразователи
+Преобразователи меняют материал шара. Материал площадки показывает, каким станет шар.
+Перед вами преобразователь в каменный шар.</Text>
+    <Text name="core.ui.TutorialTouch7">Этот подъём слишком крут для каменного шара!
+Найдите преобразователь в деревянный шар и попробуйте снова.
+Совет: поворачивайте камеру , чтобы лучше видеть дорогу. Катиться спиной вперёд опасно!</Text>
+    <Text name="core.ui.TutorialTouch8">Дополнительные очки
+Слева показаны очки времени: во время игры они постепенно уменьшаются. Подбирайте бонусы очков, чтобы увеличить свой счёт.</Text>
+    <Text name="core.ui.TutorialTouch9">Контрольные точки
+Перед вами первая контрольная точка, через которую нужно пройти.
+Если вы потеряете жизнь, игра продолжится с последней пройденной контрольной точки.</Text>
+    <Text name="core.ui.TutorialTouch10">Последние советы
+Осматривайте путь, меняйте материал шара и не спешите на узких участках.
+Если нужна помощь или вы нашли ошибку, откройте страницу проекта через меню «Об игре».</Text>
   </Language>
 </I18n>

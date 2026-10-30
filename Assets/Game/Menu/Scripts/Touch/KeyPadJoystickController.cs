@@ -36,9 +36,10 @@ namespace Ballance2.Menu.Touch
     private KeyPadJoystickDirection currentState;
     private bool state = false;
 
-    private void Start()
+    private void Start() { InitKeys(); }
+
+    private void Awake()
     {
-      InitKeys();
       controller = GetComponent<SimpleTouchController>();
       controller.TouchEvent += (value) => {
         if(state)
@@ -67,6 +68,7 @@ namespace Ballance2.Menu.Touch
       SetKeysSize(GameSettings.GetFloat(SettingConstants.SettingsControlKeySize));
     }
     private void SetKeysSize(float newKeySize) {
+      if (MobileControls.Available) return;
       if (keySize != newKeySize) {
         keySize = newKeySize;
         Joystick.rectTransform.sizeDelta = new Vector2(keySize * 2.5f, keySize * 2.5f);

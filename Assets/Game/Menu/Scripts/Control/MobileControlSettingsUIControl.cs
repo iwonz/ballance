@@ -21,6 +21,54 @@ namespace Ballance2.Menu
       public Sprite image;
     }
     private List<MobileControlItem> items = new List<MobileControlItem>();
+    private Vector2 touchScreen;
+    private float touchUnit;
+
+    private void LateUpdate() {
+      if (Touch.MobileControls.Available && (touchScreen != new Vector2(Screen.width, Screen.height) ||
+          !Mathf.Approximately(touchUnit, Touch.MobileUILayout.Unit(transform)))) FitTouch();
+    }
+
+    private static void Rect(RectTransform rect, float left, float bottom, float right, float top) {
+      rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+      rect.offsetMin = new Vector2(left, bottom); rect.offsetMax = new Vector2(-right, -top);
+    }
+
+    private void FitTouch() {
+      touchScreen = new Vector2(Screen.width, Screen.height); touchUnit = Touch.MobileUILayout.Unit(transform);
+      Touch.MobileUILayout.FitMenuHost(transform);
+      var layout = GetComponent<LayoutGroup>(); if (layout != null) layout.enabled = false;
+      foreach (Transform child in transform) if (child.name == "Space") child.gameObject.SetActive(false);
+      var bounds = ((RectTransform)transform).rect.size / touchUnit;
+      bool landscape = Screen.width > Screen.height;
+      float side = landscape ? bounds.x * .55f : 0;
+      var list = (RectTransform)ScrollView.transform;
+      Rect(list, 0, (landscape ? 56 : 208) * touchUnit, landscape ? (bounds.x - side + 8) * touchUnit : 0, 48 * touchUnit);
+      if (ScrollView.verticalScrollbar != null) ScrollView.verticalScrollbar.gameObject.SetActive(false);
+      Rect(ScrollView.viewport, 0, 0, 0, 0);
+      ScrollView.defaultItemSize = new Vector2(list.rect.width, 80 * touchUnit);
+      Rect((RectTransform)transform.Find("Text"), 0, (bounds.y - 40) * touchUnit, 0, 0);
+      Rect((RectTransform)transform.Find("ButtonBack"), 0, 0, 0, (bounds.y - 48) * touchUnit);
+      var reverse = transform.Find("ButtonToogleControlReverse").GetComponent<ToggleEx>();
+      var size = transform.Find("ButtonControlUISize").GetComponent<Updown>();
+      float reverseBottom = landscape ? Mathf.Max(136, bounds.y - 128) : 128;
+      Rect((RectTransform)reverse.transform, side * touchUnit, reverseBottom * touchUnit, 0, (bounds.y - reverseBottom - 72) * touchUnit);
+      Rect((RectTransform)size.transform, side * touchUnit, 56 * touchUnit, 0, (bounds.y - 128) * touchUnit);
+      Rect(reverse.Text.rectTransform, 0, 48 * touchUnit, 0, 0);
+      float half = ((RectTransform)reverse.transform).rect.width * .5f;
+      Rect(reverse.CheckedButton.rectTransform, 0, 0, half + 2 * touchUnit, 24 * touchUnit);
+      Rect(reverse.UnCheckedButton.rectTransform, half + 2 * touchUnit, 0, 0, 24 * touchUnit);
+      Rect(size.TextTitle.rectTransform, 0, 48 * touchUnit, 0, 0);
+      float width = ((RectTransform)size.transform).rect.width;
+      Rect((RectTransform)size.DownBtn.transform, 0, 0, width - 48 * touchUnit, 24 * touchUnit);
+      Rect((RectTransform)size.UpBtn.transform, width - 48 * touchUnit, 0, 0, 24 * touchUnit);
+      Rect(size.TextValue.rectTransform, 48 * touchUnit, 0, 48 * touchUnit, 24 * touchUnit);
+      foreach (var label in GetComponentsInChildren<Text>(true)) {
+        label.resizeTextForBestFit = false; label.fontSize = Mathf.RoundToInt(16 * touchUnit);
+      }
+      reverse.Text.fontSize = size.TextTitle.fontSize = Mathf.RoundToInt((landscape ? 12 : 14) * touchUnit);
+      if (ScrollView.updateFunc != null) ScrollView.UpdateData(false);
+    }
 
     private void Start() {
       var settings = GameSettingsManager.GetSettings(GamePackageManager.SYSTEM_PACKAGE_NAME);
@@ -57,7 +105,8 @@ namespace Ballance2.Menu
         text.rectTransform.anchorMax = new Vector2(.97f, .9f);
         text.rectTransform.offsetMin = text.rectTransform.offsetMax = Vector2.zero;
         image.preserveAspect = true;
-        text.resizeTextForBestFit = true; text.resizeTextMinSize = 14; text.resizeTextMaxSize = 22;
+        float unit = Touch.MobileControls.Available ? Touch.MobileUILayout.Unit(item) : 1;
+        text.resizeTextForBestFit = true; text.resizeTextMinSize = Mathf.RoundToInt(16 * unit); text.resizeTextMaxSize = Mathf.RoundToInt(20 * unit);
 
         button.onClick.AddListener(() => {
           controlKeypadSettting = data.name;

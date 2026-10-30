@@ -11,7 +11,7 @@ namespace Ballance2.Menu.Touch
   /// Mobile keyboard UI controller.
   /// </summary>
   [RequireComponent(typeof(KeypadGridLayout))]
-  public class SimpleTouchDirectionKeyController : UIBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+  public class SimpleTouchDirectionKeyController : UIBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler, ICancelHandler
   {
     public Image ImageForward;
     public Image ImageForwardLeft;
@@ -118,6 +118,7 @@ namespace Ballance2.Menu.Touch
       SetKeysSize(GameSettings.GetFloat(SettingConstants.SettingsControlKeySize));
     }
     private void SetKeysSize(float newKeySize) {
+      if (MobileControls.Available) return;
       keypadGridLayout.DoLayout(newKeySize);
     }
 
@@ -151,6 +152,7 @@ namespace Ballance2.Menu.Touch
       else ClearState();
     }
     public void OnPointerUp(PointerEventData data) { if (pointer == data.pointerId) Release(); }
+    public void OnCancel(BaseEventData data) { Release(); }
     public void Release() { pointer = null; ClearState(); }
     protected override void OnDisable() { Release(); base.OnDisable(); }
     private void OnApplicationFocus(bool focused) { if (!focused) Release(); }

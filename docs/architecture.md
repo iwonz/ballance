@@ -114,7 +114,13 @@ managers and UI from core prefabs.
 points/lives, fall/rebirth, pause, transformation, and ending flow.
 [BallManager](../Assets/Game/GamePlay/Scripts/BallManager.cs) owns ball registration,
 forces, control state, and effects; [CamManager](../Assets/Game/GamePlay/Scripts/CamManager.cs)
-provides camera-relative directions.
+provides camera-relative directions. User pause snapshots control, simulation, camera
+and countdown state separately from tutorial stops; pending spawn work is pause-aware
+and invalidated by restart/quit.
+[TutorialController](../Assets/Game/GamePlay/Scripts/Other/TutorialController.cs) owns
+one stage transition and its key subscriptions.
+[TutorialCardLayout](../Assets/Game/GamePlay/Scripts/Other/TutorialCardLayout.cs) adapts
+the original panel and buttons to safe mobile viewports with scrollable text.
 [SectorManager](../Assets/Game/GamePlay/Scripts/SectorManager.cs) activates and resets
 mechanisms through [ModulBase](../Assets/Game/GamePlay/Scripts/ModulBase/ModulBase.cs).
 `Balls`, `Moduls`, `Tranfo`, and `Other` below that gameplay directory implement the
@@ -157,9 +163,12 @@ selects Input System only and restores editor configuration afterward.
 Touch controllers live in `Assets/Game/Menu/Scripts/Touch`; keypad layout and settings
 live under `Menu/Scripts/Game` and `Menu/Scripts/Control`.
 [MobileControls](../Assets/Game/Menu/Scripts/Touch/MobileControls.cs) enables runtime
-touch layouts for Android and mobile Web, owns camera swipes/pause, safe-area fitting
-and interruption cleanup. The existing joystick and directional controllers own
-individual EventSystem pointers. Web capability comes from `navigator.maxTouchPoints`,
+touch layouts for Android and mobile Web, owns camera swipes, the compact game menu, safe-area fitting
+and interruption cleanup. The keypad sits below tutorial views and remains inert while
+a page is open; movement and camera controls follow the ball permissions.
+[MobileUILayout](../Assets/Game/Menu/Scripts/Touch/MobileUILayout.cs) converts browser
+CSS pixels or Android density into Canvas units for minimum touch targets. The existing joystick and directional controllers own
+individual EventSystem pointers. Web capability comes from `navigator.maxTouchPoints` or touch events combined with a coarse pointer,
 not the virtual Touchscreen Unity allocates on desktop browsers. New profiles use the left analog joystick; saved
 layouts remain valid. [MobileTilt](../Assets/Game/Menu/Scripts/Touch/MobileTilt.cs)
 calibrates normalized gravity, filters jitter and gives a held joystick priority.
@@ -169,6 +178,11 @@ The mobile settings list includes tilt with joystick fallback; its recenter acti
 also enables sensors when the browser needs a fresh gesture.
 [InputChecks](../Assets/System/Scripts/Editor/InputChecks.cs) uses virtual devices;
 physical touch layout, timing, and ergonomics still need an Android device.
+
+
+[MobileMenuList](../Assets/Game/Menu/Scripts/Touch/MobileMenuList.cs) sizes and scrolls original main, level and settings menu buttons on touch screens.
+[MobilePauseLayout](../Assets/Game/Menu/Scripts/Touch/MobilePauseLayout.cs) retains the
+existing pause menu theme while sizing its actions for touch and short viewports.
 
 ## User interface
 
@@ -334,3 +348,7 @@ not substitutes for reading changed code or reviewing scenario evidence.
 Local macOS installation and obsolete-player cleanup are owned by
 [scripts/install-macos.py](../scripts/install-macos.py); see
 [the installation procedure](build-and-release.md#local-macos-installation).
+
+[MobileTutorialChecks](../Assets/System/Scripts/Editor/MobileTutorialChecks.cs) exercises
+real tutorial lifecycle transitions with isolated persistence; its scope and command
+are documented in [validation](validation.md).

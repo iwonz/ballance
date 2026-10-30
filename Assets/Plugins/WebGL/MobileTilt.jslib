@@ -1,5 +1,9 @@
 mergeInto(LibraryManager.library, {
-  BallanceTouchAvailable: function() { return (navigator.maxTouchPoints || 0) > 0 ? 1 : 0; },
+  BallanceCanvasCSSHeight: function() { return Module.canvas.getBoundingClientRect().height; },
+  BallanceTouchAvailable: function() {
+    return (navigator.maxTouchPoints || 0) > 0 ||
+      ('ontouchstart' in window && window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ? 1 : 0;
+  },
   $BallanceTilt: {
     generation: 0, permitted: false, sample: [0, 0, 0], time: -Infinity, listening: false, prompt: null,
     receive: function(event) {
@@ -32,10 +36,10 @@ mergeInto(LibraryManager.library, {
     var generation = BallanceTilt.generation;
     var prompt = document.createElement('div');
     prompt.setAttribute('role', 'dialog'); prompt.setAttribute('aria-modal', 'true');
-    prompt.style.cssText = 'position:fixed;inset:20%;z-index:10000;background:#102128;color:white;padding:24px;display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;border:2px solid #b7ddbc;font:18px system-ui';
+    prompt.style.cssText = 'position:fixed;inset:0;z-index:10000;background:#102128ed;color:white;padding:24px;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;font:18px system-ui';
     var yes = document.createElement('button'), no = document.createElement('button');
     yes.textContent = UTF8ToString(allow); no.textContent = UTF8ToString(cancel);
-    for (var button of [yes, no]) { button.style.cssText = 'font:inherit;padding:16px;min-height:48px'; prompt.appendChild(button); }
+    for (var button of [yes, no]) { button.style.cssText = 'font:inherit;padding:16px;min-height:48px;max-width:100%'; prompt.appendChild(button); }
     function close() { prompt.remove(); if (BallanceTilt.prompt === prompt) BallanceTilt.prompt = null; if (Module.canvas) Module.canvas.focus(); }
     yes.onclick = function() {
       DeviceOrientationEvent.requestPermission().then(function(result) {

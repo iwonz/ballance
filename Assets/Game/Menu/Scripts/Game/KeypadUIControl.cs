@@ -50,6 +50,7 @@ namespace Ballance2.Menu
       SetKeysSize(GameSettings.GetFloat(SettingConstants.SettingsControlKeySize));
     }
     private void SetKeysSize(float newKeySize) {
+      if (MobileControls.Available) return;
       if (KeypadActionButtons != null)
         foreach(var layout in KeypadActionButtons)
           layout.DoLayout(newKeySize);

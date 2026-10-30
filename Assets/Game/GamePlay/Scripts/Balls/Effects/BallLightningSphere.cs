@@ -50,6 +50,7 @@ namespace Ballance2.Game.GamePlay.Balls
       this.ballLightningSphereMaterialB = meshRenderer.material;
     }
     private void Update() {
+      if (GamePlayManager.Instance.IsUserPaused) return;
       // Lightning sphere.
       if (lighing)
       {
@@ -185,8 +186,25 @@ namespace Ballance2.Game.GamePlay.Balls
       return lighing;
     }
 
+    public void Cancel() {
+      StopAllCoroutines();
+      lighing = lighingLight = lighingLightEnd = lighingBig = false;
+      Ball_LightningSphereInnernA.SetActive(false);
+      Ball_LightningSphereInnernB.SetActive(false);
+      Ball_Light.gameObject.SetActive(false);
+      Ball_Smoke.SetActive(false);
+      if (ballLightningMusic != null) ballLightningMusic.Stop();
+    }
+
+    private IEnumerator PauseAwareDelay(float seconds) {
+      while (seconds > 0) {
+        if (!GamePlayManager.Instance.IsUserPaused) seconds -= Time.deltaTime;
+        yield return null;
+      }
+    }
+
     private IEnumerator LightingDelayHide(Vector3 position, VoidDelegate callback, bool lightAnim) {
-      yield return new WaitForSeconds(BallLightSec);
+      yield return PauseAwareDelay(BallLightSec);
           
       Ball_LightningSphereInnernA.transform.localScale = new Vector3(1, 1, 1);
       Ball_LightningSphereInnernB.transform.localScale = new Vector3(1, 1, 1);
@@ -201,7 +219,7 @@ namespace Ballance2.Game.GamePlay.Balls
       
       if (lightAnim) 
       {
-        yield return new WaitForSeconds(BallLightEndSec);
+        yield return PauseAwareDelay(BallLightEndSec);
         Ball_Light.gameObject.SetActive(false);
       }
     }

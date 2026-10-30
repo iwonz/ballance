@@ -72,14 +72,25 @@ and run relevant checks individually instead of claiming the aggregate passed.
 state, mouse position/scaling, and touch state on virtual devices. It is not a
 real-device or full frame-timing test. It also invokes `MobileInputChecks.Run` for
 joystick pointer ownership, immediate press, cancellation and bounded tilt mapping.
+Run `Ballance2.Editor.MobileInputChecks.RunPrefabIntegration` separately **without**
+`-nographics`. It renders the shipped tutorial and joystick prefabs in a Canvas with
+a GraphicRaycaster and EventSystem, checks button/scroll priority, analog dispatch,
+release/cancellation/menu cleanup and the inert state of a replacement keypad.
+It also checks all five saved layouts in narrow portrait and short landscape at minimum/default/maximum size settings, including control-region intersections and 48-pixel targets. Its edit-mode fixture invokes component lifecycle methods explicitly; native ball
+force and the tutorial state machine still require the player checks below.
 The Node tilt bridge check covers permission denial, orientation mapping, stale data,
 visibility and late permission cancellation. These fixtures do not measure a real sensor.
 
 For mobile acceptance, open an isolated touch browser profile in portrait and landscape:
-start level 01 with touch, continue/skip the tutorial, move while operating camera buttons,
+start level 01 with touch and complete camera, overhead and movement guidance using
+Continue only, without skipping or keyboard input. Separately skip introductory and
+later hints. Open and close the menu on each step and during spawn; repeat fast taps,
+restart and exit to check stale callbacks. Move while operating camera buttons,
 swipe the free area, release outside the joystick, pause/resume, rotate and switch layouts.
 Opt into tilt in Controls, enable/recenter, then deny permission or remove sensor data and
-confirm touch fallback. Exercise native Android on a connected phone when available;
+confirm touch fallback. Repeat narrow portrait, landscape, rotation and browser-height
+changes in actual Chromium and WebKit engines; a Chromium User-Agent override is
+not WebKit/Safari coverage. Exercise native Android on a connected phone when available;
 record the device/browser and any unavailable real sensor/comfort/audio checks explicitly.
 
 `Ballance2.Editor.LocalizationChecks.Run` can also run separately to validate runtime
@@ -233,3 +244,12 @@ Known baseline gaps are linked from [architecture.md](architecture.md), includin
 legacy NMO, package trust, persistence robustness, and unfinished editor paths.
 Record a regression or newly reproduced defect in a focused OpenSpec change instead
 of silently changing the baseline to promise behavior the code does not provide.
+
+Run `Ballance2.Editor.MobileTutorialChecks.Run` with the exact Unity editor,
+`-buildTarget StandaloneOSX`, graphics enabled and without `-batchmode` or `-quit`.
+It enters the real first level using an isolated test product/profile, invokes
+the bound Continue/Skip buttons and authored later-hint callbacks, and checks
+pause snapshots, repeated input, spawn cancellation, restart, fall and exit.
+The temporary editor product name is restored on exit; results go to
+`Builds/checks/tutorial-*/report.txt`. These directed lifecycle checks complement
+real browser input; they do not establish a complete touch playthrough.

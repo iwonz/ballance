@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Ballance2.Menu.Touch
 {
-  public class SimpleTouchController : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+  public class SimpleTouchController : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler, ICancelHandler
   {
     public delegate void TouchDelegate(Vector2 value);
     public event TouchDelegate TouchEvent;
@@ -50,6 +50,7 @@ namespace Ballance2.Menu.Touch
     }
 
     public void OnPointerUp(PointerEventData data) { if (pointer == data.pointerId) EndDrag(); }
+    public void OnCancel(BaseEventData data) { EndDrag(); }
     public void BeginDrag() { TouchStateEvent?.Invoke(true); }
     public void EndDrag()
     {

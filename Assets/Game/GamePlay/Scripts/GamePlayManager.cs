@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Ballance2.Base;
 using Ballance2.Game.GamePlay.Balls;
@@ -100,6 +101,30 @@ namespace Ballance2.Game.GamePlay
         #endregion
 
         internal bool _IsGamePlaying = false;
+        public bool IsUserPaused { get; private set; }
+        public bool IsSessionOpen { get; private set; }
+        private bool pausedPlaying, pausedCountdown, pausedSimulation, pausedMovement, pausedCamera, pausedCamEnabled;
+        private BallControlStatus pausedControl;
+        private int sessionGeneration;
+
+        private void CancelPendingStart()
+        {
+            sessionGeneration++;
+            _DethLock = false;
+            IsUserPaused = false;
+            BallManager.CancelLighting();
+            CamManager.enabled = true;
+        }
+
+        private IEnumerator StartWhenReady(float delay, int generation, GameManager.VoidDelegate callback)
+        {
+            while (generation == sessionGeneration && (delay > 0 || IsUserPaused)) {
+                if (!IsUserPaused) delay -= Time.deltaTime;
+                yield return null;
+            }
+            if (generation == sessionGeneration && IsSessionOpen) callback();
+        }
+
         internal bool _IsCountDownPoint = false;
         internal bool _BallBirthed = false;
         internal bool _FirstStart = false;
@@ -142,6 +167,7 @@ namespace Ballance2.Game.GamePlay
         }
         private void Update()
         {
+            if (IsUserPaused) return;
             this._UpdateTick = this._UpdateTick + Time.deltaTime;
             if (this._UpdateTick >= 0.5)
             {
@@ -304,13 +330,11 @@ namespace Ballance2.Game.GamePlay
             {
                 if (down
                   && this.CanEscPause
-                  && this._BallBirthed
+                  && this.IsSessionOpen
                   && !this.CurrentLevelPass)
                 {
-                    if (this._IsGamePlaying)
-                        this.PauseLevel(true);
-                    else
-                        this.ResumeLevel();
+                    if (IsUserPaused) ResumeLevel();
+                    else if (GameUIManager.Instance.GetCurrentPage() == null) PauseLevel(true);
                 }
             }, GamepadButton.Select, GamepadButton.Start);
         }
@@ -464,7 +488,12 @@ namespace Ballance2.Game.GamePlay
         // Start.
         internal void _Start(bool isStartBySector, GameManager.VoidDelegate customerFn)
         {
+            if (IsUserPaused) {
+                StartCoroutine(StartWhenReady(0, sessionGeneration, () => _Start(isStartBySector, customerFn)));
+                return;
+            }
             this._IsGamePlaying = true;
+            int generation = sessionGeneration;
 
             if (this.CurrentDisableStart)
                 return;
@@ -486,7 +515,7 @@ namespace Ballance2.Game.GamePlay
                 }
                 BallManager.SetCanControlCameraWhenStart();
                 // Wait for lightning to finish.
-                BallManager.PlayLighting(startPos, true, true, () =>
+                BallManager.PlayLighting(startPos, true, true, () => StartCoroutine(StartWhenReady(0, generation, () =>
                 {
                     // Start control.
                     BallManager.SetNextRecoverPos(startPos);
@@ -503,7 +532,7 @@ namespace Ballance2.Game.GamePlay
                         BallManager.SetControllingStatus(BallControlStatus.Control);
                         this._IsCountDownPoint = true;
                     }
-                });
+                })));
             }
             else
             {
@@ -532,6 +561,8 @@ namespace Ballance2.Game.GamePlay
         // LevelBuilder is ready; initialize GamePlayManager.
         internal void _InitAndStart()
         {
+            CancelPendingStart();
+            IsSessionOpen = true;
             this.CurrentLevelPass = false;
             this.CurrentDisableStart = false;
             this._IsGamePlaying = false;
@@ -575,13 +606,10 @@ namespace Ballance2.Game.GamePlay
 
             if (!this._ShouldStartByCustom)
             {
-                GameTimer.Delay(0.7f, () =>
-                {
-                    // Simulate.
+                StartCoroutine(StartWhenReady(0.7f, sessionGeneration, () => {
                     this.GamePhysicsWorld.Simulate = true;
-                    // Start.
                     this._Start(true, null);
-                });
+                }));
             }
             else
                 Log.D(TAG, "Should Start By Custom");
@@ -601,6 +629,7 @@ namespace Ballance2.Game.GamePlay
             if (this._DethLock)
                 return false;
             this._DethLock = true;
+            int generation = sessionGeneration;
 
             Log.D(TAG, "Fall . CurrentLife: " + this.CurrentLife);
 
@@ -623,14 +652,14 @@ namespace Ballance2.Game.GamePlay
 
                 this.EventFall.Emit();
 
-                GameTimer.Delay(1, () =>
+                StartCoroutine(StartWhenReady(1, generation, () =>
                 {
                     // Deactivate mechanisms.
                     SectorManager.DeactiveCurrentSector();
                     // Disable control.
                     this._Stop(BallControlStatus.NoControl);
 
-                    GameTimer.Delay(1, () =>
+                    StartCoroutine(StartWhenReady(1, generation, () =>
                     {
                         GameUIManager.Instance.UIFadeManager.AddAudioFadeOut(this._SoundBallFall, 1);
 
@@ -641,13 +670,13 @@ namespace Ballance2.Game.GamePlay
                         GameUIManager.Instance.MaskWhiteFadeOut(1);
 
                         // Remove the displayed life after a delay.
-                        GameTimer.Delay(1, () =>
+                        StartCoroutine(StartWhenReady(1, generation, () =>
                         {
                             GamePlayUIControl.Instance.RemoveLifeBall();
                             this._DethLock = false;
-                        });
-                    });
-                });
+                        }));
+                    }));
+                }));
             }
             else
             {
@@ -658,18 +687,18 @@ namespace Ballance2.Game.GamePlay
 
                 this.EventDeath.Emit();
 
-                GameTimer.Delay(1.5f, () =>
+                StartCoroutine(StartWhenReady(1.5f, generation, () =>
                 {
                     this._Stop(BallControlStatus.UnleashingMode);
                     MusicManager.DisableBackgroundMusicWithoutAtmo();
 
                     // Show the failure menu after a delay.
-                    GameTimer.Delay(1, () =>
+                    StartCoroutine(StartWhenReady(1, generation, () =>
                     {
                         GameUIManager.Instance.GoPage("PageGameFail");
                         this._DethLock = false;
-                    });
-                });
+                    }));
+                }));
             }
             return true;
         }
@@ -722,43 +751,58 @@ namespace Ballance2.Game.GamePlay
         /// <param name="showPauseUI">Show the pause interface.</param>
         public void PauseLevel(bool showPauseUI)
         {
-            this._Stop(BallControlStatus.FreeMode);
-
-            Log.D(TAG, "Pause");
-
-            // Stop simulation.
-            this.GamePhysicsWorld.Simulate = false;
-            // Stop camera following to prevent jitter while paused.
-            BallManager.StopCamMove();
-
-            //UI
-            if (showPauseUI)
-            {
+            if (IsUserPaused) return;
+            if (showPauseUI) {
+                pausedPlaying = _IsGamePlaying;
+                pausedCountdown = _IsCountDownPoint;
+                pausedSimulation = GamePhysicsWorld.Simulate;
+                pausedControl = BallManager.GetControllingStatus();
+                pausedMovement = BallManager.CanControll;
+                pausedCamera = BallManager.CanControllCamera;
+                pausedCamEnabled = CamManager.enabled;
+                IsUserPaused = true;
+            }
+            // Release forces before changing the permission that guards force updates.
+            GamePlayUIControl.Instance.ReleaseMobileInput();
+            BallManager.RemoveAllBallPush();
+            BallManager.KeyStateForward = BallManager.KeyStateBack = BallManager.KeyStateLeft = BallManager.KeyStateRight = false;
+            _IsGamePlaying = false;
+            _IsCountDownPoint = false;
+            BallManager.CanControll = false;
+            BallManager.CanControllCamera = false;
+            GamePhysicsWorld.Simulate = false;
+            CamManager.enabled = false;
+            MusicManager.DisableBackgroundMusic();
+            if (showPauseUI) {
                 GameSoundManager.Instance.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.UI);
                 GameUIManager.Instance.GoPage("PageGamePause");
             }
-
-            this.EventPause.Emit();
+            EventPause.Emit();
         }
-        /// <summary>
-        /// Resume the level.
-        /// </summary>
-        /// <param name="forceRestart">Force a restart of the current sector; default false.</param>
+
+        /// <summary>Restore a user pause, or leave a tutorial stop. A forced restart respawns the sector.</summary>
         public void ResumeLevel(bool forceRestart = false)
         {
-            Log.D(TAG, "Resume");
-
-            //UI
             GameSoundManager.Instance.PlayFastVoice("core.sounds:Menu_click.wav", GameSoundType.UI);
             GameUIManager.Instance.CloseAllPage();
-
-            // Resume camera following.
-            BallManager.StartCamMove();
-            // Stop or resume.
-            this.GamePhysicsWorld.Simulate = true;
-            this._Start(forceRestart, null);
-
-            this.EventResume.Emit();
+            if (IsUserPaused && !forceRestart) {
+                IsUserPaused = false;
+                if (BallManager.GetControllingStatus() != pausedControl) BallManager.SetControllingStatus(pausedControl);
+                BallManager.CanControll = pausedMovement;
+                BallManager.CanControllCamera = pausedCamera;
+                GamePhysicsWorld.Simulate = pausedSimulation;
+                CamManager.enabled = pausedCamEnabled;
+                _IsGamePlaying = pausedPlaying;
+                _IsCountDownPoint = pausedCountdown;
+                if (pausedPlaying) MusicManager.EnableBackgroundMusic();
+            } else {
+                IsUserPaused = false;
+                CamManager.enabled = true;
+                BallManager.StartCamMove();
+                GamePhysicsWorld.Simulate = true;
+                _Start(forceRestart, null);
+            }
+            EventResume.Emit();
         }
 
         // Hide the balloon after completion.
@@ -850,6 +894,8 @@ namespace Ballance2.Game.GamePlay
 
         private void _QuitOrLoadNextLevel(bool loadNext)
         {
+            CancelPendingStart();
+            IsSessionOpen = false;
             Log.D(TAG, "Start Quit Level");
 
             GameManager.VoidDelegate callBack = null;
@@ -900,6 +946,8 @@ namespace Ballance2.Game.GamePlay
         // Restart the level.
         public void RestartLevel()
         {
+            CancelPendingStart();
+            IsSessionOpen = false;
             // Fade to black.
             GameUIManager.Instance.MaskBlackFadeIn(1);
 

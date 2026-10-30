@@ -40,6 +40,8 @@ namespace Ballance2.Menu
       PageAboutLicense.CreateContent(package);
       PageStart.CreateContent(package);
       PageStartCustomLevel.CreateContent(package);
+      PageMain.Content.gameObject.AddComponent<Touch.MobileMenuList>();
+      PageStart.Content.gameObject.AddComponent<Touch.MobileMenuList>();
       PageStart.OnShow = (options) => {
         for (var i = 2; i <= 12; i++) {
           var button = PageStart.Content.Find("ButtonLevel" + i).GetComponent<Button>();

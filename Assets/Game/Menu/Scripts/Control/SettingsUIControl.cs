@@ -41,6 +41,9 @@ namespace Ballance2.Menu
             PagePackageManager.CreateContent(package);
             PagePackageManagerInfo.CreateContent(package);
             PagePackageManagerTrust.CreateContent(package);
+            PageSettings.Content.gameObject.AddComponent<Touch.MobileMenuList>();
+            PageSettingsInGame.Content.gameObject.AddComponent<Touch.MobileMenuList>();
+            PageLanguage.Content.gameObject.AddComponent<Touch.MobileMenuList>();
 
             PageSettingsControls.OnShow += (options) =>
             {

@@ -1023,6 +1023,7 @@ namespace Ballance2.Game.GamePlay
         /// Whether the spawn lightning effect is running.
         /// </summary>
         public bool IsLighting() { return _BallLightningSphere.IsLighting(); }
+        internal void CancelLighting() { if (_BallLightningSphere != null) _BallLightningSphere.Cancel(); }
         /// <summary>
         /// Lock the ball and move it quickly to a target.
         /// </summary>
